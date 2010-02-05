@@ -21,7 +21,7 @@ a2enmod ssl
 a2ensite default-ssl
 ln -s /var/lib/webauth /etc/apache2/webauth
 
-cp /root/keytab /etc/apache2/webauth/keytab
+cp /root/webauth.keytab /etc/apache2/webauth/keytab
 chgrp www-data /etc/apache2/webauth/keytab
 chmod u=rw,g=r,o= /etc/apache2/webauth/keytab
 
