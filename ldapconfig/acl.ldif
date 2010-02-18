@@ -1,0 +1,13 @@
+dn: olcDatabase={1}hdb,cn=config
+add: olcAccess
+olcAccess: to attrs=userPassword,shadowLastChange 
+           by dn="cn=admin,dc=zakynthos,dc=zoo,dc=ox,dc=ac,dc=uk" write 
+           by anonymous auth 
+           by self write 
+           by * none
+olcAccess: to dn.base="" 
+           by * read
+olcAccess: to * 
+           by dn="cn=admin,dc=zakynthos,dc=zoo,dc=ox,dc=ac,dc=uk" write 
+           by * read
+
