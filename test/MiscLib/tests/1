@@ -1,0 +1,122 @@
+testUnits (TestTestUtils.TestExample) ... ok
+testCase (TestTestUtils.TestExample) ... ok
+testComponents (TestTestUtils.TestExample) ... ok
+testNull (TestFunctions.TestFunctions) ... ok
+testSuff1 (TestFunctions.TestFunctions) ... ok
+testSuff2 (TestFunctions.TestFunctions) ... ok
+testSuff3 (TestFunctions.TestFunctions) ... ok
+testCwd (TestFunctions.TestFunctions) ... ok
+testConcatMap1 (TestFunctions.TestFunctions) ... ok
+testConcatMap2 (TestFunctions.TestFunctions) ... ok
+testConcatMap3 (TestFunctions.TestFunctions) ... ok
+testFstSnd1 (TestFunctions.TestFunctions) ... ok
+testFstSnd2 (TestFunctions.TestFunctions) ... ok
+testIterAll1 (TestFunctions.TestFunctions) ... ok
+testIterAll2 (TestFunctions.TestFunctions) ... ok
+testZipAll1 (TestFunctions.TestFunctions) ... ok
+testZipAll2 (TestFunctions.TestFunctions) ... ok
+testAll1 (TestFunctions.TestFunctions) ... ok
+testAll2 (TestFunctions.TestFunctions) ... ok
+testAny1 (TestFunctions.TestFunctions) ... ok
+testAny2 (TestFunctions.TestFunctions) ... ok
+testAllEq1 (TestFunctions.TestFunctions) ... ok
+testAllEq2 (TestFunctions.TestFunctions) ... ok
+testAllEq3 (TestFunctions.TestFunctions) ... ok
+testAllNe1 (TestFunctions.TestFunctions) ... ok
+testAllNe2 (TestFunctions.TestFunctions) ... ok
+testAllNe3 (TestFunctions.TestFunctions) ... ok
+testFilterSplit1 (TestFunctions.TestFunctions) ... ok
+testFilterSplit2 (TestFunctions.TestFunctions) ... ok
+testFilterSplit3 (TestFunctions.TestFunctions) ... ok
+testFormatIntList1 (TestFunctions.TestFunctions) ... ok
+testFormatIntList2 (TestFunctions.TestFunctions) ... ok
+testFormatList1 (TestFunctions.TestFunctions) ... ok
+testFormatList2 (TestFunctions.TestFunctions) ... ok
+testFormatList3 (TestFunctions.TestFunctions) ... ok
+testFormatList4 (TestFunctions.TestFunctions) ... ok
+testFormatDict1 (TestFunctions.TestFunctions) ... ok
+testFormatDict9 (TestFunctions.TestFunctions) ... ok
+testCompareLists1 (TestFunctions.TestFunctions) ... ok
+testCompareLists2 (TestFunctions.TestFunctions) ... ok
+testCompareLists3 (TestFunctions.TestFunctions) ... ok
+testCompareLists4 (TestFunctions.TestFunctions) ... ok
+testCompareLists5 (TestFunctions.TestFunctions) ... ok
+testCompareLists6 (TestFunctions.TestFunctions) ... ok
+testCompareLists7 (TestFunctions.TestFunctions) ... ok
+testCompareDicts1 (TestFunctions.TestFunctions) ... ok
+testCompareDicts2 (TestFunctions.TestFunctions) ... ok
+testCompareDicts3 (TestFunctions.TestFunctions) ... ok
+testCompareDicts4 (TestFunctions.TestFunctions) ... ok
+testCompareDicts5 (TestFunctions.TestFunctions) ... ok
+testCompareDicts6 (TestFunctions.TestFunctions) ... ok
+testCompareDicts7 (TestFunctions.TestFunctions) ... ok
+testCompareDicts8 (TestFunctions.TestFunctions) ... ok
+testApply (TestCombinators.TestCombinators) ... ok
+testCurry (TestCombinators.TestCombinators) ... ok
+testCompose (TestCombinators.TestCombinators) ... ok
+testParseXmlString (TestDomHelpers.TestDomHelpers) ... ok
+testParseXmlFile (TestDomHelpers.TestDomHelpers) ... ok
+testSaveXmlToFile (TestDomHelpers.TestDomHelpers) ... ok
+testSaveXmlToFileWithBackup (TestDomHelpers.TestDomHelpers) ... ok
+testGetNamedElem1 (TestDomHelpers.TestDomHelpers) ... ok
+testGetNamedElem2 (TestDomHelpers.TestDomHelpers) ... ok
+testGetNamedElem3 (TestDomHelpers.TestDomHelpers) ... ok
+testElemText (TestDomHelpers.TestDomHelpers) ... ok
+testAttrText (TestDomHelpers.TestDomHelpers) ... ok
+testNodeListText (TestDomHelpers.TestDomHelpers) ... ok
+testIsAttribute (TestDomHelpers.TestDomHelpers) ... ok
+testIsAttributeElem (TestDomHelpers.TestDomHelpers) ... ok
+testIsAttributeText (TestDomHelpers.TestDomHelpers) ... ok
+testIsElement (TestDomHelpers.TestDomHelpers) ... ok
+testIsElementAttr (TestDomHelpers.TestDomHelpers) ... ok
+testIsElementText (TestDomHelpers.TestDomHelpers) ... ok
+testIsText (TestDomHelpers.TestDomHelpers) ... ok
+testIsTextAttr (TestDomHelpers.TestDomHelpers) ... ok
+testIsTextElem (TestDomHelpers.TestDomHelpers) ... ok
+testGetNamedNodeXml (TestDomHelpers.TestDomHelpers) ... ok
+testgetElemXml (TestDomHelpers.TestDomHelpers) ... ok
+testgetElemPrettyXml (TestDomHelpers.TestDomHelpers) ... ok
+testGetNamedNodeText (TestDomHelpers.TestDomHelpers) ... ok
+testNamedNodeAttrText (TestDomHelpers.TestDomHelpers) ... ok
+testRemoveChildren (TestDomHelpers.TestDomHelpers) ... ok
+testReplaceChildren (TestDomHelpers.TestDomHelpers) ... ok
+testReplaceChildrenText (TestDomHelpers.TestDomHelpers) ... ok
+testEscapeText (TestDomHelpers.TestDomHelpers) ... ok
+testEscapeTextForHtml (TestDomHelpers.TestDomHelpers) ... ok
+testCollectShallow (TestScanFiles.TestScanFiles) ... FAIL
+testCollectRecursive (TestScanFiles.TestScanFiles) ... ok
+testJoinDirName (TestScanFiles.TestScanFiles) ... ok
+testReadDirNameFile (TestScanFiles.TestScanFiles) ... ok
+testReadFile (TestScanFiles.TestScanFiles) ... ok
+testIpAdrStrToInt (TestNetUtils.TestNetUtils) ... ok
+testAddBroadcastBits (TestNetUtils.TestNetUtils) ... ok
+testGetBroadcastAddressI (TestNetUtils.TestNetUtils) ... ok
+testGetBroadcastAddress1 (TestNetUtils.TestNetUtils) ... ok
+testGetBroadcastAddress2 (TestNetUtils.TestNetUtils) ... ok
+testParseIpAdrs (TestNetUtils.TestNetUtils) ... ok
+testParseNetAdrs (TestNetUtils.TestNetUtils) ... ok
+testMkNetMask1 (TestNetUtils.TestNetUtils) ... ok
+testMkNetMask2 (TestNetUtils.TestNetUtils) ... ok
+testMkBroadcastAddress1 (TestNetUtils.TestNetUtils) ... ok
+testMkBroadcastAddress2 (TestNetUtils.TestNetUtils) ... ok
+testFormatIpAdrs (TestNetUtils.TestNetUtils) ... ok
+testIpInNetwork1 (TestNetUtils.TestNetUtils) ... ok
+testIpInNetwork2 (TestNetUtils.TestNetUtils) ... ok
+testParseMacAdrs (TestNetUtils.TestNetUtils) ... ok
+testFormatMacAdrs (TestNetUtils.TestNetUtils) ... ok
+testCreateSuperGlobal (TestSuperGlobal.TestSuperGlobal) ... ok
+testRetrieveSuperGlobal (TestSuperGlobal.TestSuperGlobal) ... ok
+testUpdateSuperGlobal (TestSuperGlobal.TestSuperGlobal) ... ok
+
+======================================================================
+FAIL: testCollectShallow (TestScanFiles.TestScanFiles)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/galletly/hg/admiral-jiscmrd/test/MiscLib/tests/TestScanFiles.py", line 32, in testCollectShallow
+    assert files == expected, "Wrong file list: "+repr(files)
+AssertionError: Wrong file list: [('resources/', 'TestScanFiles2.txt'), ('resources/', 'TestScanFiles1.txt')]
+
+----------------------------------------------------------------------
+Ran 109 tests in 0.011s
+
+FAILED (failures=1)
