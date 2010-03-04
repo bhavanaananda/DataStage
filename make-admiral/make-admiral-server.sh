@@ -1,3 +1,4 @@
+virsh shutdown zakynthos
 # rm /etc/libvirt/qemu/admiral.xml
 # sudo /etc/init.d/libvirt-bin restart
 if true; then
@@ -21,6 +22,7 @@ vmbuilder kvm ubuntu \
   --addpkg ufw \
   --addpkg apache2 \
   --addpkg samba \
+  --addpkg samba-doc \
   --addpkg krb5-user \
   --addpkg ntp \
   --addpkg libapache2-webauth \
@@ -29,6 +31,10 @@ vmbuilder kvm ubuntu \
   --addpkg nano \
   --addpkg slapd \
   --addpkg ldap-utils \
+  --addpkg smbldap-tools \
+  --addpkg manpages \
+  --addpkg man-db \
+  --addpkg locate \
   --copy config-files \
   --firstboot boot.sh \
 
@@ -46,4 +52,10 @@ fi
 # cp /etc/vmbuilder/libvirt/* VMBuilder/plugins/libvirt/templates/
 time=`date +%Y%m%dT%H%M`
 mkdir $time
-cp ubuntu-kvm/disk0.qcow2 $time
+if [ -e ubuntu-kvm/disk0.qcow2 ]
+then
+    cp ubuntu-kvm/disk0.qcow2 $time
+    virsh start zakynthos
+else
+    echo Problem creating disk image
+fi

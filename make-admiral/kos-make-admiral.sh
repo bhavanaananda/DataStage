@@ -1,26 +1,31 @@
+#!/bin/bash
+# Build admiral VM to run at kos.zoo.ox.ac.uk (129.67.26.204)
+#
 # rm /etc/libvirt/qemu/admiral.xml
 # sudo /etc/init.d/libvirt-bin restart
 if true; then
 vmbuilder kvm ubuntu \
+  --dest kos-ubuntu-kvm \
   --suite karmic \
   --flavour virtual \
   --arch amd64 \
   --overwrite \
-  --ip 129.67.24.65 \
+  --ip 129.67.26.204 \
   --mask 255.255.252.0 \
   --gw 129.67.27.254 \
   --dns 129.67.1.1 \
   --bridge br0 \
   --part admiral.partitions \
   --user admiral \
-  --pass zakynthos \
+  --pass kos \
   --domain zoo.ox.ac.uk \
-  --hostname zakynthos \
+  --hostname kos \
   --addpkg acpid \
   --addpkg unattended-upgrades \
   --addpkg ufw \
   --addpkg apache2 \
   --addpkg samba \
+  --addpkg samba-doc \
   --addpkg krb5-user \
   --addpkg ntp \
   --addpkg libapache2-webauth \
@@ -29,8 +34,9 @@ vmbuilder kvm ubuntu \
   --addpkg nano \
   --addpkg slapd \
   --addpkg ldap-utils \
+  --addpkg smbldap-tools \
   --copy config-files \
-  --firstboot boot.sh \
+  --firstboot kos-firstboot.sh \
 
 #  --addpkg denyhosts \
 
@@ -45,5 +51,5 @@ fi
 # mkdir -p VMBuilder/plugins/libvirt/templates
 # cp /etc/vmbuilder/libvirt/* VMBuilder/plugins/libvirt/templates/
 time=`date +%Y%m%dT%H%M`
-mkdir $time
-cp ubuntu-kvm/disk0.qcow2 $time
+mkdir kos-$time
+cp kos-ubuntu-kvm/disk0.qcow2 kos-$time

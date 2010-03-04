@@ -11,3 +11,9 @@ webauth.conf /etc/apache2/conf.d/webauth.conf
 default-ssl /root/default-ssl
 default /root/default
 make-apache2-cert.sh /root/make-apache2-cert.sh
+ldapconfig/db.ldif /root/db.ldif
+ldapconfig/migrated-base.ldif /root/migrated-base.ldif
+ldapconfig/base.ldif /root/base.ldif
+ldapconfig/config.ldif /root/config.ldif
+ldapconfig/acl.ldif /root/acl.ldif
+ldapconfig/ldapsetup.sh /root/ldapsetup.sh

@@ -1,0 +1,30 @@
+<VirtualHost *:80>
+        ServerAdmin webmaster@localhost
+
+        DocumentRoot /var/www/webdav-files/
+
+## Location of the DavLock file
+DavLockDB /usr/share/apache2/var/DavLock
+
+
+        <Directory /var/www/webdav-files/>
+                Options Indexes MultiViews
+                AllowOverride None
+                Order allow,deny
+                allow from all
+        </Directory>
+
+       Alias /webdav /var/www/webdav-files
+
+        <Location /webdav>
+		Dav On
+  	    	AuthName "Restricted"
+		AuthType Basic
+                AuthLDAPURL ldap://ldap.zakynthos.zoo.ox.ac.uk:389/ou="Domain Users",dc=zakynthos,dc=zoo,dc=ox,dc=ac,dc=uk?uid
+		AuthLDAPBindDN "cn=admin,dc=zakynthos,dc=zoo,dc=ox,dc=ac,dc=uk"
+		AuthLDAPBindPassword "zakynthos"
+        	Require valid-user
+       </Location>
+
+
+</VirtualHost>
