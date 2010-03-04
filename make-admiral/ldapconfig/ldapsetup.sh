@@ -1,0 +1,82 @@
+#!/bin/bash
+# Assume that slapd and ldap-utils have been installed.
+# Assume that db.ldif has been created.
+# Assume that base.ldif has been created with the appropriate root password hash
+# (use slappasswd -h {MD5} to create/display the hash).
+# Assume that config.ldif has been created, again with the appropriate root password hash.
+# Assume that acl.ldif has been created.
+# See http://imageweb.zoo.ox.ac.uk/wiki/index.php/Zakynthos_Configuration#LDAP-based_authorization for further details.
+# Use dpkg-reconfigure slapd to re-initialise an empty LDAP database.
+
+if [ "$1" == "purge" ]; then
+    /etc/init.d/slapd stop
+    apt-get purge slapd
+    rm /var/lib/ldap/*
+    apt-get install slapd
+fi
+
+echo =========================
+echo Adding base setup schemas
+echo =========================
+ldapadd -Y EXTERNAL -H ldapi:/// -f /etc/ldap/schema/cosine.ldif
+ldapadd -Y EXTERNAL -H ldapi:/// -f /etc/ldap/schema/inetorgperson.ldif
+ldapadd -Y EXTERNAL -H ldapi:/// -f /etc/ldap/schema/nis.ldif
+ldapadd -Y EXTERNAL -H ldapi:/// -f db.ldif
+ldapadd -Y EXTERNAL -H ldapi:/// -f migrated-base.ldif
+ldapadd -Y EXTERNAL -H ldapi:/// -f base.ldif
+ldapadd -Y EXTERNAL -H ldapi:/// -f config.ldif
+# This final step requires re-entry of the password specified previously.
+echo Adding access control, password needed
+ldapmodify -x -D cn=admin,cn=config -W -f acl.ldif
+
+echo =========================
+echo Creating a CA, and making
+echo self-signed certificates
+echo Passwords/phrases required
+echo =========================
+./makeCA.sh
+./makeCertKey.sh
+./copyCert.sh
+ldapmodify -x -D cn=admin,cn=config -W -f certs.ldif
+
+echo =========================
+echo Configuring Samba/LDAP
+echo =========================
+/etc/init.d/slapd restart
+echo Adding Samba schema
+ldapadd -x -D cn=admin,cn=config -W -f /root/cn\=samba.ldif
+./ldapconfigmodify.sh samba_indexes.ldif
+
+echo =========================
+echo Configuring smbldap-tools
+echo =========================
+perl /usr/share/doc/smbldap-tools/configure.pl
+
+slapcat -l backup.ldif
+echo Populating database
+smbldap-populate
+echo Adding admin user
+smbpasswd -w zakynthos
+/etc/init.d/samba restart
+echo Adding test_admiral user
+smbldap-useradd -a -P -m test_admiral
+/etc/init.d/samba restart
+smbldap-userdel -r test_admiral
+smbldap-useradd -a -P -m test_admiral
+
+echo =========================
+echo Configuring PAM/LDAP
+echo =========================
+apt-get install libpam-ldap
+auth-client-config -t nss -p lac_ldap
+pam-auth-update
+# pam-auth-update puts the unix and LDAP lines in common-auth the wrong way round!
+cp common-auth /etc/pam.d/common-auth
+cp etcldap.conf /etc/ldap.conf
+/etc/init.d/samba restart
+
+echo =========================
+echo Allowing file access
+echo =========================
+chgrp "Domain Users" /var/files
+chown test_admiral: ADMIRAL.README
