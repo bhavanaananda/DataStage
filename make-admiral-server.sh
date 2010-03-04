@@ -19,7 +19,6 @@ vmbuilder kvm ubuntu \
   --addpkg acpid \
   --addpkg unattended-upgrades \
   --addpkg ufw \
-  --addpkg denyhosts \
   --addpkg apache2 \
   --addpkg samba \
   --addpkg krb5-user \
@@ -28,8 +27,12 @@ vmbuilder kvm ubuntu \
   --addpkg libapache2-mod-auth-kerb \
   --addpkg cadaver \
   --addpkg nano \
+  --addpkg slapd \
+  --addpkg ldap-utils \
   --copy config-files \
   --firstboot boot.sh \
+
+#  --addpkg denyhosts \
 
 # When using this, remove old XML files in /etc/libvirt/qemu and restart libvirt-bin service
 # before running this script
