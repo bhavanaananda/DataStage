@@ -1,0 +1,10 @@
+dn: uid=test, dc=zakynthos,dc=zoo,dc=ox,dc=ac,dc=uk
+objectclass: person
+objectclass: inetOrgPerson
+objectclass: top
+objectclass: organizationalPerson
+cn: test
+sn: user
+uid: test
+userpassword: secret1
+

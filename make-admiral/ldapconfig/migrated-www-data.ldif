@@ -1,0 +1,6 @@
+dn: cn=www-data,ou=Group,dc=zakynthos,dc=zoo,dc=ox,dc=ac,dc=uk
+objectClass: posixGroup
+objectClass: top
+cn: www-data
+userPassword: {crypt}x
+gidNumber: 33

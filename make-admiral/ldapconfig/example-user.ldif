@@ -1,0 +1,35 @@
+dn: ou=people,dc=zakynthos,dc=zoo,dc=ox,dc=ac,dc=uk
+objectClass: organizationalUnit
+ou: people
+
+dn: ou=groups,dc=zakynthos,dc=zoo,dc=ox,dc=ac,dc=uk
+objectClass: organizationalUnit
+ou: groups
+
+dn: uid=john,ou=people,dc=zakynthos,dc=zoo,dc=ox,dc=ac,dc=uk
+objectClass: inetOrgPerson
+objectClass: posixAccount
+objectClass: shadowAccount
+uid: john
+sn: Doe
+givenName: John
+cn: John Doe
+displayName: John Doe
+uidNumber: 1000
+gidNumber: 10000
+userPassword: password
+gecos: John Doe
+loginShell: /bin/bash
+homeDirectory: /home/john
+shadowExpire: -1
+shadowFlag: 0
+shadowWarning: 7
+shadowMin: 8
+shadowMax: 999999
+shadowLastChange: 10877
+
+dn: cn=example,ou=groups,dc=zakynthos,dc=zoo,dc=ox,dc=ac,dc=uk
+objectClass: posixGroup
+cn: example
+gidNumber: 10000
+

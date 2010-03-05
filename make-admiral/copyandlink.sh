@@ -12,6 +12,11 @@
 # MIT Licensed - see LICENCE.txt or http://www.opensource.org/licenses/mit-license.php
 #
 
+if [[ "$1" != "test" && "$1" != "copy" ]]; then
+    echo "Usage: $0 (test|copy)"
+    exit 2
+fi
+
 SRCDIR="."
 TGTDIR="./hg/admiral-jiscmrd/make-admiral"
 BLACKLISTPATTERN="^(.*~|.*\\.(tmp|bak)|SAVED)$"
@@ -31,13 +36,19 @@ for f in $FILELIST; do
     elif [[ $f =~ $BLACKLISTPATTERN ]]; then
         echo ".blacklisted $f"
     else
-        #f2="${f##*/}"
-        #f1="${f%$f2}"
-        #echo "not blacklisted $f ($f1---$f2)"
-        echo "not blacklisted $f"
-        #echo ">> mv -f $f $TGTDIR/$f"
-        #echo ">> ln --symbolic $TGTDIR/$f $f"
-        mv -f $f $TGTDIR/$f
-        ln --symbolic $TGTDIR/$f $f
+        f2="${f##*/}"
+        f1="${f%$f2}"
+        echo "not blacklisted $f (dir:$f1, name:$f2)"
+        if [ -d $TGTDIR/$f1 ]; then
+            if [[ "$1" == "copy" ]]; then
+                mv -f $f $TGTDIR/$f
+                ln --symbolic $TGTDIR/$f $f
+            else
+                echo ">> mv -f $f $TGTDIR/$f"
+                echo ">> ln --symbolic $TGTDIR/$f $f"
+            fi
+        else
+            echo "Directory $TGTDIR/$f1 not found"
+        fi
     fi
 done
