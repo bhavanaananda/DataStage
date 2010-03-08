@@ -61,6 +61,11 @@ smbpasswd -w zakynthos
 echo Adding test_admiral user
 smbldap-useradd -a -P -m test_admiral
 /etc/init.d/samba restart
+echo ====================================
+echo Need to delete and re-add first LDAP
+echo user added, as UID detection fails
+echo first time round
+echo ====================================
 smbldap-userdel -r test_admiral
 smbldap-useradd -a -P -m test_admiral
 
@@ -70,7 +75,10 @@ echo =========================
 apt-get install libpam-ldap
 auth-client-config -t nss -p lac_ldap
 pam-auth-update
-# pam-auth-update puts the unix and LDAP lines in common-auth the wrong way round!
+echo =========================================
+echo pam-auth-update puts the unix and LDAP 
+echo lines in common-auth the wrong way round!
+echo =========================================
 cp common-auth /etc/pam.d/common-auth
 cp etcldap.conf /etc/ldap.conf
 /etc/init.d/samba restart
