@@ -18,34 +18,40 @@ if [[ "$1" != "test" && "$1" != "copy" ]]; then
 fi
 
 SRCDIR="."
-TGTDIR="./hg/admiral-jiscmrd/make-admiral"
+TGTDIR="hg/admiral-jiscmrd/make-admiral"
 BLACKLISTPATTERN="^(.*~|.*\\.(tmp|bak)|SAVED)$"
 FILELIST=`ls -1 --directory --ignore-backups --file-type * ldapconfig/*`
+REPORT="echo"
+REPORT=":"
 
 for f in $FILELIST; do
     if [[ "$f" =~ /$ ]]; then
-        echo ".directory $f"
+        $REPORT ".directory $f"
     elif [[ "$f" =~ @$ ]]; then
-        echo ".symlink $f"
+        $REPORT ".symlink $f"
     elif [[ "$f" =~ =$ ]]; then
-        echo ".socket $f"
+        $REPORT ".socket $f"
     elif [[ "$f" =~ \|$ ]]; then
-        echo ".pipe (ipc) $f"
+        $REPORT ".pipe (ipc) $f"
     elif [[ "$f" =~ \>$ ]]; then
-        echo ".door (ipc) $f"
+        $REPORT ".door (ipc) $f"
     elif [[ $f =~ $BLACKLISTPATTERN ]]; then
-        echo ".blacklisted $f"
+        $REPORT ".blacklisted $f"
     else
         f2="${f##*/}"
         f1="${f%$f2}"
-        echo "not blacklisted $f (dir:$f1, name:$f2)"
+        # Fix relative base reference for one level of subdirectory
+        fb="."
+        if [[ "$f1" != "" ]]; then fb=".."; fi
+        # Copy and link file now
+        $REPORT "not blacklisted $f (dir:$f1, name:$f2, base:$fb)"
         if [ -d $TGTDIR/$f1 ]; then
             if [[ "$1" == "copy" ]]; then
                 mv -f $f $TGTDIR/$f
-                ln --symbolic $TGTDIR/$f $f
+                ln --symbolic $fb/$TGTDIR/$f $f
             else
                 echo ">> mv -f $f $TGTDIR/$f"
-                echo ">> ln --symbolic $TGTDIR/$f $f"
+                echo ">> ln --symbolic $fb/$TGTDIR/$f $f"
             fi
         else
             echo "Directory $TGTDIR/$f1 not found"
