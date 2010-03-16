@@ -13,13 +13,18 @@
 #
 
 if [[ "$1" != "test" && "$1" != "copy" ]]; then
-    echo "Usage: $0 (test|copy)"
+    echo "Usage: $0 (test|copy) hostname password"
+    exit 2
+fi
+
+if [[ "$2" == "" || "$3" == "" ]]; then
+    echo "Usage: $0 (test|copy) hostname password"
     exit 2
 fi
 
 SRCDIR="."
-TGTDIR="hg/admiral-jiscmrd/make-admiral"
-BLACKLISTPATTERN="^(.*~|.*\\.(tmp|bak)|SAVED)$"
+TGTDIR="../$2"
+BLACKLISTPATTERN="^(.*~|.*\\.(tmp|bak)|a1\.sh|copywithhostandpassword\.sh)$"
 FILELIST="`ls -1 --directory --ignore-backups --file-type * ldapconfig/*`"
 REPORT="echo"
 REPORT=":"
@@ -45,13 +50,15 @@ for f in $FILELIST; do
         if [[ "$f1" != "" ]]; then fb=".."; fi
         # Copy and link file now
         $REPORT "not blacklisted $f (dir:$f1, name:$f2, base:$fb)"
-        if [ -d $TGTDIR/$f1 ]; then
+        if [ 1==1 ]; then
             if [[ "$1" == "copy" ]]; then
-                mv -f $f $TGTDIR/$f
-                ln --symbolic $fb/$TGTDIR/$f $f
+                sed -e "s/$2/%{HOSTNAME}/g" -e "s/$3/%{PASSWORD}/g" < $f >a1.tmp
+                mv $f $f.bak
+                mv a1.tmp $f
             else
-                echo ">> mv -f $f $TGTDIR/$f"
-                echo ">> ln --symbolic $fb/$TGTDIR/$f $f"
+                echo "sed -e 's/$2/%{HOSTNAME}/g' -e 's/$3/%{PASSWORD}/g' < $f >a1.tmp"
+                echo "mv $f $f.bak"
+                echo "mv a1.tmp $f"
             fi
         else
             echo "Directory $TGTDIR/$f1 not found"

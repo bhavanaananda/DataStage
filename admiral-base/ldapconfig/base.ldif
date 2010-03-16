@@ -1,0 +1,7 @@
+dn: cn=admin,dc=%{HOSTNAME},dc=zoo,dc=ox,dc=ac,dc=uk
+objectClass: simpleSecurityObject
+objectClass: organizationalRole
+cn: admin
+userPassword: {MD5}v/v1K9IlY2poFPYJv/kl6w==
+description: LDAP administrator
+
