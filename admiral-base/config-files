@@ -38,5 +38,3 @@ ADMIRAL.README /root/ADMIRAL.README
 firstboot.sh /root/firstboot.sh
 postboot.sh /root/postboot.sh
 etcldap.conf /root/etcldap.conf
-hfssetup.sh /root/hfssetup.sh
-nagiossetup.sh /root/nagiossetup.sh
