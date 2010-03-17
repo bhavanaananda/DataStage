@@ -76,7 +76,6 @@ smbldap-useradd -a -P -m test_admiral
 echo =========================
 echo Configuring PAM/LDAP
 echo =========================
-apt-get install libpam-ldap
 auth-client-config -t nss -p lac_ldap
 pam-auth-update
 echo =========================================
