@@ -41,9 +41,7 @@ vmbuilder vmserver ubuntu \
   --addpkg kernel-package \
   --addpkg linux-headers-2.6.31-20-server \
   --copy config-files \
-
-
-#  --firstboot firstboot.sh \
+  --firstboot firstboot.sh \
 
 
 # When using this, remove old XML files in /etc/libvirt/qemu and restart libvirt-bin service

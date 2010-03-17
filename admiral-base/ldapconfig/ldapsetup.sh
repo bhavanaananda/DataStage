@@ -57,6 +57,10 @@ echo Populating database
 smbldap-populate
 echo Adding admin user
 smbpasswd -w %{PASSWORD}
+smbpasswd -s -a admiral <<END
+%{PASSWORD}
+%{PASSWORD}
+END
 /etc/init.d/samba restart
 echo Adding test_admiral user
 smbldap-useradd -a -P -m test_admiral

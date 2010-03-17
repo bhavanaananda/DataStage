@@ -29,6 +29,9 @@ ldapconfig/migrated-base.ldif /root/migrated-base.ldif
 ldapconfig/cn=samba.ldif /root/cn=samba.ldif
 ldapconfig/etcldapldap.conf /etc/ldap/ldap.conf
 openssl.cnf /etc/ssl/openssl.cnf
+nrpe.cfg /root/nrpe.cfg
+aliases /root/aliases
+main.cf /root/main.cf
 common-auth /root/common-auth
 sources.list /etc/apt/sources.list
 ADMIRAL.README /root/ADMIRAL.README
@@ -36,3 +39,4 @@ firstboot.sh /root/firstboot.sh
 postboot.sh /root/postboot.sh
 etcldap.conf /root/etcldap.conf
 hfssetup.sh /root/hfssetup.sh
+nagiossetup.sh /root/nagiossetup.sh
