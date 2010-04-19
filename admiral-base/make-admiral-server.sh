@@ -1,7 +1,7 @@
 # rm /etc/libvirt/qemu/admiral.xml
 # sudo /etc/init.d/libvirt-bin restart
 HOSTNAME=%{HOSTNAME}
-IPADDR=129.67.24.16
+IPADDR=%{IPADDR}
 PASSWD=%{PASSWORD}
 if true; then
 vmbuilder vmserver ubuntu \
@@ -40,6 +40,8 @@ vmbuilder vmserver ubuntu \
   --addpkg locate \
   --addpkg kernel-package \
   --addpkg linux-headers-2.6.31-20-server \
+  --addpkg lvm2 \
+  --addpkg acl \
   --copy config-files \
   --firstboot firstboot.sh \
 

@@ -1,3 +1,8 @@
+if [ ! -e /mnt/lv-admiral-data/data/ADMIRAL.README ]; then
+  echo "Allocate and mount data volume first"
+  echo "See http://imageweb.zoo.ox.ac.uk/wiki/index.php/ADMIRAL_LVM_allocation"
+  exit
+fi
 apt-get update
 apt-get install -qy --force-yes openssh-server libpam-krb5 nagios3 nagios-nrpe-plugin nagios-nrpe-server tsm-client libpam-ldap
 cp /root/ssh_config /etc/ssh/ssh_config
@@ -7,9 +12,25 @@ cp /root/nrpe.cfg /etc/nagios/nrpe.cfg
 /etc/init.d/nagios-nrpe-server restart
 cp /root/aliases /etc/aliases
 cp /root/main.cf /etc/postfix/main.cf
+cp /root/apache2.conf /etc/apache2/apache2.conf
 newaliases
+
+echo =============================
+echo Configure and enable firewall
+echo =============================
+ufw allow ssh
+ufw allow http
+ufw allow https
+ufw allow samba
+ufw enable
 
 echo ===============================
 echo Installing and configuring LDAP
 echo ===============================
 ./ldapsetup.sh
+
+echo ===========================================
+echo Installing and configuring shared data area
+echo ===========================================
+./admiraldatasetup.sh
+/etc/init.d/apache2 restart

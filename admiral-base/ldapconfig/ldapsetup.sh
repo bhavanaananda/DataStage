@@ -71,7 +71,6 @@ echo user added, as UID detection fails
 echo first time round
 echo ====================================
 smbldap-userdel -r test_admiral
-smbldap-useradd -a -P -m test_admiral
 
 echo =========================
 echo Configuring PAM/LDAP
@@ -86,8 +85,3 @@ cp common-auth /etc/pam.d/common-auth
 cp etcldap.conf /etc/ldap.conf
 /etc/init.d/samba restart
 
-echo =========================
-echo Allowing file access
-echo =========================
-chgrp "Domain Users" /home/data
-chown test_admiral: ADMIRAL.README

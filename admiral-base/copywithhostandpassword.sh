@@ -13,12 +13,12 @@
 #
 
 if [[ "$1" != "test" && "$1" != "copy" ]]; then
-    echo "Usage: $0 (test|copy) hostname password"
+    echo "Usage: $0 (test|copy) hostname password workgroup"
     exit 2
 fi
 
-if [[ "$2" == "" || "$3" == "" ]]; then
-    echo "Usage: $0 (test|copy) hostname password"
+if [[ "$2" == "" || "$3" == "" || "$4" == "" ]]; then
+    echo "Usage: $0 (test|copy) hostname password workgroup"
     exit 2
 fi
 
@@ -52,9 +52,17 @@ for f in $FILELIST; do
         $REPORT "not blacklisted $f (dir:$f1, name:$f2, base:$fb)"
         if [ -d $TGTDIR/$f1 ]; then
             if [[ "$1" == "copy" ]]; then
-                sed -e "s/%{HOSTNAME}/$2/g" -e "s/%{PASSWORD}/$3/g" < $f >$TGTDIR/$f
+                if [[ "$2" == "zakynthos" ]]; then
+                    sed -e "s/%{HOSTNAME}/$2/g" -e "s/%{PASSWORD}/$3/g" -e "s/%{WORKGROUP}/$4/g" -e "s/%{IPADDR}/129.67.24.65/g" -e "s/%{LeaderName}/FritzVollrath/g" -e "s/%{MD5PASS}/vCxDg0JY2ieKRYCG0n417w==/g" < $f >$TGTDIR/$f
+                elif [[ "$2" == "zoo-admiral-silk" ]]; then
+                    sed -e "s/%{HOSTNAME}/$2/g" -e "s/%{PASSWORD}/$3/g" -e "s/%{WORKGROUP}/$4/g" -e "s/%{IPADDR}/129.67.24.16/g" -e "s/%{LeaderName}/FritzVollrath/g" -e "s/%{MD5PASS}/v\/v1K9IlY2poFPYJv\/kl6w==/g" < $f >$TGTDIR/$f
+                fi
             else
-                echo "sed -e 's/%{HOSTNAME}/$2/g' -e 's/%{PASSWORD}/$3/g' < $f >$TGTDIR/$f"
+                if [[ "$2" == "zakynthos" ]]; then
+                    echo "sed -e 's/%{HOSTNAME}/$2/g' -e 's/%{PASSWORD}/$3/g' -e 's/%{WORKGROUP}/$4/g' -e 's/%{IPADDR}/129.67.24.65/g' -e 's/%{LeaderName}/FritzVollrath/g' -e 's/%{MD5PASS}/vCxDg0JY2ieKRYCG0n417w==/g' < $f >$TGTDIR/$f"
+                elif [[ "$2" == "zoo-admiral-silk" ]]; then
+                    echo "sed -e 's/%{HOSTNAME}/$2/g' -e 's/%{PASSWORD}/$3/g' -e 's/%{WORKGROUP}/$4/g' -e 's/%{IPADDR}/129.67.24.16/g' -e 's/%{LeaderName}/FritzVollrath/g' -e 's/%{MD5PASS}/v\/v1K9IlY2poFPYJv\/kl6w==/g' < $f >$TGTDIR/$f"
+                fi
             fi
         else
             echo "Directory $TGTDIR/$f1 not found"

@@ -46,13 +46,13 @@ DavLockDB /usr/share/apache2/var/DavLock
         <Directory /home/data/>
                 Options Indexes MultiViews
                 AllowOverride None
-                Order allow,deny
-                allow from all
+                Order deny,allow
+                deny from all
         </Directory>
 
-       Alias /webdav /home/data
+       Alias /data /home/data
 
-        <Location /webdav>
+        <Location /data>
 		Dav On
                 AuthName "Restricted"
 		AuthType Basic
@@ -61,8 +61,13 @@ DavLockDB /usr/share/apache2/var/DavLock
                 AuthLDAPURL "ldap://%{HOSTNAME}.zoo.ox.ac.uk:389/dc=%{HOSTNAME},dc=zoo,dc=ox,dc=ac,dc=uk"
                 AuthLDAPBindDN "cn=admin,dc=%{HOSTNAME},dc=zoo,dc=ox,dc=ac,dc=uk"
                 AuthLDAPBindPassword "%{PASSWORD}"
-		Require valid-user
        </Location>
 
+# For testing purposes
+        <Location /data/default>
+                Require ldap-attribute gidnumber=600
+                Require ldap-attribute gidnumber=601
+                Require ldap-attribute gidnumber=602
+        </Location>
 
 </VirtualHost>

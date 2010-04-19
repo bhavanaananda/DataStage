@@ -37,4 +37,12 @@ sources.list /etc/apt/sources.list
 ADMIRAL.README /root/ADMIRAL.README
 firstboot.sh /root/firstboot.sh
 postboot.sh /root/postboot.sh
+lvmconfig.sh /root/lvmconfig.sh
 etcldap.conf /root/etcldap.conf
+admiralconfig.sh /root/admiralconfig.sh
+admiraldatasetup.sh /root/admiraldatasetup.sh
+admiraluseradd.sh /root/admiraluseradd.sh
+admiraluserdel.sh /root/admiraluserdel.sh
+addtestusers.sh /root/addtestusers.sh
+deltestusers.sh /root/deltestusers.sh
+apache2.conf /root/apache2.conf
