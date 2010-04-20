@@ -25,7 +25,7 @@ fi
 SRCDIR="."
 TGTDIR="/var/kvm/$2"
 BLACKLISTPATTERN="^(.*~|.*\\.(tmp|bak)|a1\.sh|copywithhostandpassword\.sh)$"
-FILELIST="`ls -1 --directory --ignore-backups --file-type * ldapconfig/*`"
+FILELIST="`ls -1 --directory --ignore-backups --file-type * ldapconfig/* www/* www/*/*`"
 REPORT="echo"
 REPORT=":"
 
