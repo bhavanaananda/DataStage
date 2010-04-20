@@ -37,13 +37,13 @@ class TestFileDefaultArea(unittest.TestCase):
 
         thepage=None
         try:
-            pagehandle = urllib2.urlopen(TestConfig.webdavbaseurl+'/default/ADMIRAL.README')
+            pagehandle = urllib2.urlopen(TestConfig.webdavbaseurl+'/ADMIRAL.README')
             thepage = pagehandle.read()
         except urllib2.HTTPError,e:
-            if e.code!=401:
+            if e.code!=403:
                 raise e
             pass
-        assert (thepage==None), "Unauthenticated user can read file!"
+        assert (thepage==None), "Unauthenticated user can access filesystem!"
 
     # Sentinel/placeholder tests
 

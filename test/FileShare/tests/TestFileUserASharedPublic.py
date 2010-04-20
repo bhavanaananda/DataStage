@@ -24,8 +24,9 @@ urllib2.install_opener(opener)
 class TestFileUserASharedPublic(unittest.TestCase):
 
     def setUp(self):
-        mountcommand = ( 'mount.cifs //%(host)s/files/shared/%(userA)s %(mountpt)s -o rw,user=%(user)s,password=%(pass)s,nounix,forcedirectio' %
+        mountcommand = ( 'mount.cifs //%(host)s/%(share)s/shared/%(userA)s %(mountpt)s -o rw,user=%(user)s,password=%(pass)s,nounix,forcedirectio' %
                          { 'host': TestConfig.hostname
+                         , 'share': TestConfig.cifssharename
                          , 'userA': TestConfig.userAname
                          , 'user': TestConfig.collabname
                          , 'mountpt': TestConfig.cifsmountpoint

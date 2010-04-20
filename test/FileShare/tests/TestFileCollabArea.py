@@ -29,8 +29,9 @@ class TestFileCollabArea(unittest.TestCase):
         return
 
     def testSharedUserCIFS(self):
-        mountcommand = ( 'mount.cifs //%(host)s/files/collab/%(userA)s %(mountpt)s -o rw,user=%(user)s,password=%(pass)s,nounix,forcedirectio' %
+        mountcommand = ( 'mount.cifs //%(host)s/%(share)s/collab/%(userA)s %(mountpt)s -o rw,user=%(user)s,password=%(pass)s,nounix,forcedirectio' %
                          { 'host': TestConfig.hostname
+                         , 'share': TestConfig.cifssharename
                          , 'userA': TestConfig.userAname
                          , 'user': TestConfig.userAname
                          , 'mountpt': TestConfig.cifsmountpoint
@@ -48,8 +49,9 @@ class TestFileCollabArea(unittest.TestCase):
         f.close()
         self.assertEqual(l, 'Test creation of file\n', 'Unexpected file content by user A') 
         os.system('umount.cifs '+TestConfig.cifsmountpoint)
-        mountcommand = ( 'mount.cifs //%(host)s/files/collab/%(userA)s %(mountpt)s -o rw,user=%(user)s,password=%(pass)s,nounix,forcedirectio' %
+        mountcommand = ( 'mount.cifs //%(host)s/%(share)s/collab/%(userA)s %(mountpt)s -o rw,user=%(user)s,password=%(pass)s,nounix,forcedirectio' %
                          { 'host': TestConfig.hostname
+                         , 'share': TestConfig.cifssharename
                          , 'userA': TestConfig.userAname
                          , 'user': TestConfig.userBname
                          , 'mountpt': TestConfig.cifsmountpoint
@@ -72,8 +74,9 @@ class TestFileCollabArea(unittest.TestCase):
             pass
         assert (f==None), "User B can open User A's files in collab area for writing!"
         os.system('umount.cifs '+TestConfig.cifsmountpoint)
-        mountcommand = ( 'mount.cifs //%(host)s/files/collab/%(userA)s %(mountpt)s -o rw,user=%(user)s,password=%(pass)s,nounix,forcedirectio' %
+        mountcommand = ( 'mount.cifs //%(host)s/%(share)s/collab/%(userA)s %(mountpt)s -o rw,user=%(user)s,password=%(pass)s,nounix,forcedirectio' %
                          { 'host': TestConfig.hostname
+                         , 'share': TestConfig.cifssharename
                          , 'userA': TestConfig.userAname
                          , 'user': TestConfig.userRGleadername
                          , 'mountpt': TestConfig.cifsmountpoint
@@ -96,8 +99,9 @@ class TestFileCollabArea(unittest.TestCase):
             pass
         assert (f==None), "Group Leader can open User A's files in collab area for writing!"
         os.system('umount.cifs '+TestConfig.cifsmountpoint)
-        mountcommand = ( 'mount.cifs //%(host)s/files/collab/%(userA)s %(mountpt)s -o rw,user=%(user)s,password=%(pass)s,nounix,forcedirectio' %
+        mountcommand = ( 'mount.cifs //%(host)s/%(share)s/collab/%(userA)s %(mountpt)s -o rw,user=%(user)s,password=%(pass)s,nounix,forcedirectio' %
                          { 'host': TestConfig.hostname
+                         , 'share': TestConfig.cifssharename
                          , 'userA': TestConfig.userAname
                          , 'user': TestConfig.collabname
                          , 'mountpt': TestConfig.cifsmountpoint

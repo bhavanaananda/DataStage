@@ -6,19 +6,20 @@
 class TestConfig:
 
     hostname         = "zoo-admiral-silk.zoo.ox.ac.uk"
+    cifssharename    = "data"
     cifsmountpoint   = "mountadmiral"
     webdavmountpoint = "mountadmiralwebdav"
-    webdavbaseurl    = "http://zoo-admiral-silk.zoo.ox.ac.uk/webdav/"
+    webdavbaseurl    = "http://zoo-admiral-silk.zoo.ox.ac.uk/data/"
     readmefile       = "ADMIRAL.README"
     readmetext       = "This directory is the root of the ADMIRAL shared file system.\n"
-    userAname        = "GwilymDavies"
-    userApass        = "Gwilym-2203"
-    userBname        = "ChrisHolland"
-    userBpass        = "Chris-2203"
-    userRGleadername = "FritzVollrath"
-    userRGleaderpass = "Fritz-2203"
-    collabname       = "TestColl3"
-    collabpass       = "TestColl3-2203"
+    userAname        = "TestUser1"
+    userApass        = "user1"
+    userBname        = "TestUser2"
+    userBpass        = "user2"
+    userRGleadername = "TestLeader"
+    userRGleaderpass = "leader"
+    collabname       = "TestCollab"
+    collabpass       = "collab"
 
 # End.
 

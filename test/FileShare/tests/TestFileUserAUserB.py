@@ -19,8 +19,9 @@ from TestConfig import TestConfig
 class TestFileUserAUserB(unittest.TestCase):
 
     def setUp(self):
-        mountcommand = ( 'mount.cifs //%(host)s/files/%(userA)s %(mountpt)s -o rw,user=%(user)s,password=%(pass)s,nounix,forcedirectio' %
+        mountcommand = ( 'mount.cifs //%(host)s/%(share)s/%(userA)s %(mountpt)s -o rw,user=%(user)s,password=%(pass)s,nounix,forcedirectio' %
                          { 'host': TestConfig.hostname
+                         , 'share': TestConfig.cifssharename
                          , 'userA': TestConfig.userAname
                          , 'user': TestConfig.userBname
                          , 'mountpt': TestConfig.cifsmountpoint

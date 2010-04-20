@@ -29,8 +29,9 @@ class TestFileCIFSwriteHTTPread(unittest.TestCase):
         return
 
     def testSharedUserCIFS(self):
-        mountcommand = ( 'mount.cifs //%(host)s/files/ %(mountpt)s -o rw,user=%(user)s,password=%(pass)s,nounix,forcedirectio' %
+        mountcommand = ( 'mount.cifs //%(host)s/%(share)s/ %(mountpt)s -o rw,user=%(user)s,password=%(pass)s,nounix,forcedirectio' %
                          { 'host': TestConfig.hostname
+                         , 'share': TestConfig.cifssharename
                          , 'userA': TestConfig.userAname
                          , 'user': TestConfig.userAname
                          , 'mountpt': TestConfig.cifsmountpoint

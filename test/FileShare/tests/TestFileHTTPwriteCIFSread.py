@@ -65,8 +65,9 @@ class TestFileHTTPwriteCIFSread(unittest.TestCase):
         return
 
     def testSharedUserCIFSB(self):
-        mountcommand = ( 'mount.cifs //%(host)s/files/ %(mountpt)s -o rw,user=%(user)s,password=%(pass)s,nounix,forcedirectio' %
+        mountcommand = ( 'mount.cifs //%(host)s/%(share)s/ %(mountpt)s -o rw,user=%(user)s,password=%(pass)s,nounix,forcedirectio' %
                          { 'host': TestConfig.hostname
+                         , 'share': TestConfig.cifssharename
                          , 'userA': TestConfig.userAname
                          , 'user': TestConfig.userBname
                          , 'mountpt': TestConfig.cifsmountpoint
@@ -117,8 +118,9 @@ class TestFileHTTPwriteCIFSread(unittest.TestCase):
         os.system('umount.cifs '+TestConfig.cifsmountpoint)
 
     def testSharedUserCIFSRGLeader(self):
-        mountcommand = ( 'mount.cifs //%(host)s/files/ %(mountpt)s -o rw,user=%(user)s,password=%(pass)s,nounix,forcedirectio' %
+        mountcommand = ( 'mount.cifs //%(host)s/%(share)s/ %(mountpt)s -o rw,user=%(user)s,password=%(pass)s,nounix,forcedirectio' %
                          { 'host': TestConfig.hostname
+                         , 'share': TestConfig.cifssharename
                          , 'userA': TestConfig.userAname
                          , 'user': TestConfig.userRGleadername
                          , 'mountpt': TestConfig.cifsmountpoint
@@ -168,8 +170,9 @@ class TestFileHTTPwriteCIFSread(unittest.TestCase):
         os.system('umount.cifs '+TestConfig.cifsmountpoint)
 
     def testSharedUserCIFSCollab(self):
-        mountcommand = ( 'mount.cifs //%(host)s/files/ %(mountpt)s -o rw,user=%(user)s,password=%(pass)s,nounix,forcedirectio' %
+        mountcommand = ( 'mount.cifs //%(host)s/%(share)s/ %(mountpt)s -o rw,user=%(user)s,password=%(pass)s,nounix,forcedirectio' %
                          { 'host': TestConfig.hostname
+                         , 'share': TestConfig.cifssharename
                          , 'user': TestConfig.collabname
                          , 'mountpt': TestConfig.cifsmountpoint
                          , 'pass': TestConfig.collabpass

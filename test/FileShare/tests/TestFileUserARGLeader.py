@@ -15,17 +15,13 @@ sys.path.append("../..")
 from TestConfig import TestConfig
 
 # Initialize authenticated HTTP connection opener
-passman = urllib2.HTTPPasswordMgrWithDefaultRealm()
-passman.add_password(None, TestConfig.webdavbaseurl, TestConfig.userRGleadername, TestConfig.userRGleaderpass)
-authhandler = urllib2.HTTPBasicAuthHandler(passman)
-opener = urllib2.build_opener(authhandler)
-urllib2.install_opener(opener)
 
 class TestFileUserARGLeader(unittest.TestCase):
 
     def setUp(self):
-        mountcommand = ( 'mount.cifs //%(host)s/files/%(userA)s %(mountpt)s -o rw,user=%(user)s,password=%(pass)s,nounix,forcedirectio' %
+        mountcommand = ( 'mount.cifs //%(host)s/%(share)s/%(userA)s %(mountpt)s -o rw,user=%(user)s,password=%(pass)s,nounix,forcedirectio' %
                          { 'host': TestConfig.hostname
+                         , 'share': TestConfig.cifssharename
                          , 'userA': TestConfig.userAname
                          , 'user': TestConfig.userRGleadername
                          , 'mountpt': TestConfig.cifsmountpoint
@@ -178,12 +174,22 @@ class TestFileUserARGLeader(unittest.TestCase):
 
 
     def testReadMeHTTP(self):
-        pagehandle = urllib2.urlopen(TestConfig.webdavbaseurl+'/'+TestConfig.readmefile)
+        passman = urllib2.HTTPPasswordMgrWithDefaultRealm()
+        passman.add_password(None, TestConfig.webdavbaseurl, TestConfig.userRGleadername, TestConfig.userRGleaderpass)
+        authhandler = urllib2.HTTPBasicAuthHandler(passman)
+        opener = urllib2.build_opener(authhandler)
+        urllib2.install_opener(opener)
+        pagehandle = urllib2.urlopen(TestConfig.webdavbaseurl+'/'+TestConfig.userAname+'/'+TestConfig.readmefile)
         thepage = pagehandle.read()
         self.assertEqual(thepage, TestConfig.readmetext) 
         return
 
     def testCreateFileHTTP(self):
+        passman = urllib2.HTTPPasswordMgrWithDefaultRealm()
+        passman.add_password(None, TestConfig.webdavbaseurl, TestConfig.userRGleadername, TestConfig.userRGleaderpass)
+        authhandler = urllib2.HTTPBasicAuthHandler(passman)
+        opener = urllib2.build_opener(authhandler)
+        urllib2.install_opener(opener)
         thepage=None
         createstring="Testing file creation with WebDAV"
         try:
@@ -200,6 +206,11 @@ class TestFileUserARGLeader(unittest.TestCase):
 
 
     def testUpdateFileHTTP(self):
+        passman = urllib2.HTTPPasswordMgrWithDefaultRealm()
+        passman.add_password(None, TestConfig.webdavbaseurl, TestConfig.userRGleadername, TestConfig.userRGleaderpass)
+        authhandler = urllib2.HTTPBasicAuthHandler(passman)
+        opener = urllib2.build_opener(authhandler)
+        urllib2.install_opener(opener)
         thepage=None
         modifystring="Testing file modification with WebDAV"
         try:
@@ -215,6 +226,11 @@ class TestFileUserARGLeader(unittest.TestCase):
 
 
     def testDeleteFileHTTP(self):
+        passman = urllib2.HTTPPasswordMgrWithDefaultRealm()
+        passman.add_password(None, TestConfig.webdavbaseurl, TestConfig.userRGleadername, TestConfig.userRGleaderpass)
+        authhandler = urllib2.HTTPBasicAuthHandler(passman)
+        opener = urllib2.build_opener(authhandler)
+        urllib2.install_opener(opener)
         req=urllib2.Request(TestConfig.webdavbaseurl+'/'+TestConfig.userAname+'/'+TestWebDAVCreate.tmp)
         req.get_method = lambda: 'DELETE'
         url=opener.open(req)
