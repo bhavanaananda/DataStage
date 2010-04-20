@@ -1,0 +1,71 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML 2.0//EN">
+<html>
+
+<p><a href="../index.html">Home</a></p>
+
+<head>
+<title>Direct file access from ADMIRAL Linux host</title>
+</head>
+
+<body>
+
+<h1>Direct file access from ADMIRAL Linux host</h1>
+
+<p>It is possible for research group members to log in directly to the ADMIRAL Linux host and access the file system directly.  Generally, this is not necessary and is of use only to those familiar with Linux commands. SCP can sometimes be used to read and write files in circumstances where other methods cannot be used, and has the advantage of being a very secure mechanism for remote file access. There are a small number of administrative tasks that depend on direct system access, though we plan to provide simple web interfaces for these tasks in due course.
+</p>
+
+<p>Protocols used for direct access are:
+<ul>
+<li>SSH (Secure Shell: creates a terminal command session), and</li>
+<li>SCP (Secure Copy: copies files).</li>
+</ul>
+</p>
+
+<p>Once logged in, a user will be able to read/write files in their own private area,
+and also to read all files in the <code>shared</code> and <code>collab</code> areas.
+</p>
+
+<h2>Direct access tools for Windows</h2>
+
+<p>For Windows there are several freely available tools, including:
+<ul>
+<li>Putty to connect using a SSH login session
+(<a href="http://www.chiark.greenend.org.uk/~sgtatham/putty/">http://www.chiark.greenend.org.uk/~sgtatham/putty/</a>),</li>
+<li>WinSCP to perform SCP file transfers to/from the Windows machine (<a href="http://winscp.net/">http://winscp.net/</a>),</li>
+</ul>
+</p>
+
+<h2>Direct access tools for MacOS</h2>
+
+<p>MacOS has a built-in <code>ssh</code> command for creating SSH sessions, which can be used thus from the <code>Terminal</Code> application:
+<pre>
+  ssh <cite>username</cite>@%{HOSTNAME}.zoo.ox.ac.uk
+</pre>
+(Finder can be used to find the <code>Terminal</code> application in directory <code>Applications/Utilities</code>.)
+</p>
+
+<p>It also provides a command-line SCP file copying command, which is used similarly:
+<pre>
+  scp <cite>username</cite>@%{HOSTNAME}.zoo.ox.ac.uk:/home/<cite>username/filename</cite> <cite>localfilename</cite>
+  scp <cite>localfilename</cite> <cite>username</cite>@%{HOSTNAME}.zoo.ox.ac.uk:/home/<cite>username/filename</cite>
+</pre>
+</p>
+	
+<p>For SCP file copying, there is a shareware GUI application called Cyberduck (<a href="http://cyberduck.ch/">http://cyberduck.ch/</a>). The name and logo image may seem a bit trite, but it is a reliable and easy-to-use application.
+</p>
+
+<h2>Direct access tools for Linux</h2>
+
+<p>Linux has built-in commands <code>ssh</code> and <code>scp</code> which can be run from a terminal window.
+</p>
+
+<p>Here are some examples of their use:
+<pre>
+  ssh <cite>username</cite>@%{HOSTNAME}.zoo.ox.ac.uk
+  scp <cite>username</cite>@%{HOSTNAME}.zoo.ox.ac.uk:/home/<cite>username/filename</cite> <cite>localfilename</cite>
+  scp <cite>localfilename</cite> <cite>username</cite>@%{HOSTNAME}.zoo.ox.ac.uk:/home/<cite>username/filename</cite>
+</pre>
+
+</body>
+
+</html>
