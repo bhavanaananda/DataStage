@@ -6,6 +6,8 @@ syntax: glob
 *.tmp
 *.log
 *.bak
+*.tmproj
+.DS_Store
 *~
 
 # switch to regexp syntax.
