@@ -1,0 +1,44 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML 2.0//EN">
+<html>
+
+<p><a href="../index.html">Home</a></p>
+
+<head>
+<title>Adding and removing users</title>
+</head>
+
+<body>
+
+<h1>Adding and removing users</h1>
+
+<p>Currently, in order to add or remove users you will have to be logged in via <a href="../docs/accessdirect.html">SSH</a>
+as the user <code>admiral</code>.</p>
+
+<h2>To add a user:</h2>
+
+<p>Run the command <code>sudo su -</code> to have administrative access, using the password for the <code>admiral</code>
+user.  Then run the command 
+<blockquote>
+<code>/root/admiraluseradd.sh <cite>username</cite> <cite>userpass</cite> <cite>grouprole</cite> [<cite>room number</cite> <cite>telephone number</cite>]</code>
+</blockquote>
+The last two options (room number and telephone number) are optional.  <cite>grouprole</cite> must be one of <code>RGMember</code> (an ordinary member of
+the research group), <code>RGLeader</code> (the group leader, who is able to view the private files of all members of the group), or <code>RGCollaborator</code>
+(an external collaborator who will have read-only access to the <code>collab</code> area of the file-store).</p>
+<p>Once you have run this command, you will be prompted to set an initial password for the user, and then the relevant filespaces will be created and the
+appropriate permissions set.</p>
+<p><strong>You must then also type <code>/etc/apache2/init.d restart</code> for these configurations to take effect.</strong></p>
+
+<h2>To remove a user:</h2>
+
+<p>Similarly to the process for adding a user you must first issue the command <code>sudo su -</code> .  Then run the command
+<blockquote>
+<code>/root/admiraluserddel.sh <cite>username</cite>
+</blockquote>
+
+The user will be removed form the filesystem and (at present) all their files will be deleted.</p>
+
+<p>In the future it is intended that there will be a web-interface to these commands so no magic incantations need be remembered!</p>
+
+</body>
+
+</html>
