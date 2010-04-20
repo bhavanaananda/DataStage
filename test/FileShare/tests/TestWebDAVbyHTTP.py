@@ -16,9 +16,16 @@ sys.path.append("../..")
 
 readmetext="This directory is the root of the ADMIRAL shared file system.\n"
 readmefile="ADMIRAL.README"
-theurl="http://zakynthos.zoo.ox.ac.uk/webdav"
-username="test_admiral"
-password="test_admiral"
+hostname="zoo-admiral-silk.zoo.ox.ac.uk"
+theurl="http://" +hostname+ "/webdav/ChrisHolland"
+#username="test_admiral"
+#password="test_admiral"
+username="FritzVollrath"
+password="Fritz-2203"
+#username="ChrisHolland"
+#password="Chris-2203"
+#username="test2"
+#password="test2"
 passman = urllib2.HTTPPasswordMgrWithDefaultRealm()
 passman.add_password(None, theurl, username, password)
 authhandler = urllib2.HTTPBasicAuthHandler(passman)
@@ -39,7 +46,7 @@ class TestWebDAVbyHTTP(unittest.TestCase):
         return
 
     def testWebDAVFile(self):
-        h1 = httplib.HTTPConnection('zakynthos.zoo.ox.ac.uk')
+        h1 = httplib.HTTPConnection(hostname)
         h1.request('GET','/webdav')
         res=h1.getresponse()
         authreq = str(res.status) + ' ' + res.reason
@@ -48,6 +55,7 @@ class TestWebDAVbyHTTP(unittest.TestCase):
         return
 
     def testWebDAVFileRead(self):
+        print theurl
         pagehandle = urllib2.urlopen(theurl+'/ADMIRAL.README')
         thepage = pagehandle.read()
         self.assertEqual(thepage, readmetext) 
@@ -128,7 +136,6 @@ def getTestSuite(select="unit"):
             , "testWebDAVFileRead"
             , "testWebDAVFileCreate"
             , "testWebDAVFileUpdate"
-            , "testWebDAVFileDelete"
             ],
         "integration":
             [ "testIntegration"
@@ -136,6 +143,7 @@ def getTestSuite(select="unit"):
         "pending":
             [ "testPending"
             , "testWebDAVFile"
+            , "testWebDAVFileDelete"
             ]
         }
     return TestUtils.getTestSuite(TestWebDAVbyHTTP, testdict, select=select)

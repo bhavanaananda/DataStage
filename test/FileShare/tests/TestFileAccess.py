@@ -13,11 +13,13 @@ sys.path.append("../..")
 readmetext="This directory is the root of the ADMIRAL shared file system.\n"
 mountpoint="mountadmiral"
 readmefile="ADMIRAL.README"
+hostname="zoo-admiral-silk.zoo.ox.ac.uk"
 
 class TestFileAccess(unittest.TestCase):
 
     def setUp(self):
-        status=os.system('mount.cifs //zakynthos.zoo.ox.ac.uk/files '+mountpoint+' -o rw,user=test_admiral,password=test_admiral,nounix,forcedirectio')
+        #status=os.system('mount.cifs //' +hostname+ '/files '+mountpoint+' -o rw,user=test_admiral,password=test_admiral,nounix,forcedirectio')
+        status=os.system('mount.cifs //' +hostname+ '/files '+mountpoint+' -o rw,user=ChrisHolland,password=Chris-2203,nounix,forcedirectio')
         self.assertEqual(status, 0, 'Mount failure')
         return
 
