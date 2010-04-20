@@ -1,0 +1,93 @@
+dn: dc=%{HOSTNAME},dc=zoo,dc=ox,dc=ac,dc=uk
+dc: %{HOSTNAME}
+objectClass: top
+objectClass: domain
+objectClass: domainRelatedObject
+objectClass: dcObject
+description: My LDAP Root
+associatedDomain: %{HOSTNAME}.zoo.ox.ac.uk
+
+dn: ou=Hosts,dc=%{HOSTNAME},dc=zoo,dc=ox,dc=ac,dc=uk
+ou: Hosts
+objectClass: top
+objectClass: organizationalUnit
+objectClass: domainRelatedObject
+associatedDomain: %{HOSTNAME}.zoo.ox.ac.uk
+
+dn: ou=Rpc,dc=%{HOSTNAME},dc=zoo,dc=ox,dc=ac,dc=uk
+ou: Rpc
+objectClass: top
+objectClass: organizationalUnit
+objectClass: domainRelatedObject
+associatedDomain: %{HOSTNAME}.zoo.ox.ac.uk
+
+dn: ou=Services,dc=%{HOSTNAME},dc=zoo,dc=ox,dc=ac,dc=uk
+ou: Services
+objectClass: top
+objectClass: organizationalUnit
+objectClass: domainRelatedObject
+associatedDomain: %{HOSTNAME}.zoo.ox.ac.uk
+
+dn: nisMapName=netgroup.byuser,dc=%{HOSTNAME},dc=zoo,dc=ox,dc=ac,dc=uk
+nismapname: netgroup.byuser
+objectClass: top
+objectClass: nisMap
+objectClass: domainRelatedObject
+associatedDomain: %{HOSTNAME}.zoo.ox.ac.uk
+
+dn: ou=Mounts,dc=%{HOSTNAME},dc=zoo,dc=ox,dc=ac,dc=uk
+ou: Mounts
+objectClass: top
+objectClass: organizationalUnit
+objectClass: domainRelatedObject
+associatedDomain: %{HOSTNAME}.zoo.ox.ac.uk
+
+dn: ou=Networks,dc=%{HOSTNAME},dc=zoo,dc=ox,dc=ac,dc=uk
+ou: Networks
+objectClass: top
+objectClass: organizationalUnit
+objectClass: domainRelatedObject
+associatedDomain: %{HOSTNAME}.zoo.ox.ac.uk
+
+dn: ou=People,dc=%{HOSTNAME},dc=zoo,dc=ox,dc=ac,dc=uk
+ou: People
+objectClass: top
+objectClass: organizationalUnit
+objectClass: domainRelatedObject
+associatedDomain: %{HOSTNAME}.zoo.ox.ac.uk
+
+dn: ou=Group,dc=%{HOSTNAME},dc=zoo,dc=ox,dc=ac,dc=uk
+ou: Group
+objectClass: top
+objectClass: organizationalUnit
+objectClass: domainRelatedObject
+associatedDomain: %{HOSTNAME}.zoo.ox.ac.uk
+
+dn: ou=Netgroup,dc=%{HOSTNAME},dc=zoo,dc=ox,dc=ac,dc=uk
+ou: Netgroup
+objectClass: top
+objectClass: organizationalUnit
+objectClass: domainRelatedObject
+associatedDomain: %{HOSTNAME}.zoo.ox.ac.uk
+
+dn: ou=Protocols,dc=%{HOSTNAME},dc=zoo,dc=ox,dc=ac,dc=uk
+ou: Protocols
+objectClass: top
+objectClass: organizationalUnit
+objectClass: domainRelatedObject
+associatedDomain: %{HOSTNAME}.zoo.ox.ac.uk
+
+dn: ou=Aliases,dc=%{HOSTNAME},dc=zoo,dc=ox,dc=ac,dc=uk
+ou: Aliases
+objectClass: top
+objectClass: organizationalUnit
+objectClass: domainRelatedObject
+associatedDomain: %{HOSTNAME}.zoo.ox.ac.uk
+
+dn: nisMapName=netgroup.byhost,dc=%{HOSTNAME},dc=zoo,dc=ox,dc=ac,dc=uk
+nismapname: netgroup.byhost
+objectClass: top
+objectClass: nisMap
+objectClass: domainRelatedObject
+associatedDomain: %{HOSTNAME}.zoo.ox.ac.uk
+

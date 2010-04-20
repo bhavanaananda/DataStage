@@ -1,0 +1,5 @@
+When enabling Kerberos authentication:
+
+1) Request the relevant principals (HTTP, CIFS, webauth, host) from system development team
+2) Generate appropriate keytabs using kadmin (see http://imageweb.zoo.ox.ac.uk/wiki/index.php/Zakynthos_Configuration#Kerberisation_of_services for details)
+3) Copy them into the locations specified (but commented out) in firstboot.sh
