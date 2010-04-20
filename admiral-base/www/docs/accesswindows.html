@@ -1,0 +1,32 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML 2.0//EN">
+<html>
+
+<p><a href="../index.html">Home</a></p>
+
+<head>
+<title>ADMIRAL data file access from Windows</title>
+</head>
+
+<body>
+
+<h1>ADMIRAL data file access from Windows</h1>
+
+<p>ADMIRAL files are accessed from Windows as a network share:
+<blockquote>
+<code>\\%{HOSTNAME}.zoo.ox.ac.uk\data</code>
+</blockquote>
+A username and password will be required to complete a connection.
+The username entered should be in workgroup <code>%{WORKGROUP}</code>; e.g. <code>%{WORKGROUP}\<cite>username</cite></code>.
+</p>
+
+<p>There are many ways to connect a share in Windows.
+One is to use Windows Explorer's "Tools > Map Network Drive..." menu command.
+</p>
+
+<p>Once connected, a user will be able to read/write files in their own private area,
+and also to read all files in the <code>shared</code> and <code>collab</code> areas.
+</p>
+
+</body>
+
+</html>
