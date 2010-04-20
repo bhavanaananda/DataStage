@@ -13,6 +13,8 @@ cp /root/nrpe.cfg /etc/nagios/nrpe.cfg
 cp /root/aliases /etc/aliases
 cp /root/main.cf /etc/postfix/main.cf
 cp /root/apache2.conf /etc/apache2/apache2.conf
+mkdir /var/www/docs
+cp /root/*.html /var/www/docs
 newaliases
 
 echo =============================

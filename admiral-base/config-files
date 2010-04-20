@@ -46,3 +46,12 @@ admiraluserdel.sh /root/admiraluserdel.sh
 addtestusers.sh /root/addtestusers.sh
 deltestusers.sh /root/deltestusers.sh
 apache2.conf /root/apache2.conf
+www/index.html /var/www/index.html
+www/docs/accesswindows.html /root/accesswindows.html
+www/docs/accessmacos.html /root/accessmacos.html
+www/docs/accesslinux.html /root/accesslinux.html
+www/docs/accesshttp.html /root/accesshttp.html
+www/docs/accesswebdav.html /root/accesswebdav.html
+www/docs/accessdirect.html /root/accessdirect.html
+www/docs/fileorganization.html /root/fileorganization.html
+www/docs/adminusers.html /root/adminusers.html
