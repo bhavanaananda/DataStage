@@ -10,4 +10,4 @@ cd /home
 cp -axv data/ /mnt/lv-admiral-data/
 mv data data-saved
 ln -s /mnt/lv-admiral-data/data/ data
-
+mkdir /mnt/lv-admiral-data/home 

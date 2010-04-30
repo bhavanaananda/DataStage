@@ -10,4 +10,4 @@ rm -rf /home/data/$1
 rm -rf /home/data/shared/$1
 rm -rf /home/data/collab/$1
 rm -rf /home/$1-saved
-rm -rf /home/$1
+rm -rf /mnt/lv-admiral-data/home/$1

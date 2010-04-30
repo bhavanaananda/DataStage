@@ -13,12 +13,12 @@
 #
 
 if [[ "$1" != "test" && "$1" != "copy" ]]; then
-    echo "Usage: $0 (test|copy) hostname password workgroup"
+    echo "Usage: $0 (test|copy) hostname password workgroup leadername"
     exit 2
 fi
 
-if [[ "$2" == "" || "$3" == "" || "$4" == "" ]]; then
-    echo "Usage: $0 (test|copy) hostname password workgroup"
+if [[ "$2" == "" || "$3" == "" || "$4" == "" || "$5" == "" ]]; then
+    echo "Usage: $0 (test|copy) hostname password leadername"
     exit 2
 fi
 
@@ -28,6 +28,8 @@ BLACKLISTPATTERN="^(.*~|.*\\.(tmp|bak)|a1\.sh|copywithhostandpassword\.sh)$"
 FILELIST="`ls -1 --directory --ignore-backups --file-type * ldapconfig/* www/* www/*/*`"
 REPORT="echo"
 REPORT=":"
+MD5PASSWD=`slappasswd -h {MD5} -s $3`
+IP=`host $2 | cut -d ' ' -f4`
 
 for f in $FILELIST; do
     if [[ "$f" =~ /$ ]]; then
@@ -52,17 +54,9 @@ for f in $FILELIST; do
         $REPORT "not blacklisted $f (dir:$f1, name:$f2, base:$fb)"
         if [ -d $TGTDIR/$f1 ]; then
             if [[ "$1" == "copy" ]]; then
-                if [[ "$2" == "zakynthos" ]]; then
-                    sed -e "s/%{HOSTNAME}/$2/g" -e "s/%{PASSWORD}/$3/g" -e "s/%{WORKGROUP}/$4/g" -e "s/%{IPADDR}/129.67.24.65/g" -e "s/%{LeaderName}/FritzVollrath/g" -e "s/%{MD5PASS}/vCxDg0JY2ieKRYCG0n417w==/g" < $f >$TGTDIR/$f
-                elif [[ "$2" == "zoo-admiral-silk" ]]; then
-                    sed -e "s/%{HOSTNAME}/$2/g" -e "s/%{PASSWORD}/$3/g" -e "s/%{WORKGROUP}/$4/g" -e "s/%{IPADDR}/129.67.24.16/g" -e "s/%{LeaderName}/FritzVollrath/g" -e "s/%{MD5PASS}/v\/v1K9IlY2poFPYJv\/kl6w==/g" < $f >$TGTDIR/$f
-                fi
+                    sed -e "s/%{HOSTNAME}/$2/g" -e "s/%{PASSWORD}/$3/g" -e "s/%{WORKGROUP}/$4/g" -e "s/%{IPADDR}/$IP/g" -e "s/%{LeaderName}/$5/g" -e "s/%{MD5PASS}/$MD5PASSWD/g" < $f >$TGTDIR/$f
             else
-                if [[ "$2" == "zakynthos" ]]; then
-                    echo "sed -e 's/%{HOSTNAME}/$2/g' -e 's/%{PASSWORD}/$3/g' -e 's/%{WORKGROUP}/$4/g' -e 's/%{IPADDR}/129.67.24.65/g' -e 's/%{LeaderName}/FritzVollrath/g' -e 's/%{MD5PASS}/vCxDg0JY2ieKRYCG0n417w==/g' < $f >$TGTDIR/$f"
-                elif [[ "$2" == "zoo-admiral-silk" ]]; then
-                    echo "sed -e 's/%{HOSTNAME}/$2/g' -e 's/%{PASSWORD}/$3/g' -e 's/%{WORKGROUP}/$4/g' -e 's/%{IPADDR}/129.67.24.16/g' -e 's/%{LeaderName}/FritzVollrath/g' -e 's/%{MD5PASS}/v\/v1K9IlY2poFPYJv\/kl6w==/g' < $f >$TGTDIR/$f"
-                fi
+                    echo "sed -e 's/%{HOSTNAME}/$2/g' -e 's/%{PASSWORD}/$3/g' -e 's/%{WORKGROUP}/$4/g' -e 's/%{IPADDR}/$IP/g' -e 's/%{LeaderName}/$5/g' -e 's/%{MD5PASS}/$MD5PASSWD/g' < $f >$TGTDIR/$f"
             fi
         else
             echo "Directory $TGTDIR/$f1 not found"

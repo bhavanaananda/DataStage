@@ -18,7 +18,7 @@ olcRootDN: cn=admin,cn=config
 dn: olcDatabase={0}config,cn=config
 changetype: modify
 add: olcRootPW
-olcRootPW: {MD5}%{MD5PASS}
+olcRootPW: %{MD5PASS}
 
 dn: olcDatabase={0}config,cn=config
 changetype: modify

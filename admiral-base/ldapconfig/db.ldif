@@ -16,7 +16,7 @@ olcDbDirectory: /var/lib/ldap
 olcSuffix: dc=%{HOSTNAME},dc=zoo,dc=ox,dc=ac,dc=uk
 olcRootDN: cn=admin,dc=%{HOSTNAME},dc=zoo,dc=ox,dc=ac,dc=uk
 # This is the password that subsequently controls access for adding users
-olcRootPW: {MD5}v/v1K9IlY2poFPYJv/kl6w==
+olcRootPW: %{MD5PASS}
 olcDbConfig: {0}set_cachesize 0 2097152 0
 olcDbConfig: {1}set_lk_max_objects 1500
 olcDbConfig: {2}set_lk_max_locks 1500
