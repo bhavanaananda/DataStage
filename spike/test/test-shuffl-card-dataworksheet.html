@@ -1,0 +1,80 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>test-shuffl-card-dataworksheet</title>
+
+    <!-- Import MochiKit modules: require MochiKit library functions to be fully qualified -->
+    <script type="text/javascript">MochiKit = {__export__: false};</script>
+    <script type="text/javascript" src="../../MochiKit/Base.js"></script>
+    <script type="text/javascript" src="../../MochiKit/Iter.js"></script>
+    <script type="text/javascript" src="../../MochiKit/Logging.js"></script>
+     
+    <!-- Import jQuery and related scripts -->
+    <link type="text/css" href="../../jQuery/css/smoothness/jquery-ui-1.8.custom.css" rel="stylesheet" />  
+    <script type="text/javascript" src="../../jQuery/js/jquery-1.4.2.min.js"></script>
+    <script type="text/javascript" src="../../jQuery/js/jquery-ui-1.8.custom.min.js"></script>
+    <link rel="stylesheet" type="text/css" href="../../qunit/testsuite.css" media="screen" />
+    <script type="text/javascript" src="../../qunit/testrunner.js"></script>
+    <script>
+    // Use jQuery via jQuery(...)
+      jQuery.noConflict();
+    </script>
+
+    <script type="text/javascript" src="../../jQuery/jquery.uri.js"></script>
+
+    <!-- JSON conversion script -->
+    <script type="text/javascript" src="../../jQuery/jquery.json-2.2.js"></script>
+
+    <!-- inline text editing script -->
+    <script type="text/javascript" src="../../jQuery/jquery.jeditable.js"></script>
+
+    <!-- pop-up menu script -->
+    <script type="text/javascript" src="../../jQuery/jquery.contextmenu.js"></script>
+    
+    <!-- Shuffl style rules -->
+    <link type="text/css" href="../css/shuffl.css" rel="stylesheet"/>
+    
+    <!-- Shuffl script -->    
+    <script type="text/javascript" src="../../src/jquery.model.js"></script>
+    <script type="text/javascript" src="../../src/jquery.arraytable.js"></script>
+    <script type="text/javascript" src="../../src/jquery.readcsv.js"></script>
+    <script type="text/javascript" src="../../src/shuffl-base.js"></script>
+    <script type="text/javascript" src="../../src/shuffl-cardhandlers.js"></script>
+    <script type="text/javascript" src="../../src/shuffl-card-dataworksheet.js"></script>
+
+    <!-- Import test modules -->
+    <script type="text/javascript" src="../../src/qunit.testhelpers.js"></script>
+    <script type="text/javascript" src="../../src/test/test-shuffl-card-dataworksheet.js"></script>
+    
+  </head>
+  
+  <body>
+
+    <!--  Run the test script -->
+    <script type="text/javascript">
+      jQuery(document).ready(TestCardDataWorksheet);
+    </script>
+    <h1>Shuffl tests</h1>
+    <h2 id="banner"></h2>
+    <h2 id="userAgent"></h2>
+    <ol id="tests"></ol>
+    <div id="main" style="height:16em">
+
+      <div id="workspace" class="shuffl-workspace">
+        <!-- padding to space down stockbar -->
+        <div class="shuffl-header"></div>
+        <!-- Stock bar goes here -->
+        <div id="stockbar" class="shuffl-stockbar">
+          <!-- Shuffl logo -->
+          <div class="shuffl-workspacemenu" id="workspacemenu"><c class="stock-yellow">s</c><c class="stock-blue">h</c><c class="stock-green">u</c><c class="stock-orange">f</c><c class="stock-pink">f</c><c class="stock-purple">l</c></div>
+        </div>
+        <!-- cards go here -->
+        <div id="layout" class="shuffl-layout" style="height:20em">
+        </div>
+      </div>
+
+    </div> 
+ 
+  </body>
+</html>

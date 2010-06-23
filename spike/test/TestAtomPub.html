@@ -1,0 +1,57 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"  "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+
+<head>
+
+    <!-- Import MochiKit modules: require MochiKit library functions to be fully qualified -->
+    <script type="text/javascript">MochiKit = {__export__: false};</script>
+    <script type="text/javascript" src="../../MochiKit/Base.js"></script>
+    <script type="text/javascript" src="../../MochiKit/Iter.js"></script>
+    <script type="text/javascript" src="../../MochiKit/Logging.js"></script>
+
+    <!-- Import jQuery, unit testing framework and related scripts -->
+    <link type="text/css" href="../../jQuery/css/smoothness/jquery-ui-1.8.custom.css" rel="stylesheet" />  
+    <script type="text/javascript" src="../../jQuery/js/jquery-1.4.2.min.js"></script>
+    <script type="text/javascript" src="../../jQuery/js/jquery-ui-1.8.custom.min.js"></script>
+    <link rel="stylesheet" type="text/css" href="../../qunit/testsuite.css" media="screen" />
+    <script type="text/javascript" src="../../qunit/testrunner.js"></script>
+    <script>
+    // Use jQuery via jQuery(...)
+      jQuery.noConflict();
+    </script>
+
+    <!-- rddfQuery plug-ins
+    <script type="text/javascript" src="../../jQuery/jquery.uri.js"></script>
+    <script type="text/javascript" src="../../jQuery/jquery.rdfquery.core-1.0.js"></script>
+     -->
+    <script type="text/javascript" src="../../jQuery/jquery.uri.js"></script>
+
+    <!-- JSON conversion script -->
+    <script type="text/javascript" src="../../jQuery/jquery.json-2.2.js"></script>
+
+    <!-- Import shuffl modules -->
+    <script type="text/javascript" src="../../src/shuffl-base.js"></script>
+    <script type="text/javascript" src="../../src/AsyncComputation.js"></script>
+    <script type="text/javascript" src="../../src/AtomPub.js"></script>
+
+    <!-- Import test modules -->
+	  <script type="text/javascript" src="../../src/test/test-atompub.js"></script>
+
+    <!-- Execute the tests -->
+	  <script>
+	  jQuery(document).ready( function () {
+		    TestAtomPub();
+	  });
+	  </script>  
+
+</head>
+
+<body>
+		<h1>Shuffl tests</h1>
+		<h2 id="banner"></h2>
+		<h2 id="userAgent"></h2>
+		<ol id="tests"></ol>
+		<div id="main"></div> 
+</body>
+
+</html>

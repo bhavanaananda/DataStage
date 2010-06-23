@@ -1,0 +1,25 @@
+{ "shuffl:id":        "id_2"
+, "shuffl:type":     "shuffl-datagraph-blue"
+, "shuffl:version":   "0.1"
+, "shuffl:base-uri":  "#"
+, "shuffl:uses-prefixes":
+  [ { "shuffl:prefix":  "shuffl", "shuffl:uri": "http://purl.org/NET/Shuffl/vocab#" }
+  , { "shuffl:prefix":  "rdf",    "shuffl:uri": "http://www.w3.org/1999/02/22-rdf-syntax-ns#" }
+  , { "shuffl:prefix":  "rdfs",   "shuffl:uri": "http://www.w3.org/2000/01/rdf-schema#" }
+  , { "shuffl:prefix":  "owl",    "shuffl:uri": "http://www.w3.org/2002/07/owl#" }
+  , { "shuffl:prefix":  "xsd",    "shuffl:uri": "http://www.w3.org/2001/XMLSchema#" }
+  ]
+, "shuffl:data":
+  { "shuffl:title":   "Data graph card"
+  , "shuffl:tags":    [ "card_2_tag", "bluetag" ]
+  , "shuffl:uri":     "test-shuffl-loadworkspace-linked-card_2.csv"
+  , "shuffl:source_id": "id_1"
+  , "shuffl:dataminy":  1.0
+  , "shuffl:datamaxy":  2.3
+  , "shuffl:labels":    ["y1", "y2"]
+  , "shuffl:series":    
+    [ [ [0, 1.0], [1,1.1], [2,1.2], [3, 1.3] ]
+    , [ [0, 2.0], [1,2.1], [2,2.2], [3, 2.3] ]
+    ]
+  }
+}

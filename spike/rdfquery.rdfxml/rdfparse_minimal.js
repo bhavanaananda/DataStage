@@ -48,7 +48,6 @@ var ns = {
     req.open('GET','test_input.xml',false);
     req.send(null);
     var doc = req.responseXML;
-   
     var databank = $.rdf.databank();
     databank.load(doc);
     equals(databank.size(), 1);
@@ -59,7 +58,6 @@ var ns = {
   }),
    
    test("Loading RDF/XML from a file into a databank using JQuery", function() {
-    
     expect(6);
     $.get('test_input.xml', function(data, textStatus) {
       equals(textStatus, 'success');

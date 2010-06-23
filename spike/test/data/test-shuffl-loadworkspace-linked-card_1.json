@@ -1,0 +1,23 @@
+{ "shuffl:id":        "id_1"
+, "shuffl:type":      "shuffl-datatable-yellow"
+, "shuffl:version":   "0.1"
+, "shuffl:base-uri":  "#"
+, "shuffl:uses-prefixes":
+  [ { "shuffl:prefix":  "shuffl", "shuffl:uri": "http://purl.org/NET/Shuffl/vocab#" }
+  , { "shuffl:prefix":  "rdf",    "shuffl:uri": "http://www.w3.org/1999/02/22-rdf-syntax-ns#" }
+  , { "shuffl:prefix":  "rdfs",   "shuffl:uri": "http://www.w3.org/2000/01/rdf-schema#" }
+  , { "shuffl:prefix":  "owl",    "shuffl:uri": "http://www.w3.org/2002/07/owl#" }
+  , { "shuffl:prefix":  "xsd",    "shuffl:uri": "http://www.w3.org/2001/XMLSchema#" }
+  ]
+, "shuffl:data":
+  { "shuffl:title":   "Data table card"
+  , "shuffl:tags":    [ "data_table", "yellowtag" ]
+  , "shuffl:uri":     "test-shuffl-loadworkspace-linked-card_1.csv"
+  , "shuffl:table":
+    [ [ "",      "col1",  "col2",  "col3" ]
+    , [ "row_1", "1.11",  "1.22",  "1.33" ]
+    , [ "row_2", "2.11",  "2.22",  "2.33" ]
+    , [ "End." ]
+    ]
+  }
+}
