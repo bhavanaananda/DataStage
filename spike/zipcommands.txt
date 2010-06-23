@@ -1,4 +1,0 @@
-# Zip commands for MacOS to prevent including junk __MACOS directories
-
-# zip -r $ZIPFILE $DIR
-# unzip -l $ZIPFILE 
