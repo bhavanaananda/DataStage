@@ -155,7 +155,8 @@ class SparqlQueryTestCase(unittest.TestCase):
             "Accept":       expect_type
             }
         self.setRequestEndPoint(endpointhost, endpointpath)
-        (response, responsedata) = self.doRequest("GET", resource,
+        (response, responsedata) = self.doRequest("GET", resource, 
+            reqheaders=reqheaders,
             expect_status=expect_status, expect_reason=expect_reason)
         if (expect_type == "application/JSON"): responsedata = simplejson.loads(responsedata)
         return responsedata

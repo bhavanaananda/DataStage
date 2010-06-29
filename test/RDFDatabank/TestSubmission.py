@@ -34,6 +34,9 @@ class TestSubmission(SparqlQueryTestCase.SparqlQueryTestCase):
         self.setRequestEndPoint(
             endpointhost="163.1.127.173", 
             endpointpath="/packages/admiral-test/")
+        self.setRequestEndPoint(
+            endpointhost="localhost:9080",  # Via SSH tunnel
+            endpointpath="/packages/admiral-test/")
         self.setRequestUserPass(endpointuser="admiral", endpointpass="admiral")
         self.doHTTP_DELETE(resource="TestSubmission", expect_status="*", expect_reason="*")
         return
