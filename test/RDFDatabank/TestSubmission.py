@@ -61,9 +61,13 @@ class TestSubmission(SparqlQueryTestCase.SparqlQueryTestCase):
             [ ("file", "testdir.zip", zipdata, "application/zip") 
             ]
         (reqtype, reqdata) = SparqlQueryTestCase.encode_multipart_formdata(fields, files)
-        self.doHTTP_POST(reqdata, reqtype, expect_status=201, expect_reason="Created")
+        self.doHTTP_POST(
+            reqdata, reqtype, 
+            endpointpath="/packages/admiral-test/", 
+            expect_status=200, expect_reason="OK")
         # Access dataset, check response
-        data = self.doHTTP_GET(endpointpath="/objects/admiral-test/", resource="TestSubmission", 
+        data = self.doHTTP_GET(
+            endpointpath="/objects/admiral-test/", resource="TestSubmission", 
             expect_status=200, expect_reason="OK", expect_type="application/JSON")
         # Access versions info, check two versions exist
         state = data['state']
@@ -84,7 +88,6 @@ class TestSubmission(SparqlQueryTestCase.SparqlQueryTestCase):
         # Metadata
         self.assertEqual(state['metadata']['createdby'], "admiral", "Created by")
         self.assertEqual(state['metadata']['embargoed'], True,      "Embargoed?")
-        #self.assertEqual(state['metadata']['embargoed_until, ????,      "Embargoed_until")
 
     def testInitialSubmissionContent(self):
         assert False, "TODO"
