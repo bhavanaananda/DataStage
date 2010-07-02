@@ -38,7 +38,9 @@ class TestSubmission(SparqlQueryTestCase.SparqlQueryTestCase):
             endpointhost="localhost:9080",  # Via SSH tunnel
             endpointpath="/packages/admiral-test/")
         self.setRequestUserPass(endpointuser="admiral", endpointpass="admiral")
-        self.doHTTP_DELETE(resource="TestSubmission", expect_status="*", expect_reason="*")
+        self.doHTTP_DELETE(
+            endpointpath="/objects/admiral-test/", resource="TestSubmission", 
+            expect_status="*", expect_reason="*")
         return
 
     def tearDown(self):
@@ -59,28 +61,30 @@ class TestSubmission(SparqlQueryTestCase.SparqlQueryTestCase):
             [ ("file", "testdir.zip", zipdata, "application/zip") 
             ]
         (reqtype, reqdata) = SparqlQueryTestCase.encode_multipart_formdata(fields, files)
-        self.doHTTP_POST(reqdata, reqtype, expect_status=200, expect_reason="OK")
+        self.doHTTP_POST(reqdata, reqtype, expect_status=201, expect_reason="Created")
         # Access dataset, check response
         data = self.doHTTP_GET(endpointpath="/objects/admiral-test/", resource="TestSubmission", 
             expect_status=200, expect_reason="OK", expect_type="application/JSON")
         # Access versions info, check two versions exist
-        self.assertEqual(data.item_id,        "TestSubmission", "Submission item identifier")
-        self.assertEqual(data.versions.size,  2,   "Initially two versions")
-        self.assertEqual(data.versions[0],    '1', "Version 1")
-        self.assertEqual(data.versions[1],    '2', "Version 2")
-        self.assertEqual(data.currentversion, '2', "Current version == 2")
-        self.assertEqual(data.rdffileformat,  'xml',          "RDF file type")
-        self.assertEqual(data.rdffilename,    'manifest.rdf', "RDF file name")
+        state = data['state']
+        parts = data['parts']
+        self.assertEqual(state['item_id'],        "TestSubmission", "Submission item identifier")
+        self.assertEqual(len(state['versions']),  2,   "Initially two versions")
+        self.assertEqual(state['versions'][0],    '1', "Version 1")
+        self.assertEqual(state['versions'][1],    '2', "Version 2")
+        self.assertEqual(state['currentversion'], '2', "Current version == 2")
+        self.assertEqual(state['rdffileformat'],  'xml',          "RDF file type")
+        self.assertEqual(state['rdffilename'],    'manifest.rdf', "RDF file name")
         # subdir
-        self.assertEqual(data.subdir.size,    2,   "Subdirectory count")
+        self.assertEqual(len(state['subdir']),    2,   "Subdirectory count")
         # Files
         # Metadata files
         # date
         # version_dates
         # Metadata
-        self.assertEqual(data.metadata.createdby,       "admiral", "Created by")
-        self.assertEqual(data.metadata.embargoed,       True,      "Embargoed?")
-        #self.assertEqual(data.metadata.embargoed_until, ????,      "Embargoed_until")
+        self.assertEqual(state['metadata']['createdby'], "admiral", "Created by")
+        self.assertEqual(state['metadata']['embargoed'], True,      "Embargoed?")
+        #self.assertEqual(state['metadata']['embargoed_until, ????,      "Embargoed_until")
 
     def testInitialSubmissionContent(self):
         assert False, "TODO"

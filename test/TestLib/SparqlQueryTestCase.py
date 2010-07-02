@@ -100,12 +100,14 @@ class SparqlQueryTestCase(unittest.TestCase):
 
     def setRequestEndPoint(self, endpointhost=None, endpointpath=None):
         if endpointhost or endpointpath:
-            if endpointhost: self._endpointhost = endpointhost
+            if endpointhost:
+                self._endpointhost = endpointhost
+                # Reset credentials if setting host
+                self._endpointuser = None
+                self._endpointpass = None
             if endpointpath: self._endpointpath = endpointpath
             logger.debug("setRequestEndPoint: endpointhost %s: " % self._endpointhost)
             logger.debug("setRequestEndPoint: endpointpath %s: " % self._endpointpath)
-            self._endpointuser = None
-            self._endpointpass = None
         return
 
     def setRequestUserPass(self, endpointuser=None, endpointpass=None):
@@ -140,10 +142,11 @@ class SparqlQueryTestCase(unittest.TestCase):
             response = hc.getresponse()
             if response.status != 301: break
             path = response.getheader('Location', None)
-            responsedata = response.read()
+            response.read()  # Seems to be needed to free up connection
         logger.debug("Status: %i %s" % (response.status, response.reason))
         if expect_status != "*": self.assertEqual(response.status, expect_status)
         if expect_reason != "*": self.assertEqual(response.reason, expect_reason)
+        responsedata = response.read()
         hc.close()
         return (response, responsedata)
 
