@@ -1,0 +1,161 @@
+K 25
+svn:wc:ra_dav:version-url
+V 32
+/svn/!svn/ver/792/trunk/src/test
+END
+test-shuffl-base.js
+K 25
+svn:wc:ra_dav:version-url
+V 52
+/svn/!svn/ver/840/trunk/src/test/test-shuffl-base.js
+END
+test-jquery.model.js
+K 25
+svn:wc:ra_dav:version-url
+V 53
+/svn/!svn/ver/840/trunk/src/test/test-jquery.model.js
+END
+test-shuffl-saveworkspace.js
+K 25
+svn:wc:ra_dav:version-url
+V 61
+/svn/!svn/ver/840/trunk/src/test/test-shuffl-saveworkspace.js
+END
+test-atompub.js
+K 25
+svn:wc:ra_dav:version-url
+V 48
+/svn/!svn/ver/689/trunk/src/test/test-atompub.js
+END
+test-shuffl-storage-existatom.js
+K 25
+svn:wc:ra_dav:version-url
+V 65
+/svn/!svn/ver/813/trunk/src/test/test-shuffl-storage-existatom.js
+END
+test-shuffl-card-freetext.js
+K 25
+svn:wc:ra_dav:version-url
+V 61
+/svn/!svn/ver/828/trunk/src/test/test-shuffl-card-freetext.js
+END
+test-shuffl-card-datagraph-drop.js
+K 25
+svn:wc:ra_dav:version-url
+V 67
+/svn/!svn/ver/779/trunk/src/test/test-shuffl-card-datagraph-drop.js
+END
+test-shuffl-card-selectfile.js
+K 25
+svn:wc:ra_dav:version-url
+V 63
+/svn/!svn/ver/840/trunk/src/test/test-shuffl-card-selectfile.js
+END
+test-shuffl-storage-localfile.js
+K 25
+svn:wc:ra_dav:version-url
+V 65
+/svn/!svn/ver/840/trunk/src/test/test-shuffl-storage-localfile.js
+END
+test-shuffl-card-imagegallery.js
+K 25
+svn:wc:ra_dav:version-url
+V 65
+/svn/!svn/ver/828/trunk/src/test/test-shuffl-card-imagegallery.js
+END
+test-shuffl-card-datagraph.js
+K 25
+svn:wc:ra_dav:version-url
+V 62
+/svn/!svn/ver/828/trunk/src/test/test-shuffl-card-datagraph.js
+END
+test-shuffl-card-dataworksheet.js
+K 25
+svn:wc:ra_dav:version-url
+V 66
+/svn/!svn/ver/840/trunk/src/test/test-shuffl-card-dataworksheet.js
+END
+test-shuffl-card-datatable.js
+K 25
+svn:wc:ra_dav:version-url
+V 62
+/svn/!svn/ver/840/trunk/src/test/test-shuffl-card-datatable.js
+END
+test-shuffl-data-readwrite.js
+K 25
+svn:wc:ra_dav:version-url
+V 62
+/svn/!svn/ver/841/trunk/src/test/test-shuffl-data-readwrite.js
+END
+test-jquery.arraytable.js
+K 25
+svn:wc:ra_dav:version-url
+V 58
+/svn/!svn/ver/779/trunk/src/test/test-jquery.arraytable.js
+END
+test-shuffl-loadworkspace.js
+K 25
+svn:wc:ra_dav:version-url
+V 61
+/svn/!svn/ver/840/trunk/src/test/test-shuffl-loadworkspace.js
+END
+test-shuffl-ajax.js
+K 25
+svn:wc:ra_dav:version-url
+V 52
+/svn/!svn/ver/840/trunk/src/test/test-shuffl-ajax.js
+END
+test-shuffl-storage-common.js
+K 25
+svn:wc:ra_dav:version-url
+V 62
+/svn/!svn/ver/840/trunk/src/test/test-shuffl-storage-common.js
+END
+test-00-skeleton.js
+K 25
+svn:wc:ra_dav:version-url
+V 52
+/svn/!svn/ver/840/trunk/src/test/test-00-skeleton.js
+END
+test-shuffl-cardhandlers.js
+K 25
+svn:wc:ra_dav:version-url
+V 60
+/svn/!svn/ver/840/trunk/src/test/test-shuffl-cardhandlers.js
+END
+test-shuffl-card-imagenotes.js
+K 25
+svn:wc:ra_dav:version-url
+V 63
+/svn/!svn/ver/828/trunk/src/test/test-shuffl-card-imagenotes.js
+END
+test-shuffl-assembleworkspace.js
+K 25
+svn:wc:ra_dav:version-url
+V 65
+/svn/!svn/ver/840/trunk/src/test/test-shuffl-assembleworkspace.js
+END
+test-shuffl-storage-webdav.js
+K 25
+svn:wc:ra_dav:version-url
+V 62
+/svn/!svn/ver/841/trunk/src/test/test-shuffl-storage-webdav.js
+END
+test-shuffl-card-dataselect.js
+K 25
+svn:wc:ra_dav:version-url
+V 63
+/svn/!svn/ver/840/trunk/src/test/test-shuffl-card-dataselect.js
+END
+test-jquery.readcsv.js
+K 25
+svn:wc:ra_dav:version-url
+V 55
+/svn/!svn/ver/840/trunk/src/test/test-jquery.readcsv.js
+END
+test-async-computation.js
+K 25
+svn:wc:ra_dav:version-url
+V 58
+/svn/!svn/ver/840/trunk/src/test/test-async-computation.js
+END

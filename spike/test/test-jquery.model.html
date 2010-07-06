@@ -1,0 +1,43 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"  "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+
+<head>
+    <title>Test jquery.model plugin</title>
+    
+    <!-- Import MochiKit modules: require MochiKit library functions to be fully qualified -->
+    <script type="text/javascript">MochiKit = {__export__: false};</script>
+    <script type="text/javascript" src="../../MochiKit/Base.js"></script>
+    <script type="text/javascript" src="../../MochiKit/Iter.js"></script>
+    <script type="text/javascript" src="../../MochiKit/Logging.js"></script>
+  
+    <!-- Import jQuery and unit testing framework -->
+    <link rel="stylesheet" href="../../qunit/testsuite.css" type="text/css" media="screen" />
+    <script type="text/javascript" src="../../jQuery/js/jquery-1.4.2.js"></script> 
+    <script type="text/javascript" src="../../qunit/testrunner.js"></script>
+  
+    <!-- Import module under test -->
+    <script type="text/javascript" src="../../src/shuffl-base.js"></script>
+    <script type="text/javascript" src="../../src/jquery.model.js"></script>
+  
+    <!-- Import test modules -->
+    <script type="text/javascript" src="../../src/qunit.testhelpers.js"></script>
+    <script type="text/javascript" src="../../src/test/test-jquery.model.js"></script>
+  
+    <!-- Execute the tests -->
+    <script>
+    jQuery(document).ready( function () {
+        TestJqueryModel();
+    });
+    </script>  
+
+</head>
+
+<body>
+    <h1>Shuffl tests</h1>
+    <h2 id="banner"></h2>
+    <h2 id="userAgent"></h2>
+    <ol id="tests"></ol>
+    <div id="main"></div> 
+</body>
+
+</html>

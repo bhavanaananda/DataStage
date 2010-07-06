@@ -1,0 +1,135 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+
+<head>
+    <title>TestAll - run all stand-alone tests</title>
+
+    <!-- Import MochiKit modules: require MochiKit library functions to be fully qualified -->
+    <script type="text/javascript">MochiKit = {__export__: false};</script>
+    <script type="text/javascript" src="../../MochiKit/Base.js"></script>
+    <script type="text/javascript" src="../../MochiKit/Iter.js"></script>
+    <script type="text/javascript" src="../../MochiKit/Logging.js"></script>
+
+    <!-- Import jQuery and unit testing framework -->
+	  <link rel="stylesheet" href="../../qunit/testsuite.css" type="text/css" media="screen" />
+    <script type="text/javascript" src="../../jQuery/js/jquery-1.4.2.js"></script> 
+    <script type="text/javascript" src="../../jQuery/js/jquery-ui-1.7.2.custom.js"></script>
+	  <script type="text/javascript" src="../../qunit/testrunner.js"></script>
+    <script>
+    // Use jQuery via jQuery(...)
+      jQuery.noConflict();
+    </script>
+
+    <!-- URI handling script from RDFquery -->
+    <script type="text/javascript" src="../../jQuery/jquery.uri.js"></script>
+
+    <!-- JSON conversion script -->
+    <script type="text/javascript" src="../../jQuery/jquery.json-2.2.js"></script>
+
+    <!-- jQuery timer script -->
+    <script type="text/javascript" src="../../jQuery/jquery.timer.js"></script>
+
+    <!-- inline text editing script -->
+    <script type="text/javascript" src="../../jQuery/jquery.jeditable.js"></script>
+
+    <!-- pop-up menu script -->
+    <script type="text/javascript" src="../../jQuery/jquery.contextmenu.js"></script>
+ 
+    <!-- "Flot" graph plotting script -->
+    <script type="text/javascript" src="../../jQuery/jquery.flot.js"></script>
+    
+    <!-- Shuffl style rules -->
+    <link type="text/css" href="../css/shuffl.css" rel="stylesheet"/>
+
+    <!-- Import shuffl modules -->
+    <script type="text/javascript" src="../../src/jquery.model.js"></script>
+    <script type="text/javascript" src="../../src/jquery.readcsv.js"></script>
+    <script type="text/javascript" src="../../src/jquery.arraytable.js"></script>
+    <script type="text/javascript" src="../../src/shuffl-base.js"></script>
+    <script type="text/javascript" src="../../src/AsyncComputation.js"></script>
+    <script type="text/javascript" src="../../src/shuffl-ajax.js"></script>
+    <script type="text/javascript" src="../../src/shuffl-storage-common.js"></script>
+    <script type="text/javascript" src="../../src/shuffl-storage-localfile.js"></script>
+    <script type="text/javascript" src="../../src/shuffl-cardhandlers.js"></script>
+    <script type="text/javascript" src="../../src/shuffl-card-freetext.js"></script>
+    <script type="text/javascript" src="../../src/shuffl-card-selectfile.js"></script>
+    <script type="text/javascript" src="../../src/shuffl-card-datatable.js"></script>
+    <script type="text/javascript" src="../../src/shuffl-card-dataworksheet.js"></script>
+    <script type="text/javascript" src="../../src/shuffl-card-datagraph.js"></script>
+    <script type="text/javascript" src="../../src/shuffl-loadworkspace.js"></script>
+    <script type="text/javascript" src="../../src/shuffl-saveworkspace.js"></script>
+
+    <!-- Import test modules -->
+    <script type="text/javascript" src="../../src/qunit.testhelpers.js"></script>
+    <script type="text/javascript" src="../../src/test/test-jquery.model.js"></script>
+    <script type="text/javascript" src="../../src/test/test-jquery.readcsv.js"></script>
+    <script type="text/javascript" src="../../src/test/test-jquery.arraytable.js"></script>
+    <script type="text/javascript" src="../../src/test/test-async-computation.js"></script>
+    <script type="text/javascript" src="../../src/test/test-shuffl-base.js"></script>
+    <script type="text/javascript" src="../../src/test/test-shuffl-ajax.js"></script>
+    <script type="text/javascript" src="../../src/test/test-shuffl-storage-common.js"></script>
+    <script type="text/javascript" src="../../src/test/test-shuffl-storage-localfile.js"></script>
+    <script type="text/javascript" src="../../src/test/test-shuffl-cardhandlers.js"></script>
+    <script type="text/javascript" src="../../src/test/test-shuffl-card-freetext.js"></script>
+    <script type="text/javascript" src="../../src/test/test-shuffl-card-selectfile.js"></script>
+    <script type="text/javascript" src="../../src/test/test-shuffl-card-datatable.js"></script>
+    <script type="text/javascript" src="../../src/test/test-shuffl-card-dataworksheet.js"></script>
+    <script type="text/javascript" src="../../src/test/test-shuffl-card-datagraph.js"></script>
+    <script type="text/javascript" src="../../src/test/test-shuffl-card-datagraph-drop.js"></script>
+    <script type="text/javascript" src="../../src/test/test-shuffl-assembleworkspace.js"></script>
+
+    <!-- Execute the stand-alone tests -->
+	  <script>
+	  jQuery(document).ready( function () {
+        TestJqueryModel();
+        TestJqueryReadCSV();
+        TestJqueryArrayTable();
+        TestShufflBase();
+        TestAsyncComputation();
+        TestShufflAjax();
+        TestStorageCommon();
+        TestLocalFileStorage();
+        TestCardHandlers();
+        TestCardFreetext();
+        // TestCardSelectfile();
+        TestCardDatatable();
+        TestCardDataWorksheet();
+        TestCardDatagraph();
+        TestCardDatagraphDrop();
+        TestAssembleWorkspaceDescription();
+	  });
+	  </script>  
+
+</head>
+
+<body>
+
+		<h1>Shuffl tests</h1>
+		<h2 id="banner"></h2>
+		<h2 id="userAgent"></h2>
+		<ol id="tests"></ol>
+
+    <div id="main" style="height:22em">
+      <div id="workspace" class="shuffl-workspace">
+        <!-- padding to space down stockbar -->
+        <div class="shuffl-header"></div>
+        <!-- Stock bar goes here -->
+        <div id="stockbar" class="shuffl-stockbar">
+          <div class="shuffl-workspacemenu" id="workspacemenu"><c class="stock-yellow">s</c><c class="stock-blue">h</c><c class="stock-green">u</c><c class="stock-orange">f</c><c class="stock-pink">f</c><c class="stock-purple">l</c></div>
+        </div>
+        <!-- cards go here -->
+        <div id="layout" class="shuffl-layout"></div>
+        <!-- footer -->
+        <p id="footer" class="shuffl-footer">
+          <span id="workspace_status" class="shuffl-footer-left">(location)</span>
+          <span id="shufflhome" class="shuffl-footer-right">
+            <a href="http://code.google.com/p/shuffl/">shuffl project</a>
+          </span>
+        </p>
+      </div>
+    </div> 
+
+</body>
+
+</html>

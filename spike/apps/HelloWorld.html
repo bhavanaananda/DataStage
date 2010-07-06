@@ -1,0 +1,36 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+
+<head>
+    <title>Hello world</title>
+
+    <!-- Import jQuery framework -->
+    <script type="text/javascript" src="js/jquery-1.4.2.js"></script> 
+    <script>
+    // Use jQuery via jQuery(...)
+      jQuery.noConflict();
+    </script>
+
+    <!-- URI handling script from RDFquery -->
+    <script type="text/javascript" src="js/jquery.uri.js"></script>
+
+    <!-- JSON conversion script -->
+    <script type="text/javascript" src="js/jquery.json-2.2.js"></script>
+
+    <!-- Execute the code -->
+	  <script>
+	  jQuery(document).ready( function () {
+				jQuery("#message").text("Hello programmatic world")
+	  });
+	  </script>  
+
+</head>
+
+<body>
+  <h1>Hello world</h1>
+  <div>A simple web page to prove I can load a simple application from RDF databank.</div>
+  <div id="message">(to be replaced)</div>
+</body>
+
+</html>
