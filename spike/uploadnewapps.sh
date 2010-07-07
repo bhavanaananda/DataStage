@@ -1,6 +1,6 @@
 #! /bin/bash
 #
-# Create and upload ZIP file of apps directory
+# Create and upload a ZIP file of apps directory
 #
 
 rm apps.zip
