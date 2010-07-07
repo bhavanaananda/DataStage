@@ -32,14 +32,14 @@ class TestSubmission(SparqlQueryTestCase.SparqlQueryTestCase):
         #super(TestSubmission, self).__init__()
         # TODO: use separate config file
         self.setRequestEndPoint(
-            endpointhost="163.1.127.173", 
-            endpointpath="/packages/admiral-test/")
-        self.setRequestEndPoint(
             endpointhost="localhost:9080",  # Via SSH tunnel
-            endpointpath="/packages/admiral-test/")
+            endpointpath="/admiral-test/packages/")
+        self.setRequestEndPoint(
+            endpointhost="163.1.127.173", 
+            endpointpath="/admiral-test/packages/")
         self.setRequestUserPass(endpointuser="admiral", endpointpass="admiral")
         self.doHTTP_DELETE(
-            endpointpath="/objects/admiral-test/", resource="TestSubmission", 
+            endpointpath="/admiral-test/datasets/", resource="TestSubmission", 
             expect_status="*", expect_reason="*")
         return
 
@@ -63,11 +63,11 @@ class TestSubmission(SparqlQueryTestCase.SparqlQueryTestCase):
         (reqtype, reqdata) = SparqlQueryTestCase.encode_multipart_formdata(fields, files)
         self.doHTTP_POST(
             reqdata, reqtype, 
-            endpointpath="/packages/admiral-test/", 
+            endpointpath="/admiral-test/packages/", 
             expect_status=200, expect_reason="OK")
         # Access dataset, check response
         data = self.doHTTP_GET(
-            endpointpath="/objects/admiral-test/", resource="TestSubmission", 
+            endpointpath="/admiral-test/datasets/", resource="TestSubmission", 
             expect_status=200, expect_reason="OK", expect_type="application/JSON")
         # Access versions info, check two versions exist
         state = data['state']

@@ -3,7 +3,7 @@
 # Driving RDFDatabank API using command line curl.
 #
 
-RDBROOT=http://163.1.127.173/objects/admiral-test
+RDBROOT=http://163.1.127.173/admiral-test/datasets
 
 # --data-binary @- posts multiline from stdin
 
@@ -12,8 +12,8 @@ echo "===== RETRIEVE DATASET PAGE (No Accept header) ====="
 curl ${RDBROOT}/apps -u admiral:admiral
 
 echo
-echo "===== RETRIEVE DATASET PAGE (Accept *) ====="
-curl ${RDBROOT}/apps -u admiral:admiral -H "Accept: *"
+echo "===== RETRIEVE DATASET PAGE (Accept */*) ====="
+curl ${RDBROOT}/apps -u admiral:admiral -H "Accept: */*"
 
 echo
 echo "===== RETRIEVE DATASET PAGE (Accept XHTML) ====="
