@@ -13,6 +13,13 @@ import logging
 import httplib
 import urllib
 import simplejson
+import rdflib
+from rdflib.namespace import RDF
+from rdflib.graph import Graph
+from rdflib.plugins.memory import Memory
+from StringIO import StringIO
+from rdflib import URIRef
+from rdflib import Literal
 
 if __name__ == "__main__":
     # For testing: 
@@ -90,11 +97,48 @@ class TestSubmission(SparqlQueryTestCase.SparqlQueryTestCase):
         self.assertEqual(state['metadata']['embargoed'], True,      "Embargoed?")
 
     def testInitialSubmissionContent(self):
-        assert False, "TODO"
+        # assert False, "TODO"
         # Submit ZIP file, check response
+        fields = \
+            [ ("id", "TestSubmission")
+            ]
+        zipdata = open("data/testdir.zip").read()
+        files = \
+            [ ("file", "testdir.zip", zipdata, "application/zip") 
+            ]
+        (reqtype, reqdata) = SparqlQueryTestCase.encode_multipart_formdata(fields, files)
+        self.doHTTP_POST(
+            reqdata, reqtype, 
+            resource="packages/", 
+            expect_status=200, expect_reason="OK")
         # Access dataset, check response
+        data = self.doHTTP_GET(
+            resource="datasets/TestSubmission", 
+            expect_status=200, expect_reason="OK", expect_type="application/JSON")
         # Access and check list of contents
-        # Access and check content of each resource
+        rdfdata = self.doHTTP_GET(
+            resource="datasets/TestSubmission", 
+            expect_status=200, expect_reason="OK", expect_type="application/rdf+xml")
+        rdfstore = Memory()
+        rdfgraph = Graph()
+        rdfstream = StringIO(rdfdata)
+        rdfgraph.parse(rdfstream) 
+        self.assertEqual(len(rdfgraph),9,'Graph length %i' %len(rdfgraph))
+        subj = URIRef("http://databank.bodleian.ox.ac.uk/objects/admiral-test/TestSubmission")
+        stype = URIRef("http://vocab.ox.ac.uk/dataset/schema#Grouping")
+        self.failUnless((subj,RDF.type,stype) in rdfgraph, 'Testing submission type')        
+        dcterms = "http://purl.org/dc/terms/"
+        base = "http://databank.bodleian.ox.ac.uk/objects/admiral-test/TestSubmission/"
+        ore = "http://www.openarchives.org/ore/terms/"
+        self.failUnless((subj,URIRef(dcterms+"modified"),None) in rdfgraph, 'dcterms:modified')
+        self.failUnless((subj,URIRef(dcterms+"isVersionOf"),None) in rdfgraph, 'dcterms:isVersionOf')
+        self.failUnless((subj,URIRef(ore+"aggregates"),URIRef(base+"testdir")) in rdfgraph)
+        self.failUnless((subj,URIRef(ore+"aggregates"),URIRef(base+"testdir/directory")) in rdfgraph)
+        self.failUnless((subj,URIRef(ore+"aggregates"),URIRef(base+"testdir/directory/file1.a")) in rdfgraph)
+        self.failUnless((subj,URIRef(ore+"aggregates"),URIRef(base+"testdir/directory/file1.b")) in rdfgraph)
+        self.failUnless((subj,URIRef(ore+"aggregates"),URIRef(base+"testdir/directory/file2.a")) in rdfgraph)
+        self.failUnless((subj,URIRef(ore+"aggregates"),URIRef(base+"testdir/test-csv.csv")) in rdfgraph)
+        # Access and check content of a resource
         # Access and check zip file content
 
     def testUpdateSubmission(self):
