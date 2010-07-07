@@ -36,10 +36,10 @@ class TestSubmission(SparqlQueryTestCase.SparqlQueryTestCase):
             endpointpath="/admiral-test/packages/")
         self.setRequestEndPoint(
             endpointhost="163.1.127.173", 
-            endpointpath="/admiral-test/packages/")
+            endpointpath="/admiral-test/")
         self.setRequestUserPass(endpointuser="admiral", endpointpass="admiral")
         self.doHTTP_DELETE(
-            endpointpath="/admiral-test/datasets/", resource="TestSubmission", 
+            resource="datasets/TestSubmission", 
             expect_status="*", expect_reason="*")
         return
 
@@ -63,11 +63,11 @@ class TestSubmission(SparqlQueryTestCase.SparqlQueryTestCase):
         (reqtype, reqdata) = SparqlQueryTestCase.encode_multipart_formdata(fields, files)
         self.doHTTP_POST(
             reqdata, reqtype, 
-            endpointpath="/admiral-test/packages/", 
+            resource="packages/", 
             expect_status=200, expect_reason="OK")
         # Access dataset, check response
         data = self.doHTTP_GET(
-            endpointpath="/admiral-test/datasets/", resource="TestSubmission", 
+            resource="datasets/TestSubmission", 
             expect_status=200, expect_reason="OK", expect_type="application/JSON")
         # Access versions info, check two versions exist
         state = data['state']
