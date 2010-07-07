@@ -97,7 +97,6 @@ class TestSubmission(SparqlQueryTestCase.SparqlQueryTestCase):
         self.assertEqual(state['metadata']['embargoed'], True,      "Embargoed?")
 
     def testInitialSubmissionContent(self):
-        # assert False, "TODO"
         # Submit ZIP file, check response
         fields = \
             [ ("id", "TestSubmission")
@@ -139,14 +138,61 @@ class TestSubmission(SparqlQueryTestCase.SparqlQueryTestCase):
         self.failUnless((subj,URIRef(ore+"aggregates"),URIRef(base+"testdir/directory/file2.a")) in rdfgraph)
         self.failUnless((subj,URIRef(ore+"aggregates"),URIRef(base+"testdir/test-csv.csv")) in rdfgraph)
         # Access and check content of a resource
+        filedata = self.doHTTP_GET(
+            resource="datasets/TestSubmission/testdir/directory/file1.b",
+            expect_status=200, expect_reason="OK", expect_type="*/*")
+        checkdata = open("data/testdir/directory/file1.b").read()
+        self.assertEqual(filedata, checkdata, "Difference between local and remote data!")
         # Access and check zip file content
 
     def testUpdateSubmission(self):
-        assert False, "TODO"
         # Submit ZIP file, check response
-        # Submit ZIP file again, check response
+        fields = \
+            [ ("id", "TestSubmission")
+            ]
+        zipdata = open("data/testdir.zip").read()
+        files = \
+            [ ("file", "testdir.zip", zipdata, "application/zip") 
+            ]
+        (reqtype, reqdata) = SparqlQueryTestCase.encode_multipart_formdata(fields, files)
+        self.doHTTP_POST(
+            reqdata, reqtype, 
+            resource="packages/", 
+            expect_status=200, expect_reason="OK")
         # Access dataset, check response
+        data = self.doHTTP_GET(
+            resource="datasets/TestSubmission", 
+            expect_status=200, expect_reason="OK", expect_type="application/JSON")
+        # Access versions info, check two versions exist
+        state = data['state']
+        parts = data['parts']
+        self.assertEqual(state['item_id'],        "TestSubmission", "Submission item identifier")
+        self.assertEqual(len(state['versions']),  2,   "Initially two versions")
+        self.assertEqual(state['versions'][0],    '1', "Version 1")
+        self.assertEqual(state['versions'][1],    '2', "Version 2")
+        self.assertEqual(state['currentversion'], '2', "Current version == 2")
+        self.assertEqual(state['rdffileformat'],  'xml',          "RDF file type")
+        self.assertEqual(state['rdffilename'],    'manifest.rdf', "RDF file name")
+        # Submit ZIP file again, check response
+        self.doHTTP_POST(
+            reqdata, reqtype, 
+            resource="packages/", 
+            expect_status=200, expect_reason="OK")
+        # Access dataset, check response
+        data = self.doHTTP_GET(
+            resource="datasets/TestSubmission", 
+            expect_status=200, expect_reason="OK", expect_type="application/JSON")
         # Access versions info, check three versions exist
+        state = data['state']
+        parts = data['parts']
+        self.assertEqual(state['item_id'],        "TestSubmission", "Submission item identifier")
+        self.assertEqual(len(state['versions']),  3,   "Update gives three versions")
+        self.assertEqual(state['versions'][0],    '1', "Version 1")
+        self.assertEqual(state['versions'][1],    '2', "Version 2")
+        self.assertEqual(state['versions'][2],    '3', "Version 3")
+        self.assertEqual(state['currentversion'], '3', "Current version == 3")
+        self.assertEqual(state['rdffileformat'],  'xml',          "RDF file type")
+        self.assertEqual(state['rdffilename'],    'manifest.rdf', "RDF file name")
 
     def testUpdatedSubmissionContent(self):
         assert False, "TODO"
@@ -158,11 +204,51 @@ class TestSubmission(SparqlQueryTestCase.SparqlQueryTestCase):
         # Access and check zip file content
 
     def testDeleteDataset(self):
-        assert False, "TODO"
         # Submit ZIP file, check response
+        fields = \
+            [ ("id", "TestSubmission")
+            ]
+        zipdata = open("data/testdir.zip").read()
+        files = \
+            [ ("file", "testdir.zip", zipdata, "application/zip") 
+            ]
+        (reqtype, reqdata) = SparqlQueryTestCase.encode_multipart_formdata(fields, files)
+        self.doHTTP_POST(
+            reqdata, reqtype, 
+            resource="packages/", 
+            expect_status=200, expect_reason="OK")
         # Access dataset, check response
+        data = self.doHTTP_GET(
+            resource="datasets/TestSubmission", 
+            expect_status=200, expect_reason="OK", expect_type="application/JSON")
         # Delete dataset, check response
+        self.doHTTP_DELETE(
+            resource="datasets/TestSubmission", 
+            expect_status=200, expect_reason="OK")
         # Access dataset, test response indicating non-existent
+        data = self.doHTTP_GET(
+            resource="datasets/TestSubmission", 
+            expect_status=404, expect_reason="Not Found")
+
+    def testDeleteZipFiles(self):
+       status=os.system("./deletezips.sh > zips-for-deletion.log")
+       self.assertEqual(status, 0, "Failed to create list of zip files to be deleted")
+       ziplist = open("zips-for-deletion.log")
+       count_lines = len(ziplist.readlines())
+       print count_lines
+       line_num=0
+       ziplist.close()
+       ziplist = open("zips-for-deletion.log")
+       while line_num<count_lines:
+           i=ziplist.readline()
+           i=i.rstrip('\n')
+           self.doHTTP_DELETE(
+               resource=i, 
+               expect_status=200, expect_reason="OK")
+           line_num+=1
+       ziplist.close()
+       status=os.system("rm zips-for-deletion.log")
+       self.assertEqual(status, 0, "Failed to delete list of zip files that have been deleted")
 
     # Sentinel/placeholder tests
 
@@ -200,6 +286,7 @@ def getTestSuite(select="unit"):
             , "testUpdateSubmission"
             , "testUpdatedSubmissionContent"
             , "testDeleteDataset"
+            , "testDeleteZipFiles"
             ],
         "component":
             [ "testComponents"
