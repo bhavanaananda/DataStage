@@ -19,6 +19,8 @@ RDFManifest.display = function (jelem)
         jQuery.ajax({
             type:         "GET",
             url:          val,
+            username:     "admiral",
+            password:     "admiral",
             dataType:     "xml",
             beforeSend:   function (xhr)
                 {
@@ -65,6 +67,6 @@ RDFManifest.display = function (jelem)
         var o = rq.eq(0).node('?o');        
     });
 
-    m.exec("/objects/admiral-test/apps", shuffl.noop);
+    m.exec("http://163.1.127.173/admiral-test/datasets/apps", shuffl.noop);
 };
 

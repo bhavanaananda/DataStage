@@ -42,6 +42,7 @@ class TestSubmission(SparqlQueryTestCase.SparqlQueryTestCase):
             endpointhost="localhost:9080",  # Via SSH tunnel
             endpointpath="/admiral-test/packages/")
         self.setRequestEndPoint(
+            # here be dragons, will change eventually
             endpointhost="163.1.127.173", 
             endpointpath="/admiral-test/")
         self.setRequestUserPass(endpointuser="admiral", endpointpass="admiral")
@@ -118,16 +119,18 @@ class TestSubmission(SparqlQueryTestCase.SparqlQueryTestCase):
         rdfdata = self.doHTTP_GET(
             resource="datasets/TestSubmission", 
             expect_status=200, expect_reason="OK", expect_type="application/rdf+xml")
-        rdfstore = Memory()
         rdfgraph = Graph()
         rdfstream = StringIO(rdfdata)
         rdfgraph.parse(rdfstream) 
         self.assertEqual(len(rdfgraph),9,'Graph length %i' %len(rdfgraph))
-        subj = URIRef("http://databank.bodleian.ox.ac.uk/objects/admiral-test/TestSubmission")
+        # here be dragons, will change eventually
+        subj = URIRef("http://163.1.127.173/admiral-test/datasets/TestSubmission")
         stype = URIRef("http://vocab.ox.ac.uk/dataset/schema#Grouping")
+#        rdf= URIRef("http://www.w3.org/1999/02/22-rdf-syntax-ns#about")
         self.failUnless((subj,RDF.type,stype) in rdfgraph, 'Testing submission type')        
         dcterms = "http://purl.org/dc/terms/"
-        base = "http://databank.bodleian.ox.ac.uk/objects/admiral-test/TestSubmission/"
+        # here be dragons, will change eventually
+        base = "http://163.1.127.173/admiral-test/datasets/TestSubmission/"
         ore = "http://www.openarchives.org/ore/terms/"
         self.failUnless((subj,URIRef(dcterms+"modified"),None) in rdfgraph, 'dcterms:modified')
         self.failUnless((subj,URIRef(dcterms+"isVersionOf"),None) in rdfgraph, 'dcterms:isVersionOf')
@@ -144,6 +147,15 @@ class TestSubmission(SparqlQueryTestCase.SparqlQueryTestCase):
         checkdata = open("data/testdir/directory/file1.b").read()
         self.assertEqual(filedata, checkdata, "Difference between local and remote data!")
         # Access and check zip file content
+        z = rdfstream.getvalue()
+        z_loc = z.find("zipfile");
+        z_end_loc = z.find("/",z_loc)
+        zip_num = z[z_loc:z_end_loc]
+        zip_res = "datasets/" + zip_num + "/testdir.zip"
+        zipfile = self.doHTTP_GET(
+            resource=zip_res,
+            expect_status=200, expect_reason="OK", expect_type="application/zip")
+        self.assertEqual(zipdata, zipfile, "Difference between local and remote zipfile!")
 
     def testUpdateSubmission(self):
         # Submit ZIP file, check response
@@ -195,13 +207,76 @@ class TestSubmission(SparqlQueryTestCase.SparqlQueryTestCase):
         self.assertEqual(state['rdffilename'],    'manifest.rdf', "RDF file name")
 
     def testUpdatedSubmissionContent(self):
-        assert False, "TODO"
         # Submit ZIP file, check response
+        fields = \
+            [ ("id", "TestSubmission")
+            ]
+        zipdata = open("data/testdir.zip").read()
+        files = \
+            [ ("file", "testdir.zip", zipdata, "application/zip") 
+            ]
+        (reqtype, reqdata) = SparqlQueryTestCase.encode_multipart_formdata(fields, files)
+        self.doHTTP_POST(
+            reqdata, reqtype, 
+            resource="packages/", 
+            expect_status=200, expect_reason="OK")
         # Submit ZIP file again, check response
+        self.doHTTP_POST(
+            reqdata, reqtype, 
+            resource="packages/", 
+            expect_status=200, expect_reason="OK")
         # Access dataset, check response
+        data = self.doHTTP_GET(
+            resource="datasets/TestSubmission", 
+            expect_status=200, expect_reason="OK", expect_type="application/JSON")
+        rdfdata = self.doHTTP_GET(
+            resource="datasets/TestSubmission", 
+            expect_status=200, expect_reason="OK", expect_type="application/rdf+xml")
         # Access and check list of contents
-        # Access and check content of each resource
+        state = data['state']
+        parts = data['parts']
+        self.assertEqual(state['item_id'],        "TestSubmission", "Submission item identifier")
+        self.assertEqual(len(state['versions']),  3,   "Update gives three versions")
+        self.assertEqual(state['versions'][0],    '1', "Version 1")
+        self.assertEqual(state['versions'][1],    '2', "Version 2")
+        self.assertEqual(state['versions'][2],    '3', "Version 3")
+        self.assertEqual(state['currentversion'], '3', "Current version == 3")
+        rdfgraph = Graph()
+        rdfstream = StringIO(rdfdata)
+        rdfgraph.parse(rdfstream) 
+        self.assertEqual(len(rdfgraph),9,'Graph length %i' %len(rdfgraph))
+        # here be dragons, will change eventually
+        subj = URIRef("http://163.1.127.173/admiral-test/datasets/TestSubmission")
+        stype = URIRef("http://vocab.ox.ac.uk/dataset/schema#Grouping")
+        self.failUnless((subj,RDF.type,stype) in rdfgraph, 'Testing submission type')        
+        dcterms = "http://purl.org/dc/terms/"
+        # here be dragons, will change eventually
+        base = "http://163.1.127.173/admiral-test/datasets/TestSubmission/"
+        ore = "http://www.openarchives.org/ore/terms/"
+        self.failUnless((subj,URIRef(dcterms+"modified"),None) in rdfgraph, 'dcterms:modified')
+        self.failUnless((subj,URIRef(dcterms+"isVersionOf"),None) in rdfgraph, 'dcterms:isVersionOf')
+        self.failUnless((subj,URIRef(ore+"aggregates"),URIRef(base+"testdir")) in rdfgraph)
+        self.failUnless((subj,URIRef(ore+"aggregates"),URIRef(base+"testdir/directory")) in rdfgraph)
+        self.failUnless((subj,URIRef(ore+"aggregates"),URIRef(base+"testdir/directory/file1.a")) in rdfgraph)
+        self.failUnless((subj,URIRef(ore+"aggregates"),URIRef(base+"testdir/directory/file1.b")) in rdfgraph)
+        self.failUnless((subj,URIRef(ore+"aggregates"),URIRef(base+"testdir/directory/file2.a")) in rdfgraph)
+        self.failUnless((subj,URIRef(ore+"aggregates"),URIRef(base+"testdir/test-csv.csv")) in rdfgraph)
+        # Access and check content of a resource
+        filedata = self.doHTTP_GET(
+            resource="datasets/TestSubmission/testdir/directory/file1.b",
+            expect_status=200, expect_reason="OK", expect_type="*/*")
+        checkdata = open("data/testdir/directory/file1.b").read()
+        self.assertEqual(filedata, checkdata, "Difference between local and remote data!")
         # Access and check zip file content
+        z = rdfstream.getvalue()
+        z_loc = z.find("zipfile");
+        z_end_loc = z.find("/",z_loc)
+        zip_num = z[z_loc:z_end_loc]
+        zip_res = "datasets/" + zip_num + "/testdir.zip"
+        zipfile = self.doHTTP_GET(
+            resource=zip_res,
+            expect_status=200, expect_reason="OK", expect_type="application/zip")
+        self.assertEqual(zipdata, zipfile, "Difference between local and remote zipfile!")
 
     def testDeleteDataset(self):
         # Submit ZIP file, check response
@@ -235,7 +310,6 @@ class TestSubmission(SparqlQueryTestCase.SparqlQueryTestCase):
        self.assertEqual(status, 0, "Failed to create list of zip files to be deleted")
        ziplist = open("zips-for-deletion.log")
        count_lines = len(ziplist.readlines())
-       print count_lines
        line_num=0
        ziplist.close()
        ziplist = open("zips-for-deletion.log")
