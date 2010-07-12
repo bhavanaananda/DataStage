@@ -273,7 +273,7 @@ class TestSubmission(SparqlQueryTestCase.SparqlQueryTestCase):
         self.failUnless((subj,URIRef(ore+"aggregates"),URIRef(base+"testdir2/directory/file1.c")) in rdfgraph)
         self.failUnless((subj,URIRef(ore+"aggregates"),URIRef(base+"testdir2/directory/file2.a")) in rdfgraph)
         self.failUnless((subj,URIRef(ore+"aggregates"),URIRef(base+"testdir2/test-csv.csv")) in rdfgraph)
-        # Access and check content of a resource
+        # Access and check content of modified resource
         filedata = self.doHTTP_GET(
             resource="datasets/TestSubmission/testdir2/directory/file1.b",
             expect_status=200, expect_reason="OK", expect_type="*/*")
