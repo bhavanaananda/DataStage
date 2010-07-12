@@ -13,6 +13,7 @@ import logging
 import httplib
 import urllib
 import simplejson
+import json
 import rdflib
 from rdflib.namespace import RDF
 from rdflib.graph import Graph
@@ -223,6 +224,14 @@ class TestSubmission(SparqlQueryTestCase.SparqlQueryTestCase):
             resource="packages/", 
             expect_status=200, expect_reason="OK")
         # Submit ZIP file again, check response
+        fields = \
+            [ ("id", "TestSubmission")
+            ]
+        zipdata = open("data/testdir2.zip").read()
+        files = \
+            [ ("file", "testdir2.zip", zipdata, "application/zip") 
+            ]
+        (reqtype, reqdata) = SparqlQueryTestCase.encode_multipart_formdata(fields, files)
         self.doHTTP_POST(
             reqdata, reqtype, 
             resource="packages/", 
@@ -246,39 +255,39 @@ class TestSubmission(SparqlQueryTestCase.SparqlQueryTestCase):
         rdfgraph = Graph()
         rdfstream = StringIO(rdfdata)
         rdfgraph.parse(rdfstream) 
-        self.assertEqual(len(rdfgraph),9,'Graph length %i' %len(rdfgraph))
+        self.assertEqual(len(rdfgraph),10,'Graph length %i' %len(rdfgraph))
         # here be dragons, will change eventually
         subj = URIRef("http://163.1.127.173/admiral-test/datasets/TestSubmission")
         stype = URIRef("http://vocab.ox.ac.uk/dataset/schema#Grouping")
         self.failUnless((subj,RDF.type,stype) in rdfgraph, 'Testing submission type')        
         dcterms = "http://purl.org/dc/terms/"
         # here be dragons, will change eventually
-        base = "http://163.1.127.173/admiral-test/datasets/TestSubmission/"
+        base = "http://%s%sdatasets/TestSubmission/" %(self._endpointhost, self._endpointpath)
         ore = "http://www.openarchives.org/ore/terms/"
         self.failUnless((subj,URIRef(dcterms+"modified"),None) in rdfgraph, 'dcterms:modified')
         self.failUnless((subj,URIRef(dcterms+"isVersionOf"),None) in rdfgraph, 'dcterms:isVersionOf')
-        self.failUnless((subj,URIRef(ore+"aggregates"),URIRef(base+"testdir")) in rdfgraph)
-        self.failUnless((subj,URIRef(ore+"aggregates"),URIRef(base+"testdir/directory")) in rdfgraph)
-        self.failUnless((subj,URIRef(ore+"aggregates"),URIRef(base+"testdir/directory/file1.a")) in rdfgraph)
-        self.failUnless((subj,URIRef(ore+"aggregates"),URIRef(base+"testdir/directory/file1.b")) in rdfgraph)
-        self.failUnless((subj,URIRef(ore+"aggregates"),URIRef(base+"testdir/directory/file2.a")) in rdfgraph)
-        self.failUnless((subj,URIRef(ore+"aggregates"),URIRef(base+"testdir/test-csv.csv")) in rdfgraph)
+        self.failUnless((subj,URIRef(ore+"aggregates"),URIRef(base+"testdir2")) in rdfgraph)
+        self.failUnless((subj,URIRef(ore+"aggregates"),URIRef(base+"testdir2/directory")) in rdfgraph)
+        self.failUnless((subj,URIRef(ore+"aggregates"),URIRef(base+"testdir2/directory/file1.a")) in rdfgraph)
+        self.failUnless((subj,URIRef(ore+"aggregates"),URIRef(base+"testdir2/directory/file1.b")) in rdfgraph)
+        self.failUnless((subj,URIRef(ore+"aggregates"),URIRef(base+"testdir2/directory/file1.c")) in rdfgraph)
+        self.failUnless((subj,URIRef(ore+"aggregates"),URIRef(base+"testdir2/directory/file2.a")) in rdfgraph)
+        self.failUnless((subj,URIRef(ore+"aggregates"),URIRef(base+"testdir2/test-csv.csv")) in rdfgraph)
         # Access and check content of a resource
         filedata = self.doHTTP_GET(
-            resource="datasets/TestSubmission/testdir/directory/file1.b",
+            resource="datasets/TestSubmission/testdir2/directory/file1.b",
             expect_status=200, expect_reason="OK", expect_type="*/*")
-        checkdata = open("data/testdir/directory/file1.b").read()
+        checkdata = open("data/testdir2/directory/file1.b").read()
         self.assertEqual(filedata, checkdata, "Difference between local and remote data!")
         # Access and check zip file content
-        z = rdfstream.getvalue()
-        z_loc = z.find("zipfile");
-        z_end_loc = z.find("/",z_loc)
-        zip_num = z[z_loc:z_end_loc]
-        zip_res = "datasets/" + zip_num + "/testdir.zip"
-        zipfile = self.doHTTP_GET(
-            resource=zip_res,
-            expect_status=200, expect_reason="OK", expect_type="application/zip")
-        self.assertEqual(zipdata, zipfile, "Difference between local and remote zipfile!")
+        query_string = "SELECT ?z WHERE {<%s> <%s> ?z . }"%(subj,URIRef(dcterms+"isVersionOf"))
+        query_result = rdfgraph.query(query_string)
+        for row in query_result:
+            zip_res = row
+            zipfile = self.doHTTP_GET(
+                resource=zip_res,
+                expect_status=200, expect_reason="OK", expect_type="application/zip")
+            self.assertEqual(zipdata, zipfile, "Difference between local and remote zipfile!")
 
     def testDeleteDataset(self):
         # Submit ZIP file, check response
@@ -308,23 +317,16 @@ class TestSubmission(SparqlQueryTestCase.SparqlQueryTestCase):
             expect_status=404, expect_reason="Not Found")
 
     def testDeleteZipFiles(self):
-       status=os.system("./deletezips.sh > zips-for-deletion.log")
-       self.assertEqual(status, 0, "Failed to create list of zip files to be deleted")
-       ziplist = open("zips-for-deletion.log")
-       count_lines = len(ziplist.readlines())
-       line_num=0
-       ziplist.close()
-       ziplist = open("zips-for-deletion.log")
-       while line_num<count_lines:
-           i=ziplist.readline()
-           i=i.rstrip('\n')
-           self.doHTTP_DELETE(
-               resource=i, 
-               expect_status=200, expect_reason="OK")
-           line_num+=1
-       ziplist.close()
-       status=os.system("rm zips-for-deletion.log")
-       self.assertEqual(status, 0, "Failed to delete list of zip files that have been deleted")
+       data = self.doHTTP_GET(
+           resource="datasets",
+           expect_status=200, expect_reason="OK", expect_type="application/JSON")
+       keys = data.keys()
+       keys.sort()
+       for i in keys:
+           if (i.startswith("zipfile:")):
+               self.doHTTP_DELETE(
+                   resource="datasets/"+i,
+                   expect_status=200, expect_reason="OK")
 
     # Sentinel/placeholder tests
 

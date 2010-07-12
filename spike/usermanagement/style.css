@@ -1,0 +1,28 @@
+body {
+	font-family: Arial,Helvetica,sans-serif;
+        display: block;
+        margin-left: 5%;
+        margin-right: 5%;
+	margin-top: 30px;
+        padding: 3em 1em 3em 1em;
+        border: 1pt solid rgb(0%,0%,60%);
+}
+
+#tabs {
+    border-bottom: .5em solid #03c;
+    margin: 0;
+    padding: 0;
+}
+
+#tabs li { 
+    display:inline; 
+    border-top: .1em solid #03c;
+    border-left: .1em solid #03c;
+    border-right: .1em solid #03c;
+}
+
+#tabs li a {
+    text-decoration: none;
+    padding: 0.25em 1em;
+    color: #000;
+} 
