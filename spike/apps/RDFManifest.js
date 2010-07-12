@@ -61,10 +61,18 @@ RDFManifest.display = function (jelem)
     {
         rq = rq.where('?s ?p ?o');
         jelem.html("<p>Manifest displays here: "+rq.length+" triples</p>");
-        jelem.append("<p>"+rq.eq(0).dump({format:'application/json', serialize: true})+"</p>");
-        var s = rq.eq(0).node('?s');
-        var p = rq.eq(0).node('?p');
-        var o = rq.eq(0).node('?o');        
+        var i = 0;
+/*        while (i<rq.length) {
+            jelem.append("<p>"+rq.eq(i).dump({format:'application/json', serialize: true})+"</p>");
+            i++;
+        }*/
+        jelem.append("<table>");
+        jelem.append("<tr><td><strong>Subject</strong></td><td><strong>Property</strong></td><td><strong>Object</strong></td></tr>");
+        rq.each(function ()
+        {
+            jelem.append("<tr><td>"+this.s.value+"</td><td>"+this.p.value+"</td><td>"+this.o.value+"</td></tr>");
+        });
+        jelem.append("</table>");
     });
 
     m.exec("http://163.1.127.173/admiral-test/datasets/apps", shuffl.noop);
