@@ -14,6 +14,7 @@ import httplib
 import base64
 import mimetypes
 import urllib
+import urlparse
 import simplejson
 
 if __name__ == "__main__":
@@ -122,9 +123,8 @@ class SparqlQueryTestCase(unittest.TestCase):
         return
 
     def getRequestPath(self, rel):
-        # TODO: use URI library to combine parts properly
         rel = rel or ""
-        return self._endpointpath+rel
+        return urlparse.urljoin(self._endpointpath,rel)
 
     def doRequest(self, command, resource, reqdata=None, reqheaders={}, expect_status=200, expect_reason="OK"):
         logger.debug(command+" http://"+self._endpointhost+self.getRequestPath(resource))

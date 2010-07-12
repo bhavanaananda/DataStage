@@ -20,6 +20,9 @@ from rdflib.plugins.memory import Memory
 from StringIO import StringIO
 from rdflib import URIRef
 from rdflib import Literal
+rdflib.plugin.register('sparql',rdflib.query.Processor,'rdfextras.sparql.processor','Processor')
+rdflib.plugin.register('sparql', rdflib.query.Result,
+                       'rdfextras.sparql.query', 'SPARQLQueryResult')
 
 if __name__ == "__main__":
     # For testing: 
@@ -130,7 +133,7 @@ class TestSubmission(SparqlQueryTestCase.SparqlQueryTestCase):
         self.failUnless((subj,RDF.type,stype) in rdfgraph, 'Testing submission type')        
         dcterms = "http://purl.org/dc/terms/"
         # here be dragons, will change eventually
-        base = "http://163.1.127.173/admiral-test/datasets/TestSubmission/"
+        base = "http://%s%sdatasets/TestSubmission/" %(self._endpointhost, self._endpointpath)
         ore = "http://www.openarchives.org/ore/terms/"
         self.failUnless((subj,URIRef(dcterms+"modified"),None) in rdfgraph, 'dcterms:modified')
         self.failUnless((subj,URIRef(dcterms+"isVersionOf"),None) in rdfgraph, 'dcterms:isVersionOf')
@@ -147,15 +150,14 @@ class TestSubmission(SparqlQueryTestCase.SparqlQueryTestCase):
         checkdata = open("data/testdir/directory/file1.b").read()
         self.assertEqual(filedata, checkdata, "Difference between local and remote data!")
         # Access and check zip file content
-        z = rdfstream.getvalue()
-        z_loc = z.find("zipfile");
-        z_end_loc = z.find("/",z_loc)
-        zip_num = z[z_loc:z_end_loc]
-        zip_res = "datasets/" + zip_num + "/testdir.zip"
-        zipfile = self.doHTTP_GET(
-            resource=zip_res,
-            expect_status=200, expect_reason="OK", expect_type="application/zip")
-        self.assertEqual(zipdata, zipfile, "Difference between local and remote zipfile!")
+        query_string = "SELECT ?z WHERE {<%s> <%s> ?z . }"%(subj,URIRef(dcterms+"isVersionOf"))
+        query_result = rdfgraph.query(query_string)
+        for row in query_result:
+            zip_res = row
+            zipfile = self.doHTTP_GET(
+                resource=zip_res,
+                expect_status=200, expect_reason="OK", expect_type="application/zip")
+            self.assertEqual(zipdata, zipfile, "Difference between local and remote zipfile!")
 
     def testUpdateSubmission(self):
         # Submit ZIP file, check response
