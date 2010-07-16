@@ -58,8 +58,7 @@
     <script type="text/javascript" src="js/shuffl/AsyncComputation.js"></script>
 
     <!-- Import dataset information display code -->
-    <script type="text/javascript" src="DatasetState.js"></script>
-    <script type="text/javascript" src="RDFManifest.js"></script>
+    <script type="text/javascript" src="DatasetBrowser.js"></script>
 
     <script>
     // Use jQuery via jQuery(...)
@@ -69,26 +68,16 @@
     <!-- Execute the code -->
 	  <script>
 	  jQuery(document).ready( function () {
-				DatasetState.display(jQuery(".dataset"));
-				RDFManifest.display(jQuery(".manifest"));
-                                jQuery((".display").hide());
-//                                jQuery("# container .manifest ul").prepend(<li class='readbody'><a href='' title='Read the article'>Read Body</a></li>");
- //                               jQuery(".actions li. readbody a").click(function(event){
-  //                              jQuery((this).parents("ul).prev(".display").toggle());
-   //                             jQuery(event.preventDefault());
-    //                            });
+				DatasetBrowser.display(jQuery("#dataset"));
 	  });
 	  </script>  
 
 </head>
 
 <body>
- <h1>Information about test dataset</h1>
- <p>Displays information about an RDFDatabank dataset.</p>
-  <div class="dataset">(to be replaced)</div>
-  <div class="manifest">
-    <div class="display">(to be replaced)</div>
-  </div>
+  <h1>Information about datasets</h1>
+  <div>Displays information about RDFDatabank datasets.</div>
+  <div id="dataset">(to be replaced)</div>
 </body>
 
 </html>

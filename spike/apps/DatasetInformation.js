@@ -9,6 +9,8 @@ if (typeof DatasetInformation == "undefined")
     DatasetInformation = {};
 }
 
+var base_dataset = "http://163.1.127.173/admiral-test/datasets/apps";
+
 DatasetInformation.display = function (jelem)
 {
     var m = new shuffl.AsyncComputation();
@@ -61,7 +63,7 @@ DatasetInformation.display = function (jelem)
              jelem.append("<tr><td>RDF file format</td><td>" + data.state.rdffileformat + "</td></tr>");
              jelem.append("<tr><td>RDF file name</td><td>" + data.state.rdffilename + "</td></tr>");
              jelem.append("</table>");
-             callback("http://163.1.127.173/admiral-test/datasets/apps");
+             callback(base_dataset);
         } 
         catch(e)
         {
@@ -72,6 +74,7 @@ DatasetInformation.display = function (jelem)
 
     m.eval(function (val, callback)
     {
+        jelem.append("Fetching manifest ...");
         jQuery.ajax({
             type:         "GET",
             url:          val,
@@ -125,11 +128,11 @@ DatasetInformation.display = function (jelem)
         jelem.append("<tr><td><strong>Subject</strong></td><td><strong>Property</strong></td><td><strong>Object</strong></td></tr>");
         rq.each(function ()
         {
-            jelem.append("<tr><td>"+this.s.value+"</td><td>"+this.p.value+"</td><td>"+this.o.value+"</td></tr>");
+            jelem.append("<tr><td>"+this.s.value+"</td><td>"+this.p.value+"</td><td>"+jQuery.url.param(this.o.value)+"</td></tr>");
         });
         jelem.append("</table>");
     });
 
-    m.exec("http://163.1.127.173/admiral-test/datasets/apps", shuffl.noop);
+    m.exec(base_dataset, shuffl.noop);
 };
 
