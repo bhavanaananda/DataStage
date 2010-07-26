@@ -12,8 +12,11 @@ import unittest
 import logging
 import httplib
 import urllib
-import simplejson
-import json
+try:
+    # Running Python 2.5 with simplejson?
+    import simplejson as json
+except ImportError:
+    import json
 import rdflib
 from rdflib.namespace import RDF
 from rdflib.graph import Graph
@@ -33,6 +36,8 @@ if __name__ == "__main__":
 from MiscLib import TestUtils
 from TestLib import SparqlQueryTestCase
 
+from RDFDatabankConfig import RDFDatabankConfig
+
 logger = logging.getLogger('TestSubmission')
 
 class TestSubmission(SparqlQueryTestCase.SparqlQueryTestCase):
@@ -41,15 +46,12 @@ class TestSubmission(SparqlQueryTestCase.SparqlQueryTestCase):
     """
     def setUp(self):
         #super(TestSubmission, self).__init__()
-        # TODO: use separate config file
         self.setRequestEndPoint(
-            endpointhost="localhost:9080",  # Via SSH tunnel
-            endpointpath="/admiral-test/packages/")
-        self.setRequestEndPoint(
-            # here be dragons, will change eventually
-            endpointhost="163.1.127.173", 
-            endpointpath="/admiral-test/")
-        self.setRequestUserPass(endpointuser="admiral", endpointpass="admiral")
+            endpointhost=RDFDatabankConfig.endpointhost,  # Via SSH tunnel
+            endpointpath=RDFDatabankConfig.endpointpath)
+        self.setRequestUserPass(
+            endpointuser=RDFDatabankConfig.endpointuser,
+            endpointpass=RDFDatabankConfig.endpointpass)
         self.doHTTP_DELETE(
             resource="datasets/TestSubmission", 
             expect_status="*", expect_reason="*")
@@ -123,19 +125,19 @@ class TestSubmission(SparqlQueryTestCase.SparqlQueryTestCase):
         rdfdata = self.doHTTP_GET(
             resource="datasets/TestSubmission", 
             expect_status=200, expect_reason="OK", expect_type="application/rdf+xml")
+        print rdfdata #######
         rdfgraph = Graph()
         rdfstream = StringIO(rdfdata)
         rdfgraph.parse(rdfstream) 
         self.assertEqual(len(rdfgraph),9,'Graph length %i' %len(rdfgraph))
-        # here be dragons, will change eventually
-        subj = URIRef("http://163.1.127.173/admiral-test/datasets/TestSubmission")
+        #TODO: here be dragons, will change eventually
+        subj  = URIRef("http://163.1.127.173/admiral-test/datasets/TestSubmission")
         stype = URIRef("http://vocab.ox.ac.uk/dataset/schema#Grouping")
-#        rdf= URIRef("http://www.w3.org/1999/02/22-rdf-syntax-ns#about")
         self.failUnless((subj,RDF.type,stype) in rdfgraph, 'Testing submission type')        
         dcterms = "http://purl.org/dc/terms/"
-        # here be dragons, will change eventually
+        #TODO: here be dragons, will change eventually
         base = "http://%s%sdatasets/TestSubmission/" %(self._endpointhost, self._endpointpath)
-        ore = "http://www.openarchives.org/ore/terms/"
+        ore  = "http://www.openarchives.org/ore/terms/"
         self.failUnless((subj,URIRef(dcterms+"modified"),None) in rdfgraph, 'dcterms:modified')
         self.failUnless((subj,URIRef(dcterms+"isVersionOf"),None) in rdfgraph, 'dcterms:isVersionOf')
         self.failUnless((subj,URIRef(ore+"aggregates"),URIRef(base+"testdir")) in rdfgraph)
