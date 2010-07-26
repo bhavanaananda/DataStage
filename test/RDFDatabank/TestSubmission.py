@@ -287,6 +287,51 @@ class TestSubmission(SparqlQueryTestCase.SparqlQueryTestCase):
                 expect_status=200, expect_reason="OK", expect_type="application/zip")
             self.assertEqual(zipdata, zipfile, "Difference between local and remote zipfile!")
 
+    def testMetadataMerging(self):
+        # Submit ZIP file data/testrdf.zip, check response
+        fields = \
+            [ ("id", "TestSubmission")
+            ]
+        zipdata = open("data/testrdf.zip").read()
+        files = \
+            [ ("file", "testrdf.zip", zipdata, "application/zip") 
+            ]
+        (reqtype, reqdata) = SparqlQueryTestCase.encode_multipart_formdata(fields, files)
+        self.doHTTP_POST(
+            reqdata, reqtype, 
+            resource="packages/", 
+            expect_status=200, expect_reason="OK")
+        # Access dataset, check response
+        data = self.doHTTP_GET(
+            resource="datasets/TestSubmission", 
+            expect_status=200, expect_reason="OK", expect_type="application/JSON")
+        # Access and check list of contents and metadata
+        rdfdata = self.doHTTP_GET(
+            resource="datasets/TestSubmission", 
+            expect_status=200, expect_reason="OK", expect_type="application/rdf+xml")
+        rdfgraph = Graph()
+        rdfstream = StringIO(rdfdata)
+        rdfgraph.parse(rdfstream) 
+        self.assertEqual(len(rdfgraph),12,'Graph length %i' %len(rdfgraph))
+        subj  = URIRef(self.getRequestUri("datasets/TestSubmission"))
+        stype = URIRef("http://vocab.ox.ac.uk/dataset/schema#Grouping")
+        self.failUnless((subj,RDF.type,stype) in rdfgraph, 'Testing submission type: '+subj+", "+stype)
+        owl = "http://www.w3.org/2002/07/owl#"
+        dcterms = "http://purl.org/dc/terms/"
+        base = self.getRequestUri("datasets/TestSubmission/")
+        ore  = "http://www.openarchives.org/ore/terms/"
+        self.failUnless((subj,URIRef(owl+"sameAs"),URIRef("http://example.org/testrdf/")) in rdfgraph, 'owl:sameAs')
+        self.failUnless((subj,URIRef(dcterms+"modified"),None) in rdfgraph, 'dcterms:modified')
+        self.failUnless((subj,URIRef(dcterms+"isVersionOf"),None) in rdfgraph, 'dcterms:isVersionOf')
+        self.failUnless((subj,URIRef(dcterms+"title"),"Test dataset with merged metadata") in rdfgraph, 'dcterms:title')
+        self.failUnless((subj,URIRef(ore+"aggregates"),URIRef(base+"testdir")) in rdfgraph)
+        self.failUnless((subj,URIRef(ore+"aggregates"),URIRef(base+"testdir/directory")) in rdfgraph)
+        self.failUnless((subj,URIRef(ore+"aggregates"),URIRef(base+"testdir/directory/file1.a")) in rdfgraph)
+        self.failUnless((subj,URIRef(ore+"aggregates"),URIRef(base+"testdir/directory/file1.b")) in rdfgraph)
+        self.failUnless((subj,URIRef(ore+"aggregates"),URIRef(base+"testdir/directory/file2.a")) in rdfgraph)
+        self.failUnless((subj,URIRef(ore+"aggregates"),URIRef(base+"testdir/test-csv.csv")) in rdfgraph)
+        self.failUnless((subj,URIRef(ore+"aggregates"),URIRef(base+"testdir/manifest.rdf")) in rdfgraph)
+
     def testDeleteDataset(self):
         # Submit ZIP file, check response
         fields = \
@@ -361,6 +406,7 @@ def getTestSuite(select="unit"):
             , "testInitialSubmissionContent"
             , "testUpdateSubmission"
             , "testUpdatedSubmissionContent"
+            , "testMetadataMerging"
             , "testDeleteDataset"
             , "testDeleteZipFiles"
             ],
