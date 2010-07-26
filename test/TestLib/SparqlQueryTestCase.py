@@ -126,8 +126,11 @@ class SparqlQueryTestCase(unittest.TestCase):
         rel = rel or ""
         return urlparse.urljoin(self._endpointpath,rel)
 
+    def getRequestUri(self, rel):
+        return "http://"+self._endpointhost+self.getRequestPath(rel)
+
     def doRequest(self, command, resource, reqdata=None, reqheaders={}, expect_status=200, expect_reason="OK"):
-        logger.debug(command+" http://"+self._endpointhost+self.getRequestPath(resource))
+        logger.debug(command+" "+self.getRequestUri(resource))
         if self._endpointuser:
             auth = base64.encodestring("%s:%s" % (self._endpointuser, self._endpointpass)).strip()
             reqheaders["Authorization"] = "Basic %s" % auth
