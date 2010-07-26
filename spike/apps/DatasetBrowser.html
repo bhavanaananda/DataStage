@@ -3,7 +3,7 @@
 <html>
 
 <head>
-    <title>Display RDF manifest for dataset</title>
+    <title>Display dataset information</title>
 
     <!-- Import jQuery framework -->
     <style>
@@ -25,7 +25,7 @@
         padding: 4px;
         background-color: #FFE;
     }
-   
+
     </style>
     <script type="text/javascript" src="js/jquery-1.4.2.js"></script> 
     <script type="text/javascript" src="js/jquery.json-2.2.js"></script> 
@@ -57,8 +57,8 @@
     <script type="text/javascript" src="js/shuffl/shuffl-base.js"></script>
     <script type="text/javascript" src="js/shuffl/AsyncComputation.js"></script>
 
-    <!-- Import RDF manifest display code -->
-    <script type="text/javascript" src="RDFManifest.js"></script>
+    <!-- Import dataset information display code -->
+    <script type="text/javascript" src="DatasetBrowser.js"></script>
 
     <script>
     // Use jQuery via jQuery(...)
@@ -68,16 +68,16 @@
     <!-- Execute the code -->
 	  <script>
 	  jQuery(document).ready( function () {
-				RDFManifest.display(jQuery("#manifest"));
+				DatasetBrowser.display(jQuery("#dataset"));
 	  });
 	  </script>  
 
 </head>
 
 <body>
-  <h1>RDF manifest for test dataset</h1>
-  <div>Display RDF manifest from RDFDatabank dataset.</div>
-  <div id="manifest">(to be replaced)</div>
+  <h1>Information about datasets</h1>
+  <div>Displays information about RDFDatabank datasets.</div>
+  <div id="dataset">(to be replaced)</div>
 </body>
 
 </html>
