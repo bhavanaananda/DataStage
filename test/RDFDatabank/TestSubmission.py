@@ -125,18 +125,16 @@ class TestSubmission(SparqlQueryTestCase.SparqlQueryTestCase):
         rdfdata = self.doHTTP_GET(
             resource="datasets/TestSubmission", 
             expect_status=200, expect_reason="OK", expect_type="application/rdf+xml")
-        print rdfdata #######
+        ###### print rdfdata #######
         rdfgraph = Graph()
         rdfstream = StringIO(rdfdata)
         rdfgraph.parse(rdfstream) 
         self.assertEqual(len(rdfgraph),9,'Graph length %i' %len(rdfgraph))
-        #TODO: here be dragons, will change eventually
-        subj  = URIRef("http://163.1.127.173/admiral-test/datasets/TestSubmission")
-        stype = URIRef("http://vocab.ox.ac.uk/dataset/schema#Grouping")
-        self.failUnless((subj,RDF.type,stype) in rdfgraph, 'Testing submission type')        
+        subj  = URIRef(self.getRequestUri("datasets/TestSubmission"))
+        stype = URIRef("http://vocab.ox.ac.uk/dataset/schema#Grouping") #####TODO: change
+        self.failUnless((subj,RDF.type,stype) in rdfgraph, 'Testing submission type: '+subj+", "+stype)
         dcterms = "http://purl.org/dc/terms/"
-        #TODO: here be dragons, will change eventually
-        base = "http://%s%sdatasets/TestSubmission/" %(self._endpointhost, self._endpointpath)
+        base = self.getRequestUri("datasets/TestSubmission/")
         ore  = "http://www.openarchives.org/ore/terms/"
         self.failUnless((subj,URIRef(dcterms+"modified"),None) in rdfgraph, 'dcterms:modified')
         self.failUnless((subj,URIRef(dcterms+"isVersionOf"),None) in rdfgraph, 'dcterms:isVersionOf')
@@ -258,13 +256,11 @@ class TestSubmission(SparqlQueryTestCase.SparqlQueryTestCase):
         rdfstream = StringIO(rdfdata)
         rdfgraph.parse(rdfstream) 
         self.assertEqual(len(rdfgraph),10,'Graph length %i' %len(rdfgraph))
-        # here be dragons, will change eventually
-        subj = URIRef("http://163.1.127.173/admiral-test/datasets/TestSubmission")
-        stype = URIRef("http://vocab.ox.ac.uk/dataset/schema#Grouping")
-        self.failUnless((subj,RDF.type,stype) in rdfgraph, 'Testing submission type')        
+        subj  = URIRef(self.getRequestUri("datasets/TestSubmission"))
+        stype = URIRef("http://vocab.ox.ac.uk/dataset/schema#Grouping") #####TODO: change
+        self.failUnless((subj,RDF.type,stype) in rdfgraph, 'Testing submission type: '+subj+", "+stype)
         dcterms = "http://purl.org/dc/terms/"
-        # here be dragons, will change eventually
-        base = "http://%s%sdatasets/TestSubmission/" %(self._endpointhost, self._endpointpath)
+        base = self.getRequestUri("datasets/TestSubmission/")
         ore = "http://www.openarchives.org/ore/terms/"
         self.failUnless((subj,URIRef(dcterms+"modified"),None) in rdfgraph, 'dcterms:modified')
         self.failUnless((subj,URIRef(dcterms+"isVersionOf"),None) in rdfgraph, 'dcterms:isVersionOf')
