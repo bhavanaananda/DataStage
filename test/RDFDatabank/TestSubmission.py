@@ -1,7 +1,7 @@
 #!/usr/bin/python
 # $Id:  $
 """
-HTTP and SPARQL query test case support functions 
+Databank submission test cases
 
 $Rev: $
 """
