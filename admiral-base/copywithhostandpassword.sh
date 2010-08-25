@@ -12,13 +12,15 @@
 # MIT Licensed - see LICENCE.txt or http://www.opensource.org/licenses/mit-license.php
 #
 
+USAGE= "$0 (test|copy) hostname password workgroup leadername"
+
 if [[ "$1" != "test" && "$1" != "copy" ]]; then
-    echo "Usage: $0 (test|copy) hostname password workgroup leadername"
+    echo "Usage: $USAGE"
     exit 2
 fi
 
 if [[ "$2" == "" || "$3" == "" || "$4" == "" || "$5" == "" ]]; then
-    echo "Usage: $0 (test|copy) hostname password leadername"
+    echo "Usage: $USAGE"
     exit 2
 fi
 
