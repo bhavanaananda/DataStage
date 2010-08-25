@@ -5,8 +5,9 @@
 # Copy files from source directory to target directory, ignoring those listed as
 # blacklisted, and replace the originals with a symlink to the copy.
 #
-# (This is to be used for moving working-copy files into a repository workspace,
-# then running the working copy from the repository space.)
+# This is used to creayte a test  working copy of an ADMIRAL system, with
+# supplied host name, password and group leader names interpolated into key 
+# configuration files (???)
 #
 # Copyright (c) 2010 University of Oxford
 # MIT Licensed - see LICENCE.txt or http://www.opensource.org/licenses/mit-license.php
