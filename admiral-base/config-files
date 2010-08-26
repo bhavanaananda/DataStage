@@ -36,7 +36,10 @@ common-auth /root/common-auth
 sources.list /etc/apt/sources.list
 ADMIRAL.README /root/ADMIRAL.README
 firstboot.sh /root/firstboot.sh
-postboot.sh /root/postboot.sh
+postboot-1.sh /root/postboot-1.sh
+postboot-2.sh /root/postboot-2.sh
+postboot-3.sh /root/postboot-3.sh
+postboot-4.sh /root/postboot-4.sh
 lvmconfig.sh /root/lvmconfig.sh
 etcldap.conf /root/etcldap.conf
 admiralconfig.sh /root/admiralconfig.sh
