@@ -2,6 +2,13 @@
 #
 # Run from new VM console or SSH session
 
+echo =============================
+echo "Install LDAP packages"
+echo =============================
+
+apt-get update
+apt-get install -qy --force-yes libpam-ldap
+
 echo ===============================
 echo "Configure LDAP"
 echo ===============================

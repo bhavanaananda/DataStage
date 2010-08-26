@@ -7,7 +7,7 @@ echo "Install new packages"
 echo =============================
 
 apt-get update
-apt-get install -qy --force-yes libpam-krb5 nagios3 nagios-nrpe-plugin nagios-nrpe-server tsm-client libpam-ldap
+apt-get install -qy --force-yes libpam-krb5 nagios3 nagios-nrpe-plugin nagios-nrpe-server tsm-client
 
 echo =============================
 echo "Configure new packages"
