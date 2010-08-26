@@ -13,3 +13,6 @@ syntax: glob
 # switch to regexp syntax.
 #syntax: regexp
 #^\.pc/
+
+syntax: regexp
+^\.pydevproject$
