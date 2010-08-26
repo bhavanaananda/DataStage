@@ -27,8 +27,8 @@ answers() {
 	echo Zoology Department
 	echo %{HOSTNAME}
 	echo .
-        echo challenge
-        echo optional-company
+    echo challenge
+    echo optional-company
 }
 answers | sudo openssl req -new -key %{HOSTNAME}.key -out %{HOSTNAME}.csr
 
