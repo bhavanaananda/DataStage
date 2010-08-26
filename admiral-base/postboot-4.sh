@@ -9,13 +9,13 @@ if [[ "$1" != "test" && ! -e /mnt/lv-admiral-data/data/ADMIRAL.README ]]; then
 fi
 
 echo ===========================================
-echo Installing and configuring shared data area
+echo "Installing and configuring shared data area"
 echo ===========================================
 
 ./admiraldatasetup.sh
 /etc/init.d/apache2 restart
 
 echo =================================
-echo Next step: configure system users
+echo "Next step: configure system users"
 echo =================================
 

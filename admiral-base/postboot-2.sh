@@ -3,14 +3,14 @@
 # Run from new VM console or SSH session
 
 echo =============================
-echo Install new packages
+echo "Install new packages"
 echo =============================
 
 apt-get update
 apt-get install -qy --force-yes libpam-krb5 nagios3 nagios-nrpe-plugin nagios-nrpe-server tsm-client libpam-ldap
 
 echo =============================
-echo Configure new packages
+echo "Configure new packages"
 echo =============================
 
 cp /root/common-password /etc/pam.d/common-password
@@ -24,7 +24,7 @@ cp /root/*.html /var/www/docs
 newaliases
 
 echo =============================
-echo Configure and enable firewall
+echo "Configure and enable firewall"
 echo =============================
 
 ufw allow ssh
@@ -34,5 +34,5 @@ ufw allow samba
 ufw enable
 
 echo =============================
-echo Next step: postboot_3.sh
+echo "Next step: postboot_3.sh"
 echo =============================

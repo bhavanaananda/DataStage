@@ -17,6 +17,6 @@ cp /root/ssh_config /etc/ssh/ssh_config
 cp /root/sshd_config /etc/ssh/sshd_config
 
 echo =============================
-echo Next step: postboot_2.sh
-echo (should be able to run via SSH)
+echo "Next step: postboot_2.sh"
+echo "should be able to run via SSH"
 echo =============================
