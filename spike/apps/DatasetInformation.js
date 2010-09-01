@@ -51,8 +51,9 @@ DatasetInformation.display = function (jelem)
              var jsondata = jQuery.toJSON(data);
              // jelem.append("<p>" + jsondata + "</p>");
              jelem.text("");
+             jelem.append("br /><center>" + data.state.item_id + "</center>" + "  the link to rdf datasetname " );
              jelem.append("<br /><table>");
-             jelem.append("<tr><td><strong>Property</strong></td>" + "<td><strong>Value</strong></td></tr>");
+            jelem.append("<tr><td><strong>Property</strong></td>" + "<td><strong>Value</strong></td></tr>");
              jelem.append("<tr><td>Submission identifier</td><td>" + data.state.item_id + "</td></tr>");
              jelem.append("<tr><td>Created by</td><td>" + data.state.metadata.createdby + "</td></tr>");
              jelem.append("<tr><td>Current version</td><td>" + data.state.currentversion + "</td></tr>");
