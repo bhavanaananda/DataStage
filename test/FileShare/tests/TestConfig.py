@@ -5,11 +5,12 @@
 
 class TestConfig:
 
-    hostname         = "zoo-admiral-silk.zoo.ox.ac.uk"
+    hostname         = "zakynthos.zoo.ox.ac.uk"
+    #hostname         = "zoo-admiral-silk.zoo.ox.ac.uk"
     cifssharename    = "data"
     cifsmountpoint   = "mountadmiral"
     webdavmountpoint = "mountadmiralwebdav"
-    webdavbaseurl    = "http://zoo-admiral-silk.zoo.ox.ac.uk/data/"
+    webdavbaseurl    = "http://"+hostname+"/data/"
     readmefile       = "ADMIRAL.README"
     readmetext       = "This directory is the root of the ADMIRAL shared file system.\n"
     userAname        = "TestUser1"
