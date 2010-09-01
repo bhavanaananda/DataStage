@@ -8,6 +8,11 @@ if [[ "$1" != "test" && ! -e /mnt/lv-admiral-data/data/ADMIRAL.README ]]; then
   exit
 fi
 
+if [[ "$1" == "test" ]]
+  mkdir /mnt/lv-admiral-data
+  mkdir /mnt/lv-admiral-data/home
+fi
+
 echo ===========================================
 echo "Installing and configuring shared data area"
 echo ===========================================

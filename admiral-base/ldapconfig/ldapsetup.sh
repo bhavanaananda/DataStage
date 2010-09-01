@@ -71,6 +71,7 @@ echo user added, as UID detection fails
 echo first time round
 echo ====================================
 smbldap-userdel -r test_admiral
+echo User test_admiral deleted
 
 echo =========================
 echo Configuring PAM/LDAP
@@ -83,5 +84,7 @@ echo lines in common-auth the wrong way round!
 echo =========================================
 cp common-auth /etc/pam.d/common-auth
 cp etcldap.conf /etc/ldap.conf
+echo "/etc/pam.d/common-auth and /etc/ldap.conf updated"
+
 /etc/init.d/samba restart
 

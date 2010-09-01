@@ -39,6 +39,11 @@ def getTestSuite(select="all"):
 from MiscLib import TestUtils
 
 if __name__ == "__main__":
+    print "============================================================"
+    print "This test suite needs to run under a Linux operating system"
+    print "Edit TestConfig.py to specify hostname and other parameters"
+    print "Create test accounts on target system to match TestConfig.py"
+    print "============================================================"
     TestUtils.runTests("TestAll", getTestSuite, sys.argv)
 
 # End.
