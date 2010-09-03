@@ -47,12 +47,89 @@ TestDatasetTree = function()
         same(seg4, [[]], "list with empty path");
 
         var seg5 = admiral.segmentPaths(["a","","b/c/d/e"]);
-        same(seg5, [["a"], [], ["b","c","d","e"]], "list with empty path");
+        same(seg5, [["a"], [], ["b","c","d","e"]], "list with varying path lengths");
 
         //same(val, exp, "what");
         //ok(cond,"msg")
     });
+    
+    test ("testSegmentTreeBuilder", function()
+    {
+    	logtest("testSegmentTreeBuilder");
+    	
+		same(admiral.segmentTreeBuilder([["a"], ["b"], ["c"]]),
+			[ { segment: 'a', subtree: null}
+			, { segment: 'b', subtree: null}
+			, { segment: 'c', subtree: null}
+			], 
+			"Single-segment paths");
+        
+        same(admiral.segmentTreeBuilder([["a","b"]]),
+            [ { segment: 'a', subtree: [ {segment: 'b', subtree: null} ] }
+            ], 
+            "2-segment path");
+    	
+		same(admiral.segmentTreeBuilder([["a","b"], ["b","c"], ["c","d"]]),
+			[ { segment: 'a', subtree: [ {segment: 'b', subtree: null} ] }
+			, { segment: 'b', subtree: [ {segment: 'c', subtree: null} ] }
+			, { segment: 'c', subtree: [ {segment: 'd', subtree: null} ] }
+			], 
+			"2-segment paths");
+    	
+		same(admiral.segmentTreeBuilder([]),
+		    [],
+			"empty list of paths");
+    	
+		same(admiral.segmentTreeBuilder([[]]),
+		    [ { segment: '', subtree: null } ],
+			"list with empty path");
+    	
+		same(admiral.segmentTreeBuilder([["a"], [], ["b","c","d","e"]]),
+			[ { segment: 'a', subtree: null }
+			, { segment: '',  subtree: null }
+			, { segment: 'b', subtree: 
+ 			    [ { segment: 'c', subtree: 
+			        [ { segment: 'd', subtree:
+			            [ { segment: 'e', subtree: null } ] }
+			        ] }
+			    ] }
+			], 
+			"list with varying path lengths");
+
+        same(admiral.segmentTreeBuilder(
+            [ [ "a", "b", "c" ]
+            , [ "a", "b", "d" ]
+            , [ "a", "b", "e" ]
+            , [ "a", "f", "g" ]
+            , [ "a", "f", "h" ]
+            , [ "b", "i" ]
+            , [ "b", "j" ]
+            ]),
+            [ { segment: 'a', subtree: 
+                [ { segment: 'b', subtree:
+                    [ { segment: 'c', subtree: null }
+                    , { segment: 'd', subtree: null }
+                    , { segment: 'e', subtree: null }
+                    ] 
+                  }
+                , { segment: 'f', subtree: 
+                    [ { segment: 'g', subtree: null }
+                    , { segment: 'h', subtree: null }
+                    ] 
+                  }
+                ] 
+              }
+            , { segment: 'b', subtree:
+                [ { segment: 'i', subtree: null }
+                , { segment: 'j', subtree: null }
+                ] 
+              }
+            ], 
+            "list with common leading segment sequences");
+    });
 
 };
+
+
 
 // End

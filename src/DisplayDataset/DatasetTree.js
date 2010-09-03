@@ -32,18 +32,62 @@ if (typeof admiral == "undefined")
  */
 admiral.segmentPaths = function (listofpaths)
 {
-	function splitPath(path) {
-		if (path.length == 0) {
+	function splitPath(path) 
+	{
+		if (path.length == 0) 
+		{
 			return [];
 		}
 		return path.split("/");
 	}
     log.debug("admiral.segmentPaths "+jQuery.toJSON(listofpaths));
 	return MochiKit.Base.map (splitPath, listofpaths);
-	
 };
 
-
+/**
+ * Convert array of segment arrays (as returned by admiral.segmentPaths) into
+ * a traversable tree structure.
+ * 
+ * In the returned tree value, each tree nodes is a list of branches or 
+ * leaf nodes, where each branch is an object (structure) with members 
+ * 'segment' and 'subtree', and a leaf node is similar except that the 
+ * 'subtree' member is null.
+ * 
+ * NOTE: input segment array are assumed to be ordered such that common
+ * leading segment subsequences appear adjacent in the array of arrays.
+ * 
+ * @param segmentlists  an array of arays, each of which contains an
+ *                      array of segments in an input path.
+ * @return              a tree structure reflecing the branching.
+ */
+admiral.segmentTreeBuilder = function (segmentlists)
+{
+    log.debug("admiral.segmentTreeBuilder "+jQuery.toJSON(segmentlists));
+    function generateTreePath(seglist, depth)
+    {
+    	if ( depth >= seglist.length ) return null;
+    	var subtree = generateTreePath(seglist, depth+1);
+    	return { segment: seglist[depth], subtree: (subtree != null ? [ subtree ] : null) };
+    }
+    var tree = [];
+    for (var i = 0 ; i < segmentlists.length ; i++)
+    {
+    	var seglist = segmentlists[i];
+    	if (seglist.length == 0)
+    	{
+            tree.push( { segment: '', subtree: null } );    		
+    	} 
+    	else if (seglist.length == 1)
+    	{
+	        tree.push( { segment: seglist[0], subtree: null } );
+    	}
+    	else
+    	{
+    		tree.push( generateTreePath(seglist, 0));
+    	}
+    }
+    return tree;
+};
 
 /**
  * .....
