@@ -77,10 +77,6 @@ admiral.segmentTreeBuilder = function (segmentlists)
     	{
             tree.push( { segment: '', subtree: null } );    		
     	} 
-    	else if (seglist.length == 1)
-    	{
-	        tree.push( { segment: seglist[0], subtree: null } );
-    	}
     	else
     	{
     		tree.push( generateTreePath(seglist, 0));
