@@ -32,10 +32,18 @@ if (typeof admiral == "undefined")
  */
 admiral.segmentPaths = function (listofpaths)
 {
+	function splitPath(path) {
+		if (path.length == 0) {
+			return [];
+		}
+		return path.split("/");
+	}
     log.debug("admiral.segmentPaths "+jQuery.toJSON(listofpaths));
-    return [ ["a"], ["b"], ["c"] ];
-    throw new shuffl.Error("admiral.segmentPaths not implemented");
+	return MochiKit.Base.map (splitPath, listofpaths);
+	
 };
+
+
 
 /**
  * .....
