@@ -69,8 +69,26 @@ admiral.segmentTreeBuilder = function (segmentlists)
       	var subtree = generateTreePath(seglist, depth+1);
       	return { segment: seglist[depth], subtree: (subtree != null ? [ subtree ] : null) };
     }
+    function mergeBranch(tree, basebranch, newbranch)
+    {
+        //TODO: this passes the current test cases, but the recursion-limiting
+        //      test is gfragile.  E.g. a repeated segment list or segment
+        //      used as both a node and a leaf could cause problems.
+        if (!basebranch || (basebranch.segment != newbranch.segment))
+        {
+            tree.push( newbranch );
+            basebranch = newbranch;
+        }            
+        else
+        {
+            mergeBranch(
+                basebranch.subtree, 
+                basebranch.subtree[basebranch.subtree.length-1], 
+                newbranch.subtree[0]);
+        }
+        return basebranch;
+    }
     var tree = [];
-    var cursegment = undefined;
     var curbranch  = undefined;
     for (var i = 0 ; i < segmentlists.length ; i++)
     {
@@ -81,17 +99,8 @@ admiral.segmentTreeBuilder = function (segmentlists)
         } 
         else
         {
-            var branch = generateTreePath(seglist, 0);
-            if (seglist[0] != cursegment)
-            {
-                cursegment = seglist[0];
-              	curbranch  = branch
-              	tree.push( branch );
-            }            
-            else
-            {
-                curbranch.subtree.push(branch.subtree[0]);
-            }
+            var newbranch = generateTreePath(seglist, 0);
+            curbranch = mergeBranch(tree, curbranch, newbranch);
     	}
     }
     return tree;
