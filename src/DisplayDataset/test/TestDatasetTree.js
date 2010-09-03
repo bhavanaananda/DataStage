@@ -97,6 +97,30 @@ TestDatasetTree = function()
 			"list with varying path lengths");
 
         same(admiral.segmentTreeBuilder(
+            [ [ "a", "m" ]
+            , [ "a", "n" ]
+            , [ "a", "o" ]
+            , [ "b", "p" ]
+            , [ "b", "q", "r" ]
+            ]),
+            [ { segment: 'a', subtree: 
+                [ { segment: 'm', subtree: null }
+                , { segment: 'n', subtree: null }
+                , { segment: 'o', subtree: null }
+                ] 
+              }
+            , { segment: 'b', subtree:
+                [ { segment: 'p', subtree: null }
+                , { segment: 'q', subtree: 
+                    [ { segment: 'r', subtree: null }
+                    ] 
+                  }
+                ] 
+              }
+            ], 
+            "list with leading segment (1 level only)");
+
+        same(admiral.segmentTreeBuilder(
             [ [ "a", "b", "c" ]
             , [ "a", "b", "d" ]
             , [ "a", "b", "e" ]

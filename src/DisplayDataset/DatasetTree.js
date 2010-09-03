@@ -70,6 +70,8 @@ admiral.segmentTreeBuilder = function (segmentlists)
     	return { segment: seglist[depth], subtree: (subtree != null ? [ subtree ] : null) };
     }
     var tree = [];
+    var cursegment = undefined;
+    var curbranch  = undefined;
     for (var i = 0 ; i < segmentlists.length ; i++)
     {
     	var seglist = segmentlists[i];
@@ -79,7 +81,21 @@ admiral.segmentTreeBuilder = function (segmentlists)
     	} 
     	else
     	{
-    		tree.push( generateTreePath(seglist, 0));
+            if (seglist[0] != cursegment)
+            {
+                cursegment = seglist[0];
+            	curbranch = { segment: cursegment, subtree: null }
+            	tree.push( curbranch );
+            }            
+    		var branch = generateTreePath(seglist, 0);
+            if (curbranch.subtree == null)
+            {
+            	curbranch.subtree = branch.subtree;
+            }
+            else
+            {
+                curbranch.subtree.push(branch.subtree[0]);
+            }
     	}
     }
     return tree;
