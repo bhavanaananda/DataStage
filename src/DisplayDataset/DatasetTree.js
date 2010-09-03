@@ -65,33 +65,29 @@ admiral.segmentTreeBuilder = function (segmentlists)
     log.debug("admiral.segmentTreeBuilder "+jQuery.toJSON(segmentlists));
     function generateTreePath(seglist, depth)
     {
-    	if ( depth >= seglist.length ) return null;
-    	var subtree = generateTreePath(seglist, depth+1);
-    	return { segment: seglist[depth], subtree: (subtree != null ? [ subtree ] : null) };
+      	if ( depth >= seglist.length ) return null;
+      	var subtree = generateTreePath(seglist, depth+1);
+      	return { segment: seglist[depth], subtree: (subtree != null ? [ subtree ] : null) };
     }
     var tree = [];
     var cursegment = undefined;
     var curbranch  = undefined;
     for (var i = 0 ; i < segmentlists.length ; i++)
     {
-    	var seglist = segmentlists[i];
-    	if (seglist.length == 0)
-    	{
+        var seglist = segmentlists[i];
+        if (seglist.length == 0)
+        {
             tree.push( { segment: '', subtree: null } );    		
-    	} 
-    	else
-    	{
+        } 
+        else
+        {
+            var branch = generateTreePath(seglist, 0);
             if (seglist[0] != cursegment)
             {
                 cursegment = seglist[0];
-            	curbranch = { segment: cursegment, subtree: null }
-            	tree.push( curbranch );
+              	curbranch  = branch
+              	tree.push( branch );
             }            
-    		var branch = generateTreePath(seglist, 0);
-            if (curbranch.subtree == null)
-            {
-            	curbranch.subtree = branch.subtree;
-            }
             else
             {
                 curbranch.subtree.push(branch.subtree[0]);
