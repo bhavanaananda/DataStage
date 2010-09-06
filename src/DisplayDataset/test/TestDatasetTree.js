@@ -150,6 +150,64 @@ TestDatasetTree = function()
               }
             ], 
             "list with common leading segment sequences");
+    
+        same(admiral.segmentTreeBuilder(
+            [ [ "a", "b", "c" ]
+            , [ "a", "b", "d" ]
+            , [ "a", "b", "d" ]
+            , [ "b", "j" ]
+            ]),
+            [ { segment: 'a', subtree: 
+                [ { segment: 'b', subtree:
+                    [ { segment: 'c', subtree: null }
+                    , { segment: 'd', subtree: null }
+                    ] 
+                  }
+                ] 
+              }
+            , { segment: 'b', subtree:
+                [ { segment: 'j', subtree: null }
+                ] 
+              }
+            ], 
+            "list with 2 or more identical seglists");
+
+    });
+    
+    test ("testLeafAsNode", function()
+    {
+        logtest("testLeafAsNode");
+        var exceptionSeen = false;
+        try 
+        {    
+	        var x = admiral.segmentTreeBuilder(
+	            [ [ "a", "b", "c" ]
+	            , [ "a", "b" ]
+	            , [ "a", "b", "d" ]
+	            , [ "b", "j" ]
+	            ]); 
+        } catch (e)
+        {
+        	equals(e.toString(), "shuffl error: node used as branch and leaf");
+        	exceptionSeen = true;
+        } 
+        ok(exceptionSeen, "exception expected");     
+            
+        exceptionSeen = false;
+        try 
+        {    
+            var x = admiral.segmentTreeBuilder(
+                [ [ "a", "b", "c" ]
+                , [ "a", "b", "d" ]
+                , [ "a", "b" ]
+                , [ "b", "j" ]
+                ]); 
+        } catch (e)
+        {
+            equals(e.toString(), "shuffl error: node used as branch and leaf");
+            exceptionSeen = true;
+        } 
+        ok(exceptionSeen, "exception expected");
     });
 
 };

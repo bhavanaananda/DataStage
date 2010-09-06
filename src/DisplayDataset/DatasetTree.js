@@ -71,20 +71,25 @@ admiral.segmentTreeBuilder = function (segmentlists)
     }
     function mergeBranch(tree, basebranch, newbranch)
     {
-        //TODO: this passes the current test cases, but the recursion-limiting
-        //      test is gfragile.  E.g. a repeated segment list or segment
-        //      used as both a node and a leaf could cause problems.
         if (!basebranch || (basebranch.segment != newbranch.segment))
         {
             tree.push( newbranch );
             basebranch = newbranch;
         }            
-        else
+        else if(basebranch.subtree != null && newbranch.subtree != null) 
         {
             mergeBranch(
                 basebranch.subtree, 
                 basebranch.subtree[basebranch.subtree.length-1], 
                 newbranch.subtree[0]);
+        }
+        else if(basebranch.subtree != newbranch.subtree) 
+        {
+        	throw new shuffl.Error("node used as branch and leaf");
+        }
+        else
+        {
+        	log.debug("duplicate branch; nothing new to add");
         }
         return basebranch;
     }
