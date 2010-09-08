@@ -188,7 +188,7 @@ TestDatasetTree = function()
 	            ]); 
         } catch (e)
         {
-        	equals(e.toString(), "shuffl error: node used as branch and leaf");
+        	equals(e.toString(), "admiral error: node used as branch and leaf");
         	exceptionSeen = true;
         } 
         ok(exceptionSeen, "exception expected");     
@@ -204,7 +204,7 @@ TestDatasetTree = function()
                 ]); 
         } catch (e)
         {
-            equals(e.toString(), "shuffl error: node used as branch and leaf");
+            equals(e.toString(), "admiral error: node used as branch and leaf");
             exceptionSeen = true;
         } 
         ok(exceptionSeen, "exception expected");

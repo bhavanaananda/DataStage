@@ -85,7 +85,7 @@ admiral.segmentTreeBuilder = function (segmentlists)
         }
         else if(basebranch.subtree != newbranch.subtree) 
         {
-        	throw new shuffl.Error("node used as branch and leaf");
+        	throw new admiral.Error("node used as branch and leaf");
         }
         else
         {
@@ -122,7 +122,7 @@ admiral.segmentTreeBuilder = function (segmentlists)
 admiral.cccccc = function (aaaa, bbbb)
 {
     ////log.debug("admiral.cccccc "+aaaa+", "+bbbb);
-    throw new shuffl.Error("admiral.cccccc not implemented");
+    throw new admiral.Error("admiral.cccccc not implemented");
 };
 
 //// admiral.cccccc.prototype = new prototypeclass(....);
@@ -137,7 +137,7 @@ admiral.cccccc = function (aaaa, bbbb)
 admiral.cccccc.prototype.ffffff = function (aaaa, bbbb)
 {
     ////log.debug("admiral.cccccc.prototype.ffffff "+aaaa+", "+bbbb);
-    throw new shuffl.Error("admiral.cccccc.prototype.ffffff not implemented");
+    throw new admiral.Error("admiral.cccccc.prototype.ffffff not implemented");
 };
 
 // End.

@@ -2,7 +2,7 @@
  * @fileoverview
  *  ADMIRAL zzzzzz
  *  
- * @author sho
+ * @author zzz
  * @version $Id: $
  * 
  * Coypyright (C) 2010, University of Oxford
@@ -33,7 +33,7 @@ if (typeof admiral == "undefined")
 admiral.ffffff = function (aaaa, bbbb)
 {
     ////log.debug("admiral.ffffff "+aaaa+", "+bbbb);
-    throw new shuffl.Error("admiral.ffffff not implemented");
+    throw new admiral.Error("admiral.ffffff not implemented");
 };
 
 /**
@@ -47,7 +47,7 @@ admiral.ffffff = function (aaaa, bbbb)
 admiral.cccccc = function (aaaa, bbbb)
 {
     ////log.debug("admiral.cccccc "+aaaa+", "+bbbb);
-    throw new shuffl.Error("admiral.cccccc not implemented");
+    throw new admiral.Error("admiral.cccccc not implemented");
 };
 
 //// admiral.cccccc.prototype = new prototypeclass(....);
@@ -62,7 +62,7 @@ admiral.cccccc = function (aaaa, bbbb)
 admiral.cccccc.prototype.ffffff = function (aaaa, bbbb)
 {
     ////log.debug("admiral.cccccc.prototype.ffffff "+aaaa+", "+bbbb);
-    throw new shuffl.Error("admiral.cccccc.prototype.ffffff not implemented");
+    throw new admiral.Error("admiral.cccccc.prototype.ffffff not implemented");
 };
 
 // End.
