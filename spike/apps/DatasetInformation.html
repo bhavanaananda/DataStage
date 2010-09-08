@@ -12,17 +12,22 @@
     }
 
     table {
+/*
         border-color: #600;
         border-width: 1px 1px 1px 1px;
         border-style: solid;
+*/
     }	
 
     td {
+/*
         border-color: #600;
         border-width: 1px 1px 1px 1px;
         border-style: solid;
+
         margin: 0;
         padding: 4px;
+*/
         background-color: #FFE;
     }
 
@@ -69,9 +74,19 @@
     <!-- Execute the code -->
 	  <script>
 	  jQuery(document).ready( function () {
-				DatasetState.display(jQuery(".dataset"));
-				RDFManifest.display(jQuery(".manifest"));
-                                jQuery((".display").hide());
+	            var m = new shuffl.AsyncComputation();
+	            m.eval(function (val, callback)
+	            {
+	               DatasetState.display(jQuery(".dataset"), callback);
+	            });
+	            m.eval(function (val, callback)
+	            {
+	               RDFManifest.display(jQuery(".manifest"));
+	            });
+	            m.exec(null, shuffl.noop);
+				
+//			jQuery("#datasetName").text(jQuery("#submissionIdentifier").text());
+//                                jQuery(".display").hide();
 //                                jQuery("# container .manifest ul").prepend(<li class='readbody'><a href='' title='Read the article'>Read Body</a></li>");
  //                               jQuery(".actions li. readbody a").click(function(event){
   //                              jQuery((this).parents("ul).prev(".display").toggle());
@@ -83,12 +98,15 @@
 </head>
 
 <body>
- <h1>Information about test dataset</h1>
- <p>Displays information about an RDFDatabank dataset.</p>
+ <h1>Information about <a id="datasetLink" href="dummy"><span id="datasetName">...</span></a></h1>
    <div class="dataset">(to be replaced)</div>
+<p />
   <div class="manifest">
     <div class="display">(to be replaced)</div>
   </div>
+
+
+
  
 </body>
 
