@@ -82,33 +82,36 @@ admiral.displayDatasetManifest = function (jelem, callback)
     m.eval(function (rq, callback)
     {
         rq = rq.where('?s ?p ?o');
-        rq.each(function ()
-        {
-            jelem.text("");
-            if(this.p.value.toString()=="http://purl.org/dc/terms/isVersionOf") {
-                  jQuery("#derivedFrom > a").text(this.o.value.toString());
-                  jQuery("#derivedFrom > a").attr("href", this.o.value);
-            } else if(this.p.value.toString()=="http://purl.org/dc/terms/modified") {
-                jQuery("#lastModified").text(this.o.value);
- 
-            }
-        });
-        jelem.append("<h3>Contents of Dataset </h3>");
+
         jQuery("#datasetLink").attr("href", rq[0].s.value);
 
-        var newText = "";
         var fileAbsolutePaths = new Array();
+        var fileRelativePaths = new Array();
 
         rq.each(function ()
         {
-             if(shuffl.starts(this.s.value.toString(), this.o.value.toString())) {
-                 newText = newText + "<a href=\""+this.o.value+"\">"+jQuery.uri.relative(this.o.value, this.s.value).toString()+"</a><br />";
-                 fileAbsolutePaths.push(jQuery.uri.relative(this.o.value, this.s.value).toString());
+            if (this.p.value.toString()=="http://purl.org/dc/terms/isVersionOf")
+            {
+				jQuery("#derivedFrom > a").text(this.o.value.toString());
+				jQuery("#derivedFrom > a").attr("href", this.o.value.toString());
+            } 
+            else if (this.p.value.toString()=="http://purl.org/dc/terms/modified")
+            {
+                jQuery("#lastModified").text(this.o.value);
+            }
+            else if (this.p.value.toString()=="http://www.openarchives.org/ore/terms/aggregates")
+            {
+                fileAbsolutePaths.push(this.o.value.toString());
+                fileRelativePaths.push(jQuery.uri.relative(this.o.value, this.s.value).toString());
             }
         });
  
-        jelem.append("<div style=\"border-color:#600;border-width: 1px 1px 1px 1px;border-style:solid;width:700px;height:100px;background-color: #FFE;overflow:auto;\" >" + newText + "</div>");
- 
+        var seglists = admiral.segmentPaths(fileRelativePaths.sort());
+        var segtree  = admiral.segmentTreeBuilder(seglists);
+        var seghtml  = admiral.nestedListBuilder(segtree);
+        jelem.text("");
+        jelem.append(seghtml);
+        seghtml.treeview();
     });
 
     // TODO: replace hard-wired dataset with parameter

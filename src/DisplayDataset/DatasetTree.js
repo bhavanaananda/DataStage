@@ -83,9 +83,14 @@ admiral.segmentTreeBuilder = function (segmentlists)
                 basebranch.subtree[basebranch.subtree.length-1], 
                 newbranch.subtree[0]);
         }
-        else if(basebranch.subtree != newbranch.subtree) 
+        else if ((basebranch.subtree == null) && (newbranch.subtree != null)) 
         {
-        	throw new admiral.Error("node used as branch and leaf");
+            // New branch replaces existing leaf
+            basebranch.subtree = newbranch.subtree;
+        }
+        else if ((basebranch.subtree != null) && (newbranch.subtree == null)) 
+        {
+            log.debug("incoming leaf at existing branch; nothing new to add");
         }
         else
         {
@@ -112,32 +117,38 @@ admiral.segmentTreeBuilder = function (segmentlists)
 };
 
 /**
- * .....
+ * Convert a file segments tree structure into a jQuery nested directory 
+ * list structure.
  * 
- * @constructor
- * @param aaaa      zzzzzz
- * @param bbbb      zzzzzz
- * @return          zzzzzz
+ * @param tree          a tree structure (a list of branches).
+ * @return              a jQuery element containing a nested structure of
+ *                      unordered lists reflecting the tree.
  */
-admiral.cccccc = function (aaaa, bbbb)
+admiral.nestedListBuilder = function (tree)
 {
-    ////log.debug("admiral.cccccc "+aaaa+", "+bbbb);
-    throw new admiral.Error("admiral.cccccc not implemented");
-};
-
-//// admiral.cccccc.prototype = new prototypeclass(....);
-
-/**
- * .....
- * 
- * @param aaaa      zzzzzz
- * @param bbbb      zzzzzz
- * @return          zzzzzz
- */
-admiral.cccccc.prototype.ffffff = function (aaaa, bbbb)
-{
-    ////log.debug("admiral.cccccc.prototype.ffffff "+aaaa+", "+bbbb);
-    throw new admiral.Error("admiral.cccccc.prototype.ffffff not implemented");
+    log.debug("admiral.nestedListBuilder "+jQuery.toJSON(tree));
+    function appendTree(tree, jelem)
+    {
+	    for (var i = 0 ; i < tree.length ; i++)
+	    {
+	    	if (tree[i].subtree == null)
+	    	{
+	    		// Leaf here
+		        jelem.append("<li><span 'class='file'>"+tree[i].segment+"</span></li>");
+	    	}
+	    	else
+	    	{
+	    		// New branch here
+	            jelem.append("<li><span class='folder'>"+tree[i].segment+"</span><ul/></li>")
+	            appendTree(tree[i].subtree, jelem.find("li:last > ul"));
+	    	}
+	    }
+    }
+    // Start witjh empty list
+    var jelem = jQuery("<ul class='filetree' />");
+    // Append tree to list
+    appendTree(tree, jelem);
+    return jelem;
 };
 
 // End.
