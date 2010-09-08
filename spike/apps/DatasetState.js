@@ -9,7 +9,7 @@ if (typeof DatasetState == "undefined")
     DatasetState = {};
 }
 
-DatasetState.display = function (jelem)
+DatasetState.display = function (jelem, callback)
 {
     var m = new shuffl.AsyncComputation();
     // Read dataset information
@@ -47,28 +47,28 @@ DatasetState.display = function (jelem)
         {
              embargo = data.state.metadata.embargoed;
              var jsondata = jQuery.toJSON(data);
-             // jelem.append("<p>" + jsondata + "</p>");
              jelem.text("");
-             jelem.append("<br /><table>");
-             jelem.append("<tr><td><strong>Property</strong></td>" + "<td><strong>Value</strong></td></tr>");
-             jelem.append("<tr><td>Submission identifier</td><td>" + data.state.item_id + "</td></tr>");
+             jelem.append("<br /><table >");
+             jelem.append("<tr ><td>Submission identifier &nbsp;</td><td id=\"submissionIdentifier\">" + data.state.item_id + "</td></tr>");
              jelem.append("<tr><td>Created by</td><td>" + data.state.metadata.createdby + "</td></tr>");
              jelem.append("<tr><td>Current version</td><td>" + data.state.currentversion + "</td></tr>");
+             jelem.append("<tr><td>Last modified</td><td id=\"lastModified\">...</td></tr>");
              jelem.append("<tr><td>Embargoed?</td><td>" + embargo + "</td></tr>");
              if (embargo == true) {
                  jelem.append("<tr><td>Embargo expiry date</td><td>" + data.state.metadata.embargoed_until + "</td></tr>");
              }
-             jelem.append("<tr><td>RDF file format</td><td>" + data.state.rdffileformat + "</td></tr>");
-             jelem.append("<tr><td>RDF file name</td><td>" + data.state.rdffilename + "</td></tr>");
+             jelem.append("<tr><td>Derived from</td><td><span id=\"derivedFrom\"><a href=\"dummy\">...</a></span></td></tr>");
              jelem.append("</table>");
+             
+             jQuery("#datasetName").text(jQuery("#submissionIdentifier").text());
+             callback(null);
         } 
         catch(e)
         {
             jelem.text("JSON decode: "+e);
-            jelem.css('color', 'red');
         }
     });
 
-    m.exec("http://163.1.127.173/admiral-test/datasets/apps", shuffl.noop);
+    m.exec("/admiral-test/datasets/apps", callback);
 };
 
