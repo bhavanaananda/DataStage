@@ -9,7 +9,7 @@ if (typeof DatasetInformation == "undefined")
     DatasetInformation = {};
 }
 
-var base_dataset = "http://163.1.127.173/admiral-test/datasets/apps";
+var base_dataset = "/admiral-test/datasets/apps";
 
 DatasetInformation.display = function (jelem)
 {
@@ -53,7 +53,7 @@ DatasetInformation.display = function (jelem)
              jelem.text("");
              jelem.append("br /><center>" + data.state.item_id + "</center>" + "  the link to rdf datasetname " );
              jelem.append("<br /><table>");
-            jelem.append("<tr><td><strong>Property</strong></td>" + "<td><strong>Value</strong></td></tr>");
+ //removed           jelem.append("<tr><td><strong>Property</strong></td>" + "<td><strong>Value</strong></td></tr>");
              jelem.append("<tr><td>Submission identifier</td><td>" + data.state.item_id + "</td></tr>");
              jelem.append("<tr><td>Created by</td><td>" + data.state.metadata.createdby + "</td></tr>");
              jelem.append("<tr><td>Current version</td><td>" + data.state.currentversion + "</td></tr>");
@@ -61,15 +61,15 @@ DatasetInformation.display = function (jelem)
              if (embargo == true) {
                  jelem.append("<tr><td>Embargo expiry date</td><td>" + data.state.metadata.embargoed_until + "</td></tr>");
              }
-             jelem.append("<tr><td>RDF file format</td><td>" + data.state.rdffileformat + "</td></tr>");
-             jelem.append("<tr><td>RDF file name</td><td>" + data.state.rdffilename + "</td></tr>");
+//removed            jelem.append("<tr><td>RDF file format</td><td>" + data.state.rdffileformat + "</td></tr>");
+//removed             jelem.append("<tr><td>RDF file name</td><td>" + data.state.rdffilename + "</td></tr>");
              jelem.append("</table>");
              callback(base_dataset);
         } 
         catch(e)
         {
             jelem.text("JSON decode: "+e);
-            jelem.css('color', 'red');
+//removed border            jelem.css('color', 'red');
         }
     });
 
