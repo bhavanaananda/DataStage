@@ -527,6 +527,9 @@ TestDatasetTree = function()
             
         
         
+        //BELOW ARE BENS TEST CASES--THEY REPEAT THE CASES ABOVE BUT PROVIDE FOR LINKS
+        
+        
         var jelem9 = jQuery(
             "<ul class='filetree'>"+
               "<li><span class='folder'>a</span>"+
