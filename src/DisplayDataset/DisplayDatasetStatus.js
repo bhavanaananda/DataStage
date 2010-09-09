@@ -70,6 +70,10 @@ admiral.displayDatasetStatus = function (jelem, callback)
              embargo = data.state.metadata.embargoed;
              var jsondata = jQuery.toJSON(data);
              jelem.text("");
+ 
+ 
+ /*
+ 
              jelem.append("<br /><table >");
              jelem.append("<tr ><td>Submission identifier &nbsp;</td><td id=\"submissionIdentifier\">" + data.state.item_id + "</td></tr>");
              jelem.append("<tr><td>Created by</td><td>" + data.state.metadata.createdby + "</td></tr>");
@@ -81,7 +85,19 @@ admiral.displayDatasetStatus = function (jelem, callback)
              }
              jelem.append("<tr><td>Derived from</td><td><span id=\"derivedFrom\"><a href=\"dummy\">...</a></span></td></tr>");
              jelem.append("</table>");
-             jQuery("#datasetName").text(jQuery("#submissionIdentifier").text());
+ 
+ */
+             jQuery("#submissionIdentifier").text(data.state.item_id);
+             jQuery("#datasetName").text(data.state.item_id);
+             jQuery("#createdBy").text(data.state.metadata.createdby);
+             jQuery("#currentVersion").text(data.state.currentversion);
+             //lastModified populated by DataSetManifest.js
+             jQuery("#isEmbargoed").text(embargo);
+             if (embargo == true) {
+                jQuery("#embargoExpiryDate").text(data.state.metadata.embargoed_until);
+             }
+             //<td> element "derivedFrom" in dataSet table populated by DataSetManifest.js
+ 
              callback(null);
         } 
         catch(e)
