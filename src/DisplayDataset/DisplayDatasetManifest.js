@@ -108,8 +108,7 @@ admiral.displayDatasetManifest = function (jelem, callback)
  
         var seglists = admiral.segmentPaths(fileRelativePaths.sort());
         var segtree  = admiral.segmentTreeBuilder(seglists);
-        var rebuiltSegmentList = "";
-        var seghtml  = admiral.nestedListBuilder(segtree, rebuiltSegmentList);
+        var seghtml  = admiral.nestedListBuilder(segtree);
         jelem.text("");
         jelem.append(seghtml);
         seghtml.treeview();

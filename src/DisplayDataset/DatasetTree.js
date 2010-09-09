@@ -103,6 +103,7 @@ admiral.segmentTreeBuilder = function (segmentlists)
     for (var i = 0 ; i < segmentlists.length ; i++)
     {
         var seglist = segmentlists[i];
+//        log.debug("seglist: " + seglist);
         if (seglist.length == 0)
         {
             tree.push( { segment: '', subtree: null } );    		
@@ -127,27 +128,32 @@ admiral.segmentTreeBuilder = function (segmentlists)
 admiral.nestedListBuilder = function (tree)
 {
     log.debug("admiral.nestedListBuilder "+jQuery.toJSON(tree));
-    function appendTree(tree, jelem)
+    function appendTree(tree, jelem, rebuiltSegList)
     {
+	    
 	    for (var i = 0 ; i < tree.length ; i++)
 	    {
 	    	if (tree[i].subtree == null)
 	    	{
-	    		// Leaf here
-		        jelem.append("<li><span 'class='file'>"+tree[i].segment+"</span></li>");
+	    		//LATER ADD A 2ND SPAN WITH ID = URI; THEN ADD <A HREF> TAG + URI TO THIS SPAN 
+	    		// WHEN THE SEGMENT IS NOT ZERO-LENGTH OR NULL--THAT WAY THE EMPTY FILE NAMES CAN BE HANDLED 
+	    		var URI = rebuiltSegList+"/"+tree[i].segment;
+	    		var fileName = tree[i].segment;
+                jelem.append("<li><span 'class='file'><a href=\"" + URI + "\">" + fileName + "</a></span></li>");
 	    	}
-	    	else
+            else
 	    	{
 	    		// New branch here
-	            jelem.append("<li><span class='folder'>"+tree[i].segment+"</span><ul/></li>")
-	            appendTree(tree[i].subtree, jelem.find("li:last > ul"));
+	            jelem.append("<li><span class='folder'>"+tree[i].segment+"</span><ul/></li>");
+	            appendTree(tree[i].subtree, jelem.find("li:last > ul"), rebuiltSegList + "/" + tree[i].segment);
 	    	}
 	    }
     }
     // Start witjh empty list
     var jelem = jQuery("<ul class='filetree' />");
     // Append tree to list
-    appendTree(tree, jelem);
+    var rebuiltSegmentList = "http://163.1.127.173/admiral-test/datasets/apps";
+    appendTree(tree, jelem, rebuiltSegmentList);
     return jelem;
 };
 
