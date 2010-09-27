@@ -66,16 +66,18 @@
     <script>
     jQuery(document).ready( function () 
     {
+
         var m = new shuffl.AsyncComputation();
         m.eval(function (val, callback)
         {
-           admiral.displayDatasetStatus(jQuery(".dataset"), callback);
+           admiral.displayDatasetStatus(jQuery("#pageLoadStatus"), callback);
         });
         m.eval(function (val, callback)
         {
            admiral.displayDatasetManifest(jQuery(".manifest"), callback);
         });
         m.exec(null, shuffl.noop);
+
     });
   </script>  
 
@@ -84,7 +86,19 @@
 <body>
    <h1>Dataset <a id="datasetLink" href="dummy"><span id="datasetName">...</span></a></h1>
    <h2>Status</h2>
-   <div class="dataset">(to be replaced)</div>
+   <div class="dataset">
+     <div id="pageLoadStatus"></div>
+     <br />
+     <table >
+        <tr ><td>Submission identifier &nbsp;</td><td id="submissionIdentifier">...</td></tr>
+        <tr><td>Created by</td><td id="createdBy">...</td></tr>
+        <tr><td>Current version</td><td id="currentVersion">...</td></tr>
+        <tr><td>Last modified</td><td id="lastModified">...</td></tr>
+        <tr><td>Embargoed?</td><td id="isEmbargoed">...</td></tr>
+        <tr><td>Embargo expiry date</td><td id ="embargoExpiryDate">...</td></tr>
+        <tr><td>Derived from</td><td><span id="derivedFrom"><a href="dummy">...</a></span></td></tr>
+     </table>
+   </div>
    <h2>Contents</h2>
    <div class="manifest">(to be replaced)</div>
 </body>
