@@ -70,23 +70,6 @@ admiral.displayDatasetStatus = function (jelem, callback)
              embargo = data.state.metadata.embargoed;
              var jsondata = jQuery.toJSON(data);
              jelem.text("");
- 
- 
- /*
- 
-             jelem.append("<br /><table >");
-             jelem.append("<tr ><td>Submission identifier &nbsp;</td><td id=\"submissionIdentifier\">" + data.state.item_id + "</td></tr>");
-             jelem.append("<tr><td>Created by</td><td>" + data.state.metadata.createdby + "</td></tr>");
-             jelem.append("<tr><td>Current version</td><td>" + data.state.currentversion + "</td></tr>");
-             jelem.append("<tr><td>Last modified</td><td id=\"lastModified\">...</td></tr>");
-             jelem.append("<tr><td>Embargoed?</td><td>" + embargo + "</td></tr>");
-             if (embargo == true) {
-                 jelem.append("<tr><td>Embargo expiry date</td><td>" + data.state.metadata.embargoed_until + "</td></tr>");
-             }
-             jelem.append("<tr><td>Derived from</td><td><span id=\"derivedFrom\"><a href=\"dummy\">...</a></span></td></tr>");
-             jelem.append("</table>");
- 
- */
              jQuery("#submissionIdentifier").text(data.state.item_id);
              jQuery("#datasetName").text(data.state.item_id);
              jQuery("#createdBy").text(data.state.metadata.createdby);

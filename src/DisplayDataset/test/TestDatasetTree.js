@@ -252,41 +252,10 @@ TestDatasetTree = function()
         ok(exceptionSeen, "exception expected");
     });
 
-
-
-
-/*
-
-  <ul id="example" class="filetree">
-        <li><span class="folder">Folder 1</span>
-            <ul>
-                <li><span class="file">Item 1.1</span></li>
-            </ul>
-        </li>
-        <li><span class="folder">Folder 2</span>
-            <ul>
-                <li><span class="folder">Subfolder 2.1</span>
-                    <ul>
-                        <li><span class="file">File 2.1.1</span></li>
-                        <li><span class="file">File 2.1.2</span></li>
-                    </ul>
-                </li>
-                <li><span class="file">File 2.2</span></li>
-            </ul>
-        </li>
-        <li class="closed"><span class="folder">Folder 3 (closed at start)</span>
-            <ul>
-                <li><span class="file">File 3.1</span></li>
-            </ul>
-        </li>
-        <li><span class="file">File 4</span></li>
-    </ul>
-
-*/
-
-    test ("testNestedListBuilder", function()
+    notest ("testNestedListBuilder", function()
     {
-        logtest("testNestedListBuilder");        
+        logtest("testNestedListBuilder - without links");        
+        var baseuri = "http://163.1.127.173/admiral-test/datasets/apps/";
 
         var tree1 =
             [ { segment: 'a', subtree: null}
@@ -441,39 +410,6 @@ TestDatasetTree = function()
             jelem7.outerhtml(),
             "list with leading segment (1 level only)");
 
-        var jelem8a = jQuery("<ul class='filetree' />")
-            .append("<li><span class='folder'>a</span></li>")
-            .find("li:last")
-                .append("<ul />")
-                .find("ul:last")
-                    .append("<li><span class='folder'>b</span></li>")
-                    .find("li:last")
-                        .append("<ul />")
-                        .find("ul:last")
-                            .append("<li><span class='file'>c</span></li>")
-                            .append("<li><span class='file'>d</span></li>")
-                            .append("<li><span class='file'>e</span></li>")
-                        .end()
-                    .end()
-                    .append("<li><span class='folder'>f</span></li>")
-                    .find("li:last")
-                        .append("<ul />")
-                        .find("ul:last")
-                            .append("<li><span class='file'>g</span></li>")
-                            .append("<li><span class='file'>h</span></li>")
-                        .end()
-                    .end()
-                .end()
-            .end()
-            .append("<li><span class='folder'>i</span></li>")
-            .find("li:last")
-                .append("<ul />")
-                .find("ul:last")
-                    .append("<li><span class='file'>j</span></li>")
-                    .append("<li><span class='file'>k</span></li>")
-                .end()
-            .end()
-            ;
         var jelem8 = jQuery(
             "<ul class='filetree'>"+
               "<li><span class='folder'>a</span>"+
@@ -524,56 +460,189 @@ TestDatasetTree = function()
             ] ).outerhtml(),
             jelem8.outerhtml(),
             "list with common leading segment sequences");
-            
+    });
+
+    test ("testNestedListBuilder", function()
+    {
+        logtest("testNestedListBuilder - with links");
+        var baseuri = "http://163.1.127.173/admiral-test/datasets/apps/";
+
+        var tree1 =
+            [ { segment: 'a', subtree: null}
+            , { segment: 'b', subtree: null}
+            , { segment: 'c', subtree: null}
+            ];
+        var jelem1 = jQuery("<ul class='filetree' />")
+            .append("<li><span class='file'><a href=\""+baseuri+"a\">a</a></span></li>")
+            .append("<li><span class='file'><a href=\""+baseuri+"b\">b</a></span></li>")
+            .append("<li><span class='file'><a href=\""+baseuri+"c\">c</a></span></li>")
+            ;
+        same(admiral.nestedListBuilder(tree1).outerhtml(), jelem1.outerhtml(), "Single-segment paths with links");
+
+        var jelem2 = jQuery("<ul class='filetree' />")
+            .append("<li><span class='folder'><a href=\""+baseuri+"a/\">a</a></span></li>")
+            .find("li:last")
+                .append("<ul />")
+                .find("ul:last")
+                    .append("<li><span class='file'><a href=\""+baseuri+"a/b\">b</a></span></li>")
+                .end()
+            .end();
+        same(admiral.nestedListBuilder(
+            [ { segment: 'a', subtree: [ {segment: 'b', subtree: null} ] }
+            ] ).outerhtml(),
+            jelem2.outerhtml(),
+            "2-segment path wrapped in link");
+
+        var jelem3 = jQuery("<ul class='filetree' />")
+            .append("<li><span class='folder'><a href=\""+baseuri+"a/\">a</a></span></li>")
+            .find("li:last")
+                .append("<ul />")
+                .find("ul:last")
+                    .append("<li><span class='file'><a href=\""+baseuri+"a/b\">b</a></span></li>")
+                .end()
+            .end()
+            .append("<li><span class='folder'><a href=\""+baseuri+"b/\">b</a></span></li>")
+            .find("li:last")
+                .append("<ul />")
+                .find("ul:last")
+                    .append("<li><span class='file'><a href=\""+baseuri+"b/c\">c</a></span></li>")
+                .end()
+            .end()
+            .append("<li><span class='folder'><a href=\""+baseuri+"c/\">c</a></span></li>")
+            .find("li:last")
+                .append("<ul />")
+                .find("ul:last")
+                    .append("<li><span class='file'><a href=\""+baseuri+"c/d\">d</a></span></li>")
+                .end()
+            .end()
+            ;
+        same(admiral.nestedListBuilder(
+            [ { segment: 'a', subtree: [ {segment: 'b', subtree: null} ] }
+            , { segment: 'b', subtree: [ {segment: 'c', subtree: null} ] }
+            , { segment: 'c', subtree: [ {segment: 'd', subtree: null} ] }
+            ] ).outerhtml(),
+            jelem3.outerhtml(),
+            "2-segment paths providing for links");
+
+        var jelem4 = jQuery("<ul class='filetree' />");
+        same(admiral.nestedListBuilder(
+            [ 
+            ] ).outerhtml(),
+            jelem4.outerhtml(),
+            "empty list of paths with links");
         
+        var jelem5 = jQuery("<ul class='filetree' />")
+            .append("<li><span class='file'></span></li>")
+            ;
+        same(admiral.nestedListBuilder(
+            [ { segment: '', subtree: null } 
+            ] ).outerhtml(),
+            jelem5.outerhtml(),
+            "list with empty path providing for links");
         
-        //BELOW ARE BENS TEST CASES--THEY REPEAT THE CASES ABOVE BUT PROVIDE FOR LINKS
+        var jelem6 = jQuery("<ul class='filetree' />")
+            .append("<li><span class='file'><a href=\""+baseuri+"a\">a</a></span></li>")
+            .append("<li><span class='file'></span></li>")
+            .append("<li><span class='folder'><a href=\""+baseuri+"b/\">b</a></span></li>")
+            .find("li:last")
+                .append("<ul />")
+                .find("ul:last")
+                    .append("<li><span class='folder'><a href=\""+baseuri+"b/c/\">c</a></span></li>")
+                    .find("li:last")
+                        .append("<ul />")
+                        .find("ul:last")
+                            .append("<li><span class='folder'><a href=\""+baseuri+"b/c/d/\">d</a></span></li>")
+                            .find("li:last")
+                                .append("<ul />")
+                                .find("ul:last")
+                                    .append("<li><span class='file'><a href=\""+baseuri+"b/c/d/e\">e</a></span></li>")
+                                .end()
+                            .end()
+                        .end()
+                    .end()                          
+                .end()
+            .end()
+            ;
+        same(admiral.nestedListBuilder(
+            [ { segment: 'a', subtree: null }
+            , { segment: '',  subtree: null }
+            , { segment: 'b', subtree: 
+                [ { segment: 'c', subtree: 
+                    [ { segment: 'd', subtree:
+                        [ { segment: 'e', subtree: null } ] }
+                    ] }
+                ] }
+            ] ).outerhtml(),
+            jelem6.outerhtml(),
+            "list with varying path lengths wrapped in links");
         
-        
-        var jelem9 = jQuery(
-            "<ul class='filetree'>"+
-              "<li><span class='folder'>a</span>"+
-                "<ul>"+
-                  "<li><span class='file'><a href=\"http://163.1.127.173/admiral-test/datasets/apps/a/b\">b</a></span>"+
-                   "</li>"+
-                "</ul>"+
-              "</li>"+
-            "</ul>"
-            );
+        var jelem7 = jQuery("<ul class='filetree' />")
+            .append("<li><span class='folder'><a href=\""+baseuri+"a/\">a</a></span></li>")
+            .find("li:last")
+                .append("<ul />")
+                .find("ul:last")
+                    .append("<li><span class='file'><a href=\""+baseuri+"a/m\">m</a></span></li>")
+                    .append("<li><span class='file'><a href=\""+baseuri+"a/n\">n</a></span></li>")
+                    .append("<li><span class='file'><a href=\""+baseuri+"a/o\">o</a></span></li>")
+                .end()
+            .end()
+            .append("<li><span class='folder'><a href=\""+baseuri+"b/\">b</a></span></li>")
+            .find("li:last")
+                .append("<ul />")
+                .find("ul:last")
+                    .append("<li><span class='file'><a href=\""+baseuri+"b/p\">p</a></span></li>")
+                    .append("<li><span class='folder'><a href=\""+baseuri+"b/q/\">q</a></span></li>")
+                    .find("li:last")
+                        .append("<ul />")
+                        .find("ul:last")
+                            .append("<li><span class='file'><a href=\""+baseuri+"b/q/r\">r</a></span></li>")
+                        .end()
+                    .end()
+                .end()
+            .end()
+            ;
         same(admiral.nestedListBuilder(
             [ { segment: 'a', subtree: 
-                [ { segment: 'b', subtree: null }              
+                [ { segment: 'm', subtree: null }
+                , { segment: 'n', subtree: null }
+                , { segment: 'o', subtree: null }
+                ] 
+              }
+            , { segment: 'b', subtree:
+                [ { segment: 'p', subtree: null }
+                , { segment: 'q', subtree: 
+                    [ { segment: 'r', subtree: null }
+                    ] 
+                  }
                 ] 
               }
             ] ).outerhtml(),
-            jelem9.outerhtml(),
-            "2-segment paths wrapped in links");
-        
-        
-        
-        var jelem10 = jQuery(
+            jelem7.outerhtml(),
+            "list with leading segment (1 level only) wrapped in links");
+
+        var jelem8 = jQuery(
             "<ul class='filetree'>"+
-              "<li><span class='folder'>a</span>"+
+              "<li><span class='folder'><a href=\""+baseuri+"a/\">a</a></span>"+
                 "<ul>"+
-                  "<li><span class='folder'>b</span>"+
+                  "<li><span class='folder'><a href=\""+baseuri+"a/b/\">b</a></span>"+
                     "<ul>"+
-                      "<li><span class='file'><a href=\"http://163.1.127.173/admiral-test/datasets/apps/a/b/c\">c</a></span></li>"+
-                      "<li><span class='file'><a href=\"http://163.1.127.173/admiral-test/datasets/apps/a/b/d\">d</a></span></li>"+
-                      "<li><span class='file'><a href=\"http://163.1.127.173/admiral-test/datasets/apps/a/b/e\">e</a></span></li>"+
+                      "<li><span class='file'><a href=\""+baseuri+"a/b/c\">c</a></span></li>"+
+                      "<li><span class='file'><a href=\""+baseuri+"a/b/d\">d</a></span></li>"+
+                      "<li><span class='file'><a href=\""+baseuri+"a/b/e\">e</a></span></li>"+
                     "</ul>"+
                   "</li>"+
-                  "<li><span class='folder'>f</span>"+
+                  "<li><span class='folder'><a href=\""+baseuri+"a/f/\">f</a></span>"+
                     "<ul>"+
-                      "<li><span class='file'><a href=\"http://163.1.127.173/admiral-test/datasets/apps/a/f/g\">g</a></span></li>"+
-                      "<li><span class='file'><a href=\"http://163.1.127.173/admiral-test/datasets/apps/a/f/h\">h</a></span></li>"+
+                      "<li><span class='file'><a href=\""+baseuri+"a/f/g\">g</a></span></li>"+
+                      "<li><span class='file'><a href=\""+baseuri+"a/f/h\">h</a></span></li>"+
                     "</ul>"+
                   "</li>"+
                 "</ul>"+
               "</li>"+
-              "<li><span class='folder'>i</span>"+
+              "<li><span class='folder'><a href=\""+baseuri+"i/\">i</a></span>"+
                 "<ul>"+
-                  "<li><span class='file'><a href=\"http://163.1.127.173/admiral-test/datasets/apps/i/j\">j</a></span></li>"+
-                  "<li><span class='file'><a href=\"http://163.1.127.173/admiral-test/datasets/apps/i/k\">k</a></span></li>"+
+                  "<li><span class='file'><a href=\""+baseuri+"i/j\">j</a></span></li>"+
+                  "<li><span class='file'><a href=\""+baseuri+"i/k\">k</a></span></li>"+
                 "</ul>"+
               "</li>"+
             "</ul>"
@@ -599,218 +668,8 @@ TestDatasetTree = function()
                 ] 
               }
             ] ).outerhtml(),
-            jelem10.outerhtml(),
+            jelem8.outerhtml(),
             "list with common leading segment sequences wrapped in links");
-          
-
-
-        var tree11 =
-            [ { segment: 'a', subtree: null}
-            , { segment: 'b', subtree: null}
-            , { segment: 'c', subtree: null}
-            ];
-        var jelem11 = jQuery("<ul class='filetree' />")
-            .append("<li><span class='file'><a href=\"http://163.1.127.173/admiral-test/datasets/apps/a\">a</a></span></li>")
-            .append("<li><span class='file'><a href=\"http://163.1.127.173/admiral-test/datasets/apps/b\">b</a></span></li>")
-            .append("<li><span class='file'><a href=\"http://163.1.127.173/admiral-test/datasets/apps/c\">c</a></span></li>")
-            ;
-        same(admiral.nestedListBuilder(tree11).outerhtml(), jelem11.outerhtml(), "Single-segment paths");
-
-        var jelem12 = jQuery("<ul class='filetree' />")
-            .append("<li><span class='folder'>a</span></li>")
-            .find("li:last")
-                .append("<ul />")
-                .find("ul:last")
-                    .append("<li><span class='file'><a href=\"http://163.1.127.173/admiral-test/datasets/apps/a/b\">b</a></span></li>")
-                .end()
-            .end();
-        same(admiral.nestedListBuilder(
-            [ { segment: 'a', subtree: [ {segment: 'b', subtree: null} ] }
-            ] ).outerhtml(),
-            jelem12.outerhtml(),
-            "2-segment path wrapped in link");
-
-        var jelem13 = jQuery("<ul class='filetree' />")
-            .append("<li><span class='folder'>a</span></li>")
-            .find("li:last")
-                .append("<ul />")
-                .find("ul:last")
-                    .append("<li><span class='file'><a href=\"http://163.1.127.173/admiral-test/datasets/apps/a/b\">b</a></span></li>")
-                .end()
-            .end()
-            .append("<li><span class='folder'>b</span></li>")
-            .find("li:last")
-                .append("<ul />")
-                .find("ul:last")
-                    .append("<li><span class='file'><a href=\"http://163.1.127.173/admiral-test/datasets/apps/b/c\">c</a></span></li>")
-                .end()
-            .end()
-            .append("<li><span class='folder'>c</span></li>")
-            .find("li:last")
-                .append("<ul />")
-                .find("ul:last")
-                    .append("<li><span class='file'><a href=\"http://163.1.127.173/admiral-test/datasets/apps/c/d\">d</a></span></li>")
-                .end()
-            .end()
-            ;
-        same(admiral.nestedListBuilder(
-            [ { segment: 'a', subtree: [ {segment: 'b', subtree: null} ] }
-            , { segment: 'b', subtree: [ {segment: 'c', subtree: null} ] }
-            , { segment: 'c', subtree: [ {segment: 'd', subtree: null} ] }
-            ] ).outerhtml(),
-            jelem13.outerhtml(),
-            "2-segment paths providing for links");
-
-        var jelem14 = jQuery("<ul class='filetree' />");
-        same(admiral.nestedListBuilder(
-            [ 
-            ] ).outerhtml(),
-            jelem14.outerhtml(),
-            "empty list of paths with links");
-        
-        var jelem15 = jQuery("<ul class='filetree' />")
-            .append("<li><span class='file'></span></li>")
-            ;
-        same(admiral.nestedListBuilder(
-            [ { segment: '', subtree: null } 
-            ] ).outerhtml(),
-            jelem15.outerhtml(),
-            "list with empty path providing for links");
-        
-        var jelem16 = jQuery("<ul class='filetree' />")
-            .append("<li><span class='file'><a href=\"http://163.1.127.173/admiral-test/datasets/apps/a\">a</a></span></li>")
-            .append("<li><span class='file'></span></li>")
-            .append("<li><span class='folder'>b</span></li>")
-            .find("li:last")
-                .append("<ul />")
-                .find("ul:last")
-                    .append("<li><span class='folder'>c</span></li>")
-                    .find("li:last")
-                        .append("<ul />")
-                        .find("ul:last")
-                            .append("<li><span class='folder'>d</span></li>")
-                            .find("li:last")
-                                .append("<ul />")
-                                .find("ul:last")
-                                    .append("<li><span class='file'><a href=\"http://163.1.127.173/admiral-test/datasets/apps/b/c/d/e\">e</a></span></li>")
-                                .end()
-                            .end()
-                        .end()
-                    .end()                          
-                .end()
-            .end()
-            ;
-        same(admiral.nestedListBuilder(
-            [ { segment: 'a', subtree: null }
-            , { segment: '',  subtree: null }
-            , { segment: 'b', subtree: 
-                [ { segment: 'c', subtree: 
-                    [ { segment: 'd', subtree:
-                        [ { segment: 'e', subtree: null } ] }
-                    ] }
-                ] }
-            ] ).outerhtml(),
-            jelem16.outerhtml(),
-            "list with varying path lengths wrapped in links");
-        
-        var jelem17 = jQuery("<ul class='filetree' />")
-            .append("<li><span class='folder'>a</span></li>")
-            .find("li:last")
-                .append("<ul />")
-                .find("ul:last")
-                    .append("<li><span class='file'><a href=\"http://163.1.127.173/admiral-test/datasets/apps/a/m\">m</a></span></li>")
-                    .append("<li><span class='file'><a href=\"http://163.1.127.173/admiral-test/datasets/apps/a/n\">n</a></span></li>")
-                    .append("<li><span class='file'><a href=\"http://163.1.127.173/admiral-test/datasets/apps/a/o\">o</a></span></li>")
-                .end()
-            .end()
-            .append("<li><span class='folder'>b</span></li>")
-            .find("li:last")
-                .append("<ul />")
-                .find("ul:last")
-                    .append("<li><span class='file'><a href=\"http://163.1.127.173/admiral-test/datasets/apps/b/p\">p</a></span></li>")
-                    .append("<li><span class='folder'>q</span></li>")
-                    .find("li:last")
-                        .append("<ul />")
-                        .find("ul:last")
-                            .append("<li><span class='file'><a href=\"http://163.1.127.173/admiral-test/datasets/apps/b/q/r\">r</a></span></li>")
-                        .end()
-                    .end()
-                .end()
-            .end()
-            ;
-        same(admiral.nestedListBuilder(
-            [ { segment: 'a', subtree: 
-                [ { segment: 'm', subtree: null }
-                , { segment: 'n', subtree: null }
-                , { segment: 'o', subtree: null }
-                ] 
-              }
-            , { segment: 'b', subtree:
-                [ { segment: 'p', subtree: null }
-                , { segment: 'q', subtree: 
-                    [ { segment: 'r', subtree: null }
-                    ] 
-                  }
-                ] 
-              }
-            ] ).outerhtml(),
-            jelem17.outerhtml(),
-            "list with leading segment (1 level only) wrapped in links");
-
-        var jelem18 = jQuery(
-            "<ul class='filetree'>"+
-              "<li><span class='folder'>a</span>"+
-                "<ul>"+
-                  "<li><span class='folder'>b</span>"+
-                    "<ul>"+
-                      "<li><span class='file'><a href=\"http://163.1.127.173/admiral-test/datasets/apps/a/b/c\">c</a></span></li>"+
-                      "<li><span class='file'><a href=\"http://163.1.127.173/admiral-test/datasets/apps/a/b/d\">d</a></span></li>"+
-                      "<li><span class='file'><a href=\"http://163.1.127.173/admiral-test/datasets/apps/a/b/e\">e</a></span></li>"+
-                    "</ul>"+
-                  "</li>"+
-                  "<li><span class='folder'>f</span>"+
-                    "<ul>"+
-                      "<li><span class='file'><a href=\"http://163.1.127.173/admiral-test/datasets/apps/a/f/g\">g</a></span></li>"+
-                      "<li><span class='file'><a href=\"http://163.1.127.173/admiral-test/datasets/apps/a/f/h\">h</a></span></li>"+
-                    "</ul>"+
-                  "</li>"+
-                "</ul>"+
-              "</li>"+
-              "<li><span class='folder'>i</span>"+
-                "<ul>"+
-                  "<li><span class='file'>" +
-                  "<a href=\"http://163.1.127.173/admiral-test/datasets/apps/i/j\">j</a></span></li>"+
-                  "<li><span class='file'><a href=\"http://163.1.127.173/admiral-test/datasets/apps/i/k\">k</a></span></li>"+
-                "</ul>"+
-              "</li>"+
-            "</ul>"
-            );
-        same(admiral.nestedListBuilder(
-            [ { segment: 'a', subtree: 
-                [ { segment: 'b', subtree:
-                    [ { segment: 'c', subtree: null }
-                    , { segment: 'd', subtree: null }
-                    , { segment: 'e', subtree: null }
-                    ] 
-                  }
-                , { segment: 'f', subtree: 
-                    [ { segment: 'g', subtree: null }
-                    , { segment: 'h', subtree: null }
-                    ] 
-                  }
-                ] 
-              }
-            , { segment: 'i', subtree:
-                [ { segment: 'j', subtree: null }
-                , { segment: 'k', subtree: null }
-                ] 
-              }
-            ] ).outerhtml(),
-            jelem18.outerhtml(),
-            "list with common leading segment sequences");
-            
-
-
     });
 
 };

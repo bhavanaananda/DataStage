@@ -63,12 +63,14 @@ admiral.segmentPaths = function (listofpaths)
 admiral.segmentTreeBuilder = function (segmentlists)
 {
     log.debug("admiral.segmentTreeBuilder "+jQuery.toJSON(segmentlists));
+    // ---- Generate tree path from list of segments ----
     function generateTreePath(seglist, depth)
     {
       	if ( depth >= seglist.length ) return null;
       	var subtree = generateTreePath(seglist, depth+1);
       	return { segment: seglist[depth], subtree: (subtree != null ? [ subtree ] : null) };
     }
+    // ---- Add or merge new branch; return resulting current branch ----
     function mergeBranch(tree, basebranch, newbranch)
     {
         if (!basebranch || (basebranch.segment != newbranch.segment))
@@ -98,21 +100,23 @@ admiral.segmentTreeBuilder = function (segmentlists)
         }
         return basebranch;
     }
+    // ---- Merge list of segment lists into tree ----
     var tree = [];
     var curbranch  = undefined;
     for (var i = 0 ; i < segmentlists.length ; i++)
     {
         var seglist = segmentlists[i];
-//        log.debug("seglist: " + seglist);
+        // log.debug("seglist: " + seglist);
         if (seglist.length == 0)
         {
+            // Special case: empty path
             tree.push( { segment: '', subtree: null } );    		
         } 
         else
         {
             var newbranch = generateTreePath(seglist, 0);
             curbranch = mergeBranch(tree, curbranch, newbranch);
-    	}
+      	}
     }
     return tree;
 };
@@ -130,24 +134,26 @@ admiral.nestedListBuilder = function (tree)
     log.debug("admiral.nestedListBuilder "+jQuery.toJSON(tree));
     function appendTree(tree, jelem, rebuiltSegList)
     {
-	    
-	    for (var i = 0 ; i < tree.length ; i++)
-	    {
+  	    for (var i = 0 ; i < tree.length ; i++)
+  	    {
+            var fileName = tree[i].segment;
 	    	if (tree[i].subtree == null)
 	    	{
-	    		//LATER ADD A 2ND SPAN WITH ID = URI; THEN ADD <A HREF> TAG + URI TO THIS SPAN 
-	    		// WHEN THE SEGMENT IS NOT ZERO-LENGTH OR NULL--THAT WAY THE EMPTY FILE NAMES CAN BE HANDLED 
-	    		var URI = rebuiltSegList+"/"+tree[i].segment;
-	    		var fileName = tree[i].segment;
-                jelem.append("<li><span 'class='file'><a href=\"" + URI + "\">" + fileName + "</a></span></li>");
+        		var href = fileName;
+        		if (fileName != "")
+        		{
+        		    href = "<a href=\""+rebuiltSegList+"/"+fileName+"\">"+fileName+"</a>";
+        		}
+                jelem.append("<li><span 'class='file'>"+href+"</span></li>");
 	    	}
             else
 	    	{
-	    		// New branch here
-	            jelem.append("<li><span class='folder'>"+tree[i].segment+"</span><ul/></li>");
-	            appendTree(tree[i].subtree, jelem.find("li:last > ul"), rebuiltSegList + "/" + tree[i].segment);
+        		// New branch here == new directory level
+                href = "<a href=\""+rebuiltSegList+"/"+fileName+"/\">"+fileName+"</a>";
+                jelem.append("<li><span class='folder'>"+href+"</span><ul/></li>");
+                appendTree(tree[i].subtree, jelem.find("li:last > ul"), rebuiltSegList + "/" + fileName);
 	    	}
-	    }
+  	    }
     }
     // Start witjh empty list
     var jelem = jQuery("<ul class='filetree' />");
