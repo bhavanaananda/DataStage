@@ -65,16 +65,28 @@
     <script>
     jQuery(document).ready( function () 
     {
-        var m = new admiral.AsyncComputation();
-        m.eval(function (val, callback)
+        log.debug(admiral.objectString(window.location));
+        var datasetName = window.location.hash;
+        if( datasetName.length <= 1)
         {
-           admiral.displayDatasetStatus(jQuery("#pageLoadStatus"), callback);
-        });
-        m.eval(function (val, callback)
-        {
-           admiral.displayDatasetManifest(jQuery(".manifest"), callback);
-        });
-        m.exec(null, admiral.noop);
+             jQuery("#pageLoadStatus").text('No dataset name specified');
+             jQuery("#pageLoadStatus").addClass('error');
+        }
+        else
+        {   
+            var dataSet = "/admiral-test/datasets/"+datasetName.slice(1);
+            var m = new admiral.AsyncComputation();
+            m.eval(function (val, callback)
+            {
+               admiral.displayDatasetStatus(dataSet, callback);
+            });
+            m.eval(function (val, callback)
+            {
+               admiral.displayDatasetManifest(dataSet, callback);
+            });
+            m.exec(null, admiral.noop);
+        }
+        
     });
   </script>  
 

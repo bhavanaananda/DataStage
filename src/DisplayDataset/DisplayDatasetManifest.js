@@ -26,10 +26,10 @@ if (typeof admiral == "undefined")
 /**
  * Read an RDFDatabank manifest, and display in a supplied jQuery object.
  * 
- * @param jelem     jQuery element whose contents are replaced by the dataset manifest display.
- * @param callback  callback function invoked when the dataset status has been read and displayed.
+ * @param dataSetPath   String containing the URI path of the dataset to be displayed.
+ * @param callback      callback function invoked when the dataset status has been read and displayed.
  */
-admiral.displayDatasetManifest = function (jelem, callback)
+admiral.displayDatasetManifest = function (dataSetPath, callback)
 {
     log.debug("admiral.displayDatasetManifest ");
     var m = new admiral.AsyncComputation();
@@ -37,7 +37,7 @@ admiral.displayDatasetManifest = function (jelem, callback)
     // Read manifest RDF/XML
     m.eval(function (val, callback)
     {
-        jelem.text("Fetching manifest...");
+        jQuery(".manifest").text("Fetching manifest...");
         jQuery.ajax({
             type:         "GET",
             url:          val,
@@ -54,8 +54,8 @@ admiral.displayDatasetManifest = function (jelem, callback)
                 },
             error:        function (xhr, status) 
                 { 
-                    jelem.text("HTTP GET "+val+" failed: "+status+"; HTTP status: "+xhr.status+" "+xhr.statusText);
-                    jelem.css('color', 'red');
+                    jQuery("#pageLoadStatus").text("HTTP GET "+val+" failed: "+status+"; HTTP status: "+xhr.status+" "+xhr.statusText);
+                    jQuery("#pageLoadStatus").addClass('error');
                 },
             cache:        false
         });
@@ -64,7 +64,7 @@ admiral.displayDatasetManifest = function (jelem, callback)
     // Create RDFquery databank
     m.eval(function (data, callback)
     {
-        jelem.text("Decoding manifest...");
+        jQuery(".manifest").text("Decoding manifest...");
         try
         {
             var databank = jQuery.rdf.databank();
@@ -73,8 +73,8 @@ admiral.displayDatasetManifest = function (jelem, callback)
         } 
         catch(e)
         {
-            jelem.text("Databank decode: "+e);
-            jelem.css('color', 'red');
+            jQuery("#pageLoadStatus").text("Databank decode: "+e);
+            jQuery("#pageLoadStatus").addClass('error');
         }
     });
 
@@ -109,13 +109,12 @@ admiral.displayDatasetManifest = function (jelem, callback)
         var seglists = admiral.segmentPaths(fileRelativePaths.sort());
         var segtree  = admiral.segmentTreeBuilder(seglists);
         var seghtml  = admiral.nestedListBuilder(segtree);
-        jelem.text("");
-        jelem.append(seghtml);
+        jQuery(".manifest").text("");
+        jQuery(".manifest").append(seghtml);
         seghtml.treeview();
     });
-
-    // TODO: replace hard-wired dataset with parameter
-    m.exec("/admiral-test/datasets/apps", callback);
+    // Kick off access to manifest data
+    m.exec(dataSetPath, callback);
 };
 
 // End.

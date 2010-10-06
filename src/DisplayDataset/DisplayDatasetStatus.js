@@ -26,10 +26,10 @@ if (typeof admiral == "undefined")
 /**
  * Read information about a RDFDatabank dataset status, and display in a supplied jQuery object.
  * 
- * @param jelem     jQuery element whose contents are replaced by the dataset status display.
- * @param callback  callback function invoked when the dataset status has been read and displayed.
+ * @param dataSetPath   String containing the URI path of the dataset to be displayed.
+ * @param callback      callback function invoked when the dataset status has been read and displayed.
  */
-admiral.displayDatasetStatus = function (jelem, callback)
+admiral.displayDatasetStatus = function (dataSetPath, callback)
 {
     log.debug("admiral.displayDatasetStatus");
     var m = new admiral.AsyncComputation();
@@ -37,7 +37,7 @@ admiral.displayDatasetStatus = function (jelem, callback)
     // Read dataset information
     m.eval(function (val, callback)
     {
-        jelem.text("Fetching dataset information...");
+        jQuery("#pageLoadStatus").text("Fetching dataset information...");
         jQuery.ajax({
             type:         "GET",
             url:          val,
@@ -54,8 +54,8 @@ admiral.displayDatasetStatus = function (jelem, callback)
                 },
             error:        function (xhr, status) 
                 { 
-                    jelem.text("HTTP GET "+val+" failed: "+status+"; HTTP status: "+xhr.status+" "+xhr.statusText);
-                    jelem.addClass('error');
+                    jQuery("#pageLoadStatus").text("HTTP GET "+val+" failed: "+status+"; HTTP status: "+xhr.status+" "+xhr.statusText);
+                    jQuery("#pageLoadStatus").addClass('error');
                 },
             cache:        false
         });
@@ -64,12 +64,12 @@ admiral.displayDatasetStatus = function (jelem, callback)
     // Extract JSON information and display in page
     m.eval(function (data, callback)
     {
-        jelem.text("Interpreting information...");
+        jQuery("#pageLoadStatus").text("Interpreting information...");
         try
         {
              embargo = data.state.metadata.embargoed;
              var jsondata = jQuery.toJSON(data);
-             jelem.text("");
+             jQuery("#pageLoadStatus").text("");
              jQuery("#submissionIdentifier").text(data.state.item_id);
              jQuery("#datasetName").text(data.state.item_id);
              jQuery("#createdBy").text(data.state.metadata.createdby);
@@ -85,13 +85,13 @@ admiral.displayDatasetStatus = function (jelem, callback)
         } 
         catch(e)
         {
-            jelem.text("JSON decode: "+e);
+            jQuery("#pageLoadStatus").text("JSON decode: "+e);
         }
     });
 
     // Kick it off
-    // TODO: replace hard-wired dataset name with parameter
-    m.exec("/admiral-test/datasets/apps", callback);
+    
+    m.exec(dataSetPath, callback);
 };
 
 // End.
