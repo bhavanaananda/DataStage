@@ -32,7 +32,7 @@ if (typeof admiral == "undefined")
 admiral.displayDatasetManifest = function (jelem, callback)
 {
     log.debug("admiral.displayDatasetManifest ");
-    var m = new shuffl.AsyncComputation();
+    var m = new admiral.AsyncComputation();
 
     // Read manifest RDF/XML
     m.eval(function (val, callback)

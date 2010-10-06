@@ -46,11 +46,9 @@
     <script type="text/javascript" src="../../MochiKit/Logging.js"></script>
 
     <!-- Import Admiral functions -->
+    <script type="text/javascript" src="../../Admiral/admiral-base.js"></script>
     <script type="text/javascript" src="../../Admiral/Error.js"></script>
-
-    <!-- Import support functions from Shuffl -->
-    <script type="text/javascript" src="../../shuffl/shuffl-base.js"></script>
-    <script type="text/javascript" src="../../shuffl/AsyncComputation.js"></script>
+    <script type="text/javascript" src="../../Admiral/AsyncComputation.js"></script>
 
     <!-- Import dataset information display code -->
     <script type="text/javascript" src="../DatasetTree.js"></script>
@@ -67,7 +65,7 @@
     jQuery(document).ready( function () 
     {
 
-        var m = new shuffl.AsyncComputation();
+        var m = new admiral.AsyncComputation();
         m.eval(function (val, callback)
         {
            admiral.displayDatasetStatus(jQuery("#pageLoadStatus"), callback);
@@ -76,7 +74,7 @@
         {
            admiral.displayDatasetManifest(jQuery(".manifest"), callback);
         });
-        m.exec(null, shuffl.noop);
+        m.exec(null, admiral.noop);
 
     });
   </script>  

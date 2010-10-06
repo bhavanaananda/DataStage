@@ -21,14 +21,14 @@
  */
 
 /**
- * Ensure shuffl namespace is defined
+ * Ensure admiral namespace is defined
  */
-if (typeof shuffl == "undefined") { shuffl = {}; };
+if (typeof admiral == "undefined") { admiral = {}; };
 
 /**
  * @constructor
  */
-shuffl.AsyncComputation = function() {
+admiral.AsyncComputation = function() {
     this.data = new Object();
     this.proc = [];
 };
@@ -42,8 +42,8 @@ shuffl.AsyncComputation = function() {
  * value when the possibly asynchronous operation is complete.  'fn' is
  * invoked with 'this' set to a data object associated with this computation
  */
-shuffl.AsyncComputation.prototype.eval = function(fn) {
-    //log.debug("shuffl.AsyncComputation.eval");
+admiral.AsyncComputation.prototype.eval = function(fn) {
+    //log.debug("admiral.AsyncComputation.eval");
     this.proc.push(fn);
     return this;
 };
@@ -57,8 +57,8 @@ shuffl.AsyncComputation.prototype.eval = function(fn) {
  * that is the value supplied by the callback from the last function in the 
  * sequence.
  */
-shuffl.AsyncComputation.prototype.exec = function(val, callback) {
-    //log.debug("shuffl.AsyncComputation.exec");
+admiral.AsyncComputation.prototype.exec = function(val, callback) {
+    //log.debug("admiral.AsyncComputation.exec");
     // Local function handles threading of asynchronous functions
     function eval_do(here, next, val) {
         function eval_done(val) {
@@ -69,7 +69,7 @@ shuffl.AsyncComputation.prototype.exec = function(val, callback) {
     // Local function returns callback chain-breaker 
     function eval_cb(here, callback) {
         function eval_chain_breaker(val, callback_ignored) {
-            //log.debug("shuffl.AsyncComputation: eval_chain_breaker "+val);
+            //log.debug("admiral.AsyncComputation: eval_chain_breaker "+val);
             callback.call(here.data, val);
         }
         return eval_chain_breaker; 
@@ -84,11 +84,11 @@ shuffl.AsyncComputation.prototype.exec = function(val, callback) {
  * Bind the result from the previous functionin the sequence to the named
  * variable in the computation's data object.
  */
-shuffl.AsyncComputation.prototype.bind = function(name) {
+admiral.AsyncComputation.prototype.bind = function(name) {
     // TODO: add diagnostic logic to detect multipleminvocations of callback
     function assign_fn(name) {
         function assign_do(val, callback) {
-            //log.debug("shuffl.AsyncComputation.bind "+name+" to "+val);
+            //log.debug("admiral.AsyncComputation.bind "+name+" to "+val);
             this[name] = val;
             callback(val);
         }

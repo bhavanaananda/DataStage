@@ -1,9 +1,9 @@
 /**
  * @fileoverview
- *  Shuffl application common code.
+ *  Admiral applications common code.
  *  
  * @author Graham Klyne
- * @version $Id: shuffl-base.js 820 2010-06-07 12:26:38Z gk-google@ninebynine.org $
+ * @version $Id: $
  * 
  * Coypyright (C) 2009, University of Oxford
  *
@@ -46,91 +46,27 @@ mk = {};
 mk.partial = MochiKit.Base.partial;
 mk.map     = MochiKit.Base.map;
 
-// Mochikit logging hack as default is no limit and default firebug off:
-//MochiKit.Logging.logger.useNativeConsole = false;
-//MochiKit.Logging.logger.maxSize = 2000;
-
 /**
- * Ensure shuffl namespace is defined
+ * Ensure admiral namespace is defined
  */
-if (typeof shuffl == "undefined") { shuffl = {}; };
-
-// ----------------------------------------------------------------
-// Error class
-// ----------------------------------------------------------------
-
-/**
- * Error class for Shuffl
- */
-shuffl.Error = function(msg, val) 
-{
-    this.msg = this.message = msg;
-    this.val = val;
-};
-
-shuffl.Error.prototype = new Error("(shuffl)");
-
-shuffl.Error.prototype.toString = function () 
-{
-    var s = "shuffl error: "+this.msg;
-    if (this.val) {
-        s += " ("+this.val.toString()+")";
-    }
-    return s;
-};
-
-// ----------------------------------------------------------------
-// Status display
-// ----------------------------------------------------------------
-
-/**
- * Display workspace location in status bar.
- * 
- * @param uri       is the location URI or string to be displayed.
- *                  If not supplied, the current base uri is used.
- */
-shuffl.showLocation = function (uri)
-{
-    uri = uri || jQuery.uri();
-    jQuery('#workspace_status').text(uri.toString()).removeClass('shuffl-error');
-};
-
-/**
- * Display error message in status bar.
- * 
- * @param msg       is the error message to be displayed.
- */
-shuffl.showError = function (msg)
-{
-    ////log.debug("- msg "+shuffl.objectString(msg));
-    if (msg instanceof Error)
-    {
-        msg = msg.toString();
-    };
-    log.error(msg);
-    jQuery('#workspace_status').text(msg).addClass('shuffl-error');
-};
-
-// ----------------------------------------------------------------
-// Callback helpers
-// ----------------------------------------------------------------
-
-/**
- * Callback function taking one parameter that does nothing.
- */
-shuffl.noop = function (val)
-{
-    return;
-};
+if (typeof admiral == "undefined") { admiral = {}; };
 
 // ----------------------------------------------------------------
 // Miscellaneous support functions
 // ----------------------------------------------------------------
 
 /**
+ * Callback function taking one parameter that does nothing.
+ */
+admiral.noop = function (val)
+{
+    return;
+};
+
+/**
  * Get string value representing a supplied element
  */
-shuffl.elemString = function(elem) 
+admiral.elemString = function(elem) 
 {
     var attrs = elem.attributes || [];
     var attrtext = "";
@@ -142,22 +78,22 @@ shuffl.elemString = function(elem)
     // If faults about here, check that param passed is DOM element,
     // not jQuery object; e.g. jQuery(selector)[0].
     return "<"+tagName+attrtext+">"
-        + mk.map(shuffl.nodeString, elem.childNodes).join("")
+        + mk.map(admiral.nodeString, elem.childNodes).join("")
         + "</"+tagName+">";
 };
 
 /**
  * Get string value representing a supplied node
  */
-shuffl.nodeString = function(node) 
+admiral.nodeString = function(node) 
 {
     if (node.nodeType == 3) {
         return node.textContent ;
     }
     if (node.nodeType == 1) {
-        return shuffl.elemString(node);
+        return admiral.elemString(node);
     }
-    return shuffl.objectString(node);
+    return admiral.objectString(node);
     //1 ELEMENT_NODE
     //2 ATTRIBUTE_NODE
     //3 TEXT_NODE
@@ -171,7 +107,7 @@ shuffl.nodeString = function(node)
 /**
  * Get string value for object attributes
  */
-shuffl.objectString = function (obj) 
+admiral.objectString = function (obj) 
 {
 	if (typeof(obj) != "object")
 	{
@@ -184,7 +120,7 @@ shuffl.objectString = function (obj)
             str += pre + k + ': "' + obj[k] + '"';
             pre = ', ';
         } else if (obj[k] instanceof Array) {
-            str += pre + k + ': [' + mk.map(shuffl.objectString, obj[k]).join() + ']';
+            str += pre + k + ': [' + mk.map(admiral.objectString, obj[k]).join() + ']';
         } else if ( typeof obj[k] != "function" ) {
             //log.debug("  - "+k+": "+obj[k]);
             str += pre + k + ': ' + obj[k];
@@ -197,7 +133,7 @@ shuffl.objectString = function (obj)
 /**
  * Function to test if one string starts with another
  */
-shuffl.starts = function (pre, str)
+admiral.starts = function (pre, str)
 {
     return (str != null) && (str.slice(0,pre.length) == pre);
 };
@@ -205,7 +141,7 @@ shuffl.starts = function (pre, str)
 /**
  * Function to test if one string ends with another
  */
-shuffl.ends = function (suf, str)
+admiral.ends = function (suf, str)
 {
     return (str != null) && (suf.length == 0 || str.slice(-suf.length) == suf);
 };
@@ -216,15 +152,15 @@ shuffl.ends = function (suf, str)
  * formatting codes, namely %(name)s is replaced by the corresponding entry 
  * from the dictionary.
  */
-shuffl.interpolate = function(template, dict) 
+admiral.interpolate = function(template, dict) 
 {
-    //log.debug("shuffl.interpolate: "+template+", "+shuffl.objectString(dict));
+    //log.debug("admiral.interpolate: "+template+", "+admiral.objectString(dict));
     var str = template;
     for (k in dict) {
-        //log.debug("shuffl.interpolate: key: "+k+", "+dict[k]);        
+        //log.debug("admiral.interpolate: key: "+k+", "+dict[k]);        
         str = str.replace(new RegExp("%\\("+k+"\\)s","g"), dict[k]);
     };
-    //log.debug("shuffl.interpolate: return: "+str);
+    //log.debug("admiral.interpolate: return: "+str);
     return str;
 };
 
@@ -238,7 +174,7 @@ shuffl.interpolate = function(template, dict)
  * @param def           the default value to use if there is any
  *                      problem with the object member value.
  */
-shuffl.get = function (obj, key, def) 
+admiral.get = function (obj, key, def) 
 {
     if (typeof obj == "object" && obj.hasOwnProperty(key)) {
         var val = obj[key];
@@ -246,7 +182,7 @@ shuffl.get = function (obj, key, def)
         if (typeof val == "string") { return val; }
         if (typeof val == "number") { return val; }
         if (val instanceof Array)   { return val; }
-        log.error("shuffl.get: unexpected value type "+val);
+        log.error("admiral.get: unexpected value type "+val);
     };
     return def;
 };
@@ -258,7 +194,7 @@ shuffl.get = function (obj, key, def)
  * @param rad       radix to parse
  * @param def       default value
  */
-shuffl.parseInt = function (str, rad, def) 
+admiral.parseInt = function (str, rad, def) 
 {
     return parseInt(str, 10) || def;
 };
@@ -266,15 +202,15 @@ shuffl.parseInt = function (str, rad, def)
 /**
  *  Test to see is supplied URI is relative
  */
-shuffl.isRelativeUri = function (uriref) 
+admiral.isRelativeUri = function (uriref) 
 {
-    return shuffl.toAbsoluteUri("abs://nodomain/", uriref) != uriref;
+    return admiral.toAbsoluteUri("abs://nodomain/", uriref) != uriref;
 };
 
 /**
  *  Get absolute URI for specified base and URI reference
  */
-shuffl.toAbsoluteUri = function (baseuri, uriref) 
+admiral.toAbsoluteUri = function (baseuri, uriref) 
 {
     return jQuery.uri(baseuri).resolve(uriref);
 };
@@ -292,7 +228,7 @@ shuffl.toAbsoluteUri = function (baseuri, uriref)
  * @param pathext   a URI path that extends the base URI.
  * @return          the extended URI.
  */
-shuffl.extendUriPath = function (baseuri, pathext) 
+admiral.extendUriPath = function (baseuri, pathext) 
 {
     return jQuery.uri(baseuri).resolve(pathext.replace(/^\//,""));
 };
@@ -301,7 +237,7 @@ shuffl.extendUriPath = function (baseuri, pathext)
  * Format URI component:  if defined, the supplied prefix and suffix are added, 
  * otherwise returns an empty string.
  */
-shuffl.uriComponent = function (pre, component, suf) 
+admiral.uriComponent = function (pre, component, suf) 
 {
     if (component != undefined) { return pre+component+suf; }
     return "";
@@ -310,47 +246,47 @@ shuffl.uriComponent = function (pre, component, suf)
 /**
  * Function to return query including "?" from a URI, or an empty string.
  */
-shuffl.uriQuery = function (uri) 
+admiral.uriQuery = function (uri) 
 {
-    return shuffl.uriComponent("?", jQuery.uri(uri).query, "");
+    return admiral.uriComponent("?", jQuery.uri(uri).query, "");
 };
 
 /**
  *  Get URI without fragment
  */
-shuffl.uriWithoutFragment = function (uri) 
+admiral.uriWithoutFragment = function (uri) 
 {
     uri = jQuery.uri(uri);
-    return shuffl.uriComponent("",   uri.scheme,    ":")+
-           shuffl.uriComponent("//", uri.authority, "" )+
-           shuffl.uriComponent("",   uri.path,      "" )+
-           shuffl.uriComponent("?",  uri.query,     "" );           
+    return admiral.uriComponent("",   uri.scheme,    ":")+
+           admiral.uriComponent("//", uri.authority, "" )+
+           admiral.uriComponent("",   uri.path,      "" )+
+           admiral.uriComponent("?",  uri.query,     "" );           
 };
 
 /**
  * Resolve URI against current default
  * 
- * Resolve w.r.t. shuffl.uriBase("") is to work around what I beleive to be 
+ * Resolve w.r.t. admiral.uriBase("") is to work around what I beleive to be 
  * a bug in jQuery.uri, which uses filename part from the base path if none
  * is present in the relative path.
  */
-shuffl.uriResolveDefault = function (uri) 
+admiral.uriResolveDefault = function (uri) 
 {
-    return jQuery.uri(uri, shuffl.uriBase(""));
+    return jQuery.uri(uri, admiral.uriBase(""));
 };
 
 /**
  * Get URI component name (path following last '/')
  */
-shuffl.uriName = function (uri) 
+admiral.uriName = function (uri) 
 {
-    return shuffl.uriResolveDefault(uri).path.replace(/.*\//, "");
+    return admiral.uriResolveDefault(uri).path.replace(/.*\//, "");
 };
 
 /**
  * Get URI path excluding component name (path up to last '/')
  */
-shuffl.uriPath = function (uri) 
+admiral.uriPath = function (uri) 
 {
     return jQuery.uri(uri).path.replace(/\/[^\/]*$/, "/");
 };
@@ -358,9 +294,9 @@ shuffl.uriPath = function (uri)
 /**
  * Get full base URI, excluding component name, query and fragment
  */
-shuffl.uriBase = function (uri) 
+admiral.uriBase = function (uri) 
 {
-    return jQuery.uri(shuffl.uriPath(uri), jQuery.uri(uri)).toString();
+    return jQuery.uri(admiral.uriPath(uri), jQuery.uri(uri)).toString();
 };
 
 /**
@@ -373,13 +309,13 @@ shuffl.uriBase = function (uri)
  *                  with a trailing '/'
  * @return          a jQuery.uri object with the required normalized URI.
  */
-shuffl.normalizeUri = function (baseuri, uriref, col) {
-    ////log.debug("shuffl.StorageCommon.collectionUri: "+uri);
+admiral.normalizeUri = function (baseuri, uriref, col) {
+    ////log.debug("admiral.StorageCommon.collectionUri: "+uri);
     var uri  = jQuery.uri(baseuri, "error:///error").resolve(uriref);
     var path = uri.path.replace(/\/$/,"");
     return jQuery.uri(
-           shuffl.uriComponent("",   uri.scheme,    ":")+
-           shuffl.uriComponent("//", uri.authority, "" )+
+           admiral.uriComponent("",   uri.scheme,    ":")+
+           admiral.uriComponent("//", uri.authority, "" )+
            path+(col ? '/' : ''));
 };
 

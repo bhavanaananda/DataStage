@@ -32,7 +32,7 @@ if (typeof admiral == "undefined")
 admiral.displayDatasetStatus = function (jelem, callback)
 {
     log.debug("admiral.displayDatasetStatus");
-    var m = new shuffl.AsyncComputation();
+    var m = new admiral.AsyncComputation();
 
     // Read dataset information
     m.eval(function (val, callback)
