@@ -55,7 +55,7 @@ admiral.displayDatasetStatus = function (jelem, callback)
             error:        function (xhr, status) 
                 { 
                     jelem.text("HTTP GET "+val+" failed: "+status+"; HTTP status: "+xhr.status+" "+xhr.statusText);
-                    jelem.css('color', 'red');
+                    jelem.addClass('error');
                 },
             cache:        false
         });
