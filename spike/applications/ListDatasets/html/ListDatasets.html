@@ -1,0 +1,94 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+
+<head>
+    <title>ADMIRAL: Datasets</title>
+
+    <!-- TODO: move to separate CSS file -->
+    <style>
+    td {
+        background-color: #FFE;
+    }
+    </style>
+
+    <!-- Import jQuery framework -->
+    <script type="text/javascript" src="../../jQuery/js/jquery-1.4.2.js"></script> 
+
+    <!-- Import jQuery additional libraries -->
+    <script type="text/javascript" src="../../jQuery/jquery.json-2.2.js"></script> 
+ 
+    <!-- Import MochiKit modules: require MochiKit library functions to be fully qualified -->
+    <script type="text/javascript">MochiKit = {__export__: false};</script>
+    <script type="text/javascript" src="../../MochiKit/Base.js"></script>
+    <script type="text/javascript" src="../../MochiKit/Iter.js"></script>
+    <script type="text/javascript" src="../../MochiKit/Logging.js"></script>
+
+    <!-- Import Admiral functions -->
+    <script type="text/javascript" src="../../Admiral/admiral-base.js"></script>
+    <script type="text/javascript" src="../../Admiral/Error.js"></script>
+    <script type="text/javascript" src="../../Admiral/AsyncComputation.js"></script>
+
+    <script>
+    // Use jQuery via jQuery(...)
+      jQuery.noConflict();
+    </script>
+
+    <!-- Execute the code -->
+    <script>
+    admiral.listDatasets = function (host, siloName)
+    {
+        var m = new admiral.AsyncComputation();
+        m.eval(function (val, callback)
+        {
+            log.debug("Get "+val);
+            jQuery.ajax({
+                type:         "GET",
+                url:          val,
+                username:     "admiral",
+                password:     "admiral",
+                dataType:     "json",
+                beforeSend:   function (xhr)
+                    {
+                        xhr.setRequestHeader("Accept", "text/plain");
+                    },
+                success:      function (data, status, xhr)
+                    {
+                        callback(data);
+                    },
+                error:        function (xhr, status) 
+                    { 
+                        log.debug("HTTP GET "+val+" failed: "+status+"; HTTP status: "+xhr.status+" "+xhr.statusText);
+                        //jQuery("#status").text("HTTP GET "+val+" failed: "+status+"; HTTP status: "+xhr.status+" "+xhr.statusText);
+                        //jQuery("#status").css('color', 'red');
+                    },
+                cache:        false
+            });
+        });    
+        m.eval(function (data, callback)
+        {
+            log.debug(admiral.objectString(data));
+            callback(data);
+        });    
+        m.exec(host+"/"+siloName+"/datasets", admiral.noop);
+    }
+    jQuery(document).ready( function ()
+    {
+        admiral.listDatasets("", "admiral-test");
+    });
+    </script>  
+
+</head>
+
+<body>
+   <h1>Datasets</h1>
+
+   <div>
+     <table id="tableDatasets"></table>   
+   </div>
+
+   <div id="status" />
+   
+</body>
+
+</html>
