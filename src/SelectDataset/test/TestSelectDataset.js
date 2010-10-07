@@ -58,7 +58,7 @@ TestSelectDataset = function()
         var m = new admiral.AsyncComputation();
         m.eval(function(val,callback)
         {
-	        var jqelem = admiral.listDatasets(host, silo, getlist, callback);        	
+	        admiral.listDatasets(host, silo, getlist, callback);        	
         });
         m.eval(function(val, callback)
         {
