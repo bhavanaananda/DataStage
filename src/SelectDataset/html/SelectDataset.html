@@ -1,0 +1,98 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+
+<head>
+    <title>ADMIRAL: Datasets</title>
+
+    <!-- TODO: move to separate CSS file -->
+    <style>
+    td {
+        background-color: #FFE;
+    }
+    </style>
+
+    <!-- Import jQuery framework -->
+    <script type="text/javascript" src="../../jQuery/js/jquery-1.4.2.js"></script> 
+
+    <!-- Import jQuery additional libraries -->
+    <script type="text/javascript" src="../../jQuery/jquery.json-2.2.js"></script> 
+ 
+    <!-- Import MochiKit modules: require MochiKit library functions to be fully qualified -->
+    <script type="text/javascript">MochiKit = {__export__: false};</script>
+    <script type="text/javascript" src="../../MochiKit/Base.js"></script>
+    <script type="text/javascript" src="../../MochiKit/Iter.js"></script>
+    <script type="text/javascript" src="../../MochiKit/Logging.js"></script>
+
+    <!-- Import Admiral functions -->
+    <script type="text/javascript" src="../../Admiral/admiral-base.js"></script>
+    <script type="text/javascript" src="../../Admiral/Error.js"></script>
+    <script type="text/javascript" src="../../Admiral/AsyncComputation.js"></script>
+
+    <script>
+    // Use jQuery via jQuery(...)
+      jQuery.noConflict();
+    </script>
+
+    <!-- Execute the code -->
+    <script>
+    // var m = new admiral.AsyncComputation();
+    // var host, siloName;
+    // m.eval(function (val,val, callback)
+    //        {
+    //           admiral.getDatasetList(host,siloName);
+    //        });
+    //       m.eval(function (val, val, callback)
+    //        {
+    //           admiral.listDatasets(host,siloName);
+    //        });            
+    //        m.exec(null, admiral.noop);
+            
+    admiral.getDatasetList = function (host,siloName)
+    {
+        // Mock result until Databank API is confirmed
+        log.debug("Get datasets for "+host+"/"+siloName);
+        return ["apps", "test"];
+    }
+    admiral.listDatasets = function (host,siloName)
+    {
+        log.debug("List datasets for "+host+"/"+siloName);
+        // Get list of datasets
+        var datasets = admiral.getDatasetList(host, siloName);
+        log.debug("Datasets: "+jQuery.toJSON(datasets));
+        // Build display with links to datasets
+        jQuery("#tableDatasets").html("");
+        for (var i in datasets)
+        {
+            var dataset = datasets[i];
+            var newhtml = admiral.interpolate(
+                 "<tr><td><a href=\"%(datasetlink)s\">%(datasetname)s</a></td></tr>",
+                 { datasetlink: "../../DisplayDataset/html/DisplayDataset#"+dataset
+                 , datasetname: dataset
+                 });
+            var newelem = jQuery(newhtml);
+            jQuery("#tableDatasets").append(newelem);
+        }
+    }
+    
+    jQuery(document).ready( function ()
+    {
+        admiral.listDatasets("", "admiral-test");
+    });
+  </script>  
+
+</head>
+
+<body>
+   <h1>Datasets</h1>
+
+   <div>
+     <table id="tableDatasets">
+       <tr><td><a href="somehost/somesilo/dataset/somedatasets1">somedataset1</a></td></tr>
+       <tr><td><a href="somehost/somesilo/dataset/somedatasets2">somedataset2</a></td></tr>
+     </table>   
+   </div>
+   
+</body>
+
+</html>

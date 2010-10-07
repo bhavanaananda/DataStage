@@ -59,8 +59,8 @@
                 error:        function (xhr, status) 
                     { 
                         log.debug("HTTP GET "+val+" failed: "+status+"; HTTP status: "+xhr.status+" "+xhr.statusText);
-                        //jQuery("#status").text("HTTP GET "+val+" failed: "+status+"; HTTP status: "+xhr.status+" "+xhr.statusText);
-                        //jQuery("#status").css('color', 'red');
+                        jQuery("#status").text("HTTP GET "+val+" failed: "+status+"; HTTP status: "+xhr.status+" "+xhr.statusText);
+                        jQuery("#status").css('color', 'red');
                     },
                 cache:        false
             });
