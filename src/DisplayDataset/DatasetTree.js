@@ -40,7 +40,7 @@ admiral.segmentPaths = function (listofpaths)
 		}
 		return path.split("/");
 	}
-    log.debug("admiral.segmentPaths "+jQuery.toJSON(listofpaths));
+    //log.debug("admiral.segmentPaths "+jQuery.toJSON(listofpaths));
 	return MochiKit.Base.map (splitPath, listofpaths);
 };
 
@@ -62,7 +62,7 @@ admiral.segmentPaths = function (listofpaths)
  */
 admiral.segmentTreeBuilder = function (segmentlists)
 {
-    log.debug("admiral.segmentTreeBuilder "+jQuery.toJSON(segmentlists));
+    // log.debug("admiral.segmentTreeBuilder "+jQuery.toJSON(segmentlists));
     // ---- Generate tree path from list of segments ----
     function generateTreePath(seglist, depth)
     {
@@ -131,7 +131,7 @@ admiral.segmentTreeBuilder = function (segmentlists)
  */
 admiral.nestedListBuilder = function (tree)
 {
-    log.debug("admiral.nestedListBuilder "+jQuery.toJSON(tree));
+    //log.debug("admiral.nestedListBuilder "+jQuery.toJSON(tree));
     function appendTree(tree, jelem, rebuiltSegList)
     {
   	    for (var i = 0 ; i < tree.length ; i++)

@@ -73,8 +73,14 @@ TestSelectDataset = function()
             equals(table.length, 1, "HTML page contains single table");
             var tablerows = val.find("table tr")
             equals(tablerows.length, 0, "Table contains no elements");
+            callback(null);
         });
-        m.exec(null,admiral.noop);
+        m.exec(null, function (val)
+        {
+            log.debug("testEmptyListDatasets complete");
+            start();
+        });
+        stop(2000);
     });
     
     test("testMultipleListDatasets", function ()
@@ -120,9 +126,15 @@ TestSelectDataset = function()
                 var expected = "../../DisplayDataset/html/DisplayDataset#"+ rowdata;
                 var rowdatalink = tablerows.eq(i).find("a").attr('href');
                 equals(rowdatalink, expected, "Table contains one element with hyperlink: " +  rowdatalink);
-            }    
+            }   
+            callback(null); 
         });
-        m.exec(null,admiral.noop);
+        m.exec(null, function (val)
+        {
+            log.debug("testMultipleListDatasets complete");
+            start();
+        });
+        stop(2000);
     });
         
         
@@ -165,9 +177,61 @@ TestSelectDataset = function()
 	        // test for row data hyperlink
 	        var expected = "../../DisplayDataset/html/DisplayDataset#"+ rowdata;
 	        var rowdatalink = tablerows.eq(0).find("a").attr('href');
-	        equals(rowdatalink, expected, "Table contains one element with hyperlink: " +  rowdatalink);    
+	        equals(rowdatalink, expected, "Table contains one element with hyperlink: " +  rowdatalink);   
+	        callback(null); 
 	    });
-        m.exec(null,admiral.noop);
+        m.exec(null, function (val)
+        {
+            log.debug("testSingletonDataset complete");
+            start();
+        });
+        stop(2000);
+    });
+    
+    test("testDatabankDatasetListing", function ()
+    {
+        logtest("testDatabankDatasetListing");
+        if(window.location.protocol!="http:")
+        {
+            log.debug("Not loaded from http: Skipping test");
+            return;
+        }
+        var m = new admiral.AsyncComputation();
+        m.eval(function(val, callback)
+        {   
+            admiral.getDatasetList(host,silo,callback);            
+        });
+        m.eval(function(val,callback)
+        {
+            this.datasetlist = val;
+            var jqelem = admiral.listDatasets(host, silo, admiral.getDatasetList, callback);           
+        });
+        m.eval(function(val, callback)
+        {   log.debug("admiral.listDatasets callback");
+            var table     = val.find("table");
+            equals(table.length, 1, "HTML page contains single table");
+            
+            var tablerows = val.find("table tr");
+            equals(tablerows.length,this.datasetlist.length,"One row for each dataset");
+            for (var i = 0 ; i<this.datasetlist.length ; i++)
+            {
+                // test for row text
+                var expected = this.datasetlist[i];
+                var rowdata =  tablerows.eq(i).find("a").text();
+                equals(rowdata, expected, "Row "+i+" text: " + rowdata);
+                // test for row hyperlink
+                var expected = "../../DisplayDataset/html/DisplayDataset#"+ rowdata;
+                var rowdatalink = tablerows.eq(i).find("a").attr('href');
+                equals(rowdatalink, expected, "Row "+i+" hyperlink: " +  rowdatalink); 
+            }
+            callback(null);
+        });
+        m.exec(null, function (val)
+        {   
+            log.debug("testDatabankDatasetListing complete");
+            start();
+        });
+        stop(2000);
     });
 }
 
