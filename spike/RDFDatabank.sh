@@ -8,6 +8,10 @@ RDBROOT=http://163.1.127.173/admiral-test/datasets
 # --data-binary @- posts multiline from stdin
 
 echo
+echo "===== RETRIEVE DATASET LISTING (Accept JSON) ====="
+curl ${RDBROOT} -u admiral:admiral -o 00-temp-list.json -H "Accept: text/plain"
+
+echo
 echo "===== RETRIEVE DATASET PAGE (No Accept header) ====="
 curl ${RDBROOT}/apps -u admiral:admiral
 
