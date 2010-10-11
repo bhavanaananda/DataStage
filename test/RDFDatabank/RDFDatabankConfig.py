@@ -14,7 +14,8 @@ class RDFDatabankConfig:
 
     # Access via IP address
     endpointhost="163.1.127.173"
-    endpointpath="/admiral-test/"
+    endpointsilo="admiral-test"
+    endpointpath="/"+endpointsilo+"/"
 
     # Access credentials for testing
     endpointuser="admiral"

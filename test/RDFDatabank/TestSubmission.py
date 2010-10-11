@@ -371,6 +371,67 @@ class TestSubmission(SparqlQueryTestCase.SparqlQueryTestCase):
                    resource="datasets/"+i,
                    expect_status=200, expect_reason="OK")
 
+    def testListDatasets(self):
+        # Access list datasets, check response
+        data = self.doHTTP_GET(
+            resource="datasets/", 
+            expect_status=200, expect_reason="OK", expect_type="text/plain")
+        data = json.loads(data)
+        # Save initial list of datasets
+        datasetlist = []
+        for k in data:
+            datasetlist.append(k)
+        # Create a new dataset
+        fields = \
+            [ ("id", "TestSubmission")
+            ]
+        zipdata = open("data/testdir.zip").read()
+        files = \
+            [ ("file", "testdir.zip", zipdata, "application/zip") 
+            ]
+        (reqtype, reqdata) = SparqlQueryTestCase.encode_multipart_formdata(fields, files)
+        self.doHTTP_POST(
+            reqdata, reqtype, 
+            resource="packages/",
+            expect_status=200, expect_reason="OK")
+        # Read list of datasets, check that new list is original + new dataset
+        data = self.doHTTP_GET(
+            resource="datasets/", 
+            expect_status=200, expect_reason="OK", expect_type="text/plain")
+        data = json.loads(data)
+        newlist = []
+        for k in data:
+            newlist.append(k)
+        logger.debug("Orig. length "+str(len(datasetlist))+", new length "+str(len(newlist)))
+        self.assertEquals(len(newlist), len(datasetlist)+2, "One additional dataset + ZIPFILE in silo")
+        for ds in datasetlist: self.failUnless(ds in newlist, "Datset "+ds+" in original list, not in new list")
+        newzipfile = None
+        for ds in newlist:
+            if (ds not in datasetlist) and (ds[0:7] == "zipfile"):
+                newzipfile = ds
+            self.failUnless((ds in datasetlist) or (ds == newzipfile) or (ds == "TestSubmission"), 
+                            "Datset "+ds+" in new list, not in original list")
+        self.failUnless("TestSubmission" in newlist, "testSubmission in new list")
+        # Delete new dataset
+        self.doHTTP_DELETE(
+            resource="datasets/TestSubmission", 
+            expect_status=200, expect_reason="OK")
+        self.doHTTP_DELETE(
+            resource="datasets/"+newzipfile, 
+            expect_status=200, expect_reason="OK")
+        # read list of datasets, check result is same as original list
+        data = self.doHTTP_GET(
+            resource="datasets/", 
+            expect_status=200, expect_reason="OK", expect_type="text/plain")
+        data = json.loads(data)
+        newlist = []
+        for k in data:
+            newlist.append(k)
+        logger.debug("Orig. length "+str(len(datasetlist))+", new length "+str(len(newlist)))
+        self.assertEquals(len(newlist), len(datasetlist), "Back to original content in silo")
+        for ds in datasetlist: self.failUnless(ds in newlist, "Datset "+ds+" in original list, not in new list")
+        for ds in newlist: self.failUnless(ds in datasetlist, "Datset "+ds+" in new list, not in original list")
+
     # Sentinel/placeholder tests
 
     def testUnits(self):
@@ -409,6 +470,7 @@ def getTestSuite(select="unit"):
             , "testMetadataMerging"
             , "testDeleteDataset"
             , "testDeleteZipFiles"
+            , "testListDatasets"
             ],
         "component":
             [ "testComponents"

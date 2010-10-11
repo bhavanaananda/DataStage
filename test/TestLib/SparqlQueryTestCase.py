@@ -15,7 +15,11 @@ import base64
 import mimetypes
 import urllib
 import urlparse
-import simplejson
+try:
+    # Running Python 2.5 with simplejson?
+    import simplejson as simplejson
+except ImportError:
+    import json as simplejson
 
 if __name__ == "__main__":
     # For testing: 
