@@ -1,3 +1,4 @@
 # See man 5 aliases for format
 postmaster:    root
-root:    diana.galletly@zoo.ox.ac.uk
+webmaster:     root
+root:    graham.klyne@zoo.ox.ac.uk, bhavana.nanjangudananda@zoo.ox.ac.uk
