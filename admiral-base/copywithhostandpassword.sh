@@ -34,6 +34,12 @@ REPORT=":"
 MD5PASSWD=`slappasswd -h {MD5} -s $3`
 IP=`host $2 | cut -d ' ' -f4`
 
+if [[ "$1" == "copy" ]]; then
+    mkdir $TGTDIR/ldapconfig
+    mkdir $TGTDIR/www
+    mkdir $TGTDIR/www/docs
+fi
+
 for f in $FILELIST; do
     if [[ "$f" =~ /$ ]]; then
         $REPORT ".directory $f"

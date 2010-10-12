@@ -8,7 +8,7 @@ if [[ "$1" != "test" && ! -e /mnt/lv-admiral-data/data/ADMIRAL.README ]]; then
   exit
 fi
 
-if [[ "$1" == "test" ]]
+if [[ "$1" == "test" ]]; then
   mkdir /mnt/lv-admiral-data
   mkdir /mnt/lv-admiral-data/home
 fi
