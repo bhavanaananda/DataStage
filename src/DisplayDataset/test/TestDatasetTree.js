@@ -277,7 +277,7 @@ TestDatasetTree = function()
                     .append("<li><span class='file'>b</span></li>")
                 .end()
             .end();
-        same(admiral.nestedListBuilder(
+        same(admiral.nestedListBuilder(baseuri, 
             [ { segment: 'a', subtree: [ {segment: 'b', subtree: null} ] }
             ] ).outerhtml(),
             jelem2.outerhtml(),
@@ -306,7 +306,7 @@ TestDatasetTree = function()
                 .end()
             .end()
             ;
-        same(admiral.nestedListBuilder(
+        same(admiral.nestedListBuilder(baseuri, 
             [ { segment: 'a', subtree: [ {segment: 'b', subtree: null} ] }
             , { segment: 'b', subtree: [ {segment: 'c', subtree: null} ] }
             , { segment: 'c', subtree: [ {segment: 'd', subtree: null} ] }
@@ -315,7 +315,7 @@ TestDatasetTree = function()
             "2-segment paths");
 
         var jelem4 = jQuery("<ul class='filetree' />");
-        same(admiral.nestedListBuilder(
+        same(admiral.nestedListBuilder(baseuri, 
             [ 
             ] ).outerhtml(),
             jelem4.outerhtml(),
@@ -324,7 +324,7 @@ TestDatasetTree = function()
         var jelem5 = jQuery("<ul class='filetree' />")
             .append("<li><span class='file'></span></li>")
             ;
-        same(admiral.nestedListBuilder(
+        same(admiral.nestedListBuilder(baseuri, 
             [ { segment: '', subtree: null } 
             ] ).outerhtml(),
             jelem5.outerhtml(),
@@ -353,7 +353,7 @@ TestDatasetTree = function()
                 .end()
             .end()
             ;
-        same(admiral.nestedListBuilder(
+        same(admiral.nestedListBuilder(baseuri, 
             [ { segment: 'a', subtree: null }
             , { segment: '',  subtree: null }
             , { segment: 'b', subtree: 
@@ -391,7 +391,7 @@ TestDatasetTree = function()
                 .end()
             .end()
             ;
-        same(admiral.nestedListBuilder(
+        same(admiral.nestedListBuilder(baseuri, 
             [ { segment: 'a', subtree: 
                 [ { segment: 'm', subtree: null }
                 , { segment: 'n', subtree: null }
@@ -437,7 +437,7 @@ TestDatasetTree = function()
               "</li>"+
             "</ul>"
             );
-        same(admiral.nestedListBuilder(
+        same(admiral.nestedListBuilder(baseuri, 
             [ { segment: 'a', subtree: 
                 [ { segment: 'b', subtree:
                     [ { segment: 'c', subtree: null }
@@ -465,7 +465,7 @@ TestDatasetTree = function()
     test ("testNestedListBuilder", function()
     {
         logtest("testNestedListBuilder - with links");
-        var baseuri = "http://163.1.127.173/admiral-test/datasets/apps/";
+        var baseuri = "http://163.1.127.173/admiral-test/datasets/somedataset/";
 
         var tree1 =
             [ { segment: 'a', subtree: null}
@@ -477,7 +477,7 @@ TestDatasetTree = function()
             .append("<li><span class='file'><a href=\""+baseuri+"b\">b</a></span></li>")
             .append("<li><span class='file'><a href=\""+baseuri+"c\">c</a></span></li>")
             ;
-        same(admiral.nestedListBuilder(tree1).outerhtml(), jelem1.outerhtml(), "Single-segment paths with links");
+        same(admiral.nestedListBuilder(baseuri, tree1).outerhtml(), jelem1.outerhtml(), "Single-segment paths with links");
 
         var jelem2 = jQuery("<ul class='filetree' />")
             .append("<li><span class='folder'><a href=\""+baseuri+"a/\">a</a></span></li>")
@@ -487,7 +487,7 @@ TestDatasetTree = function()
                     .append("<li><span class='file'><a href=\""+baseuri+"a/b\">b</a></span></li>")
                 .end()
             .end();
-        same(admiral.nestedListBuilder(
+        same(admiral.nestedListBuilder(baseuri, 
             [ { segment: 'a', subtree: [ {segment: 'b', subtree: null} ] }
             ] ).outerhtml(),
             jelem2.outerhtml(),
@@ -516,7 +516,7 @@ TestDatasetTree = function()
                 .end()
             .end()
             ;
-        same(admiral.nestedListBuilder(
+        same(admiral.nestedListBuilder(baseuri, 
             [ { segment: 'a', subtree: [ {segment: 'b', subtree: null} ] }
             , { segment: 'b', subtree: [ {segment: 'c', subtree: null} ] }
             , { segment: 'c', subtree: [ {segment: 'd', subtree: null} ] }
@@ -525,7 +525,7 @@ TestDatasetTree = function()
             "2-segment paths providing for links");
 
         var jelem4 = jQuery("<ul class='filetree' />");
-        same(admiral.nestedListBuilder(
+        same(admiral.nestedListBuilder(baseuri, 
             [ 
             ] ).outerhtml(),
             jelem4.outerhtml(),
@@ -534,7 +534,7 @@ TestDatasetTree = function()
         var jelem5 = jQuery("<ul class='filetree' />")
             .append("<li><span class='file'></span></li>")
             ;
-        same(admiral.nestedListBuilder(
+        same(admiral.nestedListBuilder(baseuri, 
             [ { segment: '', subtree: null } 
             ] ).outerhtml(),
             jelem5.outerhtml(),
@@ -563,7 +563,7 @@ TestDatasetTree = function()
                 .end()
             .end()
             ;
-        same(admiral.nestedListBuilder(
+        same(admiral.nestedListBuilder(baseuri, 
             [ { segment: 'a', subtree: null }
             , { segment: '',  subtree: null }
             , { segment: 'b', subtree: 
@@ -601,7 +601,7 @@ TestDatasetTree = function()
                 .end()
             .end()
             ;
-        same(admiral.nestedListBuilder(
+        same(admiral.nestedListBuilder(baseuri, 
             [ { segment: 'a', subtree: 
                 [ { segment: 'm', subtree: null }
                 , { segment: 'n', subtree: null }
@@ -647,7 +647,7 @@ TestDatasetTree = function()
               "</li>"+
             "</ul>"
             );
-          same(admiral.nestedListBuilder(
+          same(admiral.nestedListBuilder(baseuri, 
             [ { segment: 'a', subtree: 
                 [ { segment: 'b', subtree:
                     [ { segment: 'c', subtree: null }

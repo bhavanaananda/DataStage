@@ -74,7 +74,8 @@
         }
         else
         {   
-            var dataSet = "/admiral-test/datasets/"+datasetName.slice(1);
+            datasetName = datasetName.slice(1);     // Remove '#'
+            var dataSet = "/admiral-test/datasets/"+datasetName;
             var m = new admiral.AsyncComputation();
             m.eval(function (val, callback)
             {
@@ -82,7 +83,7 @@
             });
             m.eval(function (val, callback)
             {
-               admiral.displayDatasetManifest(dataSet, callback);
+               admiral.displayDatasetManifest(dataSet, datasetName, callback);
             });
             m.exec(null, admiral.noop);
         }

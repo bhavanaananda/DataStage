@@ -13,10 +13,15 @@ import subprocess
 sys.path.append("../..")
 
 from TestConfig import TestConfig
+import TestHttpUtils
 
 # Initialize authenticated HTTP connection opener
 
 class TestFileUserAUserA(unittest.TestCase):
+
+    def do_HTTP_redirect(self, opener, method, uri, data, content_type):
+        TestHttpUtils.do_HTTP_redirect(opener, method, uri, data, content_type)
+        return
 
     def setUp(self):
         mountcommand = ( 'mount.cifs //%(host)s/%(share)s/%(user)s %(mountpt)s -o rw,user=%(user)s,password=%(pass)s,nounix,forcedirectio' %
@@ -200,10 +205,11 @@ class TestFileUserAUserA(unittest.TestCase):
         opener = urllib2.build_opener(authhandler)
         urllib2.install_opener(opener)
         createstring="Testing file creation with WebDAV"
-        req=urllib2.Request(TestConfig.webdavbaseurl+'/'+TestConfig.userAname+'/TestWebDAVCreate.tmp', data=createstring)
-        req.add_header('Content-Type', 'text/plain')
-        req.get_method = lambda: 'PUT'
-        url=opener.open(req)
+        # Write data to server
+        self.do_HTTP_redirect(opener, "PUT",
+            TestConfig.webdavbaseurl+'/'+TestConfig.userAname+'/TestWebDAVCreate.tmp', 
+            createstring, 'text/plain')
+        # Read back value and check result
         phan=urllib2.urlopen(TestConfig.webdavbaseurl+'/'+TestConfig.userAname+'/TestWebDAVCreate.tmp')
         thepage=phan.read()
         self.assertEqual(thepage,createstring)
@@ -215,15 +221,14 @@ class TestFileUserAUserA(unittest.TestCase):
         authhandler = urllib2.HTTPBasicAuthHandler(passman)
         opener = urllib2.build_opener(authhandler)
         urllib2.install_opener(opener)
+        modifyuri   = TestConfig.webdavbaseurl+'/'+TestConfig.userAname+'/TestWebDAVModify.tmp'
         createstring="Testing file modification with WebDAV"
         modifystring="And this is after an update" 
-        req=urllib2.Request(TestConfig.webdavbaseurl+'/'+TestConfig.userAname+'/TestWebDAVModify.tmp', createstring)
-        req.add_header('Content-Type', 'text/plain')
-        req.get_method = lambda: 'PUT'
-        url=opener.open(req)
-        req=urllib2.Request(TestConfig.webdavbaseurl+'/'+TestConfig.userAname+'/TestWebDAVModify.tmp', modifystring)
-        req.get_method = lambda: 'PUT'
-        urllib2.urlopen(req)
+        # Write initial data to server
+        self.do_HTTP_redirect(opener, "PUT", modifyuri, createstring, 'text/plain')
+        # Write updated data to server
+        self.do_HTTP_redirect(opener, "PUT", modifyuri, modifystring, 'text/plain')
+        # Read back value and check result        
         phan=urllib2.urlopen(TestConfig.webdavbaseurl+'/'+TestConfig.userAname+'/TestWebDAVModify.tmp')
         thepage=phan.read()
         self.assertEqual(thepage,modifystring)
@@ -235,12 +240,18 @@ class TestFileUserAUserA(unittest.TestCase):
         authhandler = urllib2.HTTPBasicAuthHandler(passman)
         opener = urllib2.build_opener(authhandler)
         urllib2.install_opener(opener)
-        req=urllib2.Request(TestConfig.webdavbaseurl+'/'+TestConfig.userAname+'/TestWebDAVCreate.tmp')
-        req.get_method = lambda: 'DELETE'
-        url=opener.open(req)
-        req=urllib2.Request(TestConfig.webdavbaseurl+'/'+TestConfig.userAname+'/TestWebDAVModify.tmp')
-        req.get_method = lambda: 'DELETE'
-        url=opener.open(req)
+        self.do_HTTP_redirect(opener, "DELETE", 
+            TestConfig.webdavbaseurl+'/'+TestConfig.userAname+'/TestWebDAVCreate.tmp',
+            None, None)
+        self.do_HTTP_redirect(opener, "DELETE", 
+            TestConfig.webdavbaseurl+'/'+TestConfig.userAname+'/TestWebDAVModify.tmp',
+            None, None)
+        #req=urllib2.Request(TestConfig.webdavbaseurl+'/'+TestConfig.userAname+'/TestWebDAVCreate.tmp')
+        #req.get_method = lambda: 'DELETE'
+        #url=opener.open(req)
+        #req=urllib2.Request(TestConfig.webdavbaseurl+'/'+TestConfig.userAname+'/TestWebDAVModify.tmp')
+        #req.get_method = lambda: 'DELETE'
+        #url=opener.open(req)
         return
 
     # Sentinel/placeholder tests

@@ -125,14 +125,21 @@ admiral.segmentTreeBuilder = function (segmentlists)
  * Convert a file segments tree structure into a jQuery nested directory 
  * list structure.
  * 
+ * @param baseUri       a base URI for creating links to all files and directories
+ *                      in the dataset.
  * @param tree          a tree structure (a list of branches).
  * @return              a jQuery element containing a nested structure of
  *                      unordered lists reflecting the tree.
  */
-admiral.nestedListBuilder = function (tree)
+admiral.nestedListBuilder = function (baseUri, tree)
 {
     //log.debug("admiral.nestedListBuilder "+jQuery.toJSON(tree));
-    function appendTree(tree, jelem, rebuiltSegList)
+    if (baseUri.slice(-1) == "/")
+    {
+        // trim off trailing '/'
+        baseUri = baseUri.slice(0,-1);
+    }
+    function appendTree(tree, jelem, rebuiltBaseUri)
     {
   	    for (var i = 0 ; i < tree.length ; i++)
   	    {
@@ -142,24 +149,23 @@ admiral.nestedListBuilder = function (tree)
         		var href = fileName;
         		if (fileName != "")
         		{
-        		    href = "<a href=\""+rebuiltSegList+"/"+fileName+"\">"+fileName+"</a>";
+        		    href = "<a href=\""+rebuiltBaseUri+"/"+fileName+"\">"+fileName+"</a>";
         		}
                 jelem.append("<li><span 'class='file'>"+href+"</span></li>");
 	    	}
             else
 	    	{
         		// New branch here == new directory level
-                href = "<a href=\""+rebuiltSegList+"/"+fileName+"/\">"+fileName+"</a>";
+                href = "<a href=\""+rebuiltBaseUri+"/"+fileName+"/\">"+fileName+"</a>";
                 jelem.append("<li><span class='folder'>"+href+"</span><ul/></li>");
-                appendTree(tree[i].subtree, jelem.find("li:last > ul"), rebuiltSegList + "/" + fileName);
+                appendTree(tree[i].subtree, jelem.find("li:last > ul"), rebuiltBaseUri + "/" + fileName);
 	    	}
   	    }
     }
     // Start witjh empty list
     var jelem = jQuery("<ul class='filetree' />");
     // Append tree to list
-    var rebuiltSegmentList = "http://163.1.127.173/admiral-test/datasets/apps";
-    appendTree(tree, jelem, rebuiltSegmentList);
+    appendTree(tree, jelem, baseUri);
     return jelem;
 };
 

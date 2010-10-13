@@ -149,7 +149,13 @@ class SparqlQueryTestCase(unittest.TestCase):
             response = hc.getresponse()
             if response.status != 301: break
             path = response.getheader('Location', None)
-            response.read()  # Seems to be needed to free up connection
+            print "Redirect to: "+path
+            if path[0:6] == "https:":
+                # close old connection, create new HTTPS connection
+                hc.close()
+                hc = httplib.HTTPSConnection(self._endpointhost)    # Assume same host for https:
+            else:
+                response.read()  # Seems to be needed to free up connection for new request
         logger.debug("Status: %i %s" % (response.status, response.reason))
         if expect_status != "*": self.assertEqual(response.status, expect_status)
         if expect_reason != "*": self.assertEqual(response.reason, expect_reason)

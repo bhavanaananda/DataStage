@@ -18,6 +18,22 @@ from TestConfig import TestConfig
 
 class TestFileUserAUserB(unittest.TestCase):
 
+    def do_HTTP_redirect(self, opener, method, uri, data, content_type):
+        req=urllib2.Request(uri, data=data)
+        if content_type: req.add_header('Content-Type', content_type)
+        req.get_method = lambda: method
+        try:
+            url=opener.open(req)
+        except urllib2.HTTPError as e:
+            if e.code == 301:                # Follow redirection
+                req=urllib2.Request( e.headers['Location'], data=data)
+                if content_type: req.add_header('Content-Type', content_type)
+                req.get_method = lambda: method
+                url=opener.open(req)
+            else:
+                raise e     # propagate exception
+        return
+
     def setUp(self):
         mountcommand = ( 'mount.cifs //%(host)s/%(share)s/%(userA)s %(mountpt)s -o rw,user=%(user)s,password=%(pass)s,nounix,forcedirectio' %
                          { 'host': TestConfig.hostname
@@ -181,20 +197,19 @@ class TestFileUserAUserB(unittest.TestCase):
         os.system('umount '+TestConfig.webdavmountpoint)
         return
 
-
     def testReadMeHTTP(self):
         passman = urllib2.HTTPPasswordMgrWithDefaultRealm()
         passman.add_password(None, TestConfig.webdavbaseurl, TestConfig.userBname, TestConfig.userBpass)
         authhandler = urllib2.HTTPBasicAuthHandler(passman)
         opener = urllib2.build_opener(authhandler)
         urllib2.install_opener(opener)
-        thepage=None
+        disallowed = False
         try:
             pagehandle = urllib2.urlopen(TestConfig.webdavbaseurl+'/'+TestConfig.userAname+'/'+TestConfig.readmefile)
-            thepage = pagehandle.read()
-        except:
-            pass
-        assert (thepage==None), "User B can read User A's file by HTTP!"
+        except urllib2.HTTPError as e:
+            self.assertEqual(e.code, 401, "Operation should be 401 (auth failed), was: "+str(e))
+            disallowed = True
+        assert disallowed, "User B can read User A's file by HTTP!"
         return
 
     def testCreateFileHTTP(self):
@@ -203,20 +218,18 @@ class TestFileUserAUserB(unittest.TestCase):
         authhandler = urllib2.HTTPBasicAuthHandler(passman)
         opener = urllib2.build_opener(authhandler)
         urllib2.install_opener(opener)
-        thepage=None
-        createstring="Testing file creation with WebDAV"
+        createstring="Testing file creation with HTTP"
+        disallowed = True
         try:
-            req=urllib2.Request(TestConfig.webdavbaseurl+'/'+TestConfig.userAname+'/TestWebDAVCreate.tmp', data=createstring)
-            req.add_header('Content-Type', 'text/plain')
-            req.get_method = lambda: 'PUT'
-            url=opener.open(req)
-            phan=urllib2.urlopen(TestConfig.webdavbaseurl+'/'+TestConfig.userAname+'/TestWebDAVCreate.tmp')
-            thepage=phan.read()
-        except:
-            pass
-        assert (thepage==None), "User B can create a file in User A's filespace by HTTP!"
+            # Write data to server
+            self.do_HTTP_redirect(opener, "PUT",
+                TestConfig.webdavbaseurl+'/'+TestConfig.userAname+'/TestHTTPCreate.tmp', 
+                createstring, 'text/plain')
+        except urllib2.HTTPError as e:
+            self.assertEqual(e.code, 401, "Operation should be 401 (auth failed), was: "+str(e))
+            disallowed = True
+        assert disallowed, "User B can create a file in User A's filespace by HTTP!"
         return
-
 
     def testUpdateFileHTTP(self):
         passman = urllib2.HTTPPasswordMgrWithDefaultRealm()
@@ -224,17 +237,17 @@ class TestFileUserAUserB(unittest.TestCase):
         authhandler = urllib2.HTTPBasicAuthHandler(passman)
         opener = urllib2.build_opener(authhandler)
         urllib2.install_opener(opener)
-        thepage=None
-        updatestring="Testing file modification with WebDAV"
+        updatestring="Testing file modification with HTTP"
+        disallowed = True
         try:
-            req=urllib2.Request(TestConfig.webdavbaseurl+'/'+TestConfig.userAname+'/TestWebDAVCreate.tmp', data=updatestring)
-            req.get_method = lambda: 'PUT'
-            url=opener.open(req)
-            phan=urllib2.urlopen(TestConfig.webdavbaseurl+'/'+TestConfig.userAname+'/TestWebDAVCreate.tmp')
-            thepage=phan.read()
-        except:
-            pass
-        assert (thepage!=updatestring), "User B can update User A's file by HTTP!"
+            # Write data to server
+            self.do_HTTP_redirect(opener, "PUT",
+                TestConfig.webdavbaseurl+'/'+TestConfig.userAname+'/TestHTTPCreate.tmp', 
+                updatestring, 'text/plain')
+        except urllib2.HTTPError as e:
+            self.assertEqual(e.code, 401, "Operation should be 401 (auth failed), was: "+str(e))
+            disallowed = True
+        assert disallowed, "User B can update User A's file by HTTP!"
         return
 
     def testDeleteFileHTTP(self):
@@ -243,9 +256,21 @@ class TestFileUserAUserB(unittest.TestCase):
         authhandler = urllib2.HTTPBasicAuthHandler(passman)
         opener = urllib2.build_opener(authhandler)
         urllib2.install_opener(opener)
-        req=urllib2.Request(TestConfig.webdavbaseurl+'/'+TestConfig.userAname+'/TestWebDAVCreate.tmp')
-        req.get_method = lambda: 'DELETE'
-        url=opener.open(req)
+        disallowed = False
+        try:
+            # Write data to server
+            self.do_HTTP_redirect(opener, "DELETE",
+                TestConfig.webdavbaseurl+'/'+TestConfig.userAname+'/TestHTTPCreate.tmp', 
+                None, 'text/plain')
+        except urllib2.HTTPError as e:
+            self.assertEqual(e.code, 401, "Operation should be 401 (auth failed), was: "+str(e))
+            disallowed = True
+        assert disallowed, "User B can delete User A's file by HTTP!"
+
+#        req=urllib2.Request(TestConfig.webdavbaseurl+'/'+TestConfig.userAname+'/TestWebDAVCreate.tmp')
+#        req.get_method = lambda: 'DELETE'
+#        url=opener.open(req)
+
         return
 
     # Sentinel/placeholder tests
@@ -290,6 +315,7 @@ def getTestSuite(select="unit"):
             , "testCreateFileHTTP"
             , "testUpdateFileCIFS"
             , "testUpdateFileHTTP"
+            , "testDeleteFileHTTP"
             ],
         "integration":
             [ "testIntegration"
@@ -302,7 +328,6 @@ def getTestSuite(select="unit"):
             , "testUpdateFileDAVfs"
             , "testDeleteFileDAVfs"
             , "testDeleteFileCIFS"
-            , "testDeleteFileHTTP"
             ]
         }
     return TestUtils.getTestSuite(TestFileUserAUserB, testdict, select=select)

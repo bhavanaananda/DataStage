@@ -26,12 +26,12 @@ if (typeof admiral == "undefined")
 /**
  * Read an RDFDatabank manifest, and display in a supplied jQuery object.
  * 
- * @param dataSetPath   String containing the URI path of the dataset to be displayed.
+ * @param datasetPath   String containing the URI path of the dataset to be displayed.
  * @param callback      callback function invoked when the dataset status has been read and displayed.
  */
-admiral.displayDatasetManifest = function (dataSetPath, callback)
+admiral.displayDatasetManifest = function (datasetPath, datasetName, callback)
 {
-    log.debug("admiral.displayDatasetManifest ");
+    log.debug("admiral.displayDatasetManifest "+datasetPath+", "+datasetName);
     var m = new admiral.AsyncComputation();
 
     // Read manifest RDF/XML
@@ -85,6 +85,7 @@ admiral.displayDatasetManifest = function (dataSetPath, callback)
 
         jQuery("#datasetLink").attr("href", rq[0].s.value);
 
+        var baseUri           = "";
         var fileAbsolutePaths = new Array();
         var fileRelativePaths = new Array();
 
@@ -97,6 +98,7 @@ admiral.displayDatasetManifest = function (dataSetPath, callback)
             } 
             else if (this.p.value.toString()=="http://purl.org/dc/terms/modified")
             {
+                baseUri = this.s.value.toString();
                 jQuery("#lastModified").text(this.o.value);
             }
             else if (this.p.value.toString()=="http://www.openarchives.org/ore/terms/aggregates")
@@ -108,13 +110,13 @@ admiral.displayDatasetManifest = function (dataSetPath, callback)
  
         var seglists = admiral.segmentPaths(fileRelativePaths.sort());
         var segtree  = admiral.segmentTreeBuilder(seglists);
-        var seghtml  = admiral.nestedListBuilder(segtree);
+        var seghtml  = admiral.nestedListBuilder(baseUri, segtree);
         jQuery(".manifest").text("");
         jQuery(".manifest").append(seghtml);
         seghtml.treeview();
     });
     // Kick off access to manifest data
-    m.exec(dataSetPath, callback);
+    m.exec(datasetPath, callback);
 };
 
 // End.
