@@ -14,9 +14,13 @@ sys.path.append("../..")
 
 from TestConfig import TestConfig
 
+import TestHttpUtils
 
 class TestFileCIFSwriteHTTPread(unittest.TestCase):
-
+    def do_HTTP_redirect(self, opener, method, uri, data, content_type):
+        TestHttpUtils.do_HTTP_redirect(opener, method, uri, data, content_type)
+        return
+    
     def setUp(self):
         return
 
@@ -72,6 +76,7 @@ class TestFileCIFSwriteHTTPread(unittest.TestCase):
         authhandler = urllib2.HTTPBasicAuthHandler(passman)
         opener = urllib2.build_opener(authhandler)
         urllib2.install_opener(opener)
+
         thepage=None
         createstring="Test creation of file\n"
         try:
@@ -82,53 +87,52 @@ class TestFileCIFSwriteHTTPread(unittest.TestCase):
             pass
         assert (thepage==None), "User B can read file in User A's area by HTTP!"
  
-        thepage=None
-        modifystring="And this is after an update"
+
+        modifystring="And this is after an update"  
+        disallowed = False        
         try:
-            req=urllib2.Request(TestConfig.webdavbaseurl+'/'+TestConfig.userAname+'/testCreateFileCIFSAspace.tmp', data=modifystring)
-            req.add_header('Content-Type', 'text/plain')
-            req.get_method = lambda: 'PUT'
-            url=opener.open(req)
-            phan=urllib2.urlopen(TestConfig.webdavbaseurl+'/'+TestConfig.userAname+'/testCreateFileCIFSAspace.tmp')
-            thepage=phan.read()
-            self.assertEqual(thepage,modifystring)
-        except:
-            pass
-        assert (thepage==None), "User B can update file in User A's area by HTTP!"
+            self.do_HTTP_redirect(opener, "PUT",
+                TestConfig.webdavbaseurl+'/shared/'+TestConfig.userAname+'/testCreateFileCIFSAspace.tmp', 
+                modifystring, 'text/plain')
+        except urllib2.HTTPError as e:
+            self.assertEqual(e.code, 401, "Operation should be 401 (auth failed), was: "+str(e))
+            disallowed = True          
+        assert disallowed, "User B can update file in User A's area by HTTP!"
       
+        #print "URI: "+TestConfig.webdavbaseurl+'/shared/'+TestConfig.userAname+'/testCreateFileCIFSAsharedspace.tmp'
+        authhandler = urllib2.HTTPBasicAuthHandler(passman)
+        opener = urllib2.build_opener(authhandler)
+        urllib2.install_opener(opener)
         pagehandle = urllib2.urlopen(TestConfig.webdavbaseurl+'/shared/'+TestConfig.userAname+'/testCreateFileCIFSAsharedspace.tmp')
         thepage = pagehandle.read()
         self.assertEqual(thepage, createstring) 
 
-        thepage=None
+        disallowed = False 
         try:
-            req=urllib2.Request(TestConfig.webdavbaseurl+'/shared/'+TestConfig.userAname+'/testCreateFileCIFSAsharedspace.tmp', data=modifystring)
-            req.add_header('Content-Type', 'text/plain')
-            req.get_method = lambda: 'PUT'
-            url=opener.open(req)
-            phan=urllib2.urlopen(TestConfig.webdavbaseurl+'/shared/'+TestConfig.userAname+'/testCreateFileCIFSAsharedspace.tmp')
-            thepage=phan.read()
-            self.assertEqual(thepage,modifystring)
-        except:
-            pass
-        assert (thepage==None), "User B can update file in User A's shared area by HTTP!"
+            self.do_HTTP_redirect(opener, "PUT",
+                TestConfig.webdavbaseurl+'/shared/'+TestConfig.userAname+'/testCreateFileCIFSAsharedspace.tmp', 
+                modifystring, 'text/plain')
+        except urllib2.HTTPError as e:
+            self.assertEqual(e.code, 401, "Operation should be 401 (auth failed), was: "+str(e))
+            disallowed = True          
+        assert disallowed, "User B can update file in User A's shared area by HTTP!"
         
+        authhandler = urllib2.HTTPBasicAuthHandler(passman)
+        opener = urllib2.build_opener(authhandler)
+        urllib2.install_opener(opener)
         pagehandle = urllib2.urlopen(TestConfig.webdavbaseurl+'/collab/'+TestConfig.userAname+'/testCreateFileCIFSAcollabspace.tmp')
         thepage = pagehandle.read()
         self.assertEqual(thepage, createstring) 
 
-        thepage=None
+        disallowed = False 
         try:
-            req=urllib2.Request(TestConfig.webdavbaseurl+'/collab/'+TestConfig.userAname+'/testCreateFileCIFSAcollabspace.tmp', data=modifystring)
-            req.add_header('Content-Type', 'text/plain')
-            req.get_method = lambda: 'PUT'
-            url=opener.open(req)
-            phan=urllib2.urlopen(TestConfig.webdavbaseurl+'/collab/'+TestConfig.userAname+'/testCreateFileCIFSAcollabspace.tmp')
-            thepage=phan.read()
-            self.assertEqual(thepage,modifystring)
-        except:
-            pass
-        assert (thepage==None), "User B can update file in User A's collab area by HTTP!"
+            self.do_HTTP_redirect(opener, "PUT",
+                TestConfig.webdavbaseurl+'/collab/'+TestConfig.userAname+'/testCreateFileCIFSAcollabspace.tmp', 
+                modifystring, 'text/plain') 
+        except urllib2.HTTPError as e:
+            self.assertEqual(e.code, 401, "Operation should be 401 (auth failed), was: "+str(e))
+            disallowed = True          
+        assert disallowed, "User B can update file in User A's collab area by HTTP!"
         
 
     def testSharedUserHTTPRGLeader(self):
@@ -143,53 +147,54 @@ class TestFileCIFSwriteHTTPread(unittest.TestCase):
         thepage = pagehandle.read()
         self.assertEqual(thepage, createstring) 
  
-        thepage=None
         modifystring="And this is after an update"
+        disallowed=False
         try:
-            req=urllib2.Request(TestConfig.webdavbaseurl+'/'+TestConfig.userAname+'/testCreateFileCIFSAspace.tmp', data=modifystring)
-            req.add_header('Content-Type', 'text/plain')
-            req.get_method = lambda: 'PUT'
-            url=opener.open(req)
-            phan=urllib2.urlopen(TestConfig.webdavbaseurl+'/'+TestConfig.userAname+'/testCreateFileCIFSAspace.tmp')
-            thepage=phan.read()
-            self.assertEqual(thepage,modifystring)
-        except:
-            pass
-        assert (thepage==None), "Group leader can update file in User A's area by HTTP!"
+            self.do_HTTP_redirect(opener, "PUT",
+                TestConfig.webdavbaseurl+'/'+TestConfig.userAname+'/testCreateFileCIFSAspace.tmp', 
+                modifystring, 'text/plain') 
+        except urllib2.HTTPError as e:
+            self.assertEqual(e.code, 401, "Operation should be 401 (auth failed), was: "+str(e))
+            disallowed = True          
+        assert disallowed, "Group leader can update file in User A's area by HTTP!"
       
+        authhandler = urllib2.HTTPBasicAuthHandler(passman)
+        opener = urllib2.build_opener(authhandler)
+        urllib2.install_opener(opener)
         pagehandle = urllib2.urlopen(TestConfig.webdavbaseurl+'/shared/'+TestConfig.userAname+'/testCreateFileCIFSAsharedspace.tmp')
         thepage = pagehandle.read()
         self.assertEqual(thepage, createstring) 
 
-        thepage=None
-        try:
-            req=urllib2.Request(TestConfig.webdavbaseurl+'/shared/'+TestConfig.userAname+'/testCreateFileCIFSAsharedspace.tmp', data=modifystring)
-            req.add_header('Content-Type', 'text/plain')
-            req.get_method = lambda: 'PUT'
-            url=opener.open(req)
+        disallowed = False 
+        try:           
+            self.do_HTTP_redirect(opener, "PUT",
+                TestConfig.webdavbaseurl+'/shared/'+TestConfig.userAname+'/testCreateFileCIFSAsharedspace.tmp', 
+                modifystring, 'text/plain')
+            
             phan=urllib2.urlopen(TestConfig.webdavbaseurl+'/shared/'+TestConfig.userAname+'/testCreateFileCIFSAsharedspace.tmp')
             thepage=phan.read()
             self.assertEqual(thepage,modifystring)
-        except:
-            pass
-        assert (thepage==None), "Group leader can update file in User A's shared area by HTTP!"
+        except urllib2.HTTPError as e:
+            self.assertEqual(e.code, 401, "Operation should be 401 (auth failed), was: "+str(e))
+            disallowed = True          
+        assert disallowed, "Group leader can update file in User A's shared area by HTTP!"
         
+        authhandler = urllib2.HTTPBasicAuthHandler(passman)
+        opener = urllib2.build_opener(authhandler)
+        urllib2.install_opener(opener)
         pagehandle = urllib2.urlopen(TestConfig.webdavbaseurl+'/collab/'+TestConfig.userAname+'/testCreateFileCIFSAcollabspace.tmp')
         thepage = pagehandle.read()
         self.assertEqual(thepage, createstring) 
 
-        thepage=None
+        disallowed = False 
         try:
-            req=urllib2.Request(TestConfig.webdavbaseurl+'/collab/'+TestConfig.userAname+'/testCreateFileCIFSAcollabspace.tmp', data=modifystring)
-            req.add_header('Content-Type', 'text/plain')
-            req.get_method = lambda: 'PUT'
-            url=opener.open(req)
-            phan=urllib2.urlopen(TestConfig.webdavbaseurl+'/collab/'+TestConfig.userAname+'/testCreateFileCIFSAcollabspace.tmp')
-            thepage=phan.read()
-            self.assertEqual(thepage,modifystring)
-        except:
-            pass
-        assert (thepage==None), "Group leader can update file in User A's collab area by HTTP!"
+          self.do_HTTP_redirect(opener, "PUT",
+                TestConfig.webdavbaseurl+'/collab/'+TestConfig.userAname+'/testCreateFileCIFSAcollabspace.tmp', 
+                modifystring, 'text/plain')
+        except urllib2.HTTPError as e:
+            self.assertEqual(e.code, 401, "Operation should be 401 (auth failed), was: "+str(e))
+            disallowed = True          
+        assert disallowed,"Group leader can update file in User A's collab area by HTTP!"
         
 
     def testSharedUserHTTPCollab(self):
@@ -208,19 +213,16 @@ class TestFileCIFSwriteHTTPread(unittest.TestCase):
             pass
         assert (thepage==None), "Collaborator can read file in User A's area by HTTP!"
  
-        thepage=None
+        disallowed = False 
         modifystring="And this is after an update"
         try:
-            req=urllib2.Request(TestConfig.webdavbaseurl+'/'+TestConfig.userAname+'/testCreateFileCIFSAspace.tmp', data=modifystring)
-            req.add_header('Content-Type', 'text/plain')
-            req.get_method = lambda: 'PUT'
-            url=opener.open(req)
-            phan=urllib2.urlopen(TestConfig.webdavbaseurl+'/'+TestConfig.userAname+'/testCreateFileCIFSAspace.tmp')
-            thepage=phan.read()
-            self.assertEqual(thepage,modifystring)
-        except:
-            pass
-        assert (thepage==None), "Collaborator can update file in User A's area by HTTP!"
+            self.do_HTTP_redirect(opener, "PUT",
+                TestConfig.webdavbaseurl+'/'+TestConfig.userAname+'/testCreateFileCIFSAspace.tmp', 
+                modifystring, 'text/plain')
+        except urllib2.HTTPError as e:
+            self.assertEqual(e.code, 401, "Operation should be 401 (auth failed), was: "+str(e))
+            disallowed = True          
+        assert disallowed, "Collaborator can update file in User A's area by HTTP!"
       
         thepage=None
         try:
@@ -231,35 +233,32 @@ class TestFileCIFSwriteHTTPread(unittest.TestCase):
             pass
         assert (thepage==None), "Collaborator can read file in User A's shared area by HTTP!"
 
-        thepage=None
+        disallowed = False 
         try:
-            req=urllib2.Request(TestConfig.webdavbaseurl+'/shared/'+TestConfig.userAname+'/testCreateFileCIFSAsharedspace.tmp', data=modifystring)
-            req.add_header('Content-Type', 'text/plain')
-            req.get_method = lambda: 'PUT'
-            url=opener.open(req)
-            phan=urllib2.urlopen(TestConfig.webdavbaseurl+'/shared/'+TestConfig.userAname+'/testCreateFileCIFSAsharedspace.tmp')
-            thepage=phan.read()
-            self.assertEqual(thepage,modifystring)
-        except:
-            pass
-        assert (thepage==None), "Collaborator can update file in User A's shared area by HTTP!"
+            self.do_HTTP_redirect(opener, "PUT",
+                TestConfig.webdavbaseurl+'/shared/'+TestConfig.userAname+'/testCreateFileCIFSAsharedspace.tmp', 
+                modifystring, 'text/plain')
+        except urllib2.HTTPError as e:
+            self.assertEqual(e.code, 401, "Operation should be 401 (auth failed), was: "+str(e))
+            disallowed = True          
+        assert disallowed,"Collaborator can update file in User A's shared area by HTTP!"
         
+        authhandler = urllib2.HTTPBasicAuthHandler(passman)
+        opener = urllib2.build_opener(authhandler)
+        urllib2.install_opener(opener)
         pagehandle = urllib2.urlopen(TestConfig.webdavbaseurl+'/collab/'+TestConfig.userAname+'/testCreateFileCIFSAcollabspace.tmp')
         thepage = pagehandle.read()
         self.assertEqual(thepage, createstring) 
 
-        thepage=None
+        disallowed = False 
         try:
-            req=urllib2.Request(TestConfig.webdavbaseurl+'/collab/'+TestConfig.userAname+'/testCreateFileCIFSAcollabspace.tmp', data=modifystring)
-            req.add_header('Content-Type', 'text/plain')
-            req.get_method = lambda: 'PUT'
-            url=opener.open(req)
-            phan=urllib2.urlopen(TestConfig.webdavbaseurl+'/collab/'+TestConfig.userAname+'/testCreateFileCIFSAcollabspace.tmp')
-            thepage=phan.read()
-            self.assertEqual(thepage,modifystring)
-        except:
-            pass
-        assert (thepage==None), "Collaborator can update file in User A's collab area by HTTP!"
+            self.do_HTTP_redirect(opener, "PUT",
+                TestConfig.webdavbaseurl+'/collab/'+TestConfig.userAname+'/testCreateFileCIFSAcollabspace.tmp', 
+                modifystring, 'text/plain')           
+        except urllib2.HTTPError as e:
+            self.assertEqual(e.code, 401, "Operation should be 401 (auth failed), was: "+str(e))
+            disallowed = True          
+        assert disallowed, "Collaborator can update file in User A's collab area by HTTP!"
         return
 
 

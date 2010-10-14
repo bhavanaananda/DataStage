@@ -14,8 +14,12 @@ sys.path.append("../..")
 
 from TestConfig import TestConfig
 
+import TestHttpUtils
 
 class TestFileHTTPwriteCIFSread(unittest.TestCase):
+    def do_HTTP_redirect(self, opener, method, uri, data, content_type):
+        TestHttpUtils.do_HTTP_redirect(opener, method, uri, data, content_type)
+        return
 
     def setUp(self):
         return
@@ -34,30 +38,28 @@ class TestFileHTTPwriteCIFSread(unittest.TestCase):
         authhandler = urllib2.HTTPBasicAuthHandler(passman)
         opener = urllib2.build_opener(authhandler)
         urllib2.install_opener(opener)
-
-        createstring="Testing file creation with WebDAV\n"
-        req=urllib2.Request(TestConfig.webdavbaseurl+'/'+TestConfig.userAname+'/testCreateFileHTTPAspace.tmp', data=createstring)
-        req.add_header('Content-Type', 'text/plain')
-        req.get_method = lambda: 'PUT'
-        url=opener.open(req)
+        createstring="Testing file creation with HTTP\n"
+        
+        thepage=None
+        self.do_HTTP_redirect(opener, "PUT",
+            TestConfig.webdavbaseurl+'/'+TestConfig.userAname+'/testCreateFileHTTPAspace.tmp', 
+            createstring, 'text/plain')
         phan=urllib2.urlopen(TestConfig.webdavbaseurl+'/'+TestConfig.userAname+'/testCreateFileHTTPAspace.tmp')
         thepage=phan.read()
         self.assertEqual(thepage,createstring)
 
         thepage=None
-        req=urllib2.Request(TestConfig.webdavbaseurl+'/shared/'+TestConfig.userAname+'/testCreateFileHTTPAsharedspace.tmp', data=createstring)
-        req.add_header('Content-Type', 'text/plain')
-        req.get_method = lambda: 'PUT'
-        url=opener.open(req)
+        self.do_HTTP_redirect(opener, "PUT",
+            TestConfig.webdavbaseurl+'/shared/'+TestConfig.userAname+'/testCreateFileHTTPAsharedspace.tmp', 
+            createstring, 'text/plain')
         phan=urllib2.urlopen(TestConfig.webdavbaseurl+'/shared/'+TestConfig.userAname+'/testCreateFileHTTPAsharedspace.tmp')
         thepage=phan.read()
         self.assertEqual(thepage,createstring)
 
         thepage=None
-        req=urllib2.Request(TestConfig.webdavbaseurl+'/collab/'+TestConfig.userAname+'/testCreateFileHTTPAcollabspace.tmp', data=createstring)
-        req.add_header('Content-Type', 'text/plain')
-        req.get_method = lambda: 'PUT'
-        url=opener.open(req)
+        self.do_HTTP_redirect(opener, "PUT",
+            TestConfig.webdavbaseurl+'/collab/'+TestConfig.userAname+'/testCreateFileHTTPAcollabspace.tmp', 
+            createstring, 'text/plain')
         phan=urllib2.urlopen(TestConfig.webdavbaseurl+'/collab/'+TestConfig.userAname+'/testCreateFileHTTPAcollabspace.tmp')
         thepage=phan.read()
         self.assertEqual(thepage,createstring)
@@ -94,7 +96,7 @@ class TestFileHTTPwriteCIFSread(unittest.TestCase):
         f = open(TestConfig.cifsmountpoint+'/shared/'+TestConfig.userAname+'/testCreateFileHTTPAsharedspace.tmp','r')
         l = f.readline()
         f.close()
-        self.assertEqual(l, 'Testing file creation with WebDAV\n', 'Unexpected file content in user A\'s shared space for User B') 
+        self.assertEqual(l, 'Testing file creation with HTTP\n', 'Unexpected file content in user A\'s shared space for User B') 
 
         f=None
         try: 
@@ -107,7 +109,7 @@ class TestFileHTTPwriteCIFSread(unittest.TestCase):
         f = open(TestConfig.cifsmountpoint+'/collab/'+TestConfig.userAname+'/testCreateFileHTTPAcollabspace.tmp','r')
         l = f.readline()
         f.close()
-        self.assertEqual(l, 'Testing file creation with WebDAV\n', 'Unexpected file content in user A\'s collab space for User B') 
+        self.assertEqual(l, 'Testing file creation with HTTP\n', 'Unexpected file content in user A\'s collab space for User B') 
 
         f=None
         try: 
@@ -133,7 +135,7 @@ class TestFileHTTPwriteCIFSread(unittest.TestCase):
         f = open(TestConfig.cifsmountpoint+'/'+TestConfig.userAname+'/testCreateFileHTTPAspace.tmp','r')
         l = f.readline()
         f.close()
-        self.assertEqual(l, 'Testing file creation with WebDAV\n', 'Unexpected file content in user A\'s shared space for RGLeader') 
+        self.assertEqual(l, 'Testing file creation with HTTP\n', 'Unexpected file content in user A\'s shared space for RGLeader') 
 
         f=None
         try: 
@@ -146,7 +148,7 @@ class TestFileHTTPwriteCIFSread(unittest.TestCase):
         f = open(TestConfig.cifsmountpoint+'/shared/'+TestConfig.userAname+'/testCreateFileHTTPAsharedspace.tmp','r')
         l = f.readline()
         f.close()
-        self.assertEqual(l, 'Testing file creation with WebDAV\n', 'Unexpected file content in user A\'s shared space for RGLeader') 
+        self.assertEqual(l, 'Testing file creation with HTTP\n', 'Unexpected file content in user A\'s shared space for RGLeader') 
 
         f=None
         try: 
@@ -159,7 +161,7 @@ class TestFileHTTPwriteCIFSread(unittest.TestCase):
         f = open(TestConfig.cifsmountpoint+'/collab/'+TestConfig.userAname+'/testCreateFileHTTPAcollabspace.tmp','r')
         l = f.readline()
         f.close()
-        self.assertEqual(l, 'Testing file creation with WebDAV\n', 'Unexpected file content in user A\'s collab space for RGLeader') 
+        self.assertEqual(l, 'Testing file creation with HTTP\n', 'Unexpected file content in user A\'s collab space for RGLeader') 
 
         f=None
         try: 
@@ -177,11 +179,8 @@ class TestFileHTTPwriteCIFSread(unittest.TestCase):
                          , 'mountpt': TestConfig.cifsmountpoint
                          , 'pass': TestConfig.collabpass
                          } )
-        status=None
-        try:
-            status=os.system(mountcommand)
-        except:
-            pass
+
+        status=os.system(mountcommand)
         assert (status!=0), "Collaborator can mount CIFS filesystem!"
 
     # Sentinel/placeholder tests

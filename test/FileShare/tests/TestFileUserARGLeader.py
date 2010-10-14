@@ -14,24 +14,13 @@ sys.path.append("../..")
 
 from TestConfig import TestConfig
 
+import TestHttpUtils
+
 # Initialize authenticated HTTP connection opener
 
 class TestFileUserARGLeader(unittest.TestCase):
-
     def do_HTTP_redirect(self, opener, method, uri, data, content_type):
-        req=urllib2.Request(uri, data=data)
-        if content_type: req.add_header('Content-Type', content_type)
-        req.get_method = lambda: method
-        try:
-            url=opener.open(req)
-        except urllib2.HTTPError as e:
-            if e.code == 301:                # Follow redirection
-                req=urllib2.Request( e.headers['Location'], data=data)
-                if content_type: req.add_header('Content-Type', content_type)
-                req.get_method = lambda: method
-                url=opener.open(req)
-            else:
-                raise e     # propagate exception
+        TestHttpUtils.do_HTTP_redirect(opener, method, uri, data, content_type)
         return
 
     def setUp(self):

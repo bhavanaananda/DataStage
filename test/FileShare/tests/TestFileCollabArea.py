@@ -14,9 +14,13 @@ sys.path.append("../..")
 
 from TestConfig import TestConfig
 
+import TestHttpUtils
 
 class TestFileCollabArea(unittest.TestCase):
-
+    def do_HTTP_redirect(self, opener, method, uri, data, content_type):
+        TestHttpUtils.do_HTTP_redirect(opener, method, uri, data, content_type)
+        return
+    
     def setUp(self):
         return
 
@@ -38,7 +42,6 @@ class TestFileCollabArea(unittest.TestCase):
                          , 'pass': TestConfig.userApass
                          } )
         status=os.system(mountcommand)
-
         self.assertEqual(status, 0, 'CIFS Mount failure')
         f = open(TestConfig.cifsmountpoint+'/testCreateFileCIFS.tmp','w+')
         assert (f), "File creation failed"
@@ -120,12 +123,10 @@ class TestFileCollabArea(unittest.TestCase):
         authhandler = urllib2.HTTPBasicAuthHandler(passman)
         opener = urllib2.build_opener(authhandler)
         urllib2.install_opener(opener)
-
-        createstring="Testing file creation with WebDAV"
-        req=urllib2.Request(TestConfig.webdavbaseurl+'/collab/'+TestConfig.userAname+'/TestCreateFileHTTP.tmp', data=createstring)
-        req.add_header('Content-Type', 'text/plain')
-        req.get_method = lambda: 'PUT'
-        url=opener.open(req)
+        createstring="Testing file creation with HTTP" 
+        self.do_HTTP_redirect(opener, "PUT",
+            TestConfig.webdavbaseurl+'/collab/'+TestConfig.userAname+'/TestCreateFileHTTP.tmp', 
+            createstring, 'text/plain')
         phan=urllib2.urlopen(TestConfig.webdavbaseurl+'/collab/'+TestConfig.userAname+'/TestCreateFileHTTP.tmp')
         thepage=phan.read()
         self.assertEqual(thepage,createstring)
@@ -139,21 +140,19 @@ class TestFileCollabArea(unittest.TestCase):
         urllib2.install_opener(opener)
         pagehandle = urllib2.urlopen(TestConfig.webdavbaseurl+'/collab/'+TestConfig.userAname+'/TestCreateFileHTTP.tmp')
         thepage = pagehandle.read()
-        createstring="Testing file creation with WebDAV"
+        createstring="Testing file creation with HTTP"
         self.assertEqual(thepage, createstring) 
         modifystring="And this is after an update"
-        thepage=None
+        disallowed = False 
         try:
-            req=urllib2.Request(TestConfig.webdavbaseurl+'/collab/'+TestConfig.userAname+'/TestCreateFileHTTPB.tmp', data=createstring)
-            req.add_header('Content-Type', 'text/plain')
-            req.get_method = lambda: 'PUT'
-            url=opener.open(req)
-            phan=urllib2.urlopen(TestConfig.webdavbaseurl+'/collab/'+TestConfig.userAname+'/TestCreateFileHTTPB.tmp')
-            thepage=phan.read()
-            self.assertEqual(thepage,createstring)
-        except:
-            pass
-        assert (thepage==None), "User B can create file in User A's collab area by HTTP!"
+            self.do_HTTP_redirect(opener, "PUT",
+                TestConfig.webdavbaseurl+'/collab/'+TestConfig.userAname+'/TestCreateFileHTTPB.tmp', 
+                modifystring, 'text/plain')
+        except urllib2.HTTPError as e:
+            self.assertEqual(e.code, 401, "Operation should be 401 (auth failed), was: "+str(e))
+            disallowed = True
+        assert disallowed, "User B can create file in User A's collab area by HTTP!"
+        
 
     def testSharedUserHTTPRGLeader(self):
         passman = urllib2.HTTPPasswordMgrWithDefaultRealm()
@@ -163,22 +162,18 @@ class TestFileCollabArea(unittest.TestCase):
         urllib2.install_opener(opener)
         pagehandle = urllib2.urlopen(TestConfig.webdavbaseurl+'/collab/'+TestConfig.userAname+'/TestCreateFileHTTP.tmp')
         thepage = pagehandle.read()
-        createstring="Testing file creation with WebDAV"
+        createstring="Testing file creation with HTTP"
         self.assertEqual(thepage, createstring) 
         modifystring="And this is after an update"
-        thepage=None
+        disallowed = False 
         try:
-            req=urllib2.Request(TestConfig.webdavbaseurl+'/collab/'+TestConfig.userAname+'/TestCreateFileHTTPRGL.tmp', data=createstring)
-            req.add_header('Content-Type', 'text/plain')
-            req.get_method = lambda: 'PUT'
-            url=opener.open(req)
-            phan=urllib2.urlopen(TestConfig.webdavbaseurl+'/collab/'+TestConfig.userAname+'/TestCreateFileHTTPRGL.tmp')
-            thepage=phan.read()
-            self.assertEqual(thepage,createstring)
-        except:
-            pass
-        assert (thepage==None), "Group Leader can create file in User A's collab area by HTTP!"
-
+            self.do_HTTP_redirect(opener, "PUT",
+                TestConfig.webdavbaseurl+'/collab/'+TestConfig.userAname+'/TestCreateFileHTTPRGL.tmp', 
+                modifystring, 'text/plain')
+        except urllib2.HTTPError as e:
+            self.assertEqual(e.code, 401, "Operation should be 401 (auth failed), was: "+str(e))
+            disallowed = True
+        assert disallowed, "Group Leader can create file in User A's collab area by HTTP!"
         return
 
     def testSharedUserHTTPCollab(self):
@@ -189,22 +184,18 @@ class TestFileCollabArea(unittest.TestCase):
         urllib2.install_opener(opener)
         pagehandle = urllib2.urlopen(TestConfig.webdavbaseurl+'/collab/'+TestConfig.userAname+'/TestCreateFileHTTP.tmp')
         thepage = pagehandle.read()
-        createstring="Testing file creation with WebDAV"
+        createstring="Testing file creation with HTTP"
         self.assertEqual(thepage, createstring) 
         modifystring="And this is after an update"
-        thepage=None
+        disallowed = False 
         try:
-            req=urllib2.Request(TestConfig.webdavbaseurl+'/collab/'+TestConfig.userAname+'/TestCreateFileHTTPRGL.tmp', data=createstring)
-            req.add_header('Content-Type', 'text/plain')
-            req.get_method = lambda: 'PUT'
-            url=opener.open(req)
-            phan=urllib2.urlopen(TestConfig.webdavbaseurl+'/collab/'+TestConfig.userAname+'/TestCreateFileHTTPRGL.tmp')
-            thepage=phan.read()
-            self.assertEqual(thepage,createstring)
-        except:
-            pass
-        assert (thepage==None), "Collaborator can create file in User A's collab area by HTTP!"
-
+            self.do_HTTP_redirect(opener, "PUT",
+                TestConfig.webdavbaseurl+'/collab/'+TestConfig.userAname+'/TestCreateFileHTTPRGL.tmp', 
+                modifystring, 'text/plain')
+        except urllib2.HTTPError as e:
+            self.assertEqual(e.code, 401, "Operation should be 401 (auth failed), was: "+str(e))
+            disallowed = True
+        assert disallowed, "Collaborator can create file in User A's collab area by HTTP!"
         return
 
 

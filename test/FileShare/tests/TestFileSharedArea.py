@@ -14,8 +14,12 @@ sys.path.append("../..")
 
 from TestConfig import TestConfig
 
+import TestHttpUtils
 
 class TestFileSharedArea(unittest.TestCase):
+    def do_HTTP_redirect(self, opener, method, uri, data, content_type):
+        TestHttpUtils.do_HTTP_redirect(opener, method, uri, data, content_type)
+        return
 
     def setUp(self):
         return
@@ -107,12 +111,12 @@ class TestFileSharedArea(unittest.TestCase):
         authhandler = urllib2.HTTPBasicAuthHandler(passman)
         opener = urllib2.build_opener(authhandler)
         urllib2.install_opener(opener)
-
-        createstring="Testing file creation with WebDAV"
-        req=urllib2.Request(TestConfig.webdavbaseurl+'/shared/'+TestConfig.userAname+'/TestCreateFileHTTP.tmp', data=createstring)
-        req.add_header('Content-Type', 'text/plain')
-        req.get_method = lambda: 'PUT'
-        url=opener.open(req)
+        createstring="Testing file creation with HTTP"
+        # Write data to server
+        self.do_HTTP_redirect(opener, "PUT",
+            TestConfig.webdavbaseurl+'/shared/'+TestConfig.userAname+'/TestCreateFileHTTP.tmp', 
+            createstring, 'text/plain')
+        # Read back value and check result
         phan=urllib2.urlopen(TestConfig.webdavbaseurl+'/shared/'+TestConfig.userAname+'/TestCreateFileHTTP.tmp')
         thepage=phan.read()
         self.assertEqual(thepage,createstring)
@@ -124,25 +128,22 @@ class TestFileSharedArea(unittest.TestCase):
         authhandler = urllib2.HTTPBasicAuthHandler(passman)
         opener = urllib2.build_opener(authhandler)
         urllib2.install_opener(opener)
+        # Read from User A's shared Area    
         pagehandle = urllib2.urlopen(TestConfig.webdavbaseurl+'/shared/'+TestConfig.userAname+'/TestCreateFileHTTP.tmp')
         thepage = pagehandle.read()
-        createstring="Testing file creation with WebDAV"
+        createstring="Testing file creation with HTTP"
         self.assertEqual(thepage, createstring) 
+        # Write updated data to server
         modifystring="And this is after an update"
-        thepage=None
-        try:
-            req=urllib2.Request(TestConfig.webdavbaseurl+'/shared/'+TestConfig.userAname+'/TestCreateFileHTTPB.tmp', data=createstring)
-            req.add_header('Content-Type', 'text/plain')
-            req.get_method = lambda: 'PUT'
-            url=opener.open(req)
-            phan=urllib2.urlopen(TestConfig.webdavbaseurl+'/shared/'+TestConfig.userAname+'/TestCreateFileHTTP.tmp')
-            thepage=phan.read()
-            self.assertEqual(thepage,createstring)
-        except:
-            pass
-        assert (thepage==None), "User B can update User A's file by HTTP!"
-
-
+        disallowed = False  
+        try:    
+            self.do_HTTP_redirect(opener, "PUT",
+                TestConfig.webdavbaseurl+'/shared/'+TestConfig.userAname+'/TestCreateFileHTTP.tmp', 
+                modifystring, 'text/plain')
+        except urllib2.HTTPError as e:
+            self.assertEqual(e.code, 401, "Operation should be 401 (auth failed), was: "+str(e))
+            disallowed = True
+        assert disallowed, "User B can modify a file in User A's filespace by HTTP!"
         return
 
 
