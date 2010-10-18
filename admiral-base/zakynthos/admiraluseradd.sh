@@ -31,7 +31,7 @@ END
   mkdir /home/data/private/$1
   mkdir /home/data/shared/$1
   mkdir /home/data/collab/$1
-  ln -s /home/data/private/$1 $1   # For compatibility with Silk Group
+  ln -s /home/data/private/$1 /home/data/$1   # For compatibility with Silk Group
 
   # Set default file system access modes (overridden by access control lists)
 
@@ -50,6 +50,7 @@ END
   # User access
   setfacl -m u:$1:rwx /home/data/private/$1
   setfacl -m u:$1:rwx /home/data/shared/$1
+  
   setfacl -m u:$1:rwx /home/data/collab/$1
 
   # Research group leader access

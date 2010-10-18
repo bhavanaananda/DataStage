@@ -31,6 +31,7 @@ class TestFileUserAUserA(unittest.TestCase):
                          , 'mountpt': TestConfig.cifsmountpoint
                          , 'pass': TestConfig.userApass
                          } )
+        print mountcommand
         status=os.system(mountcommand)
         self.assertEqual(status, 0, 'CIFS Mount failure')
 #        status=os.system('mount '+TestConfig.webdavmountpoint)
