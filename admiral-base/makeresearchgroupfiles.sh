@@ -13,28 +13,35 @@
 # MIT Licensed - see LICENCE.txt or http://www.opensource.org/licenses/mit-license.php
 #
 
-USAGE="$0 (test|copy) hostname password workgroup leadername"
+USAGE="$0 (test|copy) hostname password"
 
 if [[ "$1" != "test" && "$1" != "copy" ]]; then
     echo "Usage: $USAGE"
     exit 2
 fi
 
-if [[ "$2" == "" || "$3" == "" || "$4" == "" || "$5" == "" ]]; then
+if [[ "$2" == "" || "$3" == "" ]]; then
     echo "Usage: $USAGE"
     exit 2
 fi
 
+# Host-specific parameters
+COPYTEST=$1
+HOSTNAME=$2
+PASSWORD=$3
+source $HOSTNAME/hostconfig.sh
+
+# Common configuration code
 SRCDIR="."
-TGTDIR="/var/kvm/$2"
+TGTDIR="/var/kvm/$HOSTNAME"
 BLACKLISTPATTERN="^(.*~|.*\\.(tmp|bak)|a1\.sh|copywithhostandpassword\.sh)$"
-FILELIST="`ls -1 --directory --ignore-backups --file-type * ldapconfig/* www/* www/*/* $2/* $2/*/* $2/*/*/*`"
+FILELIST="`ls -1 --directory --ignore-backups --file-type * ldapconfig/* www/* www/*/* $HOSTNAME/* $HOSTNAME/*/* $HOSTNAME/*/*/*`"
 REPORT="echo"
 REPORT=":"
-MD5PASSWD=`slappasswd -h {MD5} -s $3`
-IP=`host $2 | cut -d ' ' -f4`
+MD5PASSWD=`slappasswd -h {MD5} -s $PASSWORD`
+IP=`host $HOSTNAME | cut -d ' ' -f4`
 
-if [[ "$1" == "copy" ]]; then
+if [[ "$COPYTEST" == "copy" ]]; then
     mkdir $TGTDIR/ldapconfig
     mkdir $TGTDIR/www
     mkdir $TGTDIR/www/docs
@@ -59,16 +66,16 @@ for f in $FILELIST; do
         f2="${f##*/}"
         # f1: keep just the directory names - strip out the final filename
         f1="${f%$f2}"
-        # f3: copy of file name with host name directory removed
-        f3="${f1#$2/}"
+        # f3: copy of file directory with leading host name directory removed
+        f3="${f1#$HOSTNAME/}"
         # Fix relative base reference for one level of subdirectory
         # Copy and link file now
         $REPORT "not blacklisted $f (dir:$f1, name:$f2, target:$f3)"
         if [ -d $TGTDIR/$f3 ]; then
-            if [[ "$1" == "copy" ]]; then
-                    sed -e "s/%{HOSTNAME}/$2/g" -e "s/%{PASSWORD}/$3/g" -e "s/%{WORKGROUP}/$4/g" -e "s/%{IPADDR}/$IP/g" -e "s/%{LeaderName}/$5/g" -e "s/%{MD5PASS}/$MD5PASSWD/g" < $f >$TGTDIR/$f3$f2
+            if [[ "$COPYTEST" == "copy" ]]; then
+                    sed -e "s/%{HOSTNAME}/$HOSTNAME/g" -e "s/%{PASSWORD}/$PASSWORD/g" -e "s/%{WORKGROUP}/$WORKGROUP/g" -e "s/%{IPADDR}/$IP/g" -e "s/%{LeaderName}/$LEADERNAME/g" -e "s/%{MD5PASS}/$MD5PASSWD/g" < $f >$TGTDIR/$f3$f2
             else
-                    echo "sed -e 's/%{HOSTNAME}/$2/g' -e 's/%{PASSWORD}/$3/g' -e 's/%{WORKGROUP}/$4/g' -e 's/%{IPADDR}/$IP/g' -e 's/%{LeaderName}/$5/g' -e 's/%{MD5PASS}/$MD5PASSWD/g' < $f >$TGTDIR/$f3$f2"
+                    echo "sed -e 's/%{HOSTNAME}/$HOSTNAME/g' -e 's/%{PASSWORD}/$PASSWORD/g' -e 's/%{WORKGROUP}/$WORKGROUP/g' -e 's/%{IPADDR}/$IP/g' -e 's/%{LeaderName}/$LEADERNAME/g' -e 's/%{MD5PASS}/$MD5PASSWD/g' < $f >$TGTDIR/$f3$f2"
             fi
         else
             echo "Directory $TGTDIR/$f3 not found"
