@@ -44,7 +44,7 @@
     Alias /data /home/data
 
     <Directory /home/data/>
-        Options Indexes MultiViews
+        Options Indexes MultiViews FollowSymLinks
         AllowOverride None
         Order deny,allow
         Deny from all

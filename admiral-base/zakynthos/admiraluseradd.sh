@@ -31,6 +31,7 @@ END
   mkdir /home/data/private/$1
   mkdir /home/data/shared/$1
   mkdir /home/data/collab/$1
+  ln -s /home/data/private/$1 $1   # For compatibility with Silk Group
 
   # Set default file system access modes (overridden by access control lists)
 
@@ -79,41 +80,58 @@ END
   # Set up Apache access control configuration
 
   cat << EOF > /etc/apache2/conf.d/user.$1
+
+<Location /data/$1>
+    Order Deny,Allow
+    Allow from all
+    <LimitExcept REPORT GET OPTIONS PROPFIND>
+    Require user $1
+    </LimitExcept>
+    <Limit PROPFIND OPTIONS GET REPORT>
+    Require user $1
+    Require ldap-attribute gidNumber=$RGLeaderGID
+    </Limit>
+</Location>
+
 <Location /data/private/$1>
-        Order Deny,Allow
-        Allow from all
+    Order Deny,Allow
+    Allow from all
 	<LimitExcept REPORT GET OPTIONS PROPFIND>
 	Require user $1
 	</LimitExcept>
 	<Limit PROPFIND OPTIONS GET REPORT>
+    Require user $1
     Require ldap-attribute gidNumber=$RGLeaderGID
 	</Limit>
 </Location>
 
 <Location /data/shared/$1>
-        Order Deny,Allow
-        Allow from all
+    Order Deny,Allow
+    Allow from all
 	<LimitExcept REPORT GET OPTIONS PROPFIND>
 	Require user $1
 	</LimitExcept>
 	<Limit PROPFIND OPTIONS GET REPORT>
+    Require user $1
 	Require ldap-attribute gidNumber=$RGLeaderGID
 	Require ldap-attribute gidNumber=$RGMemberGID
 	</Limit>
 </Location>
 
 <Location /data/collab/$1>
-        Order Deny,Allow
-        Allow from all
+    Order Deny,Allow
+    Allow from all
 	<LimitExcept REPORT GET OPTIONS PROPFIND>
 	Require user $1
 	</LimitExcept>
 	<Limit PROPFIND OPTIONS GET REPORT>
+    Require user $1
 	Require ldap-attribute gidNumber=$RGLeaderGID
 	Require ldap-attribute gidNumber=$RGMemberGID
 	Require ldap-attribute gidNumber=$RGCollabGID
 	</Limit>
 </Location>
+
 EOF
   chown root:root /etc/apache2/conf.d/user.$1
   chmod 644 /etc/apache2/conf.d/user.$1
