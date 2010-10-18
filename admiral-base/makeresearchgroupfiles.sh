@@ -60,20 +60,18 @@ for f in $FILELIST; do
         # f1: keep just the directory names - strip out the final filename
         f1="${f%$f2}"
         # f3: copy of file name with host name directory removed
-        f3="${f#$2/}"
+        f3="${f1#$2/}"
         # Fix relative base reference for one level of subdirectory
-        fb="."
-        if [[ "$f1" != "" ]]; then fb=".."; fi
         # Copy and link file now
-        $REPORT "not blacklisted $f (dir:$f1, name:$f2, base:$fb)"
-        if [ -d $TGTDIR/$f1 ]; then
+        $REPORT "not blacklisted $f (dir:$f1, name:$f2, target:$f3)"
+        if [ -d $TGTDIR/$f3 ]; then
             if [[ "$1" == "copy" ]]; then
-                    sed -e "s/%{HOSTNAME}/$2/g" -e "s/%{PASSWORD}/$3/g" -e "s/%{WORKGROUP}/$4/g" -e "s/%{IPADDR}/$IP/g" -e "s/%{LeaderName}/$5/g" -e "s/%{MD5PASS}/$MD5PASSWD/g" < $f >$TGTDIR/$f
+                    sed -e "s/%{HOSTNAME}/$2/g" -e "s/%{PASSWORD}/$3/g" -e "s/%{WORKGROUP}/$4/g" -e "s/%{IPADDR}/$IP/g" -e "s/%{LeaderName}/$5/g" -e "s/%{MD5PASS}/$MD5PASSWD/g" < $f >$TGTDIR/$f3$f2
             else
-                    echo "sed -e 's/%{HOSTNAME}/$2/g' -e 's/%{PASSWORD}/$3/g' -e 's/%{WORKGROUP}/$4/g' -e 's/%{IPADDR}/$IP/g' -e 's/%{LeaderName}/$5/g' -e 's/%{MD5PASS}/$MD5PASSWD/g' < $f >$TGTDIR/$f3"
+                    echo "sed -e 's/%{HOSTNAME}/$2/g' -e 's/%{PASSWORD}/$3/g' -e 's/%{WORKGROUP}/$4/g' -e 's/%{IPADDR}/$IP/g' -e 's/%{LeaderName}/$5/g' -e 's/%{MD5PASS}/$MD5PASSWD/g' < $f >$TGTDIR/$f3$f2"
             fi
         else
-            echo "Directory $TGTDIR/$f1 not found"
+            echo "Directory $TGTDIR/$f3 not found"
         fi
     fi
 done
