@@ -41,11 +41,12 @@ REPORT=":"
 MD5PASSWD=`slappasswd -h {MD5} -s $PASSWORD`
 IP=`host $HOSTNAME | cut -d ' ' -f4`
 
-if [[ "$COPYTEST" == "copy" ]]; then
-    mkdir $TGTDIR/ldapconfig
-    mkdir $TGTDIR/www
-    mkdir $TGTDIR/www/docs
-fi
+#if [[ "$COPYTEST" == "copy" ]]; then
+    mkdir -p $TGTDIR
+    mkdir -p $TGTDIR/ldapconfig
+    mkdir -p $TGTDIR/www
+    mkdir -p $TGTDIR/www/docs
+#fi
 
 for f in $FILELIST; do
     if [[ "$f" =~ /$ ]]; then
@@ -83,5 +84,10 @@ for f in $FILELIST; do
     fi
 done
 
-chmod +x $TGTDIR/*.sh
-chmod +x $TGTDIR/ldapconfig/*.sh
+if [[ "$COPYTEST" == "copy" ]]; then
+    chmod +x $TGTDIR/*.sh
+    chmod +x $TGTDIR/ldapconfig/*.sh
+fi
+
+# End.
+
