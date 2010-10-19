@@ -86,11 +86,10 @@ END
     Order Deny,Allow
     Allow from all
     <LimitExcept REPORT GET OPTIONS PROPFIND>
-    Require user $1
+      Require user $1
     </LimitExcept>
     <Limit PROPFIND OPTIONS GET REPORT>
-    Require user $1
-    Require ldap-attribute gidNumber=$RGLeaderGID
+      Require user $1 $RGLeaderName
     </Limit>
 </Location>
 
@@ -98,11 +97,13 @@ END
     Order Deny,Allow
     Allow from all
 	<LimitExcept REPORT GET OPTIONS PROPFIND>
-	Require user $1
+	  Require user $1
 	</LimitExcept>
 	<Limit PROPFIND OPTIONS GET REPORT>
-    Require user $1
-    Require ldap-attribute gidNumber=$RGLeaderGID
+	  # NOTE:
+	  # Tried to use a combination of "Require user" and "Require ldap-attribute"
+	  # here, but this caused access failures for all users.
+    Require user $1 $RGLeaderName
 	</Limit>
 </Location>
 
@@ -110,12 +111,11 @@ END
     Order Deny,Allow
     Allow from all
 	<LimitExcept REPORT GET OPTIONS PROPFIND>
-	Require user $1
+	  Require user $1
 	</LimitExcept>
 	<Limit PROPFIND OPTIONS GET REPORT>
-    Require user $1
-	Require ldap-attribute gidNumber=$RGLeaderGID
-	Require ldap-attribute gidNumber=$RGMemberGID
+    Require ldap-attribute gidNumber=$RGLeaderGID
+    Require ldap-attribute gidNumber=$RGMemberGID
 	</Limit>
 </Location>
 
@@ -123,13 +123,12 @@ END
     Order Deny,Allow
     Allow from all
 	<LimitExcept REPORT GET OPTIONS PROPFIND>
-	Require user $1
+  	Require user $1
 	</LimitExcept>
 	<Limit PROPFIND OPTIONS GET REPORT>
-    Require user $1
-	Require ldap-attribute gidNumber=$RGLeaderGID
-	Require ldap-attribute gidNumber=$RGMemberGID
-	Require ldap-attribute gidNumber=$RGCollabGID
+    Require ldap-attribute gidNumber=$RGLeaderGID
+  	Require ldap-attribute gidNumber=$RGMemberGID
+  	Require ldap-attribute gidNumber=$RGCollabGID
 	</Limit>
 </Location>
 
