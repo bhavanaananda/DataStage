@@ -1,6 +1,5 @@
 # use glob syntax.
 syntax: glob
-
 *.elc
 *.pyc
 *.tmp
@@ -16,5 +15,6 @@ syntax: glob
 
 syntax: regexp
 ^\.pydevproject$
+
 syntax: regexp
 ^\.settings/org\.eclipse\.ltk\.core\.refactoring\.prefs$
