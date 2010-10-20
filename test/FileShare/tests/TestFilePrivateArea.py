@@ -14,6 +14,7 @@ sys.path.append("../..")
 
 from TestConfig import TestConfig
 
+import TestCifsUtils
 import TestHttpUtils
 
 class TestFilePrivateArea(unittest.TestCase):
@@ -22,36 +23,36 @@ class TestFilePrivateArea(unittest.TestCase):
         return
 
     def tearDown(self):
-        #TestHttpUtils.do_cifsUnmount()
+        #TestCifsUtils.do_cifsUnmount()
         return
 
     def HTTP_redirect(self, opener, method, uri, data, content_type):
         TestHttpUtils.do_HTTP_redirect(opener, method, uri, data, content_type)
         return
     
-    def cifsMount(self, areaName, userName, userPass):
-        status= TestHttpUtils.do_cifsMount(areaName, userName, userPass)
+    def cifsMount(self, userName, userPass):
+        status= TestCifsUtils.do_cifsMount('private/'+userName, userName, userPass)
         self.assertEqual(status, 0, 'CIFS Mount failure')
         return
 
     def cifsUnmount(self):
-        TestHttpUtils.do_cifsUnmount()
+        TestCifsUtils.do_cifsUnmount()
         return
 
     def cifsCreateFile(self, fileName, fileContent):
-        TestHttpUtils.do_cifsCreateFile(fileName, fileContent)
+        TestCifsUtils.do_cifsCreateFile(fileName, fileContent)
         return
 
     def cifsReadFile(self, fileName , fileContent):
-        l = TestHttpUtils.do_cifsReadFile(fileName , fileContent)
+        l = TestCifsUtils.do_cifsReadFile(fileName , fileContent)
         return  
     
     def cifsUpdateFile(self,fileName, fileUpdateContent):
-        TestHttpUtils.do_cifsUpdateFile(fileName, fileUpdateContent)
+        TestCifsUtils.do_cifsUpdateFile(fileName, fileUpdateContent)
         return
     
     def cifsDeleteFile(self,fileName):
-        TestHttpUtils.do_cifsDeleteFile(fileName)
+        TestCifsUtils.do_cifsDeleteFile(fileName)
         return   
 
     def httpAuthenticationHandler(self,userName, userPass):
@@ -59,22 +60,21 @@ class TestFilePrivateArea(unittest.TestCase):
         return authhandler
     
     def httpCreateFile(self, userName, userPass, fileName, fileContent):
-        TestHttpUtils.do_httpCreateFile('private/'+username, userName, userPass, fileName, fileContent)
+        TestHttpUtils.do_httpCreateFile('private/'+userName, userName, userPass, fileName, fileContent)
         return
 
-    def httpReadFile(self, areaName, userName, userPass,fileName, fileContent):
-        thepage = TestHttpUtils.do_httpReadFile( areaName, userName, userPass,fileName, fileContent)
+    def httpReadFile(self, userName, userPass,fileName, fileContent):
+        thepage = TestHttpUtils.do_httpReadFile( 'private/'+userName, userName, userPass,fileName, fileContent)
         self.assertEqual(thepage,fileContent)
         return
     
-    def httpUpdateFile(self,areaName, userName, userPass,fileName, fileUpdateContent):
-        TestHttpUtils.do_httpUpdateFile(areaName, userName, userPass,fileName, fileUpdateContent)
+    def httpUpdateFile(self, userName, userPass,fileName, fileUpdateContent):
+        TestHttpUtils.do_httpUpdateFile('private/'+userName, userName, userPass,fileName, fileUpdateContent)
         return
     
     def httpDeleteFile(self,areaName, userName, userPass,fileName):
-        TestHttpUtils.do_httpDeleteFile( areaName, userName, userPass,fileName)
+        TestHttpUtils.do_httpDeleteFile( 'private/'+userName, userName, userPass,fileName)
         return
-    
 
     # Test cases
 
@@ -85,7 +85,7 @@ class TestFilePrivateArea(unittest.TestCase):
     def testUserACreateCIFSUserAReadCIFS(self): 
         fileName = 'testCreateFileCIFS.tmp'
         fileContent= 'Test creation of file\n'
-        self.cifsMount(TestConfig.userAname, TestConfig.userAname, TestConfig.userApass)
+        self.cifsMount(TestConfig.userAname, TestConfig.userApass)
         self.cifsCreateFile(fileName, fileContent)       
         self.cifsReadFile(fileName, fileContent) 
         self.cifsUnmount()
@@ -94,9 +94,9 @@ class TestFilePrivateArea(unittest.TestCase):
     def testUserACreateCIFSUserAReadHTTP(self): 
         fileName = 'testCreateFileCIFS.tmp'
         fileContent= 'Test creation of file\n'
-        self.cifsMount(TestConfig.userAname, TestConfig.userAname, TestConfig.userApass)
+        self.cifsMount(TestConfig.userAname, TestConfig.userApass)
         self.cifsCreateFile(fileName, fileContent)       
-        self.httpReadFile(TestConfig.userAname, TestConfig.userAname, TestConfig.userApass,fileName, fileContent) 
+        self.httpReadFile( TestConfig.userAname, TestConfig.userApass,fileName, fileContent) 
         self.cifsUnmount()
         return
     
@@ -104,7 +104,7 @@ class TestFilePrivateArea(unittest.TestCase):
         fileName = 'testCreateFileCIFS.tmp'
         fileContent= 'Test creation of file\n'
         fileUpdateContent= 'Test update of file\n'
-        self.cifsMount(TestConfig.userAname, TestConfig.userAname, TestConfig.userApass)
+        self.cifsMount(TestConfig.userAname, TestConfig.userApass)
         self.cifsCreateFile(fileName, fileContent)       
         self.cifsUpdateFile(fileName, fileUpdateContent)
         updatedFileContent= fileContent + fileUpdateContent
@@ -116,11 +116,11 @@ class TestFilePrivateArea(unittest.TestCase):
         fileName = 'testCreateFileCIFS.tmp'
         fileContent= 'Test creation of file\n'
         fileUpdateContent= 'Test update of file\n'
-        self.cifsMount(TestConfig.userAname, TestConfig.userAname, TestConfig.userApass)
+        self.cifsMount(TestConfig.userAname, TestConfig.userApass)
         self.cifsCreateFile(fileName, fileContent)       
         updatedFileContent= fileContent + fileUpdateContent
         # HTTP Update overwrites(does not append the original) the file, hence expecting the updated content when read again.
-        self.httpUpdateFile(TestConfig.userAname, TestConfig.userAname, TestConfig.userApass,fileName,updatedFileContent)
+        self.httpUpdateFile(TestConfig.userAname, TestConfig.userApass,fileName,updatedFileContent)
         self.cifsReadFile(fileName, updatedFileContent) 
         self.cifsUnmount()
         return
@@ -128,7 +128,7 @@ class TestFilePrivateArea(unittest.TestCase):
     def testUserACreateCIFSUserADeleteCIFS(self): 
         fileName = 'testCreateFileCIFS.tmp'
         fileContent= 'Test creation of file\n'
-        self.cifsMount(TestConfig.userAname, TestConfig.userAname, TestConfig.userApass)
+        self.cifsMount(TestConfig.userAname, TestConfig.userApass)
         self.cifsCreateFile(fileName, fileContent)     
         self.cifsDeleteFile(fileName)
         self.cifsUnmount()
@@ -137,7 +137,7 @@ class TestFilePrivateArea(unittest.TestCase):
     def testUserACreateCIFSUserADeleteHTTP(self): 
         fileName = 'testCreateFileCIFS.tmp'
         fileContent= 'Test creation of file\n'
-        self.cifsMount(TestConfig.userAname, TestConfig.userAname, TestConfig.userApass)
+        self.cifsMount(TestConfig.userAname, TestConfig.userApass)
         self.cifsCreateFile(fileName, fileContent)       
         self.httpDeleteFile(TestConfig.userAname, TestConfig.userAname, TestConfig.userApass,fileName)
         self.cifsUnmount()
@@ -147,7 +147,7 @@ class TestFilePrivateArea(unittest.TestCase):
         fileName = 'testCreateFileCIFS.tmp'
         fileContent= 'Test creation of file\n'
         self.httpCreateFile(TestConfig.userAname, TestConfig.userApass, fileName, fileContent) 
-        self.httpReadFile(TestConfig.userAname, TestConfig.userAname, TestConfig.userApass,fileName, fileContent) 
+        self.httpReadFile(TestConfig.userAname, TestConfig.userApass,fileName, fileContent) 
         return
   
     #def testUserACreateCIFSUserAReadHTTP(self): 
@@ -201,7 +201,7 @@ def getTestSuite(select="unit"):
             , "testUserAUpdateHTTPUserAReadCIFS"
             , "testUserACreateCIFSUserADeleteCIFS"
             , "testUserACreateCIFSUserADeleteHTTP"
-            #, "testUserACreateHTTPUserAReadHTTP"
+            , "testUserACreateHTTPUserAReadHTTP"
             ],
         "component":
             [ "testComponents"
