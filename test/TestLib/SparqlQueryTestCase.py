@@ -138,6 +138,7 @@ class SparqlQueryTestCase(unittest.TestCase):
         if self._endpointuser:
             auth = base64.encodestring("%s:%s" % (self._endpointuser, self._endpointpass)).strip()
             reqheaders["Authorization"] = "Basic %s" % auth
+        #print "Connect to "+self._endpointhost
         hc   = httplib.HTTPConnection(self._endpointhost)
         path = self.getRequestPath(resource)
         response     = None
@@ -145,11 +146,12 @@ class SparqlQueryTestCase(unittest.TestCase):
         repeat       = 10
         while path and repeat > 0:
             repeat -= 1
+            #print "Request "+command+", path "+path
             hc.request(command, path, reqdata, reqheaders)
             response = hc.getresponse()
             if response.status != 301: break
             path = response.getheader('Location', None)
-            print "Redirect to: "+path
+            #print "Redirect to: "+path
             if path[0:6] == "https:":
                 # close old connection, create new HTTPS connection
                 hc.close()

@@ -1,5 +1,5 @@
 ADMIRAL project notes
 
-20101019 Clean build based on per-terget configuration and symlinked /private/
+20101019 Clean build based on per-target configuration and symlinked /private/
 file area with all tests passing.
 
