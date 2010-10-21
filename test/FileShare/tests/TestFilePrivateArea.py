@@ -23,58 +23,78 @@ class TestFilePrivateArea(unittest.TestCase):
         return
 
     def tearDown(self):
-        #TestCifsUtils.do_cifsUnmount()
         return
 
     def HTTP_redirect(self, opener, method, uri, data, content_type):
         TestHttpUtils.do_HTTP_redirect(opener, method, uri, data, content_type)
         return
     
-    def cifsMount(self, userName, userPass):
-        status= TestCifsUtils.do_cifsMount('private/'+userName, userName, userPass)
+    def cifsMountAs(self, userArea, userName, userPass):
+        status= TestCifsUtils.do_cifsMount('private/'+userArea, userName, userPass)
         self.assertEqual(status, 0, 'CIFS Mount failure')
+        return
+    
+    def cifsMount(self, userName, userPass):
+        self.cifsMountAs(userName, userName, userPass)
+        #status= TestCifsUtils.do_cifsMount('private/'+userName, userName, userPass)
+        #self.assertEqual(status, 0, 'CIFS Mount failure')
         return
 
     def cifsUnmount(self):
         TestCifsUtils.do_cifsUnmount()
         return
 
-    def cifsCreateFile(self, fileName, fileContent):
-        TestCifsUtils.do_cifsCreateFile(fileName, fileContent)
-        return
+    def cifsCreateFile(self, fileName, createFileContent):
+        TestCifsUtils.do_cifsCreateFile(fileName, createFileContent)
+        return createFileContent
 
-    def cifsReadFile(self, fileName , fileContent):
-        l = TestCifsUtils.do_cifsReadFile(fileName , fileContent)
-        return  
+    def cifsReadFile(self, fileName ):
+        readFileContent = TestCifsUtils.do_cifsReadFile(fileName)
+        return  readFileContent
     
-    def cifsUpdateFile(self,fileName, fileUpdateContent):
-        TestCifsUtils.do_cifsUpdateFile(fileName, fileUpdateContent)
-        return
+    def cifsUpdateFile(self,fileName, updateFileContent):
+        TestCifsUtils.do_cifsUpdateFile(fileName, updateFileContent)
+        return updateFileContent
     
     def cifsDeleteFile(self,fileName):
-        TestCifsUtils.do_cifsDeleteFile(fileName)
-        return   
-
+        deleteMessage = TestCifsUtils.do_cifsDeleteFile(fileName)
+        return  deleteMessage
+    
     def httpAuthenticationHandler(self,userName, userPass):
         authhandler = TestHttpUtils.do_httpAuthenticationHandler(userName, userPass)
         return authhandler
     
+    def httpCreateFileAs(self, areaName, userName, userPass, fileName, fileContent):
+        createMessage = TestHttpUtils.do_httpCreateFile('private/'+areaName, userName, userPass, fileName, fileContent)
+        return createMessage
+    
     def httpCreateFile(self, userName, userPass, fileName, fileContent):
-        TestHttpUtils.do_httpCreateFile('private/'+userName, userName, userPass, fileName, fileContent)
-        return
+        createMessage = self.httpCreateFileAs(userName, userName, userPass, fileName, fileContent)
+        return createMessage
+    
+    def httpReadFileAs(self, areaName, userName, userPass,fileName):
+        readFileContent = TestHttpUtils.do_httpReadFile( 'private/'+areaName, userName, userPass,fileName)
+        return readFileContent
 
-    def httpReadFile(self, userName, userPass,fileName, fileContent):
-        thepage = TestHttpUtils.do_httpReadFile( 'private/'+userName, userName, userPass,fileName, fileContent)
-        self.assertEqual(thepage,fileContent)
-        return
+    def httpReadFile(self, userName, userPass,fileName):
+        readFileContent = self.httpReadFileAs(userName, userName, userPass,fileName)
+        return readFileContent
+      
+    def httpUpdateFileAs(self, areaName, userName, userPass,fileName, updateFileContent):
+        updateMessage = TestHttpUtils.do_httpUpdateFile('private/'+areaName, userName, userPass,fileName, updateFileContent)
+        return updateMessage
     
-    def httpUpdateFile(self, userName, userPass,fileName, fileUpdateContent):
-        TestHttpUtils.do_httpUpdateFile('private/'+userName, userName, userPass,fileName, fileUpdateContent)
-        return
+    def httpUpdateFile(self, userName, userPass,fileName, updateFileContent):
+        updateMessage = self.httpUpdateFileAs(userName, userName, userPass,fileName, updateFileContent)
+        return updateMessage
     
-    def httpDeleteFile(self,areaName, userName, userPass,fileName):
-        TestHttpUtils.do_httpDeleteFile( 'private/'+userName, userName, userPass,fileName)
-        return
+    def httpDeleteFileAs(self, areaName, userName, userPass,fileName):
+        deleteMessage = TestHttpUtils.do_httpDeleteFile( 'private/'+areaName, userName, userPass,fileName)
+        return deleteMessage
+    
+    def httpDeleteFile(self, userName, userPass,fileName):
+        deleteMessage = self.httpDeleteFileAs(userName, userName, userPass,fileName)
+        return deleteMessage
 
     # Test cases
 
@@ -86,8 +106,9 @@ class TestFilePrivateArea(unittest.TestCase):
         fileName = 'testCreateFileCIFS.tmp'
         fileContent= 'Test creation of file\n'
         self.cifsMount(TestConfig.userAname, TestConfig.userApass)
-        self.cifsCreateFile(fileName, fileContent)       
-        self.cifsReadFile(fileName, fileContent) 
+        createdFileContent = self.cifsCreateFile(fileName, fileContent)       
+        readFileContent = self.cifsReadFile(fileName) 
+        self.assertEqual(createdFileContent,readFileContent)    
         self.cifsUnmount()
         return
 
@@ -95,8 +116,9 @@ class TestFilePrivateArea(unittest.TestCase):
         fileName = 'testCreateFileCIFS.tmp'
         fileContent= 'Test creation of file\n'
         self.cifsMount(TestConfig.userAname, TestConfig.userApass)
-        self.cifsCreateFile(fileName, fileContent)       
-        self.httpReadFile( TestConfig.userAname, TestConfig.userApass,fileName, fileContent) 
+        createdFileContent = self.cifsCreateFile(fileName, fileContent)       
+        readFileContent = self.httpReadFile( TestConfig.userAname, TestConfig.userApass,fileName) 
+        self.assertEqual(createdFileContent,readFileContent) 
         self.cifsUnmount()
         return
     
@@ -107,8 +129,9 @@ class TestFilePrivateArea(unittest.TestCase):
         self.cifsMount(TestConfig.userAname, TestConfig.userApass)
         self.cifsCreateFile(fileName, fileContent)       
         self.cifsUpdateFile(fileName, fileUpdateContent)
-        updatedFileContent= fileContent + fileUpdateContent
-        self.cifsReadFile(fileName, updatedFileContent) 
+        updatedFileContent = fileContent + fileUpdateContent
+        readFileContent = self.cifsReadFile(fileName)
+        self.assertEqual(updatedFileContent,readFileContent) 
         self.cifsUnmount()
         return
     
@@ -120,8 +143,10 @@ class TestFilePrivateArea(unittest.TestCase):
         self.cifsCreateFile(fileName, fileContent)       
         updatedFileContent= fileContent + fileUpdateContent
         # HTTP Update overwrites(does not append the original) the file, hence expecting the updated content when read again.
-        self.httpUpdateFile(TestConfig.userAname, TestConfig.userApass,fileName,updatedFileContent)
-        self.cifsReadFile(fileName, updatedFileContent) 
+        updateMessage = self.httpUpdateFile(TestConfig.userAname, TestConfig.userApass,fileName,updatedFileContent)
+        self.assertEqual(updateMessage[0],0,"Update file failed: "+str(updateMessage))
+        readFileContent = self.cifsReadFile(fileName) 
+        self.assertEqual(updatedFileContent,readFileContent) 
         self.cifsUnmount()
         return
     
@@ -138,30 +163,190 @@ class TestFilePrivateArea(unittest.TestCase):
         fileName = 'testCreateFileCIFS.tmp'
         fileContent= 'Test creation of file\n'
         self.cifsMount(TestConfig.userAname, TestConfig.userApass)
-        self.cifsCreateFile(fileName, fileContent)       
-        self.httpDeleteFile(TestConfig.userAname, TestConfig.userAname, TestConfig.userApass,fileName)
+        self.cifsCreateFile(fileName, fileContent)
+        deleteMessage = self.httpDeleteFile(TestConfig.userAname, TestConfig.userApass, fileName)
+        self.assertEqual(deleteMessage[0],0,"Delete file failed: "+str(deleteMessage))
         self.cifsUnmount()
         return
 
     def testUserACreateHTTPUserAReadHTTP(self): 
         fileName = 'testCreateFileCIFS.tmp'
         fileContent= 'Test creation of file\n'
-        self.httpCreateFile(TestConfig.userAname, TestConfig.userApass, fileName, fileContent) 
-        self.httpReadFile(TestConfig.userAname, TestConfig.userApass,fileName, fileContent) 
+        createMessage = self.httpCreateFile(TestConfig.userAname, TestConfig.userApass, fileName, fileContent) 
+        self.assertEqual(createMessage[0],0,"Create file failed: "+str(createMessage))
+        readFileContent = self.httpReadFile(TestConfig.userAname, TestConfig.userApass,fileName)        
+        self.assertEqual(fileContent,readFileContent) 
         return
   
-    #def testUserACreateCIFSUserAReadHTTP(self): 
+    def testUserACreateHTTPUserAReadCIFS(self): 
+        fileName = 'testCreateFileCIFS.tmp'
+        fileContent= 'Test creation of file\n'
+        self.cifsMount(TestConfig.userAname, TestConfig.userApass)
+        createMessage = self.httpCreateFile(TestConfig.userAname, TestConfig.userApass, fileName, fileContent) 
+        self.assertEqual(createMessage[0],0,"Create file failed: "+str(createMessage))
+        readFileContent = self.cifsReadFile(fileName) 
+        self.assertEqual(fileContent,readFileContent) 
+        self.cifsUnmount()
+        return
        
-    #def testUserAUpdateCIFSUserAReadCIFS(self): 
+    def testUserAUpdateHTTPUserAReadHTTP(self):
+        fileName = 'testCreateFileCIFS.tmp'
+        fileContent= 'Test creation of file\n'
+        fileUpdateContent= 'Test update of file\n'     
+        createMessage = self.httpCreateFile(TestConfig.userAname, TestConfig.userApass, fileName, fileContent)
+        self.assertEqual(createMessage[0],0,"Create file failed: "+str(createMessage)) 
+        updateMessage = self.httpUpdateFile(TestConfig.userAname, TestConfig.userApass,fileName,fileUpdateContent)
+        self.assertEqual(updateMessage[0],0,"Update file failed: "+str(updateMessage))
+        readFileContent = self.httpReadFile(TestConfig.userAname, TestConfig.userApass,fileName)
+        self.assertEqual(fileUpdateContent,readFileContent) 
+        return 
     
-    #def testUserAUpdateHTTPUserAReadCIFS(self): 
+    def testUserAUpdateCIFSUserAReadHTTP(self): 
+        fileName = 'testCreateFileCIFS.tmp'
+        fileContent= 'Test creation of file\n'
+        fileUpdateContent= 'Test update of file\n'     
+        createMessage = self.httpCreateFile(TestConfig.userAname, TestConfig.userApass, fileName, fileContent)
+        self.assertEqual(createMessage[0],0,"Create file failed: "+str(createMessage)) 
+        self.cifsMount(TestConfig.userAname, TestConfig.userApass)
+        self.cifsUpdateFile(fileName, fileUpdateContent)
+        updatedFileContent= fileContent + fileUpdateContent
+        readFileContent = self.httpReadFile(TestConfig.userAname, TestConfig.userApass,fileName) 
+        self.assertEqual(updatedFileContent,readFileContent) 
+        self.cifsUnmount()
+        return
        
-    #def testUserACreateCIFSUserADeleteCIFS(self): 
+    def testUserACreateHTTPUserADeleteHTTP(self): 
+        fileName = 'testCreateFileCIFS.tmp'
+        fileContent= 'Test creation of file\n'
+        fileUpdateContent= 'Test update of file\n'     
+        createMessage = self.httpCreateFile(TestConfig.userAname, TestConfig.userApass, fileName, fileContent)
+        self.assertEqual(createMessage[0],0,"Create file failed: "+str(createMessage))
+        deleteMessage = self.httpDeleteFile(TestConfig.userAname, TestConfig.userApass, fileName)
+        self.assertEqual(deleteMessage[0],0,"Delete file failed: "+str(deleteMessage))
+        return
         
-    #def testUserACreateCIFSUserADeleteHTTP(self): 
+    def testUserACreateHTTPUserADeleteCIFS(self):
+        fileName = 'testCreateFileCIFS.tmp'
+        fileContent= 'Test creation of file\n'
+        fileUpdateContent= 'Test update of file\n'     
+        createMessage = self.httpCreateFile(TestConfig.userAname, TestConfig.userApass, fileName, fileContent)
+        self.assertEqual(createMessage[0],0,"Create file failed: "+str(createMessage))
+        self.cifsMount(TestConfig.userAname, TestConfig.userApass)
+        self.cifsDeleteFile(fileName)
+        self.cifsUnmount()
+        return
+    
+    def testUserBCreateCIFSInUserA(self):
+        fileName = 'testCreateFileCIFS.tmp'
+        fileContent= 'Test creation of file\n'
+        self.cifsMountAs(TestConfig.userAname, TestConfig.userBname, TestConfig.userBpass)
+        disallowed = False
+        try:
+            self.cifsCreateFile(fileName, fileContent)
+        except IOError as e:
+            self.assertEqual(e.errno, 13, "Operation should fail with error 13, was: "+str(e))
+            self.assertEqual(e.strerror, "Permission denied", "Operation should fail with 'Permission denied', was: "+str(e))
+            disallowed = True
+        assert disallowed, "User B can create a file in User A's filespace by WebDAV!"
+        self.cifsUnmount()
+        return
+    
+    def testUserACreateCIFSUserBReadCIFS(self):
+        fileName = 'testCreateFileCIFS.tmp'
+        fileContent= 'Test creation of file\n'
+        self.cifsMount(TestConfig.userAname, TestConfig.userApass)
+        self.cifsCreateFile(fileName, fileContent)
+        self.cifsUnmount()
+        self.cifsMountAs(TestConfig.userAname, TestConfig.userBname, TestConfig.userBpass)
+        disallowed = False
+        try:
+            self.cifsReadFile(fileName)
+        except IOError as e:
+            self.assertEqual(e.errno, 13, "Operation should fail with error 13, was: "+str(e))
+            self.assertEqual(e.strerror, "Permission denied", "Operation should fail with 'Permission denied', was: "+str(e))
+            disallowed = True
+        assert disallowed, "User B can read a file in User A's filespace by WebDAV!"
+        self.cifsUnmount()
+        return
+    
+    def testUserACreateCIFSUserBUpdateCIFS(self):
+        fileName = 'testCreateFileCIFS.tmp'
+        fileContent= 'Test creation of file\n'
+        fileUpdateContent= 'Test update of file\n'     
+        self.cifsMount(TestConfig.userAname, TestConfig.userApass)
+        self.cifsCreateFile(fileName, fileContent)
+        self.cifsUnmount()
+        self.cifsMountAs(TestConfig.userAname, TestConfig.userBname, TestConfig.userBpass)
+        disallowed = False
+        try:
+            self.cifsUpdateFile(fileName,fileUpdateContent)
+        except IOError as e:
+            self.assertEqual(e.errno, 13, "Operation should fail with error 13, was: "+str(e))
+            self.assertEqual(e.strerror, "Permission denied", "Operation should fail with 'Permission denied', was: "+str(e))
+            disallowed = True
+        assert disallowed, "User B can update a file in User A's filespace by WebDAV!"
+        self.cifsUnmount()
+        return
+
+    def testUserACreateCIFSUserBDeleteCIFS(self):
+        fileName = 'testCreateFileCIFS.tmp'
+        fileContent= 'Test creation of file\n'
+        fileUpdateContent= 'Test update of file\n'     
+        self.cifsMount(TestConfig.userAname, TestConfig.userApass)
+        self.cifsCreateFile(fileName, fileContent)
+        self.cifsUnmount()
+        self.cifsMountAs(TestConfig.userAname, TestConfig.userBname, TestConfig.userBpass)
+        deleteMessage = self.cifsDeleteFile(fileName)
+        self.assertEquals(deleteMessage[0], 13, 
+                          "Expected (13, Permission denied) for "+TestConfig.cifsmountpoint + '/'+ fileName+"'"+
+                          ", got: "+str(deleteMessage))
+        self.cifsUnmount()
+        return
+    
+    def testUserBCreateHTTPInUserA(self):
+        fileName = 'testCreateFileCIFS.tmp'
+        fileContent= 'Test creation of file\n'
+        createMessage = self.httpCreateFileAs(TestConfig.userAname, TestConfig.userBname, TestConfig.userBpass, fileName, fileContent)
+        self.assertEqual(createMessage[0], 401, "User B can create a file in User A's filespace by HTTP, got: "+str(createMessage))
+        return
+    
+    def testUserACreateHTTPUserBReadHTTP(self):
+        fileName = 'testCreateFileCIFS.tmp'
+        fileContent= 'Test creation of file\n'  
+        createMessage = self.httpCreateFile(TestConfig.userAname, TestConfig.userApass, fileName, fileContent)
+        self.assertEqual(createMessage[0],0,"Create file failed: "+str(createMessage))
+        disallowed = False
+        try:
+            self.httpReadFileAs(TestConfig.userAname, TestConfig.userBname, TestConfig.userBpass, fileName)
+        except urllib2.HTTPError as e:
+            self.assertEqual(e.code, 401, "Operation should be 401 (auth failed), was: "+str(e))
+            disallowed = True
+        assert disallowed, "User B can read a file in User A's filespace by HTTP!"
+        return      
+    
+    def testUserACreateHTTPUserBUpdateHTTP(self):
+        fileName = 'testCreateFileCIFS.tmp'
+        fileContent= 'Test creation of file\n'  
+        createMessage = self.httpCreateFile(TestConfig.userAname, TestConfig.userApass, fileName, fileContent)
+        self.assertEqual(createMessage[0],0,"Create file failed: "+str(createMessage))
+        updateMessage = self.httpUpdateFileAs(TestConfig.userAname, TestConfig.userBname, TestConfig.userBpass, fileName,fileContent)
+        self.assertEquals(updateMessage[0], 401, 
+                          "Expected (401, basic authentication failed) for "+TestConfig.cifsmountpoint + '/'+ fileName+"'"+
+                          ", got: "+str(updateMessage))
+        return
         
-
-
+    
+    def testUserACreateHTTPUserBDeleteHTTP(self):
+        fileName = 'testCreateFileCIFS.tmp'
+        fileContent= 'Test creation of file\n'  
+        createMessage = self.httpCreateFile(TestConfig.userAname, TestConfig.userApass, fileName, fileContent)
+        self.assertEqual(createMessage[0],0,"Create file failed: "+str(createMessage))
+        deleteMessage = self.httpDeleteFileAs(TestConfig.userAname, TestConfig.userBname, TestConfig.userBpass, fileName)
+        #print repr(deleteMessage)
+        self.assertEquals(deleteMessage[0], 401, 
+                          "Expected (401, basic authentication failed) for "+TestConfig.cifsmountpoint + '/'+ fileName+"'"+
+                          ", got: "+str(deleteMessage))
+        return
     # Sentinel/placeholder tests
 
     def testUnits(self):
@@ -201,7 +386,20 @@ def getTestSuite(select="unit"):
             , "testUserAUpdateHTTPUserAReadCIFS"
             , "testUserACreateCIFSUserADeleteCIFS"
             , "testUserACreateCIFSUserADeleteHTTP"
-            , "testUserACreateHTTPUserAReadHTTP"
+            , "testUserACreateHTTPUserAReadHTTP"           
+            , "testUserACreateHTTPUserAReadCIFS"
+            , "testUserAUpdateHTTPUserAReadHTTP"
+            , "testUserAUpdateCIFSUserAReadHTTP"
+            , "testUserACreateHTTPUserADeleteHTTP"
+            , "testUserACreateHTTPUserADeleteCIFS"
+            , "testUserBCreateCIFSInUserA"
+            , "testUserACreateCIFSUserBReadCIFS"
+            , "testUserACreateCIFSUserBUpdateCIFS"
+            , "testUserACreateCIFSUserBDeleteCIFS"
+            , "testUserBCreateHTTPInUserA"
+            , "testUserACreateHTTPUserBReadHTTP"
+            , "testUserACreateHTTPUserBUpdateHTTP"
+            , "testUserACreateHTTPUserBDeleteHTTP"
             ],
         "component":
             [ "testComponents"

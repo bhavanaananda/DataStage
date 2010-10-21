@@ -17,17 +17,44 @@ def do_HTTP_redirect(opener, method, uri, data, content_type):
     req=urllib2.Request(uri, data=data)
     if content_type: req.add_header('Content-Type', content_type)
     req.get_method = lambda: method
-    try:
+    message = (0,"Success")
+    try:    
         url=opener.open(req)
     except urllib2.HTTPError as e:
         if e.code == 301:                # Follow redirection
             req=urllib2.Request( e.headers['Location'], data=data)
             if content_type: req.add_header('Content-Type', content_type)
             req.get_method = lambda: method
-            url=opener.open(req)
+            try:            
+                url=opener.open(req)            
+            except urllib2.HTTPError as e:
+                # HTTPError from redirected request
+                message = (e.code,str(e))  
         else:
-            raise e     # propagate exception
-    return
+            # Original request error other than 301
+            message = (e.code,str(e))  
+    return message
+
+
+#
+#def do_HTTP_redirect(opener, method, uri, data, content_type):
+#    req=urllib2.Request(uri, data=data)
+#    message = (0,"Success")
+#    if content_type: req.add_header('Content-Type', content_type)
+#    req.get_method = lambda: method
+#    try:
+#        url=opener.open(req)
+#    except urllib2.HTTPError as e:
+#        if e.code == 301:                # Follow redirection
+#            req=urllib2.Request( e.headers['Location'], data=data)
+#            if content_type: req.add_header('Content-Type', content_type)
+#            req.get_method = lambda: method
+#            url=opener.open(req)
+#            message = (e.errno,str(e))
+#        else:
+#            raise e     # propagate exception
+#        message = (e.errno,str(e))
+#    return
 
 def do_httpAuthenticationHandler(userName, userPass):
     passman = urllib2.HTTPPasswordMgrWithDefaultRealm()
@@ -35,40 +62,40 @@ def do_httpAuthenticationHandler(userName, userPass):
     authhandler = urllib2.HTTPBasicAuthHandler(passman)
     return authhandler
 
-def do_httpCreateFile(areaName, userName, userPass, fileName, fileContent):
+def do_httpCreateFile(areaName, userName, userPass, fileName, createFileContent):
     authhandler = do_httpAuthenticationHandler(userName, userPass)
     opener = urllib2.build_opener(authhandler)
     urllib2.install_opener(opener)      
     # Write data to server
-    do_HTTP_redirect(opener, "PUT",
+    createMessage = do_HTTP_redirect(opener, "PUT",
         TestConfig.webdavbaseurl + '/' + areaName + '/' + fileName, 
-        fileContent, 'text/plain')
-    return 
+        createFileContent, 'text/plain')
+    return createMessage
 
-def do_httpReadFile(areaName, userName, userPass,fileName, fileContent):
+def do_httpReadFile(areaName, userName, userPass,fileName):
     authhandler = do_httpAuthenticationHandler(userName, userPass)
     opener = urllib2.build_opener(authhandler)
     urllib2.install_opener(opener)       
     phan=urllib2.urlopen(TestConfig.webdavbaseurl+'/'+ areaName +'/' + fileName)
-    thepage=phan.read()
-    return thepage
+    readFileContent = phan.read()
+    return readFileContent
 
-def do_httpUpdateFile(areaName, userName, userPass,fileName, fileUpdateContent):
+def do_httpUpdateFile(areaName, userName, userPass,fileName, updateFileContent):
     authhandler = do_httpAuthenticationHandler(userName, userPass)
     opener = urllib2.build_opener(authhandler)
     urllib2.install_opener(opener)      
     # Write/update data to server
-    do_HTTP_redirect(opener, "PUT",
+    updateMessage = do_HTTP_redirect(opener, "PUT",
         TestConfig.webdavbaseurl+'/'+ areaName +'/' + fileName, 
-        fileUpdateContent, 'text/plain')
-    return
+        updateFileContent, 'text/plain')
+    return updateMessage
 
 def do_httpDeleteFile(areaName, userName, userPass,fileName):
     authhandler = do_httpAuthenticationHandler(userName, userPass)
     opener = urllib2.build_opener(authhandler)
-    do_HTTP_redirect(opener, "DELETE", 
+    deleteMessage = do_HTTP_redirect(opener, "DELETE", 
         TestConfig.webdavbaseurl+'/'+ areaName +'/' + fileName,
         None, None)
-    return
+    return deleteMessage
     
 

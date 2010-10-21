@@ -30,39 +30,51 @@ def do_cifsMount(areaName, userName, userPass):
 def do_cifsUnmount():
     os.system('umount.cifs ' + TestConfig.cifsmountpoint)
 
-def do_cifsCreateFile(fileName, fileContent):
+def do_cifsCreateFile(fileName, createFileContent):
     ###print "do_cifsCreateFile: "+TestConfig.cifsmountpoint + '/' + fileName
     f = open(TestConfig.cifsmountpoint + '/' + fileName, 'w+')
     assert f, "File creation failed"
-    f.write(fileContent)
+    f.write(createFileContent)
     f.close()
-    return 
+    return createFileContent
 
-def do_cifsReadFile(fileName , fileContent):
+def do_cifsReadFile(fileName):
     f = open(TestConfig.cifsmountpoint + '/' + fileName, 'r')
-    l = f.read()
+    readFileContent = f.read()
     f.close()
-    return l
+    return readFileContent
 
-def do_cifsUpdateFile(fileName, fileUpdateContent):
+def do_cifsUpdateFile(fileName, updateFileContent):
     f = open(TestConfig.cifsmountpoint + '/' + fileName,'a+')
-    f.write(fileUpdateContent)
+    f.write(updateFileContent)
     f.close()
-    return
+    return updateFileContent
 
 def do_cifsDeleteFile(fileName):
+    deleteMessage = (0,"Success")
     # Test and delete file
     try:
         s = os.stat(TestConfig.cifsmountpoint + '/'+ fileName)
-    except:
-        assert (False), "File "+ fileName+" not found or other stat error"
-    os.remove(TestConfig.cifsmountpoint + '/'+ fileName)
-    try:
-        s = os.stat(TestConfig.cifsmountpoint + '/'+ fileName)
-        assert (False), "File "+ fileName+" not deleted"
-    except:
-        pass
-    return
+    except OSError as e:
+         #print repr(e)
+         deleteMessage = (e.errno,str(e))
+#    except:
+#        assert (False), "File "+ fileName+" not found or other stat error"  
+#        deleteMessage = str(e)
+    else:
+        try:
+            os.remove(TestConfig.cifsmountpoint + '/'+ fileName)
+        except OSError as e:
+             deleteMessage = (e.errno,str(e))
+        else:
+            try:
+                s = os.stat(TestConfig.cifsmountpoint + '/'+ fileName)
+                assert (False), "File "+ fileName+" not deleted"
+            except OSError as e:
+                 deleteMessage = (e.errno,str(e))
+#            except:
+#                pass
+    return deleteMessage
 
     
 
