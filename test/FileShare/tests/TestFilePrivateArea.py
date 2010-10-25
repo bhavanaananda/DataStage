@@ -355,8 +355,8 @@ class TestFilePrivateArea(unittest.TestCase):
     # Sentinel/placeholder tests
 
 
-    # Test Collaborator's access permissions on files in User A's Private area
-        
+    # Test Collaborator's access permissions on files in User A's Private area    
+      
     def testCollabCreateCIFSInUserA(self):
         fileName = 'testCreateFileCIFS.tmp'
         fileContent= 'Test creation of file\n'
@@ -476,36 +476,107 @@ class TestFilePrivateArea(unittest.TestCase):
      # Test RG Leader's access permissions on files in User A's Private area
     
     def testRGLeaderCreateCIFSInUserA(self):
-         
-         return
-     
+        fileName = 'testCreateFileCIFS.tmp'
+        fileContent= 'Test creation of file\n'
+        createMessage = self.httpCreateFileAs(TestConfig.userAname, TestConfig.userRGleadername, TestConfig.userRGleaderpass, fileName, fileContent)
+        self.assertEqual(createMessage[0], 401, "RG Leader can create a file in User A's filespace by HTTP, got: "+str(createMessage))  
+        return
+      
     def testUserACreateCIFSRGLeaderReadCIFS(self):
-         
-         return
+        fileName = 'testCreateFileCIFS.tmp'
+        fileContent= 'Test creation of file\n'
+        self.cifsMount(TestConfig.userAname, TestConfig.userApass)
+        self.cifsCreateFile(fileName, fileContent)
+        self.cifsUnmount()
+        self.cifsMountAs(TestConfig.userAname, TestConfig.userRGleadername, TestConfig.userRGleaderpass)
+        disallowed = True       
+        try: 
+            self.cifsReadFile(fileName)
+        except IOError as e:
+            self.assertEqual(e.errno, 13, "Operation should fail with error 13, was: "+str(e))
+            self.assertEqual(e.strerror, "Permission denied", "Operation should fail with 'Permission denied', was: "+str(e))
+            disallowed = False
+        assert disallowed, "Research Group Leader cannot read a file in User A's filespace by WebDAV!"        
+        self.cifsUnmount()
+        return
      
     def testUserACreateCIFSRGLeaderUpdateCIFS(self):
-         
-         return
+        fileName = 'testCreateFileCIFS.tmp'
+        fileContent= 'Test creation of file\n'
+        fileUpdateContent= 'Test update of file\n'     
+        self.cifsMount(TestConfig.userAname, TestConfig.userApass)
+        self.cifsCreateFile(fileName, fileContent)
+        self.cifsUnmount()
+        self.cifsMountAs(TestConfig.userAname, TestConfig.userRGleadername, TestConfig.userRGleaderpass)
+        disallowed = False
+        try:
+            self.cifsUpdateFile(fileName,fileUpdateContent)
+        except IOError as e:
+            self.assertEqual(e.errno, 13, "Operation should fail with error 13, was: "+str(e))
+            self.assertEqual(e.strerror, "Permission denied", "Operation should fail with 'Permission denied', was: "+str(e))
+            disallowed = True
+        assert disallowed, "Research Group Leader can update a file in User A's filespace by WebDAV!"
+        self.cifsUnmount()
+        return
      
     def testUserACreateCIFSRGLeaderDeleteCIFS(self):
-         
-         return
+        fileName = 'testCreateFileCIFS.tmp'
+        fileContent= 'Test creation of file\n'
+        fileUpdateContent= 'Test update of file\n'     
+        self.cifsMount(TestConfig.userAname, TestConfig.userApass)
+        self.cifsCreateFile(fileName, fileContent)
+        self.cifsUnmount()
+        self.cifsMountAs(TestConfig.userAname, TestConfig.userRGleadername, TestConfig.userRGleaderpass)
+        deleteMessage = self.cifsDeleteFile(fileName)
+        self.assertEquals(deleteMessage[0], 13, 
+                          "Expected (13, Permission denied) for "+TestConfig.cifsmountpoint + '/'+ fileName+"'"+
+                          ", got: "+str(deleteMessage))
+        self.cifsUnmount()
+        return
      
     def testRGLeaderCreateHTTPInUserA(self):
-         
-         return
+        fileName = 'testCreateFileCIFS.tmp'
+        fileContent= 'Test creation of file\n'
+        createMessage = self.httpCreateFileAs(TestConfig.userAname, TestConfig.userRGleadername, TestConfig.userRGleaderpass, fileName, fileContent)
+        self.assertEqual(createMessage[0], 401, "Research Group Leader can create a file in User A's filespace by HTTP, got: "+str(createMessage))
+        return
      
-    def testUserACreateHTTPRGLeaderReadHTTP(self):
-        
-         return
+    def testUserACreateHTTPRGLeaderReadHTTP(self):   
+        fileName = 'testCreateFileCIFS.tmp'
+        fileContent= 'Test creation of file\n'  
+        createMessage = self.httpCreateFile(TestConfig.userAname, TestConfig.userApass, fileName, fileContent)
+        self.assertEqual(createMessage[0],0,"Create file failed: "+str(createMessage))
+        disallowed = True
+        try:
+            self.httpReadFileAs(TestConfig.userAname, TestConfig.userRGleadername, TestConfig.userRGleaderpass, fileName)
+        except urllib2.HTTPError as e:
+            self.assertEqual(e.code, 401, "Operation should be 401 (auth failed), was: "+str(e))
+            disallowed = Fasle
+        assert disallowed, "Collaborator cannot read a file in User A's filespace by HTTP!"
+        return
      
-    def testUserACreateHTTPRGLeaderUpdateHTTP(self):
-         
-         return
+    def testUserACreateHTTPRGLeaderUpdateHTTP(self): 
+        fileName = 'testCreateFileCIFS.tmp'
+        fileContent= 'Test creation of file\n'  
+        createMessage = self.httpCreateFile(TestConfig.userAname, TestConfig.userApass, fileName, fileContent)
+        self.assertEqual(createMessage[0],0,"Create file failed: "+str(createMessage))
+        updateMessage = self.httpUpdateFileAs(TestConfig.userAname, TestConfig.userRGleadername, TestConfig.userRGleaderpass, fileName,fileContent)
+        self.assertEquals(updateMessage[0], 401, 
+                          "Expected (401, basic authentication failed) for "+TestConfig.cifsmountpoint + '/'+ fileName+"'"+
+                          ", got: "+str(updateMessage))
+        return
      
     def testUserACreateHTTPRGLeaderDeleteHTTP(self):
-         
-         return
+        fileName = 'testCreateFileCIFS.tmp'
+        fileContent= 'Test creation of file\n'  
+        createMessage = self.httpCreateFile(TestConfig.userAname, TestConfig.userApass, fileName, fileContent)
+        self.assertEqual(createMessage[0],0,"Create file failed: "+str(createMessage))
+        deleteMessage = self.httpDeleteFileAs(TestConfig.userAname, TestConfig.userRGleadername, TestConfig.userRGleaderpass, fileName)
+        self.assertEquals(deleteMessage[0], 401, 
+                          "Expected (401, basic authentication failed) for "+TestConfig.cifsmountpoint + '/'+ fileName+"'"+
+                          ", got: "+str(deleteMessage))
+        return
+    
 
     def testUnits(self):
         assert (True)
@@ -538,6 +609,7 @@ def getTestSuite(select="unit"):
         "unit": 
             [ "testUnits"
             , "testNull"
+            # Test User A's access permissions in his own Private area
             , "testUserACreateCIFSUserAReadCIFS"
             , "testUserACreateCIFSUserAReadHTTP"
             , "testUserAUpdateCIFSUserAReadCIFS"
@@ -550,6 +622,7 @@ def getTestSuite(select="unit"):
             , "testUserAUpdateCIFSUserAReadHTTP"
             , "testUserACreateHTTPUserADeleteHTTP"
             , "testUserACreateHTTPUserADeleteCIFS"
+            # Test User B's access permissions on files in User A's Private area
             , "testUserBCreateCIFSInUserA"
             , "testUserACreateCIFSUserBReadCIFS"
             , "testUserACreateCIFSUserBUpdateCIFS"
@@ -557,7 +630,8 @@ def getTestSuite(select="unit"):
             , "testUserBCreateHTTPInUserA"
             , "testUserACreateHTTPUserBReadHTTP"
             , "testUserACreateHTTPUserBUpdateHTTP"
-            , "testUserACreateHTTPUserBDeleteHTTP"           
+            , "testUserACreateHTTPUserBDeleteHTTP"  
+            # Test Collaborator's access permissions on files in User A's Private area         
             , "testCollabCreateCIFSInUserA"
             , "testUserACreateCIFSCollabReadCIFS"
             , "testUserACreateCIFSCollabUpdateCIFS"
@@ -565,7 +639,8 @@ def getTestSuite(select="unit"):
             , "testCollabCreateHTTPInUserA"
             , "testUserACreateHTTPCollabReadHTTP"
             , "testUserACreateHTTPCollabUpdateHTTP"
-            , "testUserACreateHTTPCollabDeleteHTTP"            
+            , "testUserACreateHTTPCollabDeleteHTTP"       
+            # Test RG Leader's access permissions on files in User A's Private area     
             , "testRGLeaderCreateCIFSInUserA"
             , "testUserACreateCIFSRGLeaderReadCIFS"
             , "testUserACreateCIFSRGLeaderUpdateCIFS"
