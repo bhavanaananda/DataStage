@@ -19,8 +19,7 @@ import TestHttpUtils
 
 class TestFileUserAUserB(unittest.TestCase):
     def do_HTTP_redirect(self, opener, method, uri, data, content_type):
-        TestHttpUtils.do_HTTP_redirect(opener, method, uri, data, content_type)
-        return
+        return TestHttpUtils.do_HTTP_redirect(opener, method, uri, data, content_type)
 
     def setUp(self):
         mountcommand = ( 'mount.cifs //%(host)s/%(share)s/%(userA)s %(mountpt)s -o rw,user=%(user)s,password=%(pass)s,nounix,forcedirectio' %
@@ -245,15 +244,12 @@ class TestFileUserAUserB(unittest.TestCase):
         opener = urllib2.build_opener(authhandler)
         urllib2.install_opener(opener)
         disallowed = False
-        try:
-            # Write data to server
-            self.do_HTTP_redirect(opener, "DELETE",
-                TestConfig.webdavbaseurl+'/'+TestConfig.userAname+'/TestHTTPCreate.tmp', 
-                None, 'text/plain')
-        except urllib2.HTTPError as e:
-            self.assertEqual(e.code, 401, "Operation should be 401 (auth failed), was: "+str(e))
+        message = self.do_HTTP_redirect(opener, "DELETE",
+            TestConfig.webdavbaseurl+'/'+TestConfig.userAname+'/TestHTTPCreate.tmp', 
+            None, 'text/plain')
+        if message[0] == 401: 
             disallowed = True
-        assert disallowed, "User B can delete User A's file by HTTP!"
+        assert disallowed, "User B can delete User A's file by HTTP! "+ str(message)
 
 #        req=urllib2.Request(TestConfig.webdavbaseurl+'/'+TestConfig.userAname+'/TestWebDAVCreate.tmp')
 #        req.get_method = lambda: 'DELETE'

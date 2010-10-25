@@ -18,8 +18,7 @@ import TestHttpUtils
 
 class TestFileCollabArea(unittest.TestCase):
     def do_HTTP_redirect(self, opener, method, uri, data, content_type):
-        TestHttpUtils.do_HTTP_redirect(opener, method, uri, data, content_type)
-        return
+        return TestHttpUtils.do_HTTP_redirect(opener, method, uri, data, content_type)
     
     def setUp(self):
         return
@@ -144,14 +143,12 @@ class TestFileCollabArea(unittest.TestCase):
         self.assertEqual(thepage, createstring) 
         modifystring="And this is after an update"
         disallowed = False 
-        try:
-            self.do_HTTP_redirect(opener, "PUT",
+        message = self.do_HTTP_redirect(opener, "PUT",
                 TestConfig.webdavbaseurl+'/collab/'+TestConfig.userAname+'/TestCreateFileHTTPB.tmp', 
                 modifystring, 'text/plain')
-        except urllib2.HTTPError as e:
-            self.assertEqual(e.code, 401, "Operation should be 401 (auth failed), was: "+str(e))
+        if message[0] == 401: 
             disallowed = True
-        assert disallowed, "User B can create file in User A's collab area by HTTP!"
+        assert disallowed, "User B can create file in User A's collab area by HTTP! " + str(message)
         
 
     def testSharedUserHTTPRGLeader(self):
@@ -166,14 +163,12 @@ class TestFileCollabArea(unittest.TestCase):
         self.assertEqual(thepage, createstring) 
         modifystring="And this is after an update"
         disallowed = False 
-        try:
-            self.do_HTTP_redirect(opener, "PUT",
+        message = self.do_HTTP_redirect(opener, "PUT",
                 TestConfig.webdavbaseurl+'/collab/'+TestConfig.userAname+'/TestCreateFileHTTPRGL.tmp', 
                 modifystring, 'text/plain')
-        except urllib2.HTTPError as e:
-            self.assertEqual(e.code, 401, "Operation should be 401 (auth failed), was: "+str(e))
+        if message[0] == 401: 
             disallowed = True
-        assert disallowed, "Group Leader can create file in User A's collab area by HTTP!"
+        assert disallowed, "Group Leader can create file in User A's collab area by HTTP! " + str(message)
         return
 
     def testSharedUserHTTPCollab(self):
@@ -188,14 +183,12 @@ class TestFileCollabArea(unittest.TestCase):
         self.assertEqual(thepage, createstring) 
         modifystring="And this is after an update"
         disallowed = False 
-        try:
-            self.do_HTTP_redirect(opener, "PUT",
+        message = self.do_HTTP_redirect(opener, "PUT",
                 TestConfig.webdavbaseurl+'/collab/'+TestConfig.userAname+'/TestCreateFileHTTPRGL.tmp', 
                 modifystring, 'text/plain')
-        except urllib2.HTTPError as e:
-            self.assertEqual(e.code, 401, "Operation should be 401 (auth failed), was: "+str(e))
+        if message[0] == 401: 
             disallowed = True
-        assert disallowed, "Collaborator can create file in User A's collab area by HTTP!"
+        assert disallowed, "Collaborator can create file in User A's collab area by HTTP! " + str(message)
         return
 
 

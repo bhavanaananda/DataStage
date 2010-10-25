@@ -28,7 +28,7 @@ def do_cifsMount(areaName, userName, userPass):
     return status
 
 def do_cifsUnmount():
-    #os.system('umount.cifs ' + TestConfig.cifsmountpoint)
+    os.system('umount.cifs ' + TestConfig.cifsmountpoint)
     return 
 
 def do_cifsCreateFile(fileName, createFileContent):

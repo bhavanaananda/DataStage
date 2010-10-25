@@ -23,7 +23,7 @@ class TestFilePrivateArea(unittest.TestCase):
         return
 
     def tearDown(self):
-        self.cifsUnmount()
+        #self.cifsUnmount()
         return
 
     def HTTP_redirect(self, opener, method, uri, data, content_type):

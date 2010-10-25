@@ -35,27 +35,6 @@ def do_HTTP_redirect(opener, method, uri, data, content_type):
             message = (e.code,str(e))  
     return message
 
-
-#
-#def do_HTTP_redirect(opener, method, uri, data, content_type):
-#    req=urllib2.Request(uri, data=data)
-#    message = (0,"Success")
-#    if content_type: req.add_header('Content-Type', content_type)
-#    req.get_method = lambda: method
-#    try:
-#        url=opener.open(req)
-#    except urllib2.HTTPError as e:
-#        if e.code == 301:                # Follow redirection
-#            req=urllib2.Request( e.headers['Location'], data=data)
-#            if content_type: req.add_header('Content-Type', content_type)
-#            req.get_method = lambda: method
-#            url=opener.open(req)
-#            message = (e.errno,str(e))
-#        else:
-#            raise e     # propagate exception
-#        message = (e.errno,str(e))
-#    return
-
 def do_httpAuthenticationHandler(userName, userPass):
     passman = urllib2.HTTPPasswordMgrWithDefaultRealm()
     passman.add_password(None, TestConfig.webdavbaseurl, userName, userPass)

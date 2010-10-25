@@ -20,8 +20,8 @@ import TestHttpUtils
 
 class TestFileUserARGLeader(unittest.TestCase):
     def do_HTTP_redirect(self, opener, method, uri, data, content_type):
-        TestHttpUtils.do_HTTP_redirect(opener, method, uri, data, content_type)
-        return
+        return TestHttpUtils.do_HTTP_redirect(opener, method, uri, data, content_type)
+        
 
     def setUp(self):
         mountcommand = ( 'mount.cifs //%(host)s/%(share)s/%(userA)s %(mountpt)s -o rw,user=%(user)s,password=%(pass)s,nounix,forcedirectio' %
@@ -197,16 +197,14 @@ class TestFileUserARGLeader(unittest.TestCase):
         urllib2.install_opener(opener)
         disallowed=False
         createstring="Testing file creation with HTTP"
-        try:
-            # Write data to server
-            self.do_HTTP_redirect(opener, "PUT",
+        message = self.do_HTTP_redirect(opener, "PUT",
                 TestConfig.webdavbaseurl+'/'+TestConfig.userAname+'/TestHTTPCreate.tmp', 
                 createstring, 'text/plain')
-        except urllib2.HTTPError as e:
-            self.assertEqual(e.code, 401, "Operation should be 401 (auth failed), was: "+str(e))
-            disallowed=True
-        assert disallowed, "Research Group leader can create a file in User A's filespace by HTTP!"
+        if message[0] == 401: 
+            disallowed = True
+        assert disallowed, "Research Group leader can create a file in User A's filespace by HTTP! "+ str(message)
         return
+
 
     def testUpdateFileHTTP(self):
         passman = urllib2.HTTPPasswordMgrWithDefaultRealm()
@@ -216,15 +214,12 @@ class TestFileUserARGLeader(unittest.TestCase):
         urllib2.install_opener(opener)
         disallowed=False
         modifystring="Testing file modification with HTTP"
-        try:
-            # Write data to server
-            self.do_HTTP_redirect(opener, "PUT",
+        message =  self.do_HTTP_redirect(opener, "PUT",
                 TestConfig.webdavbaseurl+'/'+TestConfig.userAname+'/TestHTTPUpdate.tmp', 
                 modifystring, 'text/plain')
-        except urllib2.HTTPError as e:
-            self.assertEqual(e.code, 401, "Operation should be 401 (auth failed), was: "+str(e))
+        if message[0] == 401: 
             disallowed=True
-        assert disallowed, "Research Group leader can update User A's file by HTTP!"
+        assert disallowed, "Research Group leader can update User A's file by HTTP! " + str(message)
         return
 
     def testDeleteFileHTTP(self):
@@ -234,15 +229,12 @@ class TestFileUserARGLeader(unittest.TestCase):
         opener = urllib2.build_opener(authhandler)
         urllib2.install_opener(opener)
         disallowed = False
-        try:
-            # Write data to server
-            self.do_HTTP_redirect(opener, "DELETE",
+        message = self.do_HTTP_redirect(opener, "DELETE",
                 TestConfig.webdavbaseurl+'/'+TestConfig.userAname+'/TestHTTPDelete.tmp', 
                 None, None)
-        except urllib2.HTTPError as e:
-            self.assertEqual(e.code, 401, "Operation should be 401 (auth failed), was: "+str(e))
-            disallowed = True
-        assert disallowed, "User B can delete User A's file by HTTP!"
+        if message[0] == 401: 
+            disallowed=True
+        assert disallowed, "User B can delete User A's file by HTTP! " + str(message)
         return
 
     # Sentinel/placeholder tests

@@ -18,8 +18,7 @@ import TestHttpUtils
 
 class TestFileSharedArea(unittest.TestCase):
     def do_HTTP_redirect(self, opener, method, uri, data, content_type):
-        TestHttpUtils.do_HTTP_redirect(opener, method, uri, data, content_type)
-        return
+        return TestHttpUtils.do_HTTP_redirect(opener, method, uri, data, content_type)    
 
     def setUp(self):
         return
@@ -135,15 +134,13 @@ class TestFileSharedArea(unittest.TestCase):
         self.assertEqual(thepage, createstring) 
         # Write updated data to server
         modifystring="And this is after an update"
-        disallowed = False  
-        try:    
-            self.do_HTTP_redirect(opener, "PUT",
+        disallowed = False     
+        message = self.do_HTTP_redirect(opener, "PUT",
                 TestConfig.webdavbaseurl+'/shared/'+TestConfig.userAname+'/TestCreateFileHTTP.tmp', 
                 modifystring, 'text/plain')
-        except urllib2.HTTPError as e:
-            self.assertEqual(e.code, 401, "Operation should be 401 (auth failed), was: "+str(e))
+        if message[0] == 401: 
             disallowed = True
-        assert disallowed, "User B can modify a file in User A's filespace by HTTP!"
+        assert disallowed, "User B can modify a file in User A's filespace by HTTP! " + str(message)
         return
 
 
