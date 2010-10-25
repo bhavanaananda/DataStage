@@ -42,16 +42,8 @@ class TestFileCIFSwriteHTTPread(unittest.TestCase):
                          , 'pass': TestConfig.userApass
                          } )
         status=os.system(mountcommand)
-
         self.assertEqual(status, 0, 'CIFS Mount failure')
-        f = open(TestConfig.cifsmountpoint+'/'+TestConfig.userAname+'/testCreateFileCIFSAspace.tmp','w+')
-        assert (f), "File creation failed"
-        f.write('Test creation of file\n')
-        f.close()
-        f = open(TestConfig.cifsmountpoint+'/'+TestConfig.userAname+'/testCreateFileCIFSAspace.tmp','r')
-        l = f.readline()
-        f.close()
-        self.assertEqual(l, 'Test creation of file\n', 'Unexpected file content by user A') 
+
         f = open(TestConfig.cifsmountpoint+'/shared/'+TestConfig.userAname+'/testCreateFileCIFSAsharedspace.tmp','w+')
         assert (f), "File creation failed"
         f.write('Test creation of file\n')
@@ -77,17 +69,7 @@ class TestFileCIFSwriteHTTPread(unittest.TestCase):
         opener = urllib2.build_opener(authhandler)
         urllib2.install_opener(opener)
 
-        thepage=None
         createstring="Test creation of file\n"
-        try:
-            pagehandle = urllib2.urlopen(TestConfig.webdavbaseurl+'/'+TestConfig.userAname+'/testCreateFileCIFSAspace.tmp')
-            thepage = pagehandle.read()
-            self.assertEqual(thepage, createstring) 
-        except:
-            pass
-        assert (thepage==None), "User B can read file in User A's area by HTTP!"
- 
-
         modifystring="And this is after an update"  
         disallowed = False        
         message = self.do_HTTP_redirect(opener, "PUT",
@@ -95,7 +77,7 @@ class TestFileCIFSwriteHTTPread(unittest.TestCase):
                 modifystring, 'text/plain')
         if message[0] == 401: 
             disallowed = True 
-        assert disallowed, "User B can update file in User A's area by HTTP! " + str(message)
+        assert disallowed, "User B can create file in User A's area by HTTP! " + str(message)
       
         #print "URI: "+TestConfig.webdavbaseurl+'/shared/'+TestConfig.userAname+'/testCreateFileCIFSAsharedspace.tmp'
         authhandler = urllib2.HTTPBasicAuthHandler(passman)
@@ -135,21 +117,10 @@ class TestFileCIFSwriteHTTPread(unittest.TestCase):
         authhandler = urllib2.HTTPBasicAuthHandler(passman)
         opener = urllib2.build_opener(authhandler)
         urllib2.install_opener(opener)
-        thepage=None
-        createstring="Test creation of file\n"
-        pagehandle = urllib2.urlopen(TestConfig.webdavbaseurl+'/'+TestConfig.userAname+'/testCreateFileCIFSAspace.tmp')
-        thepage = pagehandle.read()
-        self.assertEqual(thepage, createstring) 
- 
-        modifystring="And this is after an update"
-        disallowed=False
-        message = self.do_HTTP_redirect(opener, "PUT",
-                TestConfig.webdavbaseurl+'/'+TestConfig.userAname+'/testCreateFileCIFSAspace.tmp', 
-                modifystring, 'text/plain') 
-        if message[0] == 401: 
-            disallowed = True        
-        assert disallowed, "Group leader can update file in User A's area by HTTP! " + str(message)
       
+        createstring="Test creation of file\n"
+        modifystring="And this is after an update"
+
         authhandler = urllib2.HTTPBasicAuthHandler(passman)
         opener = urllib2.build_opener(authhandler)
         urllib2.install_opener(opener)
@@ -162,7 +133,6 @@ class TestFileCIFSwriteHTTPread(unittest.TestCase):
             self.do_HTTP_redirect(opener, "PUT",
                 TestConfig.webdavbaseurl+'/shared/'+TestConfig.userAname+'/testCreateFileCIFSAsharedspace.tmp', 
                 modifystring, 'text/plain')
-            
             phan=urllib2.urlopen(TestConfig.webdavbaseurl+'/shared/'+TestConfig.userAname+'/testCreateFileCIFSAsharedspace.tmp')
             thepage=phan.read()
             self.assertEqual(thepage,modifystring)
@@ -193,24 +163,9 @@ class TestFileCIFSwriteHTTPread(unittest.TestCase):
         authhandler = urllib2.HTTPBasicAuthHandler(passman)
         opener = urllib2.build_opener(authhandler)
         urllib2.install_opener(opener)
-        thepage=None
+
         createstring="Test creation of file\n"
-        try:
-            pagehandle = urllib2.urlopen(TestConfig.webdavbaseurl+'/'+TestConfig.userAname+'/testCreateFileCIFSAspace.tmp')
-            thepage = pagehandle.read()
-            self.assertEqual(thepage, createstring) 
-        except:
-            pass
-        assert (thepage==None), "Collaborator can read file in User A's area by HTTP!"
- 
-        disallowed = False 
         modifystring="And this is after an update"
-        message = self.do_HTTP_redirect(opener, "PUT",
-                TestConfig.webdavbaseurl+'/'+TestConfig.userAname+'/testCreateFileCIFSAspace.tmp', 
-                modifystring, 'text/plain')
-        if message[0] == 401: 
-            disallowed = True        
-        assert disallowed, "Collaborator can update file in User A's area by HTTP! " + str(message)
       
         thepage=None
         try:

@@ -42,14 +42,6 @@ class TestFileHTTPwriteCIFSread(unittest.TestCase):
         
         thepage=None
         self.do_HTTP_redirect(opener, "PUT",
-            TestConfig.webdavbaseurl+'/'+TestConfig.userAname+'/testCreateFileHTTPAspace.tmp', 
-            createstring, 'text/plain')
-        phan=urllib2.urlopen(TestConfig.webdavbaseurl+'/'+TestConfig.userAname+'/testCreateFileHTTPAspace.tmp')
-        thepage=phan.read()
-        self.assertEqual(thepage,createstring)
-
-        thepage=None
-        self.do_HTTP_redirect(opener, "PUT",
             TestConfig.webdavbaseurl+'/shared/'+TestConfig.userAname+'/testCreateFileHTTPAsharedspace.tmp', 
             createstring, 'text/plain')
         phan=urllib2.urlopen(TestConfig.webdavbaseurl+'/shared/'+TestConfig.userAname+'/testCreateFileHTTPAsharedspace.tmp')
@@ -76,21 +68,6 @@ class TestFileHTTPwriteCIFSread(unittest.TestCase):
                          , 'pass': TestConfig.userBpass
                          } )
         status=os.system(mountcommand)
-
-        self.assertEqual(status, 0, 'CIFS Mount failure')
-        f=None
-        try:
-            f = open(TestConfig.cifsmountpoint+'/'+TestConfig.userAname+'/testCreateFileHTTPAspace.tmp','r')
-        except:
-            pass
-        assert (f==None), "User B can read file in User A's area by CIFS!"
-
-        f=None
-        try: 
-            f = open(TestConfig.cifsmountpoint+'/'+TestConfig.userAname+'/testCreateFileHTTPAspace.tmp','w+')
-        except:
-            pass
-        assert (f==None), "User B can open User A's files for writing!"
 
         l=None
         f = open(TestConfig.cifsmountpoint+'/shared/'+TestConfig.userAname+'/testCreateFileHTTPAsharedspace.tmp','r')
@@ -129,20 +106,6 @@ class TestFileHTTPwriteCIFSread(unittest.TestCase):
                          , 'pass': TestConfig.userRGleaderpass
                          } )
         status=os.system(mountcommand)
-
-        self.assertEqual(status, 0, 'CIFS Mount failure')
-        l=None
-        f = open(TestConfig.cifsmountpoint+'/'+TestConfig.userAname+'/testCreateFileHTTPAspace.tmp','r')
-        l = f.readline()
-        f.close()
-        self.assertEqual(l, 'Testing file creation with HTTP\n', 'Unexpected file content in user A\'s shared space for RGLeader') 
-
-        f=None
-        try: 
-            f = open(TestConfig.cifsmountpoint+'/'+TestConfig.userAname+'/testCreateFileHTTPAspace.tmp','w+')
-        except:
-            pass
-        assert (f==None), "Research group leader can open User A's files for writing!"
 
         l=None
         f = open(TestConfig.cifsmountpoint+'/shared/'+TestConfig.userAname+'/testCreateFileHTTPAsharedspace.tmp','r')

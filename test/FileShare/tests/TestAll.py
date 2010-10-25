@@ -9,10 +9,6 @@ import sys, unittest, logging
 # Add main library directory to python path
 sys.path.append("../..")
 
-
-import TestFileUserAUserA
-import TestFileUserAUserB
-import TestFileUserARGLeader
 import TestFileUserASharedPublic
 import TestFileUserAPublic
 import TestFileSharedArea
@@ -24,9 +20,6 @@ import TestFileDefaultArea
 # Code to run unit tests from all library test modules
 def getTestSuite(select="all"):
     suite = unittest.TestSuite()
-    suite.addTest(TestFileUserAUserA.getTestSuite(select=select))
-    suite.addTest(TestFileUserAUserB.getTestSuite(select=select))
-    suite.addTest(TestFileUserARGLeader.getTestSuite(select=select))
 #    suite.addTest(TestFileUserASharedPublic.getTestSuite(select=select))
 #    suite.addTest(TestFileUserAPublic.getTestSuite(select=select))
     suite.addTest(TestFileSharedArea.getTestSuite(select=select))
