@@ -23,12 +23,13 @@ def do_cifsMount(areaName, userName, userPass):
                      , 'mountpt': TestConfig.cifsmountpoint
                      , 'pass': userPass
                      } )
-    #print mountcommand
+    #print mountcommandUserB
     status=os.system(mountcommand)
     return status
 
 def do_cifsUnmount():
-    os.system('umount.cifs ' + TestConfig.cifsmountpoint)
+    #os.system('umount.cifs ' + TestConfig.cifsmountpoint)
+    return 
 
 def do_cifsCreateFile(fileName, createFileContent):
     ###print "do_cifsCreateFile: "+TestConfig.cifsmountpoint + '/' + fileName
