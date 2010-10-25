@@ -9,6 +9,7 @@ import sys, unittest, logging
 # Add main library directory to python path
 sys.path.append("../..")
 
+import TestFilePrivateArea
 import TestFileUserASharedPublic
 import TestFileUserAPublic
 import TestFileSharedArea
@@ -22,6 +23,7 @@ def getTestSuite(select="all"):
     suite = unittest.TestSuite()
 #    suite.addTest(TestFileUserASharedPublic.getTestSuite(select=select))
 #    suite.addTest(TestFileUserAPublic.getTestSuite(select=select))
+    suite.addTest(TestFilePrivateArea.getTestSuite(select=select))
     suite.addTest(TestFileSharedArea.getTestSuite(select=select))
     suite.addTest(TestFileCollabArea.getTestSuite(select=select))
     suite.addTest(TestFileCIFSwriteHTTPread.getTestSuite(select=select))
