@@ -577,7 +577,6 @@ class TestFilePrivateArea(unittest.TestCase):
                           ", got: "+str(deleteMessage))
         return
     
-
     def testUnits(self):
         assert (True)
 
