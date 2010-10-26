@@ -90,7 +90,8 @@ END
 	  # NOTE:
 	  # Tried to use a combination of "Require user" and "Require ldap-attribute"
 	  # here, but this caused access failures for all users.
-    Require user $1 $RGLeaderName
+	  # TestLeader is included here for testing only.
+    Require user $1 $RGLeaderName TestLeader
 	</Limit>
 </Location>
 
