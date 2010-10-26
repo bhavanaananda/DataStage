@@ -546,13 +546,8 @@ class TestFilePrivateArea(unittest.TestCase):
         fileContent= 'Test creation of file\n'  
         createMessage = self.httpCreateFile(TestConfig.userAname, TestConfig.userApass, fileName, fileContent)
         self.assertEqual(createMessage[0],0,"Create file failed: "+str(createMessage))
-        disallowed = True
-        try:
-            self.httpReadFileAs(TestConfig.userAname, TestConfig.userRGleadername, TestConfig.userRGleaderpass, fileName)
-        except urllib2.HTTPError as e:
-            self.assertEqual(e.code, 401, "Operation should be 401 (auth failed), was: "+str(e))
-            disallowed = Fasle
-        assert disallowed, "Collaborator cannot read a file in User A's filespace by HTTP!"
+        readFileContent = self.httpReadFileAs(TestConfig.userAname, TestConfig.userRGleadername, TestConfig.userRGleaderpass, fileName)
+        self.assertEqual(fileContent,readFileContent,"RGLeader read of file in User A's filespace by HTTP")
         return
      
     def testUserACreateHTTPRGLeaderUpdateHTTP(self): 
