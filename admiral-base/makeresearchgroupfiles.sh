@@ -39,7 +39,12 @@ FILELIST="`ls -1 --directory --ignore-backups --file-type * ldapconfig/* www/* w
 REPORT="echo"
 REPORT=":"
 MD5PASSWD=`slappasswd -h {MD5} -s $PASSWORD`
-IP=`host $HOSTNAME | cut -d ' ' -f4`
+
+if [[ "$IPADDR" == "" ]]; then
+    IP=`host $HOSTNAME | cut -d ' ' -f4`
+else
+    IP=$IPADDR
+fi
 
 #if [[ "$COPYTEST" == "copy" ]]; then
     mkdir -p $TGTDIR

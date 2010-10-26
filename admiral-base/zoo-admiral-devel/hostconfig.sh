@@ -5,6 +5,9 @@
 # (See also: admiralconfig.sh)
 #
 
+# Override IP address for testing (kos.zoo.x.ac.uk)
+IPADDR="129.67.26.204"
+
 # Samba/Windows workgroup name for research group files
 WORKGROUP="EvolutionaryDevelopment"
 
