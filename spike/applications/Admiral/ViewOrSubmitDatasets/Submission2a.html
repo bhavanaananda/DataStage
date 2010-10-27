@@ -1,0 +1,114 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+
+<head>
+    <title>ADMIRAL: Data Submission</title>
+
+    <!-- TODO: move to separate CSS file -->
+    <style>
+    td {
+        background-color: #FFE;
+    }
+    </style>
+ 
+
+    <link rel="stylesheet" href="./css/SubmitDataset.css" type="text/css" />
+    <!-- Import jQuery framework -->
+    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.4/jquery.min.js"></script>
+    <script src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8/jquery-ui.min.js"></script>
+    <script type="text/javascript" src="../../jQuery/js/jquery-1.4.2.js"></script> 
+
+    <!-- Import jQuery additional libraries -->
+    <script type="text/javascript" src="../../jQuery/jquery.json-2.2.js"></script> 
+ 
+    <!-- Import MochiKit modules: require MochiKit library functions to be fully qualified -->
+    <script type="text/javascript">MochiKit = {__export__: false};</script>
+    <script type="text/javascript" src="../../MochiKit/Base.js"></script>
+    <script type="text/javascript" src="../../MochiKit/Iter.js"></script>
+
+    <script type="text/javascript" src="../../MochiKit/Logging.js"></script>
+
+    <!-- Import Admiral functions -->
+    <script type="text/javascript" src="../../Admiral/admiral-base.js"></script>
+    <script type="text/javascript" src="../../Admiral/Error.js"></script>
+    <script type="text/javascript" src="../../Admiral/AsyncComputation.js"></script>
+    <script type="text/javascript" src="../../SelectDataset/ListDatasets.js"></script>
+
+    <script type="text/javascript" src="../../SelectDataset/GetDatasets.js"></script>
+
+    <script>
+    // Use jQuery via jQuery(...)
+    jQuery.noConflict();
+    </script>
+
+    <!-- Execute the desired dataset listing logic -->
+  <script>
+    $(document).ready(function() {
+        $("#selectable").selectable();
+            });
+   
+    
+	jQuery(document).ready( function ()
+	{ 
+    	 $('#cancel').click( function() {
+            window.open( 'index.html','_self' );
+                });
+                
+        
+         $('#next').click( function() {
+            window.open( 'Submission2b.html','_self' );
+                });
+                
+                    	/*  var m = new admiral.AsyncComputation();
+                    	    m.eval(function(val,callback)
+                    	    {
+                    	        admiral.listDatasets("","admiral-test", admiral.getDatasetList, callback);            
+                    	    });
+                    	    m.eval(function(val,callback)
+                    	    {
+                    	        // val supplies a <div> element containing a <table> to be displayed
+                    	        jQuery("#tableDatasets").html("");
+                    	        jQuery("#tableDatasets").append(val.find("table"));
+                    	    });    
+                    	    m.exec(null,admiral.noop); 
+                    	*/
+    	  });
+    </script>
+</head> 
+
+<body>
+
+   <h1>Submit Datasets</h1>
+<form name="frm1" action="Submission2b.html" method="post">
+   <div class="box outer">
+        <div class="box">
+            <span class="label">Dataset Dir :</span>
+            <span class="labelval">
+            <div>
+                <input name="datDir" id="datDir" type="text"/>
+            </div>
+            <div>
+                <input name="file" id="file" type="file"/>
+            </div>
+            <div>
+                 <ul id="selectable">
+                    <li>file1</li> <li>file2</li> <li>SubDir1</li>
+                  </ul>
+            </div>
+        </div>
+        <div class="box">
+           <span class="label"></span>
+           <span class="labelval">
+                <input name="next" id="next" type="submit" value="Next"/>
+                <button  name="cancel" id="cancel" type="button" > Cancel </button>
+           </span>
+        </div>
+   </div>
+</form>
+
+   
+</body>
+
+</html>
+
