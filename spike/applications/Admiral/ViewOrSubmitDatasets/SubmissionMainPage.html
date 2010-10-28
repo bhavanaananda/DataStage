@@ -54,8 +54,10 @@
                 window.open( 'index.html','_self' );
                 });
             
-                $('#datID').val("username/rootDirName");
-                $('#title').val("rootDirName");     
+                $('#datID').val("");
+                $('#title').val("");     
+                $('#user').val(""); 
+                    
         
                         	/*  var m = new admiral.AsyncComputation();
                         	    m.eval(function(val,callback)
@@ -83,36 +85,34 @@
             <span class="label">Dataset Dir :</span>
             <span class="labelval">
             <div>
-                <input name="datDir" id="datDir" type="text"/>
+                *<input name="datDir" id="datDir" type="file" value="/home/data/private"/> (ADMIRAL file System)(/private/user)
             </div>
-            <div>
-                <input name="file" id="file" type="file"/>
-            </div>
-            <div>
-                 <ul id="selectable">
-                    <li>file1</li> <li>file2</li> <li>SubDir1</li>
-                  </ul>
-            </div>
+            <!--
+                <div>
+                     <ul id="selectable">
+                        <li>file1</li> <li>file2</li> <li>SubDir1</li>
+                      </ul>
+                </div>
+            -->
         </div>
         <div class="box">
            <span class="label">Dataset Id :</span>
-           <span class="labelval"><input name="datID" id="datID" type="text"/></span>
+           <span class="labelval">*<input name="datID" id="datID" type="text"/>(username/rootDirName)</span>
         </div>
         <div class="box">
            <span class="label">Title :</span>
-           <span class="labelval"><input name="title" id="title" type="text"/></span>
+           <span class="labelval">*<input name="title" id="title" type="text"/>(rootDirName)</span>
         </div>
         <div class="box">
            <span class="label">Description :</span>
            <span class="labelval">
-                <textarea rows="4"  cols="50">
-                </textarea>
+                <textarea rows="4"  cols="50"><optional></textarea>
            </span>
         </div>
         <div class="box">
             <span class="label">User :</span>
             <span class="labelval">
-                <input name="user" id="user" type="text"/>
+                *<input name="user" id="user" type="text"/>(username)
           </span>
         </div>
         <div class="box">

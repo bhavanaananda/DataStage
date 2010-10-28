@@ -58,8 +58,9 @@
             window.open( 'Submission2a.html','_self' );
                 });
                 
-            $('#datID').val("username/rootDirName");
-            $('#title').val("rootDirName");             
+            $('#datID').val("");
+            $('#title').val(""); 
+            $('#user').val("");                 
     
                     	/*  var m = new admiral.AsyncComputation();
                     	    m.eval(function(val,callback)
@@ -85,23 +86,22 @@
    <div class="box outer">
         <div class="box">
            <span class="label">Dataset Id :</span>
-           <span class="labelval"><input name="datID" id="datID" type="text"/></span>
+           <span class="labelval">*<input name="datID" id="datID" type="text"/>(username/rootDirName)</span>
         </div>
         <div class="box">
            <span class="label">Title :</span>
-           <span class="labelval"><input name="title" id="title" type="text"/></span>
+           <span class="labelval">*<input name="title" id="title" type="text"/>(rootDirName)</span>
         </div>
         <div class="box">
            <span class="label">Description :</span>
            <span class="labelval">
-                <textarea rows="4"  cols="50">
-                </textarea>
+                <textarea rows="4"  cols="50"><optional></textarea>
            </span>
         </div>
         <div class="box">
             <span class="label">User :</span>
             <span class="labelval">
-                <input name="user" id="user" type="text"/>
+                *<input name="user" id="user" type="text"/>(username)
             </span>
         </div>
         <div class="box">
