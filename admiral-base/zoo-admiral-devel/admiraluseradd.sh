@@ -26,6 +26,15 @@ END
   mv /home/$1 /home/$1-saved
   ln -s /mnt/lv-admiral-data/home/$1 /home/$1
 
+  # Create a record of the new user details in /root/admiralresearchgroupmembers
+  cat > /root/admiralresearchgroupmembers/$1.sh <<EOF
+username=$1
+userfullname=$2
+userrole=$3
+
+EOF
+
+
   # Create directory areas for the new user
 
   mkdir /home/data/private/$1

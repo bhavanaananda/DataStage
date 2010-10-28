@@ -24,3 +24,5 @@ echo =================================
 echo "Next step: configure system users"
 echo =================================
 
+mkdir /root/admiralresearchgroupmembers
+

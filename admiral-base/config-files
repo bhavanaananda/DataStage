@@ -46,6 +46,7 @@ admiralconfig.sh /root/admiralconfig.sh
 admiraldatasetup.sh /root/admiraldatasetup.sh
 admiraluseradd.sh /root/admiraluseradd.sh
 admiraluserdel.sh /root/admiraluserdel.sh
+admiralleaderchange.sh /root/admiralleaderchange.sh
 addtestusers.sh /root/addtestusers.sh
 deltestusers.sh /root/deltestusers.sh
 apache2.conf /root/apache2.conf

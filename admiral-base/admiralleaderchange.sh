@@ -3,6 +3,8 @@
 # Using both -G and -g options to smbldap-usermod may seem like a belt and braces approach, but
 # I am unconvinced that either on their own does enough.
 
+source admiralRGLeader.sh
+
 if [[ "$1" == "" ]] || [[ "$2" == "" ]]; then
   echo "Usage: $0 oldleadername newleadername [-d]"
   echo "Use the -d option only if you wish to remove the old"
@@ -10,7 +12,7 @@ if [[ "$1" == "" ]] || [[ "$2" == "" ]]; then
   echo "new Research Group Leader!  Use without the -d option if old"
   echo "Research Group Leader still a member of the group."
   exit 1
-elif [[ "$1" != "%{LeaderName}" ]]; then
+elif [[ "$1" != "$RGLeaderName" ]]; then
   echo "This person is not the current Research Group Leader."
   echo "If you want to delete a Group Member please use the"
   echo "'admiraluserdel.sh' script instead."
@@ -39,7 +41,17 @@ else
   chown -R $2:RGLeader /home/data/shared/$2
   chown -R $2:RGLeader /home/data/collab/$2
   chown -R $2:RGLeader /mnt/lv-admiral-data/home/$2
-# need a sed script here to go through /etc/apache2/conf.d/user.* replacing old leader with new leader
-# here be dragons! this needs testing before using in anger, but no functional test system ATM!
-  for i in /etc/apache2/conf.d/user.*; do mv $i $i.tmp; sed -e "s/$1/$2/" $i.tmp > $i; rm $i.tmp; done
+  
+  cat >/root/admiralRGLeader.sh <<EOF
+#!/bin/bash
+
+RGLeaderName=$2
+
+EOF
+
+# Regenerate the apache user access control files
+  
+  /root/createapacheuserconfig.sh
+
+
 fi
