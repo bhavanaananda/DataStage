@@ -273,6 +273,7 @@ class TestSubmission(SparqlQueryTestCase.SparqlQueryTestCase):
         self.assertEqual(zipdata, zipfile, "Difference between local and remote zipfile!")
 
     def testFileUploadState(self):
+        self.fail("testFileUploadState not implemented")
         pass
 
     def testFileUnpack(self):
@@ -385,6 +386,7 @@ class TestSubmission(SparqlQueryTestCase.SparqlQueryTestCase):
         self.assertEqual(zipdata, zipfile, "Difference between local and remote zipfile!")
 
     def testFileUpdateState(self):
+        self.fail("testFileUpdateState not implemented")
         pass
 
     def testMetadataMerging(self):
@@ -750,7 +752,10 @@ def getTestSuite(select="unit"):
             , "testDatasetCreation"
             , "testDatasetStateInformation"
             , "testFileUpload"
+            , "testFileUploadState"
             , "testFileUnpack"
+            , "testFileUpdate"
+            , "testFileUpdateState"
             , "testMetadataMerging"
             , "testOneDownMetadataMerging"
             , "testDeleteDataset"
