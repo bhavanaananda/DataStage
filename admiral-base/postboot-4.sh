@@ -26,5 +26,5 @@ echo =================================
 
 mkdir /root/admiralresearchgroupmembers
 
-./admiraluseradd TestLeader "Test group leader" RGLeader  room3 333333 leader
+./admiraluseradd.sh TestLeader "Test group leader" RGLeader  room3 333333 leader
 
