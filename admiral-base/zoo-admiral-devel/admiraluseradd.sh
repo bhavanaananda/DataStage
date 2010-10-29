@@ -28,9 +28,9 @@ END
 
   # Create a record of the new user details in /root/admiralresearchgroupmembers
   cat > /root/admiralresearchgroupmembers/$1.sh <<EOF
-username=$1
-userfullname=$2
-userrole=$3
+username="$1"
+userfullname="$2"
+userrole="$3"
 
 EOF
 

@@ -13,7 +13,7 @@ if [[ "$1" == "" ]] || [[ "$2" == "" ]]; then
   echo "Research Group Leader still a member of the group."
   exit 1
 elif [[ "$1" != "$RGLeaderName" ]]; then
-  echo "This person is not the current Research Group Leader."
+  echo "This person ($1) is not the current Research Group Leader."
   echo "If you want to delete a Group Member please use the"
   echo "'admiraluserdel.sh' script instead."
   exit 1

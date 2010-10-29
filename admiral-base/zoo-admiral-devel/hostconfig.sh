@@ -14,7 +14,7 @@ WORKGROUP="EvolutionaryDevelopment"
 # Username initially designated as research group leader
 # (System scripts will attempt to ensure that there is always a user 
 # who is the designated research group leader)
-LEADERNAME="SebShimeld"
+LEADERNAME="TestLeader"
 
 # End.
 
