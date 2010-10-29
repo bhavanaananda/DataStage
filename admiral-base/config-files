@@ -43,6 +43,7 @@ postboot-4.sh /root/postboot-4.sh
 lvmconfig.sh /root/lvmconfig.sh
 etcldap.conf /root/etcldap.conf
 admiralconfig.sh /root/admiralconfig.sh
+admiralRGLeader.sh /root/admiralRGLeader.sh
 admiraldatasetup.sh /root/admiraldatasetup.sh
 admiraluseradd.sh /root/admiraluseradd.sh
 admiraluserdel.sh /root/admiraluserdel.sh
@@ -50,6 +51,7 @@ admiralleaderchange.sh /root/admiralleaderchange.sh
 addtestusers.sh /root/addtestusers.sh
 deltestusers.sh /root/deltestusers.sh
 apache2.conf /root/apache2.conf
+createapacheuserconfig.sh /root/createapacheuserconfig.sh
 www/index.html /var/www/index.html
 www/docs/accesswindows.html /root/accesswindows.html
 www/docs/accessmacos.html /root/accessmacos.html
