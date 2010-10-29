@@ -11,7 +11,7 @@ elif [[ "$1" == "$RGLeaderName" ]]; then
   echo "Then run the 'admiralleaderchange.sh' script."
   exit 1
 else 
-  chown -R $RGLeaderName:RGLeader /home/data/$1
+  chown -R $RGLeaderName:RGLeader /home/data/private/$1
   chown -R $RGLeaderName:RGLeader /home/data/shared/$1
   chown -R $RGLeaderName:RGLeader /home/data/collab/$1
   chown -R $RGLeaderName:RGLeader /mnt/lv-admiral-data/home/$1
