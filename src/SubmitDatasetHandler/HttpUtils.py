@@ -32,7 +32,7 @@ _endpointpass = "admiral"
 
 logger = logging.getLogger('TestSubmitDataset')
 
-__author__ = "Bhavana Ananada"
+__author__ = "Bhavana Ananda"
 __version__ = "0.1"
 
 # Originally copied from http://code.activestate.com/recipes/146306/:
