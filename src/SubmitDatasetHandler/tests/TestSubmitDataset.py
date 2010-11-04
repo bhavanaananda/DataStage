@@ -14,7 +14,7 @@ sys.path.append("..")
 from MiscLib import TestUtils
 #from TestLib import SparqlQueryTestCase
 
-from SubmitDatasetUtils import *
+import SubmitDatasetUtils
 
 SiloName         =  "admiral-test"
 FileName         =  "file1.txt"
@@ -38,7 +38,7 @@ class TestDatasetSubmission(unittest.TestCase):
         # Test the Dataset Creation: <TestSubmission>       
     def testDatasetCreation(self):        
         # Read original Dataset List from Silo
-        initialDatasetsFromSilo = UTIL_getDatasetsListFromSilo(SiloName)
+        initialDatasetsFromSilo = SubmitDatasetUtils.getDatasetsListFromSilo(SiloName)
         
         # Formulate the initial datasets received form Databank Silo into a List: <initialDatasetsListFromSilo>
         initialDatasetsListFromSilo = []
@@ -46,10 +46,10 @@ class TestDatasetSubmission(unittest.TestCase):
             initialDatasetsListFromSilo.append(initialDataset)
             
         # Create a new Test Dataset
-        UTIL_createDataset(SiloName,TestDatasetName)
+        SubmitDatasetUtils.createDataset(SiloName,TestDatasetName)
         
         # Read updated Dataset List from Silo
-        updatedDatasetsFromSilo = UTIL_getDatasetsListFromSilo(SiloName)
+        updatedDatasetsFromSilo = SubmitDatasetUtils.getDatasetsListFromSilo(SiloName)
         
         # Formulate the updated datasets received from Databank Silo into a List: <updatedDatasetListFromSilo>
         updatedDatasetsListFromSilo = []
@@ -61,46 +61,46 @@ class TestDatasetSubmission(unittest.TestCase):
         # Test that the length <updatedDatasetListFromSilo> = length<initialDatasetsListFromSilo> + 1
         self.assertEquals(len(updatedDatasetsListFromSilo), len(initialDatasetsListFromSilo)+1, "Dataset Created Successfully")
         
-        UTIL_deleteDataset(SiloName,TestDatasetName) 
+        SubmitDatasetUtils.deleteDataset(SiloName,TestDatasetName) 
         return
  
  
         # Test the Dataset Deletion :<TestSubmission>  
     def testDatasetDeletion(self):  
-        UTIL_createDataset(SiloName,TestDatasetName)
+        SubmitDatasetUtils.createDataset(SiloName,TestDatasetName)
         # Test the dataset deletion      
-        UTIL_deleteDataset(SiloName,TestDatasetName) 
+        SubmitDatasetUtils.deleteDataset(SiloName,TestDatasetName) 
         return
     
     
         # Test the File Submission into the Dataset: <TestSubmission>  
     def testSingleFileSubmission(self):     
-        UTIL_createDataset(SiloName,TestDatasetName)  
+        SubmitDatasetUtils.createDataset(SiloName,TestDatasetName)  
         # Submit a file to the Dataset
         mimeType = FileMimeType 
-        localFileContent  = UTIL_getFileContents(FileName)
-        UTIL_submitFileToDataset(SiloName, TestDatasetName, FileName, mimeType)
+        localFileContent  = SubmitDatasetUtils.getFileContents(FileName)
+        SubmitDatasetUtils.submitFileToDataset(SiloName, TestDatasetName, FileName, mimeType)
         
         # Read from the  updated Dataset
-        remoteFileContent = UTIL_getFileFromDataset(SiloName, TestDatasetName, FileName, mimeType)
+        remoteFileContent = SubmitDatasetUtils.getFileFromDataset(SiloName, TestDatasetName, FileName, mimeType)
         
         # Check that the <localFileContent> = <remoteFileContents>
         self.assertEqual(localFileContent, remoteFileContent, "Difference between local and remote file!")
-        UTIL_deleteDataset(SiloName,TestDatasetName)  
+        SubmitDatasetUtils.deleteDataset(SiloName,TestDatasetName)  
         return
     
     
     def testDirectorySubmission(self):    
-        UTIL_createDataset(SiloName,TestDatasetName)  
+        SubmitDatasetUtils.createDataset(SiloName,TestDatasetName)  
         # Zip the required directory
         mimeType = ZipMimeType
-        zipFileName = UTIL_ZipDirectory(DirName,TestPat,TestDatasetName+".zip")
+        zipFileName = SubmitDatasetUtils.ZipDirectory(DirName,TestPat,TestDatasetName+".zip")
         #logger.debug("ZipFileName: " + zipFileName)
-        localZipFileContent  = UTIL_getZipFileContents(zipFileName)
-        UTIL_submitZipFileToDataset(SiloName, TestDatasetName, zipFileName, mimeType)
+        localZipFileContent  = SubmitDatasetUtils.getZipFileContents(zipFileName)
+        SubmitDatasetUtils.submitZipFileToDataset(SiloName, TestDatasetName, zipFileName, mimeType)
 
         # Read from the  updated Dataset
-        remoteZipFileContent = UTIL_getZipFileContentFromDataset(SiloName, TestDatasetName, zipFileName, mimeType)
+        remoteZipFileContent = SubmitDatasetUtils.getZipFileContentFromDataset(SiloName, TestDatasetName, zipFileName, mimeType)
         
         #logger.debug("LocalZipFileContents: " + localZipFileContent)
         #logger.debug(" RemoteZipFileContents: " + remoteZipFileContent)
@@ -109,9 +109,9 @@ class TestDatasetSubmission(unittest.TestCase):
         self.assertEqual(localZipFileContent, remoteZipFileContent, "Difference between local and remote zip files!") 
         
         #unpack the contents
-        UTIL_UnzipRemoteFileCreateNewDataset(zipFileName, SiloName, TestDatasetName)
-        UTIL_deleteDataset(SiloName,TestDatasetName)  
-        UTIL_deleteDataset(SiloName,TestDatasetName + "-" + TestDatasetName)
+        SubmitDatasetUtils.UnzipRemoteFileCreateNewDataset(zipFileName, SiloName, TestDatasetName)
+        SubmitDatasetUtils.deleteDataset(SiloName,TestDatasetName)  
+        SubmitDatasetUtils.deleteDataset(SiloName,TestDatasetName + "-" + TestDatasetName)
         return
 
 
@@ -119,17 +119,17 @@ class TestDatasetSubmission(unittest.TestCase):
     def testEmptyDirectorySubmission(self):
             
         # Create a new Test Dataset
-        UTIL_createDataset(SiloName,EmptyTestDatasetName)
+        SubmitDatasetUtils.createDataset(SiloName,EmptyTestDatasetName)
 
         # Zip the Empty directory
         mimeType = ZipMimeType
-        zipFileName = UTIL_ZipDirectory(EmptyDirName,TestPat,EmptyTestDatasetName+".zip")
+        zipFileName = SubmitDatasetUtils.ZipDirectory(EmptyDirName,TestPat,EmptyTestDatasetName+".zip")
         #logger.debug("ZipFileName: " + zipFileName)
-        localZipFileContent  = UTIL_getZipFileContents(zipFileName)
-        UTIL_submitZipFileToDataset(SiloName,EmptyTestDatasetName, zipFileName, mimeType)
+        localZipFileContent  = SubmitDatasetUtils.getZipFileContents(zipFileName)
+        SubmitDatasetUtils.submitZipFileToDataset(SiloName,EmptyTestDatasetName, zipFileName, mimeType)
 
         # Read from the  updated Dataset
-        remoteZipFileContent = UTIL_getZipFileContentFromDataset(SiloName, EmptyTestDatasetName, zipFileName, mimeType)
+        remoteZipFileContent = SubmitDatasetUtils.getZipFileContentFromDataset(SiloName, EmptyTestDatasetName, zipFileName, mimeType)
         
         #logger.debug("LocalZipFileContents: " + localZipFileContent)
         #logger.debug(" RemoteZipFileContents: " + remoteZipFileContent)
@@ -138,10 +138,10 @@ class TestDatasetSubmission(unittest.TestCase):
         self.assertEqual(localZipFileContent, remoteZipFileContent, "Difference between local and remote zip files!") 
         
         #unpack the contents
-        UTIL_UnzipRemoteFileCreateNewDataset(zipFileName, SiloName, EmptyTestDatasetName)
+        SubmitDatasetUtils.UnzipRemoteFileCreateNewDataset(zipFileName, SiloName, EmptyTestDatasetName)
         
-        UTIL_deleteDataset(SiloName,EmptyTestDatasetName)
-        UTIL_deleteDataset(SiloName,EmptyTestDatasetName + "-" + EmptyTestDatasetName)
+        SubmitDatasetUtils.deleteDataset(SiloName,EmptyTestDatasetName)
+        SubmitDatasetUtils.deleteDataset(SiloName,EmptyTestDatasetName + "-" + EmptyTestDatasetName)
         return
 
 

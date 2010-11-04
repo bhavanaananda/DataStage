@@ -28,7 +28,7 @@ from MiscLib.ScanFiles import *
 
 logger =  logging.getLogger("SubmitDatasetUtils")
     
-def UTIL_createDataset(siloName, datasetName):
+def createDataset(siloName, datasetName):
     # Create a new dataset, check response
     fields = \
         [ ("id", datasetName)
@@ -42,9 +42,9 @@ def UTIL_createDataset(siloName, datasetName):
     return
 
 
-def UTIL_submitFileToDataset(siloName, datasetName, fileName , mimeType):
+def submitFileToDataset(siloName, datasetName, fileName , mimeType):
     fields = []
-    fileData = UTIL_getFileContents(fileName)
+    fileData = getFileContents(fileName)
     files = \
         [ ("file", fileName, fileData, mimeType) 
         ]
@@ -56,9 +56,9 @@ def UTIL_submitFileToDataset(siloName, datasetName, fileName , mimeType):
     return
 
 
-def UTIL_submitZipFileToDataset(siloName, datasetName, zipFileName , mimeType):
+def submitZipFileToDataset(siloName, datasetName, zipFileName , mimeType):
     fields = []
-    zipFileData = UTIL_getZipFileContents(zipFileName)
+    zipFileData = getZipFileContents(zipFileName)
     zipFiles = \
         [ ("file", zipFileName, zipFileData, mimeType) 
         ]
@@ -70,7 +70,7 @@ def UTIL_submitZipFileToDataset(siloName, datasetName, zipFileName , mimeType):
     return
 
 
-def UTIL_deleteDataset(siloName, datasetName):      
+def deleteDataset(siloName, datasetName):      
     # Access dataset, check response
     data = TestUtils.doHTTP_GET(
         resource = "/" + siloName + "/datasets/" + datasetName, 
@@ -86,40 +86,35 @@ def UTIL_deleteDataset(siloName, datasetName):
         resource = "/" + siloName + "/datasets/" + datasetName, 
         expect_status=404, expect_reason="Not Found")
     return
-        
           
-def UTIL_getDatasetsListFromSilo(siloName):
+def getDatasetsListFromSilo(siloName):
     datasetsListFromSilo = TestUtils.doHTTP_GET(
     resource="/" + siloName +"/datasets/", 
     expect_status=200, expect_reason="OK", expect_type="application/json")
     return datasetsListFromSilo
 
 
-def UTIL_getFileFromDataset(siloName, datasetName, fileName, mimeType):  
+def getFileFromDataset(siloName, datasetName, fileName, mimeType):  
     readFileContent = TestUtils.doHTTP_GET(
             resource = "/" + siloName +"/datasets/" + datasetName + "/" + fileName,
             expect_status=200, expect_reason="OK", expect_type=mimeType)
     return readFileContent
 
-
-def UTIL_getZipFileContentFromDataset(siloName, datasetName, fileName, mimeType):  
+def getZipFileContentFromDataset(siloName, datasetName, fileName, mimeType):  
     readZipFileContent = TestUtils.doHTTP_GET(
             resource = "/" + siloName +"/datasets/" + datasetName + "/" + fileName,
             expect_status=200, expect_reason="OK", expect_type=mimeType)
     return readZipFileContent
 
-
-def UTIL_getFileContents(fileName):
+def getFileContents(fileName):
     fileContent = open(fileName).read()
     return fileContent
     
-    
-def UTIL_getZipFileContents(zipFileName):
-    zipFileContent = UTIL_getFileContents(zipFileName)
+def getZipFileContents(zipFileName):
+    zipFileContent = getFileContents(zipFileName)
     return zipFileContent
 
-
-def UTIL_ZipDirectory(dirName,testPat,zipFileName):
+def ZipDirectory(dirName,testPat,zipFileName):
     # Write data directly to zip file
     # See O'Reilly Python Nutshell guide, p238
     def data_to_zip(z, name, data):
@@ -137,8 +132,7 @@ def UTIL_ZipDirectory(dirName,testPat,zipFileName):
     z.close()
     return zipFileName
 
-
-def UTIL_UnzipRemoteFileCreateNewDataset(zipFileName, siloName, testDatasetName):
+def UnzipRemoteFileCreateNewDataset(zipFileName, siloName, testDatasetName):
     # Unpack ZIP file into a new dataset, check response
     logger.debug("Zip file name to be UNPACKED: " + zipFileName)
     fields = \
