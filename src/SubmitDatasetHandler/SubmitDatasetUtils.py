@@ -138,10 +138,23 @@ def getFileFromDataset(siloName, datasetName, fileName):
     return readFileTypeContent
 
 def getLocalFileContents(fileName):
+    """
+    Retrieve content of local file
+    
+    fileName    name of file to read
+    """
     fileContent = open(fileName).read()
     return fileContent
 
-def zipLocalDirectory(dirName,testPat,zipFileName):
+def zipLocalDirectory(dirName,filePat,zipFileName):
+    """
+    Create a ZIP file from the contents of a local directory
+    
+    dirName     name of directory whose contents are scanned
+    filePat     compiled regular expression matching filenames to be included
+                in the ZIP file
+    zipFileName name (in the local file system) of the ZIP file to be created
+    """
     # Write data directly to zip file
     # See O'Reilly Python Nutshell guide, p238
     def data_to_zip(z, name, data):
@@ -150,7 +163,8 @@ def zipLocalDirectory(dirName,testPat,zipFileName):
         zinfo.external_attr = 0777 << 16L # Access control for created file
         z.writestr(zinfo, data)
         return
-    files = CollectFiles(dirName,testPat)
+
+    files = CollectFiles(dirName,filePat)
     z = zipfile.ZipFile(zipFileName,'w')
     data_to_zip(z, "admiral-dataset", "This directory contains an ADMIRAL dataset\n")
     for i in files: 

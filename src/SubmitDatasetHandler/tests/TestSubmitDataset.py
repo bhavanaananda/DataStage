@@ -8,7 +8,7 @@ import sys, unittest, logging, zipfile, re
 from os.path import normpath
 
 #Add main library directory to python path
-sys.path.append("../../../test")
+###sys.path.append("../../../test")
 sys.path.append("..")
 
 from MiscLib import TestUtils
