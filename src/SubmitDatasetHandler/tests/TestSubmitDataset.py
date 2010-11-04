@@ -82,7 +82,7 @@ class TestDatasetSubmission(unittest.TestCase):
         SubmitDatasetUtils.submitFileToDataset(SiloName, TestDatasetName, FileName, mimeType, FileName)
         
         # Read from the  updated Dataset
-        remoteFileContent = SubmitDatasetUtils.getFileFromDataset(SiloName, TestDatasetName, FileName, mimeType)
+        remoteFileContent = SubmitDatasetUtils.getFileFromDataset(SiloName, TestDatasetName, FileName)
         
         # Check that the <localFileContent> = <remoteFileContents>
         self.assertEqual(localFileContent, remoteFileContent, "Difference between local and remote file!")
@@ -100,7 +100,7 @@ class TestDatasetSubmission(unittest.TestCase):
         SubmitDatasetUtils.submitFileToDataset(SiloName, TestDatasetName, zipFileName, mimeType, zipFileName)
 
         # Read from the  updated Dataset
-        remoteZipFileContent = SubmitDatasetUtils.getFileFromDataset(SiloName, TestDatasetName, zipFileName, mimeType)
+        remoteZipFileContent = SubmitDatasetUtils.getFileFromDataset(SiloName, TestDatasetName, zipFileName)
         
         #logger.debug("LocalZipFileContents: " + localZipFileContent)
         #logger.debug(" RemoteZipFileContents: " + remoteZipFileContent)
@@ -129,7 +129,7 @@ class TestDatasetSubmission(unittest.TestCase):
         SubmitDatasetUtils.submitFileToDataset(SiloName,EmptyTestDatasetName, zipFileName, mimeType, zipFileName)
 
         # Read from the  updated Dataset
-        remoteZipFileContent = SubmitDatasetUtils.getFileFromDataset(SiloName, EmptyTestDatasetName, zipFileName, mimeType)
+        remoteZipFileContent = SubmitDatasetUtils.getFileFromDataset(SiloName, EmptyTestDatasetName, zipFileName)
         
         #logger.debug("LocalZipFileContents: " + localZipFileContent)
         #logger.debug(" RemoteZipFileContents: " + remoteZipFileContent)

@@ -121,11 +121,23 @@ def unzipRemoteFileToNewDataset(siloName, testDatasetName, zipFileName):
         expect_status=201, expect_reason="Created")
     return testDatasetName+"-"+zipFileName[:-4]
 
-def getFileFromDataset(siloName, datasetName, fileName, mimeType):  
-    readFileContent = HttpUtils.doHTTP_GET(
+def getFileFromDataset(siloName, datasetName, fileName):  
+    """
+    Retrieve a file from a dataset, returning the file's MIME content type
+    and the file content.
+
+    siloName    name of Databank silo
+    datasetName name of the dataset 
+    fileName    name of a file within the dataset to retrieve
+
+    Returns a tuple (type,content), where type is a string containing the MIME
+    content-type of the data, and content is a byte array (i.e. a string in python 2) 
+    containing the file content.
+    """
+    readFileTypeContent = HttpUtils.doHTTP_GET(
             resource = "/" + siloName +"/datasets/" + datasetName + "/" + fileName,
-            expect_status=200, expect_reason="OK", expect_type=mimeType)
-    return readFileContent
+            expect_status=200, expect_reason="OK")
+    return readFileTypeContent
 
 def getLocalFileContents(fileName):
     fileContent = open(fileName).read()
