@@ -26,13 +26,19 @@ import HttpUtils
 from MiscLib.ScanFiles import *
 
 logger =  logging.getLogger("SubmitDatasetUtils")
-    
+          
+def getDatasetsListFromSilo(siloName):
+    datasetsListFromSilo = HttpUtils.doHTTP_GET(
+    resource="/" + siloName +"/datasets/", 
+    expect_status=200, expect_reason="OK", expect_type="application/json")
+    return datasetsListFromSilo
+
 def createDataset(siloName, datasetName):
     """
     Create a new empty dataset.
     
-    siloName    name of databank silo in which dataset is created
-    datasetname name for the new dataset 
+    siloName    name of Databank silo in which dataset is created
+    datasetName name for the new dataset 
     """
     fields = \
         [ ("id", datasetName)
@@ -45,36 +51,13 @@ def createDataset(siloName, datasetName):
         expect_status=201, expect_reason="Created")
     return
 
-def submitFileToDataset(siloName, datasetName, fileName , mimeType):
-    fields = []
-    fileData = getFileContents(fileName)
-    files = \
-        [ ("file", fileName, fileData, mimeType) 
-        ]
-    (reqtype, reqdata) = HttpUtils.encode_multipart_formdata(fields, files)
-    HttpUtils.doHTTP_POST(
-        reqdata, reqtype, 
-        resource = "/" + siloName + "/datasets/"+ datasetName, 
-        expect_status=201, expect_reason="Created")     
-    return
-
-
-def submitZipFileToDataset(siloName, datasetName, zipFileName , mimeType):
-    fields = []
-    zipFileData = getZipFileContents(zipFileName)
-    zipFiles = \
-        [ ("file", zipFileName, zipFileData, mimeType) 
-        ]
-    (reqtype, reqdata) = HttpUtils.encode_multipart_formdata(fields, zipFiles)
-    HttpUtils.doHTTP_POST(
-        reqdata, reqtype, 
-        resource = "/" + siloName + "/datasets/"+ datasetName, 
-        expect_status=201, expect_reason="Created")     
-    return
-
-
 def deleteDataset(siloName, datasetName):      
-    # Access dataset, check response
+    """
+    Delete a dataset.
+    
+    siloName    name of Databank silo containing the dataset
+    datasetName name of the dataset 
+    """
     data = HttpUtils.doHTTP_GET(
         resource = "/" + siloName + "/datasets/" + datasetName, 
         expect_status=200, expect_reason="OK", expect_type="application/json")
@@ -89,13 +72,54 @@ def deleteDataset(siloName, datasetName):
         resource = "/" + siloName + "/datasets/" + datasetName, 
         expect_status=404, expect_reason="Not Found")
     return
-          
-def getDatasetsListFromSilo(siloName):
-    datasetsListFromSilo = HttpUtils.doHTTP_GET(
-    resource="/" + siloName +"/datasets/", 
-    expect_status=200, expect_reason="OK", expect_type="application/json")
-    return datasetsListFromSilo
 
+def submitFileToDataset(siloName, datasetName, fileName, mimeType, targetName):
+    """
+    Submit a single file to a dataset, creating a new resource in the dataset.
+
+    siloName    name of Databank silo containing the dataset
+    datasetName name of the dataset 
+    fileName    filename of local file to be submitted
+    mimeType    MIME content type of file data to be submitted
+    targetName  file path and name to be used for storage in Databank dataset
+    """
+    fields = []
+    fileData = getLocalFileContents(fileName)
+    files = \
+        [ ("file", targetName, fileData, mimeType) 
+        ]
+    (reqtype, reqdata) = HttpUtils.encode_multipart_formdata(fields, files)
+    HttpUtils.doHTTP_POST(
+        reqdata, reqtype, 
+        resource = "/" + siloName + "/datasets/"+ datasetName, 
+        expect_status=201, expect_reason="Created")     
+    return
+
+def unzipRemoteFileToNewDataset(siloName, testDatasetName, zipFileName):
+    """
+    Unzip a ZIP file in one dataset, creating a new dataset with the contents
+    of the ZIP file.
+    
+    The name of the target dataset is derived from the source dataset name and
+    the ZIP file name.
+
+    siloName    name of Databank silo
+    datasetName name of the source dataset 
+    zipFileName name of the ZIP file in the source dataset.
+
+    Returns the name of the created dataset.
+    """
+    logger.debug("Zip file name to be UNPACKED: " + zipFileName)
+    fields = \
+        [ ("filename", zipFileName)
+        ]
+    files = []
+    (reqtype, reqdata) = HttpUtils.encode_multipart_formdata(fields, files)
+    HttpUtils.doHTTP_POST(
+        reqdata, reqtype, 
+        resource="/" + siloName +"/items/"+ testDatasetName, 
+        expect_status=201, expect_reason="Created")
+    return testDatasetName+"-"+zipFileName[:-4]
 
 def getFileFromDataset(siloName, datasetName, fileName, mimeType):  
     readFileContent = HttpUtils.doHTTP_GET(
@@ -103,21 +127,11 @@ def getFileFromDataset(siloName, datasetName, fileName, mimeType):
             expect_status=200, expect_reason="OK", expect_type=mimeType)
     return readFileContent
 
-def getZipFileContentFromDataset(siloName, datasetName, fileName, mimeType):  
-    readZipFileContent = HttpUtils.doHTTP_GET(
-            resource = "/" + siloName +"/datasets/" + datasetName + "/" + fileName,
-            expect_status=200, expect_reason="OK", expect_type=mimeType)
-    return readZipFileContent
-
-def getFileContents(fileName):
+def getLocalFileContents(fileName):
     fileContent = open(fileName).read()
     return fileContent
-    
-def getZipFileContents(zipFileName):
-    zipFileContent = getFileContents(zipFileName)
-    return zipFileContent
 
-def ZipDirectory(dirName,testPat,zipFileName):
+def zipLocalDirectory(dirName,testPat,zipFileName):
     # Write data directly to zip file
     # See O'Reilly Python Nutshell guide, p238
     def data_to_zip(z, name, data):
@@ -134,19 +148,5 @@ def ZipDirectory(dirName,testPat,zipFileName):
         z.write(n)
     z.close()
     return zipFileName
-
-def UnzipRemoteFileCreateNewDataset(zipFileName, siloName, testDatasetName):
-    # Unpack ZIP file into a new dataset, check response
-    logger.debug("Zip file name to be UNPACKED: " + zipFileName)
-    fields = \
-        [ ("filename", zipFileName)
-        ]
-    files = []
-    (reqtype, reqdata) = HttpUtils.encode_multipart_formdata(fields, files)
-    HttpUtils.doHTTP_POST(
-        reqdata, reqtype, 
-        resource="/" + siloName +"/items/"+ testDatasetName, 
-        expect_status=201, expect_reason="Created")
-    return
 
 # End.

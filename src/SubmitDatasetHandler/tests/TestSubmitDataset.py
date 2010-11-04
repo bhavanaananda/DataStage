@@ -78,8 +78,8 @@ class TestDatasetSubmission(unittest.TestCase):
         SubmitDatasetUtils.createDataset(SiloName,TestDatasetName)  
         # Submit a file to the Dataset
         mimeType = FileMimeType 
-        localFileContent  = SubmitDatasetUtils.getFileContents(FileName)
-        SubmitDatasetUtils.submitFileToDataset(SiloName, TestDatasetName, FileName, mimeType)
+        localFileContent  = SubmitDatasetUtils.getLocalFileContents(FileName)
+        SubmitDatasetUtils.submitFileToDataset(SiloName, TestDatasetName, FileName, mimeType, FileName)
         
         # Read from the  updated Dataset
         remoteFileContent = SubmitDatasetUtils.getFileFromDataset(SiloName, TestDatasetName, FileName, mimeType)
@@ -94,13 +94,13 @@ class TestDatasetSubmission(unittest.TestCase):
         SubmitDatasetUtils.createDataset(SiloName,TestDatasetName)  
         # Zip the required directory
         mimeType = ZipMimeType
-        zipFileName = SubmitDatasetUtils.ZipDirectory(DirName,TestPat,TestDatasetName+".zip")
+        zipFileName = SubmitDatasetUtils.zipLocalDirectory(DirName,TestPat,TestDatasetName+".zip")
         #logger.debug("ZipFileName: " + zipFileName)
-        localZipFileContent  = SubmitDatasetUtils.getZipFileContents(zipFileName)
-        SubmitDatasetUtils.submitZipFileToDataset(SiloName, TestDatasetName, zipFileName, mimeType)
+        localZipFileContent  = SubmitDatasetUtils.getLocalFileContents(zipFileName)
+        SubmitDatasetUtils.submitFileToDataset(SiloName, TestDatasetName, zipFileName, mimeType, zipFileName)
 
         # Read from the  updated Dataset
-        remoteZipFileContent = SubmitDatasetUtils.getZipFileContentFromDataset(SiloName, TestDatasetName, zipFileName, mimeType)
+        remoteZipFileContent = SubmitDatasetUtils.getFileFromDataset(SiloName, TestDatasetName, zipFileName, mimeType)
         
         #logger.debug("LocalZipFileContents: " + localZipFileContent)
         #logger.debug(" RemoteZipFileContents: " + remoteZipFileContent)
@@ -109,9 +109,9 @@ class TestDatasetSubmission(unittest.TestCase):
         self.assertEqual(localZipFileContent, remoteZipFileContent, "Difference between local and remote zip files!") 
         
         #unpack the contents
-        SubmitDatasetUtils.UnzipRemoteFileCreateNewDataset(zipFileName, SiloName, TestDatasetName)
+        newDatasetname = SubmitDatasetUtils.unzipRemoteFileToNewDataset(SiloName, TestDatasetName, zipFileName)
         SubmitDatasetUtils.deleteDataset(SiloName,TestDatasetName)  
-        SubmitDatasetUtils.deleteDataset(SiloName,TestDatasetName + "-" + TestDatasetName)
+        SubmitDatasetUtils.deleteDataset(SiloName,newDatasetname)
         return
 
 
@@ -123,13 +123,13 @@ class TestDatasetSubmission(unittest.TestCase):
 
         # Zip the Empty directory
         mimeType = ZipMimeType
-        zipFileName = SubmitDatasetUtils.ZipDirectory(EmptyDirName,TestPat,EmptyTestDatasetName+".zip")
+        zipFileName = SubmitDatasetUtils.zipLocalDirectory(EmptyDirName,TestPat,EmptyTestDatasetName+".zip")
         #logger.debug("ZipFileName: " + zipFileName)
-        localZipFileContent  = SubmitDatasetUtils.getZipFileContents(zipFileName)
-        SubmitDatasetUtils.submitZipFileToDataset(SiloName,EmptyTestDatasetName, zipFileName, mimeType)
+        localZipFileContent  = SubmitDatasetUtils.getLocalFileContents(zipFileName)
+        SubmitDatasetUtils.submitFileToDataset(SiloName,EmptyTestDatasetName, zipFileName, mimeType, zipFileName)
 
         # Read from the  updated Dataset
-        remoteZipFileContent = SubmitDatasetUtils.getZipFileContentFromDataset(SiloName, EmptyTestDatasetName, zipFileName, mimeType)
+        remoteZipFileContent = SubmitDatasetUtils.getFileFromDataset(SiloName, EmptyTestDatasetName, zipFileName, mimeType)
         
         #logger.debug("LocalZipFileContents: " + localZipFileContent)
         #logger.debug(" RemoteZipFileContents: " + remoteZipFileContent)
@@ -138,10 +138,9 @@ class TestDatasetSubmission(unittest.TestCase):
         self.assertEqual(localZipFileContent, remoteZipFileContent, "Difference between local and remote zip files!") 
         
         #unpack the contents
-        SubmitDatasetUtils.UnzipRemoteFileCreateNewDataset(zipFileName, SiloName, EmptyTestDatasetName)
-        
+        newDatasetName = SubmitDatasetUtils.unzipRemoteFileToNewDataset(SiloName, EmptyTestDatasetName, zipFileName)
         SubmitDatasetUtils.deleteDataset(SiloName,EmptyTestDatasetName)
-        SubmitDatasetUtils.deleteDataset(SiloName,EmptyTestDatasetName + "-" + EmptyTestDatasetName)
+        SubmitDatasetUtils.deleteDataset(SiloName,newDatasetName)
         return
 
 
