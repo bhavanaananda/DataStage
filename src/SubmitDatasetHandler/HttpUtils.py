@@ -22,12 +22,7 @@ import logging
 import httplib
 import urlparse
 import base64
-
-try:
-    # Running Python 2.5 with simplejson?
-    import simplejson as simplejson
-except ImportError:
-    import json as simplejson
+import re
 
 # Default SPARQL endpoint details
 _endpointhost = "localhost"
@@ -124,30 +119,38 @@ def doRequest(command, resource, reqdata=None, reqheaders={}, expect_status=200,
 def doHTTP_POST(data, data_type="application/octet-strem",
             endpointhost=None, endpointpath=None, resource=None,
             expect_status=200, expect_reason="OK",
-            expect_type="*/*"):
+            accept_type="*/*"):
         reqheaders   = {
             "Content-type": data_type,
-            "Accept":       expect_type
+            "Accept":       accept_type
             }
         setRequestEndPoint(endpointhost, endpointpath)
         (response, responsedata) = doRequest("POST", resource,
             reqdata=data, reqheaders=reqheaders,
             expect_status=expect_status, expect_reason=expect_reason)
-        if (expect_type.lower() == "application/json"): responsedata = simplejson.loads(responsedata)
         return responsedata
+
+matchParams = re.compile(";.*")
+def getResponseType(response):
+        type = response.getheader("Content-type")
+        if type:
+            type = matchParams.sub("",type)
+        else:
+            type = "application/octet-stream"
+        return type
     
 def doHTTP_GET(endpointhost=None, endpointpath=None, resource=None,
             expect_status=200, expect_reason="OK",
-            expect_type="*/*"):
+            accept_type="*/*"):
         reqheaders   = {
-            "Accept":       expect_type
+            "Accept": accept_type
             }
         setRequestEndPoint(endpointhost, endpointpath)
         (response, responsedata) = doRequest("GET", resource, 
             reqheaders=reqheaders,
             expect_status=expect_status, expect_reason=expect_reason)
-        if (expect_type.lower() == "application/json"): responsedata = simplejson.loads(responsedata)
-        return responsedata    
+        responsetype = getResponseType(response)
+        return (responsetype, responsedata)
     
 def doHTTP_DELETE(
             endpointhost=None, endpointpath=None, resource=None,

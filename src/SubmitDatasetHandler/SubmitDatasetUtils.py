@@ -25,12 +25,20 @@ import sys, logging, zipfile
 import HttpUtils
 from MiscLib.ScanFiles import *
 
+try:
+    # Running Python 2.5 with simplejson?
+    import simplejson as json
+except ImportError:
+    import json as json
+
 logger =  logging.getLogger("SubmitDatasetUtils")
-          
+
 def getDatasetsListFromSilo(siloName):
-    datasetsListFromSilo = HttpUtils.doHTTP_GET(
-    resource="/" + siloName +"/datasets/", 
-    expect_status=200, expect_reason="OK", expect_type="application/json")
+    (responsetype, datasetsListFromSilo) = HttpUtils.doHTTP_GET(
+        resource="/" + siloName +"/datasets/", 
+        expect_status=200, expect_reason="OK", accept_type="application/json")
+    assert responsetype.lower() == "application/json", "Expected application/json, got "+responsetype
+    datasetsListFromSilo = json.loads(datasetsListFromSilo)
     return datasetsListFromSilo
 
 def createDataset(siloName, datasetName):
@@ -58,19 +66,9 @@ def deleteDataset(siloName, datasetName):
     siloName    name of Databank silo containing the dataset
     datasetName name of the dataset 
     """
-    data = HttpUtils.doHTTP_GET(
-        resource = "/" + siloName + "/datasets/" + datasetName, 
-        expect_status=200, expect_reason="OK", expect_type="application/json")
-    
-    # Delete dataset, check response
     HttpUtils.doHTTP_DELETE(
         resource = "/" + siloName + "/datasets/" + datasetName, 
         expect_status=200, expect_reason="OK")
-    
-    # Access dataset, test response indicating non-existent
-    data = HttpUtils.doHTTP_GET(
-        resource = "/" + siloName + "/datasets/" + datasetName, 
-        expect_status=404, expect_reason="Not Found")
     return
 
 def submitFileToDataset(siloName, datasetName, fileName, mimeType, targetName):
