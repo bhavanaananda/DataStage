@@ -6,12 +6,15 @@
 
 import sys, unittest, logging, zipfile, re
 from os.path import normpath
+
 #Add main library directory to python path
 sys.path.append("../../../test")
-from MiscLib.ScanFiles import *
+sys.path.append("..")
+
 from MiscLib import TestUtils
 #from TestLib import SparqlQueryTestCase
-import logging
+
+from SubmitDatasetUtils import *
 
 SiloName         =  "admiral-test"
 FileName         =  "file1.txt"
@@ -23,7 +26,6 @@ DirName          =  "DatasetsTopDir"
 EmptyDirName     =  "DatasetsEmptyDir"
 TestPat          =  re.compile("^.*$(?<!\.zip)")
 logger           =  logging.getLogger(TestDatasetName)
-
 
 class TestDatasetSubmission(unittest.TestCase):
   
@@ -92,7 +94,7 @@ class TestDatasetSubmission(unittest.TestCase):
         UTIL_createDataset(SiloName,TestDatasetName)  
         # Zip the required directory
         mimeType = ZipMimeType
-        zipFileName = UTIL_ZipDirectory(DirName,TestPat,TestDatasetName)
+        zipFileName = UTIL_ZipDirectory(DirName,TestPat,TestDatasetName+".zip")
         #logger.debug("ZipFileName: " + zipFileName)
         localZipFileContent  = UTIL_getZipFileContents(zipFileName)
         UTIL_submitZipFileToDataset(SiloName, TestDatasetName, zipFileName, mimeType)
@@ -121,7 +123,7 @@ class TestDatasetSubmission(unittest.TestCase):
 
         # Zip the Empty directory
         mimeType = ZipMimeType
-        zipFileName = UTIL_ZipDirectory(EmptyDirName,TestPat,EmptyTestDatasetName)
+        zipFileName = UTIL_ZipDirectory(EmptyDirName,TestPat,EmptyTestDatasetName+".zip")
         #logger.debug("ZipFileName: " + zipFileName)
         localZipFileContent  = UTIL_getZipFileContents(zipFileName)
         UTIL_submitZipFileToDataset(SiloName,EmptyTestDatasetName, zipFileName, mimeType)
@@ -145,134 +147,6 @@ class TestDatasetSubmission(unittest.TestCase):
 
     def tearDown(self):
         return
-
-    
-    # Test Helper methods
-    
-def UTIL_createDataset(siloName, datasetName):
-    # Create a new dataset, check response
-    fields = \
-        [ ("id", datasetName)
-        ]
-    files =[]
-    (reqtype, reqdata) = TestUtils.encode_multipart_formdata(fields, files)
-    TestUtils.doHTTP_POST(
-        reqdata, reqtype, 
-        resource = "/" + siloName + "/datasets/", 
-        expect_status=201, expect_reason="Created")
-    return
-
-
-def UTIL_submitFileToDataset(siloName, datasetName, fileName , mimeType):
-    fields = []
-    fileData = UTIL_getFileContents(fileName)
-    files = \
-        [ ("file", fileName, fileData, mimeType) 
-        ]
-    (reqtype, reqdata) = TestUtils.encode_multipart_formdata(fields, files)
-    TestUtils.doHTTP_POST(
-        reqdata, reqtype, 
-        resource = "/" + siloName + "/datasets/"+ datasetName, 
-        expect_status=201, expect_reason="Created")     
-    return
-
-
-def UTIL_submitZipFileToDataset(siloName, datasetName, zipFileName , mimeType):
-    fields = []
-    zipFileData = UTIL_getZipFileContents(zipFileName)
-    zipFiles = \
-        [ ("file", zipFileName, zipFileData, mimeType) 
-        ]
-    (reqtype, reqdata) = TestUtils.encode_multipart_formdata(fields, zipFiles)
-    TestUtils.doHTTP_POST(
-        reqdata, reqtype, 
-        resource = "/" + siloName + "/datasets/"+ datasetName, 
-        expect_status=201, expect_reason="Created")     
-    return
-
-
-def UTIL_deleteDataset(siloName, datasetName):      
-    # Access dataset, check response
-    data = TestUtils.doHTTP_GET(
-        resource = "/" + siloName + "/datasets/" + datasetName, 
-        expect_status=200, expect_reason="OK", expect_type="application/json")
-    
-    # Delete dataset, check response
-    TestUtils.doHTTP_DELETE(
-        resource = "/" + siloName + "/datasets/" + datasetName, 
-        expect_status=200, expect_reason="OK")
-    
-    # Access dataset, test response indicating non-existent
-    data = TestUtils.doHTTP_GET(
-        resource = "/" + siloName + "/datasets/" + datasetName, 
-        expect_status=404, expect_reason="Not Found")
-    return
-        
-          
-def UTIL_getDatasetsListFromSilo(siloName):
-    datasetsListFromSilo = TestUtils.doHTTP_GET(
-    resource="/" + siloName +"/datasets/", 
-    expect_status=200, expect_reason="OK", expect_type="application/json")
-    return datasetsListFromSilo
-
-
-def UTIL_getFileFromDataset(siloName, datasetName, fileName, mimeType):  
-    readFileContent = TestUtils.doHTTP_GET(
-            resource = "/" + siloName +"/datasets/" + datasetName + "/" + fileName,
-            expect_status=200, expect_reason="OK", expect_type=mimeType)
-    return readFileContent
-
-
-def UTIL_getZipFileContentFromDataset(siloName, datasetName, fileName, mimeType):  
-    readZipFileContent = TestUtils.doHTTP_GET(
-            resource = "/" + siloName +"/datasets/" + datasetName + "/" + fileName,
-            expect_status=200, expect_reason="OK", expect_type=mimeType)
-    return readZipFileContent
-
-
-def UTIL_getFileContents(fileName):
-    fileContent = open(fileName).read()
-    return fileContent
-    
-    
-def UTIL_getZipFileContents(zipFileName):
-    zipFileContent = UTIL_getFileContents(zipFileName)
-    return zipFileContent
-
-
-def UTIL_ZipDirectory(dirName,testPat,datasetName):
-    # Write data directly to zip file
-    # See O'Reilly Python Nutshell guide, p238
-    def data_to_zip(z, name, data):
-        import time
-        zinfo = zipfile.ZipInfo(name, time.localtime()[:6])
-        zinfo.external_attr = 0777 << 16L # Access control for created file
-        z.writestr(zinfo, data)
-        return
-    files = CollectFiles(dirName,testPat)
-    z = zipfile.ZipFile(datasetName + '.zip','w')
-    data_to_zip(z, "admiral-dataset", "This directory contains an ADMIRAL dataset\n")
-    for i in files: 
-        n = joinDirName(i[0], i[1])
-        z.write(n)
-    z.close()
-    return datasetName + '.zip'
-
-
-def UTIL_UnzipRemoteFileCreateNewDataset(zipFileName, siloName, testDatasetName):
-    # Unpack ZIP file into a new dataset, check response
-    logger.debug("Zip file name to be UNPACKED: " + zipFileName)
-    fields = \
-        [ ("filename", zipFileName)
-        ]
-    files = []
-    (reqtype, reqdata) = TestUtils.encode_multipart_formdata(fields, files)
-    TestUtils.doHTTP_POST(
-        reqdata, reqtype, 
-        resource="/" + siloName +"/items/"+ testDatasetName, 
-        expect_status=201, expect_reason="Created")
-    return
-    
     
 def getTestSuite(select="unit"):
     """
