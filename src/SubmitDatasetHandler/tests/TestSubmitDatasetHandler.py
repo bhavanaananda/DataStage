@@ -7,13 +7,15 @@ import sys, unittest, logging, zipfile, re, StringIO, os, logging
 from os.path import normpath
 sys.path.append("..")
 sys.path.append("../cgi-bin")
+
 import SubmitDatasetHandler
 import SubmitDatasetUtils
 import HttpUtils
 from MiscLib import TestUtils
-TestPat          =  re.compile("^.*$(?<!\.zip)")
+
 logger           =  logging.getLogger("TestSubmitDatasethandler")
 siloName         =  "admiral-test"
+DirName          =  "DatasetsTopDir"
 formdata         =  \
                     { 'datDir'     :  "./DatasetsTopDir"
                     , 'datId'      :  "SubmissionHandlerTest"
@@ -107,11 +109,31 @@ class TestSubmitDatasethandler(unittest.TestCase):
         return
     
     def testSubmitDatasetHandlerDirectorySubmission(self):
+        outputStr =  StringIO.StringIO() 
+         
+        # Invoke dataset submission program, passing faked form submission parameters
+        SubmitDatasetHandler.processDatasetSubmissionForm(formdata, outputStr)
         
+        # Check that the dataset created for unzipped data can be dereferenced in the databank 
+        HttpUtils.doHTTP_GET(resource="/" + siloName +"/datasets/"+ formdata["datId"]+"-"+"DatasetsTopDir", 
+            expect_status=200, expect_reason="OK", accept_type="application/json")
+        
+        SubmitDatasetUtils.deleteDataset(siloName, formdata["datId"]+"-"+"DatasetsTopDir")
         return
     
     def testSubmitDatasetHandlerEmptyDirectorySubmission(self):
+        outputStr =  StringIO.StringIO() 
+         
+        # Invoke dataset submission program, passing faked form submission parameters
+        SubmitDatasetHandler.processDatasetSubmissionForm(formdata, outputStr)
         
+        # Check that the dataset created for unzipped data can be dereferenced in the databank 
+        HttpUtils.doHTTP_GET(resource="/" + siloName +"/datasets/"+ formdata["datId"]+"-"+"DatasetsTopDir", 
+            expect_status=200, expect_reason="OK", accept_type="application/json")
+        
+        SubmitDatasetUtils.deleteDataset(siloName, formdata["datId"]+"-"+"DatasetsTopDir")
+        return
+    
         return
 
     

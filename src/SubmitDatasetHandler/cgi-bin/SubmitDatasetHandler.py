@@ -21,13 +21,15 @@ an RDF Databank dataset.
 __author__ = "Bhavana Ananda"
 __version__ = "0.1"
 
-import cgi, sys
+import cgi, sys, re
 sys.path.append("..")
 sys.path.append("../..")
 
 import SubmitDatasetUtils
 from MiscLib import TestUtils
 ZipMimeType      =  "application/zip"
+FilePat          =  re.compile("^.*$(?<!\.zip)")
+
 def processDatasetSubmissionForm(formdata, outputstr):
     """
     Process form data, and print (to stdout) a new HTML page reflecting
@@ -42,12 +44,17 @@ def processDatasetSubmissionForm(formdata, outputstr):
         sys.stdout = outputstr
   
     try:
-        datasetName = formdata["datId"]   
-        zipfileName    = formdata["title"]      
+        datasetName  = formdata["datId"]   
+        dirName      = formdata["datDir"]     
+        zipFileName  = dirName+".zip"       
         # Creating a dataset
         SubmitDatasetUtils.createDataset(siloName, datasetName)
+        # Zip the selected Directory
+        SubmitDatasetUtils.zipLocalDirectory(dirName,FilePat,zipFileName)
         # Submit Directory to dataset
-        #SubmitDatasetUtils.submitFileToDataset(siloName, datasetName, zipfileName, ZipMimeType, datasetName+"-"+datasetName)
+        SubmitDatasetUtils.submitFileToDataset(siloName, datasetName, zipFileName, ZipMimeType,zipFileName)
+        # Unzip the contents into a new dataset
+        SubmitDatasetUtils.unzipRemoteFileToNewDataset(siloName, datasetName, zipFileName)
         print "Content-type: text/html"
         print                               # end of MIME headers
 

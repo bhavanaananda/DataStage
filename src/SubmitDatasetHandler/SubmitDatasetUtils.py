@@ -93,7 +93,7 @@ def submitFileToDataset(siloName, datasetName, fileName, mimeType, targetName):
         expect_status=201, expect_reason="Created")     
     return
 
-def unzipRemoteFileToNewDataset(siloName, testDatasetName, zipFileName):
+def unzipRemoteFileToNewDataset(siloName, datasetName, zipFileName):
     """
     Unzip a ZIP file in one dataset, creating a new dataset with the contents
     of the ZIP file.
@@ -115,9 +115,9 @@ def unzipRemoteFileToNewDataset(siloName, testDatasetName, zipFileName):
     (reqtype, reqdata) = HttpUtils.encode_multipart_formdata(fields, files)
     HttpUtils.doHTTP_POST(
         reqdata, reqtype, 
-        resource="/" + siloName +"/items/"+ testDatasetName, 
+        resource="/" + siloName +"/items/"+ datasetName, 
         expect_status=201, expect_reason="Created")
-    return testDatasetName+"-"+zipFileName[:-4]
+    return datasetName+"-"+zipFileName[:-4]
 
 def getFileFromDataset(siloName, datasetName, fileName):  
     """
