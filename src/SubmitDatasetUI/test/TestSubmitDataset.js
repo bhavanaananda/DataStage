@@ -1,0 +1,258 @@
+/**
+ * @fileoverview
+ *  Test suite for dataset submission
+ *  
+ * @author Graham Klyne
+ * @version $Id: $
+ * 
+ * Coypyright (C) 2010, University of Oxford
+ *
+ * Licensed under the MIT License.  You may obtain a copy of the license at:
+ *
+ *     http://www.opensource.org/licenses/mit-license.php
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+/**
+ * Test data values
+ */
+
+var host = "";
+var silo = "admiral-test";
+
+/**
+ * Function to define test suite
+ */
+TestSubmitDataset = function()
+{
+    module("TestSubmitDataset");
+
+    test("testDummyTest", function ()
+    {
+        logtest("testDummyTest");
+        equals(2+2, 4, "dummy test");
+        //equals(2+2, 5, "dummy fail");
+        var array = [1,2];
+        array.push(3);
+        same(array, [1,2,3], "array test");
+        equals( array, array.reverse(), "array test");
+        same(  array.reverse(),array, "array test");
+        //same(val, exp, "what");
+        //ok(cond,"msg")
+    });
+
+    test("testSubmitSingleFile",function()
+    {
+        
+    });
+    
+    test("testZipDirectoryContents",function()
+    {
+        
+    });
+    
+    test("testSubmitDirectory",function()
+    {
+        
+    });
+    
+    test("testSubmitEmptyDirectory",function()
+    {
+        
+    });
+    
+
+    test("testEmptyListDatasets", function ()
+    {
+        logtest("testEmptyListDatasets");
+        expect(2);
+        function getlist(host, silo, callback)
+        {
+            callback([]);
+        }
+        var m = new admiral.AsyncComputation();
+        m.eval(function(val,callback)
+        {
+	        admiral.listDatasets(host, silo, getlist, callback);        	
+        });
+        m.eval(function(val, callback)
+        {
+            // test val jQuery object contains expected HTML; e.g.
+            //
+            //	     <table id="tableDatasets">
+            //	       <tr><td><a href="somehost/somesilo/dataset/somedatasets1">somedataset1</a></td></tr>
+            //	       <tr><td><a href="somehost/somesilo/dataset/somedatasets2">somedataset2</a></td></tr>
+            //	     </table>   
+            //
+            var table    = val.find("table")
+            equals(table.length, 1, "HTML page contains single table");
+            var tablerows = val.find("table tr")
+            equals(tablerows.length, 0, "Table contains no elements");
+            callback(null);
+        });
+        m.exec(null, function (val)
+        {
+            log.debug("testEmptyListDatasets complete");
+            start();
+        });
+        stop(2000);
+    });
+    
+    test("testMultipleListDatasets", function ()
+    {
+        logtest("testMultipleListDatasets");
+	    function getlist(host, silo, callback)
+	    {
+	        var datasetArray =  ['a','b','c'];
+	        callback(datasetArray);          
+	    }
+        var m = new admiral.AsyncComputation();
+        m.eval(function(val, callback)
+	    {
+	        getlist(host,silo,callback);       
+	    });
+        m.eval(function(val,callback)
+	    {
+            this.datasetlist = val;
+            var jqelem = admiral.listDatasets(host, silo, getlist, callback);           
+	    });
+        m.eval(function(val, callback)
+        {
+        	log.debug(val.html());
+        	// test val jQuery object contains expected HTML; e.g.
+            //
+            //       <table id="tableDatasets">
+            //         <tr><td><a href="somehost/somesilo/dataset/somedatasets1">somedataset1</a></td></tr>
+            //         <tr><td><a href="somehost/somesilo/dataset/somedatasets2">somedataset2</a></td></tr>
+            //       </table>   
+            //
+            var table    = val.find("table")
+            equals(table.length, 1, "HTML page contains single table");
+            var tablerows = val.find("table tr")
+            equals(tablerows.length, 3, "Table contains three elements: "+tablerows);
+            for (var i in this.datasetlist)
+            {
+                // test for row data    
+                var expected = this.datasetlist[i];
+                var rowdata =  tablerows.eq(i).find("a").text();
+                equals(tablerows.eq(i).find("a").text(), expected, "Table contains element: " + rowdata);
+                
+                // test for row data hyperlink
+                var expected = "../../DisplayDataset/html/DisplayDataset#"+ rowdata;
+                var rowdatalink = tablerows.eq(i).find("a").attr('href');
+                equals(rowdatalink, expected, "Table contains one element with hyperlink: " +  rowdatalink);
+            }   
+            callback(null); 
+        });
+        m.exec(null, function (val)
+        {
+            log.debug("testMultipleListDatasets complete");
+            start();
+        });
+        stop(2000);
+    });
+        
+        
+    test("testSingletonDataset", function ()
+    {
+        logtest("testSingletonDataset");
+	    function getlist(host, silo, callback)
+	    {
+	        var datasetArray =  ['a'];
+	        callback(datasetArray);	       
+	    }
+
+        var m = new admiral.AsyncComputation();
+	    m.eval(function(val, callback)
+	    {
+	    	getlist(host,silo,callback);	    	
+	    });
+	    m.eval(function(val,callback)
+	    {
+	    	this.datasetlist = val;
+	        var jqelem = admiral.listDatasets(host, silo, getlist, callback);           
+	    });
+	    m.eval(function(val, callback)
+	    {
+	        //log.debug(val.html());
+	        // test val jQuery object contains expected HTML; e.g.
+	        //
+	        //       <table id="tableDatasets">
+	        //         <tr><td><a href="somehost/somesilo/dataset/somedatasets1">somedataset1</a></td></tr>
+	        //         <tr><td><a href="somehost/somesilo/dataset/somedatasets2">somedataset2</a></td></tr>
+	        //       </table>   
+	        //
+	        var table    = val.find("table")
+	        equals(table.length, 1, "HTML page contains single table");
+	        var tablerows = val.find("table tr");
+	        // test for row data
+	        var expected = this.datasetlist[0];
+	        var rowdata =  tablerows.eq(0).find("a").text();
+	        equals(tablerows.eq(0).find("a").text(), expected, "Table contains one element: " + rowdata);
+	        // test for row data hyperlink
+	        var expected = "../../DisplayDataset/html/DisplayDataset#"+ rowdata;
+	        var rowdatalink = tablerows.eq(0).find("a").attr('href');
+	        equals(rowdatalink, expected, "Table contains one element with hyperlink: " +  rowdatalink);   
+	        callback(null); 
+	    });
+        m.exec(null, function (val)
+        {
+            log.debug("testSingletonDataset complete");
+            start();
+        });
+        stop(2000);
+    });
+    
+    test("testDatabankDatasetListing", function ()
+    {
+        logtest("testDatabankDatasetListing");
+        if(window.location.protocol!="http:")
+        {
+            log.debug("Not loaded from http: Skipping test");
+            return;
+        }
+        var m = new admiral.AsyncComputation();
+        m.eval(function(val, callback)
+        {   
+            admiral.getDatasetList(host,silo,callback);            
+        });
+        m.eval(function(val,callback)
+        {
+            this.datasetlist = val;
+            var jqelem = admiral.listDatasets(host, silo, admiral.getDatasetList, callback);           
+        });
+        m.eval(function(val, callback)
+        {   log.debug("admiral.listDatasets callback");
+            var table     = val.find("table");
+            equals(table.length, 1, "HTML page contains single table");
+            
+            var tablerows = val.find("table tr");
+            equals(tablerows.length,this.datasetlist.length,"One row for each dataset");
+            for (var i = 0 ; i<this.datasetlist.length ; i++)
+            {
+                // test for row text
+                var expected = this.datasetlist[i];
+                var rowdata =  tablerows.eq(i).find("a").text();
+                equals(rowdata, expected, "Row "+i+" text: " + rowdata);
+                // test for row hyperlink
+                var expected = "../../DisplayDataset/html/DisplayDataset#"+ rowdata;
+                var rowdatalink = tablerows.eq(i).find("a").attr('href');
+                equals(rowdatalink, expected, "Row "+i+" hyperlink: " +  rowdatalink); 
+            }
+            callback(null);
+        });
+        m.exec(null, function (val)
+        {   
+            log.debug("testDatabankDatasetListing complete");
+            start();
+        });
+        stop(2000);
+    });
+}
+
+// End

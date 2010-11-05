@@ -30,7 +30,6 @@ class TestDatasetSubmission(unittest.TestCase):
   
     def setUp(self):
         return
-    
         
     # Tests
      
@@ -77,7 +76,6 @@ class TestDatasetSubmission(unittest.TestCase):
             expect_status=404, expect_reason="Not Found")
         return
     
-    
         # Test the File Submission into the Dataset: <TestSubmission>  
     def testSingleFileSubmission(self):     
         SubmitDatasetUtils.createDataset(SiloName,TestDatasetName)  
@@ -94,7 +92,6 @@ class TestDatasetSubmission(unittest.TestCase):
         self.assertEqual(localFileContent, remoteFileContent, "Difference between local and remote file contents")
         SubmitDatasetUtils.deleteDataset(SiloName,TestDatasetName)  
         return
-    
     
     def testDirectorySubmission(self):    
         SubmitDatasetUtils.createDataset(SiloName,TestDatasetName)  
@@ -119,7 +116,6 @@ class TestDatasetSubmission(unittest.TestCase):
         SubmitDatasetUtils.deleteDataset(SiloName,TestDatasetName)  
         SubmitDatasetUtils.deleteDataset(SiloName,newDatasetname)
         return
-
 
     # To dotestDirectorySubmission
     def testEmptyDirectorySubmission(self):
@@ -148,7 +144,6 @@ class TestDatasetSubmission(unittest.TestCase):
         SubmitDatasetUtils.deleteDataset(SiloName,EmptyTestDatasetName)
         SubmitDatasetUtils.deleteDataset(SiloName,newDatasetName)
         return
-
 
     def tearDown(self):
         return
