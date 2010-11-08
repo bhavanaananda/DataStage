@@ -3,7 +3,7 @@
 # Unit testing for WebBrick library functions (Functions.py)
 # See http://pyunit.sourceforge.net/pyunit.html
 #
-import sys, unittest, logging, zipfile, re, StringIO, os, logging
+import sys, unittest, logging, zipfile, re, StringIO, os, logging, cgi
 from os.path import normpath
 sys.path.append("..")
 sys.path.append("../cgi-bin")
@@ -16,14 +16,15 @@ from MiscLib import TestUtils
 logger           =  logging.getLogger("TestSubmitDatasethandler")
 siloName         =  "admiral-test"
 DirName          =  "DatasetsTopDir"
+DatasetsEmptyDir =  "DatasetsEmptyDir"
 formdata         =  \
-                    { 'datDir'     :  "./DatasetsTopDir"
-                    , 'datId'      :  "SubmissionHandlerTest"
-                    , 'title'      :  "Submission handler test"
-                    , 'decription' :  "Submission handler test decription"
-                    , 'username'   :  "admiral"
-                    , 'password'   :  "admiral"
-                    , 'submit'     :  "Submit" 
+                    { 'datDir'     :  cgi.MiniFieldStorage('datDir',     "./DatasetsTopDir")
+                    , 'datId'      :  cgi.MiniFieldStorage('datId',      "SubmissionHandlerTest")
+                    , 'title'      :  cgi.MiniFieldStorage('title',      "Submission handler test")
+                    , 'decription' :  cgi.MiniFieldStorage('decription', "Submission handler test decription")
+                    , 'username'   :  cgi.MiniFieldStorage('username',   "admiral")
+                    , 'password'   :  cgi.MiniFieldStorage('password',   "admiral")
+                    , 'submit'     :  cgi.MiniFieldStorage('submit',     "Submit")
                     }
     
 class TestSubmitDatasethandler(unittest.TestCase):
@@ -33,7 +34,7 @@ class TestSubmitDatasethandler(unittest.TestCase):
        
     def tearDown(self):
         try:
-            SubmitDatasetUtils.deleteDataset(siloName, formdata["datId"])
+            SubmitDatasetUtils.deleteDataset(siloName, formdata["datId"].value)
         except:
             pass
         return
@@ -57,6 +58,7 @@ class TestSubmitDatasethandler(unittest.TestCase):
         # Test that the named dataset has been created in the databank
     def testSubmitDatasetHandlerDatasetCreation(self):    
         outputStr =  StringIO.StringIO()
+        datasetId  = formdata["datId"].value
 
         # Invoke dataset submission program, passing faked form submission parameters
         SubmitDatasetHandler.processDatasetSubmissionForm(formdata, outputStr)
@@ -65,13 +67,13 @@ class TestSubmitDatasethandler(unittest.TestCase):
         datasetsFromSilo = SubmitDatasetUtils.getDatasetsListFromSilo(siloName)
         found = False
         for dataset in datasetsFromSilo:
-            if dataset == formdata["datId"] :
+            if dataset == datasetId :
                 found = True
             
         self.assertEquals(found, True, "Dataset Creation Failed!" )
         
         # Check that the new dataset can be dereferenced in the databank 
-        HttpUtils.doHTTP_GET(resource="/" + siloName +"/datasets/"+ formdata["datId"], 
+        HttpUtils.doHTTP_GET(resource="/" + siloName +"/datasets/"+ datasetId, 
             expect_status=200, expect_reason="OK", accept_type="application/json")
         
         # Check that a HTML Response page is returned
@@ -84,22 +86,23 @@ class TestSubmitDatasethandler(unittest.TestCase):
         # Test that the named dataset has been created in the databank
     def testSubmitDatasetHandlerDatasetDeletion(self):    
         outputStr =  StringIO.StringIO()
+        datasetId  = formdata["datId"].value
 
         # Invoke dataset submission program, passing faked form submission parameters
         SubmitDatasetHandler.processDatasetSubmissionForm(formdata, outputStr)
-        SubmitDatasetUtils.deleteDataset(siloName, formdata["datId"])
+        SubmitDatasetUtils.deleteDataset(siloName, datasetId)
 
         # Check that the dataset is delete
         datasetsFromSilo = SubmitDatasetUtils.getDatasetsListFromSilo(siloName)
         found = False
         for dataset in datasetsFromSilo:
-            if dataset == formdata["datId"] :
+            if dataset == datasetId :
                 found = True
             
         self.assertEquals(found, False, "Dataset Deletion Failed!" )     
         
         # Check that the dataset deleted cannot be dereferenced in the databank 
-        HttpUtils.doHTTP_GET(resource="/" + siloName +"/datasets/"+ formdata["datId"], 
+        HttpUtils.doHTTP_GET(resource="/" + siloName +"/datasets/"+ datasetId, 
             expect_status=404, expect_reason="Not Found", accept_type="application/json")
         
         # Check that a HTML Response page is returned   
@@ -109,33 +112,37 @@ class TestSubmitDatasethandler(unittest.TestCase):
         return
     
     def testSubmitDatasetHandlerDirectorySubmission(self):
-        outputStr =  StringIO.StringIO() 
+        outputStr  =  StringIO.StringIO()
          
         # Invoke dataset submission program, passing faked form submission parameters
         SubmitDatasetHandler.processDatasetSubmissionForm(formdata, outputStr)
         
         # Check that the dataset created for unzipped data can be dereferenced in the databank 
-        HttpUtils.doHTTP_GET(resource="/" + siloName +"/datasets/"+ formdata["datId"]+"-"+"DatasetsTopDir", 
+        datasetId  = formdata["datId"].value
+        datasetDir = formdata['datDir'].value
+        HttpUtils.doHTTP_GET(resource="/" + siloName +"/datasets/"+datasetId+"-"+DirName,
             expect_status=200, expect_reason="OK", accept_type="application/json")
         
-        SubmitDatasetUtils.deleteDataset(siloName, formdata["datId"]+"-"+"DatasetsTopDir")
+        SubmitDatasetUtils.deleteDataset(siloName, datasetId+"-"+DirName)
         return
     
     def testSubmitDatasetHandlerEmptyDirectorySubmission(self):
         outputStr =  StringIO.StringIO() 
-         
+        
+        # reset the Dataset Directory to point to an empty directory
+        formdata['datDir'] = cgi.MiniFieldStorage('datDir', DatasetsEmptyDir)
+
         # Invoke dataset submission program, passing faked form submission parameters
         SubmitDatasetHandler.processDatasetSubmissionForm(formdata, outputStr)
         
         # Check that the dataset created for unzipped data can be dereferenced in the databank 
-        HttpUtils.doHTTP_GET(resource="/" + siloName +"/datasets/"+ formdata["datId"]+"-"+"DatasetsTopDir", 
+        datasetId  = formdata["datId"].value
+        datasetDir = formdata['datDir'].value
+        HttpUtils.doHTTP_GET(resource="/" + siloName +"/datasets/"+datasetId+"-"+DatasetsEmptyDir, 
             expect_status=200, expect_reason="OK", accept_type="application/json")
         
-        SubmitDatasetUtils.deleteDataset(siloName, formdata["datId"]+"-"+"DatasetsTopDir")
+        SubmitDatasetUtils.deleteDataset(siloName, datasetId+"-"+DatasetsEmptyDir)
         return
-    
-        return
-
     
 
 def getTestSuite(select="unit"):

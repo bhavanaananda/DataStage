@@ -21,7 +21,7 @@ an RDF Databank dataset.
 __author__ = "Bhavana Ananda"
 __version__ = "0.1"
 
-import cgi, sys, re
+import cgi, sys, re, logging
 sys.path.append("..")
 sys.path.append("../..")
 
@@ -29,6 +29,7 @@ import SubmitDatasetUtils
 from MiscLib import TestUtils
 ZipMimeType      =  "application/zip"
 FilePat          =  re.compile("^.*$(?<!\.zip)")
+logger           =  logging.getLogger("processDatasetSubmissionForm")
 
 def processDatasetSubmissionForm(formdata, outputstr):
     """
@@ -44,14 +45,15 @@ def processDatasetSubmissionForm(formdata, outputstr):
         sys.stdout = outputstr
   
     try:
-        datasetName  = formdata["datId"]   
-        dirName      = formdata["datDir"]     
-        zipFileName  = dirName+".zip"       
+        datasetName  = formdata["datId"].value   
+        dirName      = formdata["datDir"].value
+        zipFileName  = dirName +".zip"
+
         # Creating a dataset
         SubmitDatasetUtils.createDataset(siloName, datasetName)
         # Zip the selected Directory
         SubmitDatasetUtils.zipLocalDirectory(dirName,FilePat,zipFileName)
-        # Submit Directory to dataset
+        #Submit Directory to dataset
         SubmitDatasetUtils.submitFileToDataset(siloName, datasetName, zipFileName, ZipMimeType,zipFileName)
         # Unzip the contents into a new dataset
         SubmitDatasetUtils.unzipRemoteFileToNewDataset(siloName, datasetName, zipFileName)
@@ -59,11 +61,11 @@ def processDatasetSubmissionForm(formdata, outputstr):
         print                               # end of MIME headers
 
         print "<h2>Form parameters supplied</h2>"
-        # print "<h3>Printing form data: " + str(formdata)+"</h3>"
+        # print "<h3>Printing form dqata: " + str(formdata)+"</h3>"
         print "<dl>"
-        print "<dt> a </dt><dd>aa</dd>"
+        print "<dt></dt><dd></dd>"
         for k in formdata:
-            print "  <dt>%s</dt><dd>%s</dd>"%(k, formdata[k])
+            print "  <dt>%s</dt><dd>%s</dd>"%(k, formdata[k].value)
         print "</dl>"
     
         print "Dataset submission handler to be implemented here"

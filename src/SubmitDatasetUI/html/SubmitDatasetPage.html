@@ -20,7 +20,7 @@
     <script type="text/javascript" src="../../jQuery/js/jquery-1.4.2.js"></script> 
 
     <!-- Import jQuery additional libraries -->
-    <script type="text/javascript" src="../../jQuery/jquery.json-2.2.js"></script> 
+    <script type="text/javascript" src="../../jQuery/jquery.json-2.2.jshttp://localhost/bhavana/google-admiral-jiscmrd/src/SubmitDatasetUI/html/SubmitDatasetPage.html"></script> 
  
     <!-- Import MochiKit modules: require MochiKit library functions to be fully qualified -->
     <script type="text/javascript">MochiKit = {__export__: false};</script>
@@ -45,33 +45,7 @@
     <!-- Execute the desired dataset listing logic -->
     <script>
             $(document).ready(function() {
-                $("#selectable").selectable();
-                    });
-        
-        	jQuery(document).ready( function ()
-        	{ 
-        	    $('#cancel').click( function() {
-                window.open( 'index.html','_self' );
-                });
-            
-                $('#datID').val("");
-                $('#title').val("");     
-                $('#user').val(""); 
-                    
-        
-                        	/*  var m = new admiral.AsyncComputation();
-                        	    m.eval(function(val,callback)
-                        	    {
-                        	        admiral.listDatasets("","admiral-test", admiral.getDatasetList, callback);            
-                        	    });
-                        	    m.eval(function(val,callback)
-                        	    {
-                        	        // val supplies a <div> element containing a <table> toNext be displayed
-                        	        jQuery("#tableDatasets").html("");
-                        	        jQuery("#tableDatasets").append(val.find("table"));
-                        	    });    
-                        	    m.exec(null,admiral.noop); 
-                        	*/
+               
         	});
      </script>
 </head> 
@@ -97,7 +71,7 @@
         </div>
         <div class="box">
            <span class="label">Dataset Id :</span>
-           <span class="labelval">*<input name="datID" id="datID" type="text"/>(username/rootDirName)</span>
+           <span class="labelval">*<input name="datId" id="datId" type="text"/>(username/rootDirName)</span>
         </div>
         <div class="box">
            <span class="label">Title :</span>
@@ -120,7 +94,7 @@
                 <input name="submit" id="submit" type="submit" value="Submit"/>
                 <button  name="cancel" id="cancel" type="button"> Cancel </button>
                 <!-- 
-                onClick="navigateto('http://localhost/bhavana/google-admiral-jiscmrd/spike/applications/Admiral/ViewDiaplayDatasets/index.html')
+                onClick="navigateto('http://localhost/bhavana/google-admiral-jiscmrd/spike/applications/Admiral/ViewOrSubmitDatasets/index.html')
                 -->
            </span>
         </div>

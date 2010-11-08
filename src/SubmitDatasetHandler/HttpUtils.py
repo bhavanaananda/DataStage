@@ -97,7 +97,7 @@ def doRequest(command, resource, reqdata=None, reqheaders={}, expect_status=200,
             repeat -= 1
             #print "Request "+command+", path "+path
             hc.request(command, path, reqdata, reqheaders)
-            logger.debug(" Path  =" + path )
+            logger.debug(" Path= " + path )
             response = hc.getresponse()
             if response.status != 301: break
             path = response.getheader('Location', None)
