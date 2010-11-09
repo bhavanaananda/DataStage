@@ -18,3 +18,6 @@ syntax: regexp
 
 syntax: regexp
 ^\.settings/org\.eclipse\.ltk\.core\.refactoring\.prefs$
+
+syntax: regexp
+\.zip$

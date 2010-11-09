@@ -101,6 +101,14 @@ class TestSubmission(SparqlQueryTestCase.SparqlQueryTestCase):
         # check list of silos is not empty
         #data = json.loads(data)
         self.failUnless(len(data)>0, "No silos returned")
+        #print repr(data)
+        siloFound = False
+        for name in data:
+            if name == RDFDatabankConfig.endpointsilo :
+                siloFound = True
+        self.failUnless(siloFound,"Expected to find the silo: "+RDFDatabankConfig.endpointsilo)
+        
+    
    
     def testListDatasets(self):
         # Access list of datasets in the silo, check response
@@ -588,6 +596,7 @@ class TestSubmission(SparqlQueryTestCase.SparqlQueryTestCase):
             resource="datasets/TestSubmission", 
             expect_status=404, expect_reason="Not Found")
 
+    #TODO: delete?
     def testUpdateSubmission(self):
         # Submit ZIP file, check response
         fields = \
@@ -637,6 +646,7 @@ class TestSubmission(SparqlQueryTestCase.SparqlQueryTestCase):
         self.assertEqual(state['rdffileformat'],  'xml',          "RDF file type")
         self.assertEqual(state['rdffilename'],    'manifest.rdf', "RDF file name")
 
+    #TODO: delete?
     def testUpdatedSubmissionContent(self):
         # Submit ZIP file, check response
         fields = \
@@ -759,6 +769,8 @@ def getTestSuite(select="unit"):
             , "testMetadataMerging"
             , "testOneDownMetadataMerging"
             , "testDeleteDataset"
+            ##, "testUpdateSubmission"
+            ##, "testUpdatedSubmissionContent"
             ],
         "component":
             [ "testComponents"
