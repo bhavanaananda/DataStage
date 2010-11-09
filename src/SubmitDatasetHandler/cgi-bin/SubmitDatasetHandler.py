@@ -21,7 +21,7 @@ an RDF Databank dataset.
 __author__ = "Bhavana Ananda"
 __version__ = "0.1"
 
-import cgi, sys, re, logging
+import cgi, sys, re, logging, os, os.path
 sys.path.append("..")
 sys.path.append("../..")
 
@@ -30,6 +30,7 @@ from MiscLib import TestUtils
 ZipMimeType      =  "application/zip"
 FilePat          =  re.compile("^.*$(?<!\.zip)")
 logger           =  logging.getLogger("processDatasetSubmissionForm")
+ERROR_MESSAGE    =  None
 
 def processDatasetSubmissionForm(formdata, outputstr):
     """
@@ -47,14 +48,37 @@ def processDatasetSubmissionForm(formdata, outputstr):
     try:
         datasetName  = formdata["datId"].value   
         dirName      = formdata["datDir"].value
-        zipFileName  = dirName +".zip"
+
+        datIDPattern = re.compile("^[a-zA-Z0-9._:-]+$")
+        matchedString = datIDPattern.match(datasetName)
+        
+        if matchedString==None:
+            raise new SubmitDatasetUtils.SubmitDatasetError(
+                "INPUT ERROR",
+                None,
+                "Not a valid Dataset ID: '"+datasetName+"' supplied")
+            
+            ERROR_MESSAGE = "Not a valid Dataset ID: '"+datasetName+"' supplied"
+        assert matchedString!= None, ERROR_MESSAGE
+
+        if dirName.endswith('/'):
+            ERROR_MESSAGE = "Expecting no trailing '/' on directory name: '"+dirName+"' supplied"    
+        assert not dirName.endswith('/'), "Expecting no trailing '/' on directory name: "+dirName+" supplied"
+          
+        zipFileName = os.path.basename(dirName) +".zip"
+        zipFilePath = "/tmp/" + zipFileName
+        logger.debug("datasetName %s, dirName %s, zipFileName %s"%(datasetName,dirName,zipFileName))
 
         # Creating a dataset
         SubmitDatasetUtils.createDataset(siloName, datasetName)
         # Zip the selected Directory
-        SubmitDatasetUtils.zipLocalDirectory(dirName,FilePat,zipFileName)
-        #Submit Directory to dataset
-        SubmitDatasetUtils.submitFileToDataset(siloName, datasetName, zipFileName, ZipMimeType,zipFileName)
+        SubmitDatasetUtils.zipLocalDirectory(dirName, FilePat, zipFilePath)
+        # Submit zip file to dataset
+        try:
+            SubmitDatasetUtils.submitFileToDataset(siloName, datasetName, zipFilePath, ZipMimeType, zipFileName)
+        finally:
+            SubmitDatasetUtils.deleteLocalFile(zipFilePath)
+
         # Unzip the contents into a new dataset
         SubmitDatasetUtils.unzipRemoteFileToNewDataset(siloName, datasetName, zipFileName)
         print "Content-type: text/html"
@@ -72,6 +96,8 @@ def processDatasetSubmissionForm(formdata, outputstr):
 
     finally:
         sys.stdout = save_stdout
+        if ERROR_MESSAGE != None:
+            SubmitDatasetUtils.generateErrorResponsePage(SubmitDatasetUtils.INPUT_ERROR,None,ERROR_MESSAGE)
 
     return
 
