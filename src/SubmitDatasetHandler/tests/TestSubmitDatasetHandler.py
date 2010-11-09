@@ -18,13 +18,13 @@ siloName         =  "admiral-test"
 DirName          =  "DatasetsTopDir"
 DatasetsEmptyDir =  "DatasetsEmptyDir"
 formdata         =  \
-                    { 'datDir'     :  cgi.MiniFieldStorage('datDir',     "./DatasetsTopDir")
-                    , 'datId'      :  cgi.MiniFieldStorage('datId',      "SubmissionHandlerTest")
-                    , 'title'      :  cgi.MiniFieldStorage('title',      "Submission handler test")
-                    , 'decription' :  cgi.MiniFieldStorage('decription', "Submission handler test decription")
-                    , 'username'   :  cgi.MiniFieldStorage('username',   "admiral")
-                    , 'password'   :  cgi.MiniFieldStorage('password',   "admiral")
-                    , 'submit'     :  cgi.MiniFieldStorage('submit',     "Submit")
+                    { 'datDir'      :  cgi.MiniFieldStorage('datDir'      ,  "./DatasetsTopDir")
+                    , 'datId'       :  cgi.MiniFieldStorage('datId'       ,  "SubmissionHandlerTest")
+                    , 'title'       :  cgi.MiniFieldStorage('title'       ,  "Submission handler test")
+                    , 'description' :  cgi.MiniFieldStorage('description' ,  "Submission handler test description")
+                    , 'user'        :  cgi.MiniFieldStorage('user'        ,  "admiral")
+                    , 'pass'        :  cgi.MiniFieldStorage('pass'        ,  "admiral")
+                    , 'submit'      :  cgi.MiniFieldStorage('submit'      ,  "Submit")
                     }
     
 class TestSubmitDatasethandler(unittest.TestCase):

@@ -27,13 +27,19 @@ import re
 # Default SPARQL endpoint details
 _endpointhost = "localhost"
 _endpointpath = "/admiral-test"     # Really just a placeholder
-_endpointuser = "admiral"
-_endpointpass = "admiral"
+_endpointuser = "not-admiral"
+_endpointpass = "not-admiral"
 
-logger = logging.getLogger('TestSubmitDataset')
+logger = logging.getLogger('HTTPUtils')
 
 __author__ = "Bhavana Ananda"
 __version__ = "0.1"
+
+class HTTPUtilsError(Exception):
+    def __init__(self, code, reason):
+        self.code   = code
+        self.reason = reason
+        return
 
 # Originally copied from http://code.activestate.com/recipes/146306/:
 def encode_multipart_formdata(fields, files):
@@ -63,16 +69,28 @@ def encode_multipart_formdata(fields, files):
     return content_type, body
     
 def setRequestEndPoint(endpointhost=None, endpointpath=None):
-        if endpointhost or endpointpath:
-            if endpointhost:
-                _endpointhost = endpointhost
-                # Reset credentials if setting host
-                _endpointuser = None
-                _endpointpass = None
-            if endpointpath: _endpointpath = endpointpath
-            #logging.getLogger.debug("setRequestEndPoint: endpointhost %s: " % _endpointhost)
-            #logging.getLogger.debug("setRequestEndPoint: endpointpath %s: " % _endpointpath)
-        return
+    if endpointhost or endpointpath:
+        if endpointhost:
+            _endpointhost = endpointhost
+            # Reset credentials if setting host
+            #                _endpointuser = None
+            #                _endpointpass = None
+        if endpointpath: _endpointpath = endpointpath
+        #logging.getLogger.debug("setRequestEndPoint: endpointhost %s: " % _endpointhost)
+        #logging.getLogger.debug("setRequestEndPoint: endpointpath %s: " % _endpointpath)
+    return
+
+def setRequestUserPass(endpointuser=None, endpointpass=None):
+    global _endpointuser, _endpointpass
+    logger.debug("setRequestEndPoint: endpointuser %s: " % endpointuser)
+    logger.debug("setRequestEndPoint: endpointpass %s: " % endpointpass)
+    if endpointuser:
+        _endpointuser = endpointuser
+        _endpointpass = endpointpass
+    else:
+        _endpointuser = None
+        _endpointpass = None
+    return
 
 def getRequestPath(rel):
         rel = rel or ""
@@ -87,6 +105,7 @@ def doRequest(command, resource, reqdata=None, reqheaders={}, expect_status=200,
         if _endpointuser:
             auth = base64.encodestring("%s:%s" % (_endpointuser, _endpointpass)).strip()
             reqheaders["Authorization"] = "Basic %s" % auth
+            logger.debug("doRequest: auth: %s:%s"%(_endpointuser, _endpointpass))
      
         hc   = httplib.HTTPConnection(_endpointhost)
         path = getRequestPath(resource)
@@ -110,8 +129,9 @@ def doRequest(command, resource, reqdata=None, reqheaders={}, expect_status=200,
                 response.read()  # Seems to be needed to free up connection for new request
         logger.debug(" Response Status: %i %s" % (response.status, response.reason))
         logger.debug(" Expected Status: %i %s" % (expect_status, expect_reason))
-        if expect_status != "*": assert response.status==expect_status, " Status: %i (Expected: %i)" % (response.status,expect_status )
-        if expect_reason != "*": assert response.reason==expect_reason,"  Reason: %s (Expected: %s)" % (response.reason, expect_reason)
+        if ( (expect_status != "*" and response.status != expect_status) or
+             (expect_reason != "*" and response.reason != expect_reason) ):
+            raise HTTPUtilsError(response.status, response.reason)
         responsedata = response.read()
         hc.close()
         return (response, responsedata)

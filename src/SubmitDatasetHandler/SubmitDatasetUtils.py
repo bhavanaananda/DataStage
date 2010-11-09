@@ -20,7 +20,7 @@ Support functions for creating, unpacking and managing datsets in RDF Databank.
 __author__ = "Bhavana Ananda"
 __version__ = "0.1"
 
-import sys, logging, zipfile
+import sys, logging, zipfile, os.path
 
 import HttpUtils
 from MiscLib.ScanFiles import *
@@ -32,6 +32,38 @@ except ImportError:
     import json as json
 
 logger =  logging.getLogger("SubmitDatasetUtils")
+
+INPUT_ERROR ="INPUT ERROR"
+HTTP_ERROR  ="HTTP REQUEST ERROR"
+
+class SubmitDatasetError(Exception):
+    def __init__(self, errType, errCode, errMsg):
+        self._errType = errType
+        self._errCode = errCode
+        self._errMsg  = errMsg
+        return
+
+def generateErrorResponsePageFromException(e):
+    generateErrorResponsePage(e._errType,e._errCode,e._errMsg)
+    return
+
+def generateErrorResponsePage(errType, errCode, errMsg):
+    """
+    Generate error response page
+    
+    errType    Type of error: [INPUT_ERROR]
+    errCode    Error Code
+    errorMsg   Error Message
+    """
+    print "Content-type: text/html"
+    print                               # end of MIME headers
+
+    print "<h2>"+errType+"</h2>"
+    if errCode!=None:
+        print str(errCode) + " : "
+    if errMsg!=None:
+        print errMsg
+    return
 
 def getDatasetsListFromSilo(siloName):
     (responsetype, datasetsListFromSilo) = HttpUtils.doHTTP_GET(
@@ -48,6 +80,7 @@ def createDataset(siloName, datasetName):
     siloName    name of Databank silo in which dataset is created
     datasetName name for the new dataset 
     """
+    logger.debug("createDataset: siloName %s, datasetName %s"%(siloName, datasetName))
     fields = \
         [ ("id", datasetName)
         ]
@@ -66,6 +99,7 @@ def deleteDataset(siloName, datasetName):
     siloName    name of Databank silo containing the dataset
     datasetName name of the dataset 
     """
+    logger.debug("deleteDataset: siloName %s, datasetName %s"%(siloName, datasetName))
     HttpUtils.doHTTP_DELETE(
         resource = "/" + siloName + "/datasets/" + datasetName, 
         expect_status=200, expect_reason="OK")
@@ -81,6 +115,8 @@ def submitFileToDataset(siloName, datasetName, fileName, mimeType, targetName):
     mimeType    MIME content type of file data to be submitted
     targetName  file path and name to be used for storage in Databank dataset
     """
+    logger.debug("submitFileToDataset: siloName %s, datasetName %s, fileName %s, targetName %s"%(siloName, datasetName, fileName, targetName))
+    assert os.path.basename(targetName) == targetName, "No directories allowed in targetName: "+targetName
     fields = []
     fileData = getLocalFileContents(fileName)
     files = \
@@ -107,7 +143,7 @@ def unzipRemoteFileToNewDataset(siloName, datasetName, zipFileName):
 
     Returns the name of the created dataset.
     """
-    logger.debug("Zip file name to be UNPACKED: " + zipFileName)
+    logger.debug("unzipRemoteFileToNewDataset: siloName %s, datasetName %s, zipFileName %s"%(siloName, datasetName, zipFileName))
     fields = \
         [ ("filename", zipFileName)
         ]
@@ -132,6 +168,7 @@ def getFileFromDataset(siloName, datasetName, fileName):
     content-type of the data, and content is a byte array (i.e. a string in python 2) 
     containing the file content.
     """
+    logger.debug("getFileFromDataset: siloName %s, datasetName %s, fileName %s"%(siloName, datasetName, fileName))
     readFileTypeContent = HttpUtils.doHTTP_GET(
             resource = "/" + siloName +"/datasets/" + datasetName + "/" + fileName,
             expect_status=200, expect_reason="OK")
@@ -146,6 +183,15 @@ def getLocalFileContents(fileName):
     fileContent = open(fileName).read()
     return fileContent
 
+def deleteLocalFile(filePath):
+    """
+    Delete local file
+    
+    filePath    Path of the file to be deleted
+    """
+    os.remove(filePath)
+    return 
+    
 def zipLocalDirectory(dirName,filePat,zipFileName):
     """
     Create a ZIP file from the contents of a local directory
@@ -164,13 +210,22 @@ def zipLocalDirectory(dirName,filePat,zipFileName):
         z.writestr(zinfo, data)
         return
 
-    files = CollectFiles(dirName,filePat)
+    logger.debug("zipLocalDirectory: dirName %s, zipFileName %s"%(dirName, zipFileName))
+    assert not dirName.endswith('/'), "Expecting no trailing '/' on directory name: "+dirName+" supplied"
+    absDirName = os.path.abspath(dirName)
+    (leadingPath,targetPath) = os.path.split(absDirName)
+    logger.debug("leadingPath %s, targetPath %s"%(leadingPath,targetPath))
     z = zipfile.ZipFile(zipFileName,'w')
-    data_to_zip(z, "admiral-dataset", "This directory contains an ADMIRAL dataset\n")
+    # Create sentinel file to ensure non-empty ZIP file
+    data_to_zip(z, "admiral-dataset.txt", "This directory contains an ADMIRAL dataset\n")
+    # Now add files from the nominated directory
+    files = CollectFiles(absDirName,filePat)
     for i in files: 
-        n = joinDirName(i[0], i[1])
-        z.write(n)
+        fullname = joinDirName(i[0], i[1])
+        relname  = fullname.replace(leadingPath+"/","",1)
+        z.write(fullname, arcname=relname)
     z.close()
     return zipFileName
+
 
 # End.

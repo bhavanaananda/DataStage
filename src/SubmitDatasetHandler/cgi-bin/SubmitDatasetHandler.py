@@ -26,11 +26,11 @@ sys.path.append("..")
 sys.path.append("../..")
 
 import SubmitDatasetUtils
+import HttpUtils
 from MiscLib import TestUtils
 ZipMimeType      =  "application/zip"
 FilePat          =  re.compile("^.*$(?<!\.zip)")
 logger           =  logging.getLogger("processDatasetSubmissionForm")
-ERROR_MESSAGE    =  None
 
 def processDatasetSubmissionForm(formdata, outputstr):
     """
@@ -46,29 +46,35 @@ def processDatasetSubmissionForm(formdata, outputstr):
         sys.stdout = outputstr
   
     try:
-        datasetName  = formdata["datId"].value   
-        dirName      = formdata["datDir"].value
+        def getFormParam(name):
+            if formdata.has_key(name): return formdata[name].value
+            return ""
+        datasetName = getFormParam("datId")   
+        dirName     = getFormParam("datDir")
+        userName    = getFormParam("user")
+        userPass    = getFormParam("pass")
 
         datIDPattern = re.compile("^[a-zA-Z0-9._:-]+$")
         matchedString = datIDPattern.match(datasetName)
         
         if matchedString==None:
-            raise new SubmitDatasetUtils.SubmitDatasetError(
-                "INPUT ERROR",
+            raise SubmitDatasetUtils.SubmitDatasetError(
+                SubmitDatasetUtils.INPUT_ERROR,
                 None,
                 "Not a valid Dataset ID: '"+datasetName+"' supplied")
-            
-            ERROR_MESSAGE = "Not a valid Dataset ID: '"+datasetName+"' supplied"
-        assert matchedString!= None, ERROR_MESSAGE
 
         if dirName.endswith('/'):
-            ERROR_MESSAGE = "Expecting no trailing '/' on directory name: '"+dirName+"' supplied"    
-        assert not dirName.endswith('/'), "Expecting no trailing '/' on directory name: "+dirName+" supplied"
+            raise SubmitDatasetUtils.SubmitDatasetError(
+                SubmitDatasetUtils.INPUT_ERROR,
+                None,
+                "Expecting no trailing '/' on directory name: '"+dirName+"' supplied")
           
         zipFileName = os.path.basename(dirName) +".zip"
         zipFilePath = "/tmp/" + zipFileName
         logger.debug("datasetName %s, dirName %s, zipFileName %s"%(datasetName,dirName,zipFileName))
 
+        #Check user credentiALS
+        HttpUtils.setRequestUserPass(userName,userPass)
         # Creating a dataset
         SubmitDatasetUtils.createDataset(siloName, datasetName)
         # Zip the selected Directory
@@ -94,10 +100,16 @@ def processDatasetSubmissionForm(formdata, outputstr):
     
         print "Dataset submission handler to be implemented here"
 
+    except SubmitDatasetUtils.SubmitDatasetError, e:
+        SubmitDatasetUtils.generateErrorResponsePageFromException(e)
+
+    except HttpUtils.HTTPUtilsError, e:
+        SubmitDatasetUtils.generateErrorResponsePage(
+            SubmitDatasetUtils.HTTP_ERROR,
+            e.code, e.reason)
+        
     finally:
         sys.stdout = save_stdout
-        if ERROR_MESSAGE != None:
-            SubmitDatasetUtils.generateErrorResponsePage(SubmitDatasetUtils.INPUT_ERROR,None,ERROR_MESSAGE)
 
     return
 
