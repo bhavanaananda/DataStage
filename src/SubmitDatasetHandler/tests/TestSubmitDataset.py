@@ -17,6 +17,8 @@ import SubmitDatasetUtils
 
 SiloName         =  "admiral-test"
 FileName         =  "file1.txt"
+Username         =  "admiral"
+Password         =  "admiral"
 TestDatasetName  =  "TestSubmitDataset"
 EmptyTestDatasetName = "Empty"+TestDatasetName
 FileMimeType     =  "text/plain"
@@ -29,6 +31,7 @@ logger           =  logging.getLogger(TestDatasetName)
 class TestDatasetSubmission(unittest.TestCase):
   
     def setUp(self):
+        HttpUtils.setRequestUserPass(Username, Password)
         return
         
     # Tests

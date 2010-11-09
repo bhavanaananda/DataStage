@@ -27,8 +27,8 @@ import re
 # Default SPARQL endpoint details
 _endpointhost = "localhost"
 _endpointpath = "/admiral-test"     # Really just a placeholder
-_endpointuser = "not-admiral"
-_endpointpass = "not-admiral"
+_endpointuser = ""
+_endpointpass = ""
 
 logger = logging.getLogger('HTTPUtils')
 
@@ -40,6 +40,9 @@ class HTTPUtilsError(Exception):
         self.code   = code
         self.reason = reason
         return
+
+    def __str__(self):
+        return "HTTPUtilsError(%i,%s)"%(self.code,self.reason)
 
 # Originally copied from http://code.activestate.com/recipes/146306/:
 def encode_multipart_formdata(fields, files):
