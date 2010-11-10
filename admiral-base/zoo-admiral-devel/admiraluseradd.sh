@@ -89,44 +89,45 @@ EOF
   # Set up Apache access control configuration
 
   cat << EOF > /etc/apache2/conf.d/user.$1
+
 <Location /data/private/$1>
     Order Deny,Allow
     Allow from all
-	<LimitExcept REPORT GET OPTIONS PROPFIND>
-	  Require user $1
-	</LimitExcept>
-	<Limit PROPFIND OPTIONS GET REPORT>
-	  # NOTE:
-	  # Tried to use a combination of "Require user" and "Require ldap-attribute"
-	  # here, but this caused access failures for all users.
-	  # TestLeader is included here for testing only.
-    Require user $1 $RGLeaderName TestLeader
-	</Limit>
+    <LimitExcept REPORT GET OPTIONS PROPFIND>
+        Require user $1
+    </LimitExcept>
+    <Limit PROPFIND OPTIONS GET REPORT>
+        # NOTE:
+        # Tried to use a combination of "Require user" and "Require ldap-attribute"
+        # here, but this caused access failures for all users.
+        # TestLeader is included here for testing only.
+        Require user $1 $RGLeaderName TestLeader
+    </Limit>
 </Location>
 
 <Location /data/shared/$1>
     Order Deny,Allow
     Allow from all
-	<LimitExcept REPORT GET OPTIONS PROPFIND>
-	  Require user $1
-	</LimitExcept>
-	<Limit PROPFIND OPTIONS GET REPORT>
-    Require ldap-attribute gidNumber=$RGLeaderGID
-    Require ldap-attribute gidNumber=$RGMemberGID
-	</Limit>
+    <LimitExcept REPORT GET OPTIONS PROPFIND>
+        Require user $1
+    </LimitExcept>
+    <Limit PROPFIND OPTIONS GET REPORT>
+        Require ldap-attribute gidNumber=$RGLeaderGID
+        Require ldap-attribute gidNumber=$RGMemberGID
+    </Limit>
 </Location>
 
 <Location /data/collab/$1>
     Order Deny,Allow
     Allow from all
-	<LimitExcept REPORT GET OPTIONS PROPFIND>
-  	Require user $1
-	</LimitExcept>
-	<Limit PROPFIND OPTIONS GET REPORT>
-    Require ldap-attribute gidNumber=$RGLeaderGID
-  	Require ldap-attribute gidNumber=$RGMemberGID
-  	Require ldap-attribute gidNumber=$RGCollabGID
-	</Limit>
+    <LimitExcept REPORT GET OPTIONS PROPFIND>
+        Require user $1
+    </LimitExcept>
+    <Limit PROPFIND OPTIONS GET REPORT>
+        Require ldap-attribute gidNumber=$RGLeaderGID
+        Require ldap-attribute gidNumber=$RGMemberGID
+        Require ldap-attribute gidNumber=$RGCollabGID
+    </Limit>
 </Location>
 
 EOF

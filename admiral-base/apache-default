@@ -42,14 +42,16 @@
     
     Alias /data /home/data
     
-    <Directory /home/data/>
-        Options Indexes MultiViews
-        AllowOverride None
-        Order deny,allow
-        Deny from all
-    </Directory>
+    # TODO: delete or reinstate...
+    #<Directory /home/data/>
+    #    Options Indexes MultiViews
+    #    AllowOverride None
+    #    Order deny,allow
+    #    Deny from all
+    #</Directory>
     
     Redirect permanent /data https://%{HOSTNAME}.zoo.ox.ac.uk/data
+    Redirect permanent /tool https://%{HOSTNAME}.zoo.ox.ac.uk/tool
 
     #<Location /data>
     #    Dav On

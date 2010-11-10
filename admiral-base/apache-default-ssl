@@ -68,6 +68,42 @@
         Require ldap-attribute gidnumber=602
     </Location>
 
+    # Config for accessing ADMIRAL support tools
+
+    Alias /tool/ /mnt/lv-admiral-data/tool/admiral/src/
+
+    # All .py files in the /tool/ location are executed as scripts
+    # TODO: tighten up this so that only known tools are executed
+    <Directory "/mnt/lv-admiral-data/tool/admiral/src">
+        AllowOverride None
+        Options Indexes +ExecCGI -MultiViews +SymLinksIfOwnerMatch
+        <FilesMatch "\.(py)$">
+            SetHandler cgi-script
+        </FilesMatch>
+    </Directory>
+    
+    <Location /tool>
+        AuthName "Restricted"
+        AuthType Basic
+        AuthBasicProvider ldap
+        AuthzLDAPAuthoritative on
+        AuthLDAPURL "ldap://%{HOSTNAME}.zoo.ox.ac.uk:389/dc=%{HOSTNAME},dc=zoo,dc=ox,dc=ac,dc=uk"
+        AuthLDAPBindDN "cn=admin,dc=%{HOSTNAME},dc=zoo,dc=ox,dc=ac,dc=uk"
+        AuthLDAPBindPassword "%{PASSWORD}"
+    </Location>
+    
+    <Location /tool>
+        Order Deny,Allow
+        Allow from all
+        <LimitExcept GET OPTIONS POST>
+        </LimitExcept>
+        <Limit OPTIONS GET POST>
+            Require ldap-attribute gidNumber=600
+            Require ldap-attribute gidNumber=601
+            Require ldap-attribute gidNumber=602
+        </Limit>
+    </Location>
+
     #   --------------------------------------------------------------------------------------
     
     #   SSL Engine Switch:
@@ -162,12 +198,15 @@
     #     This enables optimized SSL connection renegotiation handling when SSL
     #     directives are used in per-directory context.
     #SSLOptions +FakeBasicAuth +ExportCertData +StrictRequire
-    <FilesMatch "\.(cgi|shtml|phtml|php)$">
+    <FilesMatch "\.(cgi|shtml|phtml|php|py)$">
     	SSLOptions +StdEnvVars
     </FilesMatch>
     <Directory /usr/lib/cgi-bin>
     	SSLOptions +StdEnvVars
     </Directory>
+    #<Directory /mnt/lv-admiral-data/tool/admiral/src/>
+    #   SSLOptions +StdEnvVars
+    #</Directory>
     
     #   SSL Protocol Adjustments:
     #   The safe and default but still SSL/TLS standard compliant shutdown
