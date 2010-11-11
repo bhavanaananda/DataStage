@@ -183,6 +183,17 @@ def getLocalFileContents(fileName):
     fileContent = open(fileName).read()
     return fileContent
 
+def getFormParam(key,formdata):
+    """
+    Retrieve key value from formdata
+    
+    key      name of key whose value is to be read
+    formdata formdata of the input page
+    """
+    if formdata.has_key(key): 
+        return formdata[key].value
+    return ""
+        
 def deleteLocalFile(filePath):
     """
     Delete local file

@@ -28,6 +28,7 @@ sys.path.append("../..")
 import SubmitDatasetUtils
 import HttpUtils
 from MiscLib import TestUtils
+
 ZipMimeType      =  "application/zip"
 FilePat          =  re.compile("^.*$(?<!\.zip)")
 logger           =  logging.getLogger("processDatasetSubmissionForm")
@@ -46,13 +47,10 @@ def processDatasetSubmissionForm(formdata, outputstr):
         sys.stdout = outputstr
   
     try:
-        def getFormParam(name):
-            if formdata.has_key(name): return formdata[name].value
-            return ""
-        datasetName = getFormParam("datId")   
-        dirName     = getFormParam("datDir")
-        userName    = getFormParam("user")
-        userPass    = getFormParam("pass")
+        datasetName = SubmitDatasetUtils.getFormParam("datId",formdata)   
+        dirName     = SubmitDatasetUtils.getFormParam("datDir",formdata)
+        userName    = SubmitDatasetUtils.getFormParam("user",formdata)
+        userPass    = SubmitDatasetUtils.getFormParam("pass", formdata)
 
         datIDPattern = re.compile("^[a-zA-Z0-9._:-]+$")
         matchedString = datIDPattern.match(datasetName)

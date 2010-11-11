@@ -34,7 +34,7 @@ class TestSubmitDatasethandler(unittest.TestCase):
        
     def tearDown(self):
         try:
-            SubmitDatasetUtils.deleteDataset(siloName, formdata["datId"].value)
+            SubmitDatasetUtils.deleteDataset(siloName,  SubmitDatasetUtils.getFormParam('datId', formdata))
         except:
             pass
         return
@@ -58,7 +58,7 @@ class TestSubmitDatasethandler(unittest.TestCase):
         # Test that the named dataset has been created in the databank
     def testSubmitDatasetHandlerDatasetCreation(self):    
         outputStr =  StringIO.StringIO()
-        datasetId  = formdata["datId"].value
+        datasetId  =  SubmitDatasetUtils.getFormParam('datId', formdata)
 
         # Invoke dataset submission program, passing faked form submission parameters
         SubmitDatasetHandler.processDatasetSubmissionForm(formdata, outputStr)
@@ -86,7 +86,7 @@ class TestSubmitDatasethandler(unittest.TestCase):
         # Test that the named dataset has been created in the databank
     def testSubmitDatasetHandlerDatasetDeletion(self):    
         outputStr =  StringIO.StringIO()
-        datasetId  = formdata["datId"].value
+        datasetId  =  SubmitDatasetUtils.getFormParam('datId', formdata)
 
         # Invoke dataset submission program, passing faked form submission parameters
         SubmitDatasetHandler.processDatasetSubmissionForm(formdata, outputStr)
@@ -118,8 +118,8 @@ class TestSubmitDatasethandler(unittest.TestCase):
         SubmitDatasetHandler.processDatasetSubmissionForm(formdata, outputStr)
         
         # Check that the dataset created for unzipped data can be dereferenced in the databank 
-        datasetId  = formdata["datId"].value
-        datasetDir = formdata['datDir'].value
+        datasetId  =  SubmitDatasetUtils.getFormParam('datId', formdata)
+        datasetDir =  SubmitDatasetUtils.getFormParam('datDir', formdata)
         HttpUtils.doHTTP_GET(resource="/" + siloName +"/datasets/"+datasetId+"-"+DirName,
             expect_status=200, expect_reason="OK", accept_type="application/json")
         
@@ -136,8 +136,8 @@ class TestSubmitDatasethandler(unittest.TestCase):
         SubmitDatasetHandler.processDatasetSubmissionForm(formdata, outputStr)
         
         # Check that the dataset created for unzipped data can be dereferenced in the databank 
-        datasetId  = formdata["datId"].value
-        datasetDir = formdata['datDir'].value
+        datasetId  =  SubmitDatasetUtils.getFormParam('datId', formdata)
+        datasetDir =  SubmitDatasetUtils.getFormParam('datDir', formdata)
         HttpUtils.doHTTP_GET(resource="/" + siloName +"/datasets/"+datasetId+"-"+DatasetsEmptyDir, 
             expect_status=200, expect_reason="OK", accept_type="application/json")
         
