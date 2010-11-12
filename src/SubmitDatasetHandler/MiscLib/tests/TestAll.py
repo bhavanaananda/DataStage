@@ -14,6 +14,7 @@ import TestFunctions
 import TestCombinators
 import TestDomHelpers
 import TestScanFiles
+import TestScanDirectories
 import TestNetUtils
 import TestSuperGlobal
 
@@ -25,6 +26,7 @@ def getTestSuite(select="unit"):
     suite.addTest(TestCombinators.getTestSuite())
     suite.addTest(TestDomHelpers.getTestSuite())
     suite.addTest(TestScanFiles.getTestSuite())
+    suite.addTest(TestScanDirectories.getTestSuite())
     suite.addTest(TestNetUtils.getTestSuite())
     suite.addTest(TestSuperGlobal.getTestSuite())
     return suite

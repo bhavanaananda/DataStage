@@ -29,7 +29,8 @@ class TestScanFiles(unittest.TestCase):
         expected = [ (self.testpath,"TestScanFiles1.txt")
                    , (self.testpath,"TestScanFiles2.txt")
                    ]
-        assert files == expected, "Wrong file list: "+repr(files)
+        c = compareLists(files, expected)
+        assert c == None, "Wrong file list: "+repr(c)
 
     def testCollectRecursive(self):
         files    = CollectFiles(self.testpath,self.testpatt)
