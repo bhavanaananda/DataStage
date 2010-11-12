@@ -12,7 +12,6 @@ import SubmitDatasetHandler
 import SubmitDatasetUtils
 import HttpUtils
 from MiscLib import TestUtils
-from MiscLib import ScanDirectories
 logger           =  logging.getLogger("TestSubmitDatasethandler")
 siloName         =  "admiral-test"
 DirName          =  "DatasetsTopDir"
@@ -55,15 +54,6 @@ class TestSubmitDatasethandler(unittest.TestCase):
 
         self.assertEqual( firstLine, "Content-type: text/html\n", "Submission Handler could not action the client request!")
              
-        # Check retrieving sub-directories
-        srcDirectory = SubmitDatasetUtils.getFormParam('datDir', formdata)
-        directoryCollection = ScanDirectories.CollectDirectories(srcDirectory)
-       # directories = SubmitDatasetUtils.getCollectionString(directoryCollection)
-        SubmitDatasetUtils.generateJson("/", datasetDir, directoryCollection)
-        #logger.debug("List of directories found under "+srcDirectory+": "+ str(directories))
-        self.assertEquals(directoryCollection[0], './DatasetsTopDir/DatasetsEmptySubDir', "Retrieving sub-directories failed!"+"Expected:'./DatasetsTopDir/DatasetsEmptySubDir'+ Actual:"+directoryCollection[0] )    
-        self.assertEquals(directoryCollection[1], './DatasetsTopDir/DatasetsSubDir', "Retrieving sub-directories failed!"+"Expected:'./DatasetsTopDir/DatasetsSubDir'+ Actual:"+directoryCollection[1] )      
-
         SubmitDatasetUtils.deleteDataset(siloName, datasetId+"-"+DirName)
         return
 
@@ -93,6 +83,7 @@ class TestSubmitDatasethandler(unittest.TestCase):
         firstLine = outputStr.readline()
 
         self.assertEqual( firstLine, "Content-type: text/html\n", "Submission Handler could not action the client request!")
+        
         datasetId  =  SubmitDatasetUtils.getFormParam('datId', formdata)
         datasetDir =  SubmitDatasetUtils.getFormParam('datDir', formdata)
         SubmitDatasetUtils.deleteDataset(siloName, datasetId+"-"+DirName)
@@ -140,16 +131,7 @@ class TestSubmitDatasethandler(unittest.TestCase):
         datasetDir =  SubmitDatasetUtils.getFormParam('datDir', formdata)
         HttpUtils.doHTTP_GET(resource="/" + siloName +"/datasets/"+datasetId+"-"+DirName,
             expect_status=200, expect_reason="OK", accept_type="application/json")
-        
-        # Check retrieving sub-directories
-        srcDirectory = SubmitDatasetUtils.getFormParam('datDir', formdata)
-        directoryCollection = ScanDirectories.CollectDirectories(srcDirectory)
-        directories = SubmitDatasetUtils.getCollectionString(directoryCollection)
-        SubmitDatasetUtils.generateJson("/", datasetDir, directories[:-1])
-        #logger.debug("List of directories found under "+srcDirectory+": "+ str(directories))
-        self.assertEquals(directoryCollection[0], './DatasetsTopDir/DatasetsEmptySubDir', "Retrieving sub-directories failed!"+"Expected:'./DatasetsTopDir/DatasetsEmptySubDir'+ Actual:"+directoryCollection[0] )    
-        self.assertEquals(directoryCollection[1], './DatasetsTopDir/DatasetsSubDir', "Retrieving sub-directories failed!"+"Expected:'./DatasetsTopDir/DatasetsSubDir'+ Actual:"+directoryCollection[1] )      
-       
+            
         SubmitDatasetUtils.deleteDataset(siloName, datasetId+"-"+DirName)
         return
     
@@ -167,16 +149,6 @@ class TestSubmitDatasethandler(unittest.TestCase):
         datasetDir =  SubmitDatasetUtils.getFormParam('datDir', formdata)
         HttpUtils.doHTTP_GET(resource="/" + siloName +"/datasets/"+datasetId+"-"+DatasetsEmptyDir, 
             expect_status=200, expect_reason="OK", accept_type="application/json")
-        
-             # Check retrieving sub-directories
-        srcDirectory = SubmitDatasetUtils.getFormParam('datDir', formdata)
-        directoryCollection = ScanDirectories.CollectDirectories(srcDirectory)
-        directories = SubmitDatasetUtils.getCollectionString(directoryCollection)
-        SubmitDatasetUtils.generateJson("/", datasetDir, directories[:-1])
-        #logger.debug("List of directories found under "+srcDirectory+": "+ str(directories))
-        self.assertEquals(directoryCollection[0], './DatasetsTopDir/DatasetsEmptySubDir', "Retrieving sub-directories failed!"+"Expected:'./DatasetsTopDir/DatasetsEmptySubDir'+ Actual:"+directoryCollection[0] )    
-        self.assertEquals(directoryCollection[1], './DatasetsTopDir/DatasetsSubDir', "Retrieving sub-directories failed!"+"Expected:'./DatasetsTopDir/DatasetsSubDir'+ Actual:"+directoryCollection[1] )      
- 
         
         SubmitDatasetUtils.deleteDataset(siloName, datasetId+"-"+DatasetsEmptyDir)
         return
