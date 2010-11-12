@@ -29,9 +29,9 @@ import SubmitDatasetUtils
 import HttpUtils
 from MiscLib import TestUtils
 
-ZipMimeType      =  "application/zip"
-FilePat          =  re.compile("^.*$(?<!\.zip)")
-logger           =  logging.getLogger("processDatasetSubmissionForm")
+ZipMimeType  =  "application/zip"
+FilePat      =  re.compile("^.*$(?<!\.zip)")
+logger       =  logging.getLogger("SubmitDatasetHandler")
 
 def processDatasetSubmissionForm(formdata, outputstr):
     """

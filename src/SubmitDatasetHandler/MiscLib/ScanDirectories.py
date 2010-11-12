@@ -73,8 +73,8 @@ def CollectDirectories(srcDir, baseDir, recursive=True):
     """
     Return a list of directories found under the source directory.
     """
+    #logger.debug("CollectDirectories: %s, %s, %s"%(srcDir,baseDir,str(os.path.sep)))
     collection = []
-    logger.debug("CollectDirectories: %s, %s, %s"%(srcDir,baseDir,str(os.path.sep)))
     def Collect(path):
         collection.append(path.replace(baseDir+os.path.sep,"",1))
     ScanDirectoriesEx(srcDir, Collect, recursive)

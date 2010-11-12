@@ -35,7 +35,7 @@ class TestScanDirectories (unittest.TestCase):
         assert c == None, "Wrong directory list: "+repr(c)
 
     def testCollectRecursive(self):
-        dirs     = CollectDirectories(self.srcPath,self.basePath,recursive=True)
+        dirs     = CollectDirectories(self.srcPath,self.basePath)
         expected = [ "resources/TestScanDir1"
                    , "resources/TestScanDir1/SubDir1a"
                    , "resources/TestScanDir1/SubDir1b"

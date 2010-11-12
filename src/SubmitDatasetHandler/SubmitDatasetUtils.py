@@ -20,7 +20,7 @@ Support functions for creating, unpacking and managing datsets in RDF Databank.
 __author__ = "Bhavana Ananda"
 __version__ = "0.1"
 
-import sys, logging, zipfile, os.path
+import sys, logging, zipfile, os.path, json
 
 import HttpUtils
 from MiscLib.ScanFiles import *
@@ -194,6 +194,13 @@ def getFormParam(key,formdata):
         return formdata[key].value
     return ""
         
+def generateJson(rootDir, baseDir, subDirs):
+    jsonObject = {'rootdir':rootDir,'basedir': baseDir,'subdirs':subDirs}
+    #logger.debug(json.dumps(jsonString, separators=(',',':'),sort_keys=True, indent=4))
+    print json.dumps(jsonObject, separators=(',',':'),sort_keys=True, indent=4)
+    return json.dumps(jsonObject, separators=(',',':'),sort_keys=True, indent=4)
+
+
 def deleteLocalFile(filePath):
     """
     Delete local file
