@@ -8,6 +8,7 @@ echo =============================
 
 apt-get update
 apt-get install -qy --force-yes libpam-krb5 nagios3 nagios-nrpe-plugin nagios-nrpe-server tsm-client
+apt-get install -qy --force-yes mercurial
 
 echo =============================
 echo "Configure new packages"

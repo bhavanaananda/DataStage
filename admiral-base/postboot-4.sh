@@ -11,7 +11,14 @@ fi
 if [[ "$1" == "test" ]]; then
   mkdir /mnt/lv-admiral-data
   mkdir /mnt/lv-admiral-data/home
-fi
+  mkdir /mnt/lv-admiral-data/data
+  ln -s /mnt/lv-admiral-data/data /home/data
+
+echo ===========================================
+echo "Installing ADMIRAL tools"
+echo ===========================================
+
+./admiraltoolsetup.sh
 
 echo ===========================================
 echo "Installing and configuring shared data area"
@@ -25,5 +32,4 @@ echo "Next step: configure system users"
 echo =================================
 
 mkdir /root/admiralresearchgroupmembers
-
 
