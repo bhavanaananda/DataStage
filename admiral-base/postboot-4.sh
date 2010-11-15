@@ -14,9 +14,9 @@ if [[ "$1" == "test" ]]; then
   mkdir /mnt/lv-admiral-data/data
   ln -s /mnt/lv-admiral-data/data /home/data
 
-echo ===========================================
+echo ========================
 echo "Installing ADMIRAL tools"
-echo ===========================================
+echo ========================
 
 ./admiraltoolsetup.sh
 
