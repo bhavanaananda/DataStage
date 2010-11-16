@@ -207,10 +207,10 @@ TestSelectDataset = function()
             var jqelem = admiral.listDatasets(host, silo, admiral.getDatasetList, callback);           
         });
         m.eval(function(val, callback)
-        {   log.debug("admiral.listDatasets callback");
+        {
+            log.debug("admiral.listDatasets callback");
             var table     = val.find("table");
             equals(table.length, 1, "HTML page contains single table");
-            
             var tablerows = val.find("table tr");
             equals(tablerows.length,this.datasetlist.length,"One row for each dataset");
             for (var i = 0 ; i<this.datasetlist.length ; i++)

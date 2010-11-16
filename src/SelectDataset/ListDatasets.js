@@ -1,6 +1,6 @@
 /**
  * @fileoverview
- *  ADMIRAL function to list datasets in a Databank silo
+ *  ADMIRAL function to format a web page containing a list of datasets in a Databank silo
  *  
  * @author 
  * @version $Id: $

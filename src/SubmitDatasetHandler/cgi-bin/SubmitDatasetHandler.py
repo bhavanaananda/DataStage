@@ -87,16 +87,48 @@ def processDatasetSubmissionForm(formdata, outputstr):
         SubmitDatasetUtils.unzipRemoteFileToNewDataset(siloName, datasetName, zipFileName)
         print "Content-type: text/html"
         print                               # end of MIME headers
-
-        print "<h2>Form parameters supplied</h2>"
+        
+        print "<head>"
+        script =  '<script type="text/javascript" src="../../jQuery/js/jquery-1.4.2.js"></script> \
+                   <script>\
+                    jQuery(document).ready( function ()\
+                    { \
+                      dataToolURL = "../../SubmitDatasetUI/html/SubmitDataset.html";\
+                      mainURL = "http://zoo-admiral-silk.zoo.ox.ac.uk";\
+                        jQuery("#cancel").click( function() {\
+                        window.open(mainURL,"_self" );\
+                            });              \
+                        jQuery("#back").click( function() {\
+                        window.open( dataToolURL ,"_self" );\
+                            });\
+                    });\
+                  </script>'                
+        print script
+        print "</head>"
+        
+        print "<h2>Dataset submission successful!</h2>"
+        print "Created Datasets (unzipped): "+ datasetName + " and (zipped):"+datasetName+"-"+dirName
+ 
+        print "<p> Click  'Submit Datasets' to submit another dataset or 'Cancel' to return to main page.</p>"
+        #print "<h2>Form parameters supplied</h2>"
         # print "<h3>Printing form dqata: " + str(formdata)+"</h3>"
-        print "<dl>"
-        print "<dt></dt><dd></dd>"
-        for k in formdata:
-            print "  <dt>%s</dt><dd>%s</dd>"%(k, formdata[k].value)
-        print "</dl>"
-    
-        print "Dataset submission handler to be implemented here"
+        #print "<dl>"
+        #print "<dt></dt><dd></dd>"
+        #for k in formdata:
+        #    print "  <dt>%s</dt><dd>%s</dd>"%(k, formdata[k].value)
+        #print "</dl>"
+
+        navigateButtons = \
+        '<div class="box"> \
+            <span class="labelvalue"> \
+                <button name="back" id="back" type="button" > Submit Datasets </button> \
+                <button  name="cancel" id="cancel" type="button" > Cancel </button>\
+           </span>\
+        </div> '
+        
+        print navigateButtons
+        
+       # print "Dataset submission handler to be implemented here"
 
     except SubmitDatasetUtils.SubmitDatasetError, e:
         SubmitDatasetUtils.generateErrorResponsePageFromException(e)
