@@ -113,7 +113,8 @@ def processDatasetSubmissionForm(formdata, outputstr):
 
 
 if __name__ == "__main__":
-    form = cgi.FieldStorage() #parse the query
+    form = cgi.FieldStorage()   # Parse the query
+    os.chdir("/home")           # Base directory for admiral server data
     processDatasetSubmissionForm(form, sys.stdout)
 
 # End.

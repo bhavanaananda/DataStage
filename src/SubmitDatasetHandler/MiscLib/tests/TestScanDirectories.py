@@ -17,7 +17,7 @@ from MiscLib.Functions import compareLists
 class TestScanDirectories (unittest.TestCase):
     def setUp(self):
         self.srcPath = abspath("./resources/")
-        self.basePath = abspath(".")
+        self.basePath = abspath(".") #+"/"
         return
 
     def tearDown(self):
@@ -46,12 +46,38 @@ class TestScanDirectories (unittest.TestCase):
         c = compareLists(dirs, expected)
         assert c == None, "Wrong directory list: "+repr(c)
 
+    def testCollectRecursiveBaseEndswithSep(self):
+        dirs     = CollectDirectories(self.srcPath,self.basePath+"/")
+        expected = [ "resources/TestScanDir1"
+                   , "resources/TestScanDir1/SubDir1a"
+                   , "resources/TestScanDir1/SubDir1b"
+                   , "resources/TestScanDir2"
+                   , "resources/TestScanDir2/SubDir2"
+                   , "resources/TestScanFilesSubDir"
+                   ]
+        c = compareLists(dirs, expected)
+        assert c == None, "Wrong directory list: "+repr(c)
+
+    def testCollectRecursiveEmptyBase(self):
+        dirs     = CollectDirectories(self.srcPath,"")
+        expected = [ self.basePath+"/resources/TestScanDir1"
+                   , self.basePath+"/resources/TestScanDir1/SubDir1a"
+                   , self.basePath+"/resources/TestScanDir1/SubDir1b"
+                   , self.basePath+"/resources/TestScanDir2"
+                   , self.basePath+"/resources/TestScanDir2/SubDir2"
+                   , self.basePath+"/resources/TestScanFilesSubDir"
+                   ]
+        c = compareLists(dirs, expected)
+        assert c == None, "Wrong directory list: "+repr(c)
+
 # Code to run unit tests directly from command line.
 # Constructing the suite manually allows control over the order of tests.
 def getTestSuite():
     suite = unittest.TestSuite()
     suite.addTest(TestScanDirectories("testCollectShallow"))
     suite.addTest(TestScanDirectories("testCollectRecursive"))
+    suite.addTest(TestScanDirectories("testCollectRecursiveBaseEndswithSep"))
+    suite.addTest(TestScanDirectories("testCollectRecursiveEmptyBase"))
     return suite
 
 if __name__ == "__main__":

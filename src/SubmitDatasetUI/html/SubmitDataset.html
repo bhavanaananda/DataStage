@@ -45,10 +45,6 @@
 
     <!-- Execute the desired dataset listing logic -->
     <script>
-
-                // $("#dirlist").selectable();
-                //jQuery(".dirlistitem").selectable();
-
                 jQuery(document).ready( function ()
                 {                   
                
@@ -59,30 +55,23 @@
                     });
                     m.eval(function(val,callback)
                     {                    
-                         for (i=0; i<val.length; i++)
+                        // Populate directory listing box with results received
+                        jQuery("#dirlist").empty();
+                        for (i=0; i<val.length; i++)
                         {  
-                           id = 'dirlistitem' + i;
-                           newjelem='<span id = "'+ id +'" class="dirlistitem">'+val[i]+'</span>';
-                           bindid= "#" + id;
-                           //"#dirlistitem0"
-                           jQuery("#dirlistitem0").bind({
-                                                          click: function()
-                                                          {
-                                                              jQuery("#datDir").val(jQuery(bindid).text());
-                                                          },
-                                                          mouseenter: function()
-                                                          {
-                                                              jQuery(this).css('background-color','gray');
-                                                          },
-                                                           mouseleave: function()
-                                                          {
-                                                              jQuery(this).css('background-color','white');
-                                                          }
-                                                       });
-                                               
+                           newjelem='<span class="dirlistitem">'+val[i]+'</span>';
                            jQuery("#dirlist").append(newjelem);
                         }
+                    callback(val);
                     });    
+                    m.eval(function(val, callback)
+                    {
+                        // Set click handlers on directory items
+                        jQuery("#dirlist > .dirlistitem").click( function()
+                        {
+                            jQuery("#datDir").val(jQuery(this).text());
+                        });
+                    });                    
                     m.exec(null,admiral.noop);
                 });          
            
@@ -97,10 +86,11 @@
         <div class="box">
             <span class="label">Dataset Dir :</span>
             <span class="labelvalue">
-                <input name="datDir" id="datDir" type="text" value="/home/data/private"/>
+                <input name="datDir" id="datDir" type="text" value="" size="50" />
             </span>
             <span class="labelvalue withpadding">
                <span id="dirlist" class="scrollbox">
+                   <span class="dirlistitem">directoryname</span>
                </span>
             </span> 
         </div>

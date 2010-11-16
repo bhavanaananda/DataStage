@@ -29,7 +29,7 @@
      
 .box {  
         padding: 20px 20px 20px 20px; 
-        width: 50%;
+        width: 40em;
         clear: both;
      }
 
@@ -37,25 +37,29 @@
 .label {
         font-size:large;
         font-weight:bolder;  
-        width: 20%;
+        width: 25%;
        }
        
        
 .labelvalue {  
-             width: 60%;
+             width: 75%;
              float: right;     
             }
        
 .withpadding {  
             padding: 1px 1px 1px 1px;  
          }
+
+input#datDir {
+    width: 100%;
+    }
          
 .scrollbox {
              display  : block;
-             height   : 4em ;
+             height   : 6em ;
+             width    : 100%;
              overflow : auto;
            }
-       
        
 .dirlistitem{
              display: block;
@@ -69,6 +73,5 @@ dirlinstitem.ui-selected {
                         background: gray;
                        }
    
-       
        
        
