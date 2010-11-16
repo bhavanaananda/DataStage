@@ -50,6 +50,8 @@ class TestDirectoryListingHandler(unittest.TestCase):
              
         # Check retrieving sub-directories
         directoryCollection = json.load(outputStr)
+
+        logger.debug(repr(directoryCollection))
         self.assertEquals(len(directoryCollection), 4, "Expected 4 directories to be returned")
         expectdirs = \
             [ "tests/DatasetsEmptyDir"
@@ -92,6 +94,7 @@ def getTestSuite(select="unit"):
     return TestUtils.getTestSuite(TestDirectoryListingHandler, testdict, select=select)
 
 if __name__ == "__main__":
+    #logging.basicConfig(level=logging.DEBUG)
     TestUtils.runTests("TestDirectoryListingHandler.log", getTestSuite, sys.argv)
     #runner = unittest.TextTestRunner()
     #runner.run(getTestSuite())

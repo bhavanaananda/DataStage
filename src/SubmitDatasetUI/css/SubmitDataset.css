@@ -41,17 +41,34 @@
        }
        
        
-.labelval {  
-        width: 60%;
-        float: right;     
-       }
+.labelvalue {  
+             width: 60%;
+             float: right;     
+            }
        
-#selectable .ui-selecting {
-    background: silver;
-    }
-#selectable .ui-selected {
-    background: gray;
-    }
+.withpadding {  
+            padding: 1px 1px 1px 1px;  
+         }
+         
+.scrollbox {
+             display  : block;
+             height   : 4em ;
+             overflow : auto;
+           }
+       
+       
+.dirlistitem{
+             display: block;
+            }    
+       
+dirlinstitem.ui-selecting {
+                         background: silver;
+                        }
+    
+dirlinstitem.ui-selected {
+                        background: gray;
+                       }
+   
        
        
        
