@@ -16,7 +16,7 @@
     <link rel="stylesheet" href="./../css/SubmitDataset.css" type="text/css" />   
     
     <!-- Import jQuery framework -->
-    <script type="text/javascript" src="./../js/SubmitDataset.js"></script>
+    <script type="text/javascript" src="./../js/DisplayDirectories.js"></script>
     <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.4/jquery.min.js"></script>
     <script src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8/jquery-ui.min.js"></script>
     <script type="text/javascript" src="../../jQuery/js/jquery-1.4.2.js"></script> 
@@ -45,41 +45,38 @@
 
     <!-- Execute the desired dataset listing logic -->
     <script>
-                jQuery(document).ready( function ()
-                {                   
-               
-                    var m = new admiral.AsyncComputation();
-                    m.eval(function(val,callback)
+            jQuery(document).ready( function ()
+            {                         
+                var m = new admiral.AsyncComputation();
+                m.eval(function(val,callback)
+                {
+                       admiral.displayDirectories(callback);           
+                });
+                m.eval(function(val,callback)
+                {                    
+                    // Populate directory listing box with results received
+                    jQuery("#dirlist").empty();
+                    for (i=0; i<val.length; i++)
+                    {  
+                       newjelem='<span class="dirlistitem">'+val[i]+'</span>';
+                       jQuery("#dirlist").append(newjelem);
+                    }
+                callback(val);
+                });    
+                m.eval(function(val, callback)
+                {
+                    // Set click handlers on directory items
+                    jQuery("#dirlist > .dirlistitem").click( function()
                     {
-                           admiral.displayDirectories(callback);           
+                        jQuery("#datDir").val(jQuery(this).text());
                     });
-                    m.eval(function(val,callback)
-                    {                    
-                        // Populate directory listing box with results received
-                        jQuery("#dirlist").empty();
-                        for (i=0; i<val.length; i++)
-                        {  
-                           newjelem='<span class="dirlistitem">'+val[i]+'</span>';
-                           jQuery("#dirlist").append(newjelem);
-                        }
-                    callback(val);
-                    });    
-                    m.eval(function(val, callback)
-                    {
-                        // Set click handlers on directory items
-                        jQuery("#dirlist > .dirlistitem").click( function()
-                        {
-                            jQuery("#datDir").val(jQuery(this).text());
-                        });
-                    });                    
-                    m.exec(null,admiral.noop);
-                });          
-           
+                });                    
+                m.exec(null,admiral.noop);
+            });                    
      </script>
 </head> 
 
 <body>
-
    <h1>Submit Datasets</h1>
    <form name="frm1" action="../../SubmitDatasetHandler/cgi-bin/SubmitDatasetHandler.py" method="post">
    <div class="box outer">

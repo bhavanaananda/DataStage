@@ -21,7 +21,7 @@ an RDF Databank dataset.
 __author__ = "Bhavana Ananda"
 __version__ = "0.1"
 
-import cgi, sys, re, logging, os, os.path
+import cgi, sys, re, logging, os, os.path,traceback
 sys.path.append("..")
 sys.path.append("../..")
 
@@ -84,60 +84,60 @@ def processDatasetSubmissionForm(formdata, outputstr):
             SubmitDatasetUtils.deleteLocalFile(zipFilePath)
 
         # Unzip the contents into a new dataset
-        SubmitDatasetUtils.unzipRemoteFileToNewDataset(siloName, datasetName, zipFileName)
-        print "Content-type: text/html"
-        print                               # end of MIME headers
-        
-        print "<head>"
-        script =  '<script type="text/javascript" src="../../jQuery/js/jquery-1.4.2.js"></script> \
-                   <script>\
-                    jQuery(document).ready( function ()\
-                    { \
-                      dataToolURL = "../../SubmitDatasetUI/html/SubmitDataset.html";\
-                      mainURL = "http://zoo-admiral-silk.zoo.ox.ac.uk";\
-                        jQuery("#cancel").click( function() {\
-                        window.open(mainURL,"_self" );\
-                            });              \
-                        jQuery("#back").click( function() {\
-                        window.open( dataToolURL ,"_self" );\
-                            });\
-                    });\
-                  </script>'                
-        print script
-        print "</head>"
-        
-        print "<h2>Dataset submission successful!</h2>"
-        print "Created Datasets (unzipped): "+ datasetName + " and (zipped):"+datasetName+"-"+dirName
- 
-        print "<p> Click  'Submit Datasets' to submit another dataset or 'Cancel' to return to main page.</p>"
-        #print "<h2>Form parameters supplied</h2>"
-        # print "<h3>Printing form dqata: " + str(formdata)+"</h3>"
-        #print "<dl>"
-        #print "<dt></dt><dd></dd>"
-        #for k in formdata:
-        #    print "  <dt>%s</dt><dd>%s</dd>"%(k, formdata[k].value)
-        #print "</dl>"
+        datasetUnzippedName = SubmitDatasetUtils.unzipRemoteFileToNewDataset(siloName, datasetName, zipFileName)
 
-        navigateButtons = \
-        '<div class="box"> \
-            <span class="labelvalue"> \
-                <button name="back" id="back" type="button" > Submit Datasets </button> \
-                <button  name="cancel" id="cancel" type="button" > Cancel </button>\
-           </span>\
-        </div> '
-        
-        print navigateButtons
-        
-       # print "Dataset submission handler to be implemented here"
+        # Generate response headers
+        print "Content-type: text/html"
+        print "Cache-control: no-cache"
+        print
+
+        # Generate web page
+        dataToolURL = "../../SubmitDatasetUI/html/SubmitDataset.html"                                 
+        mainURL = "http://zoo-admiral-devel.zoo.ox.ac.uk"
+        viewDatasetURL = "../../DisplayDataset/html/DisplayDataset.html#" + datasetUnzippedName
+        viewZippedURL = "/admiral-test/datasets/" + datasetName
+        viewUnzippedURL = "/admiral-test/datasets/" + datasetUnzippedName
+
+        pageTemplate = ("""
+            <html>
+                <head>
+                    <script type="text/javascript" src="../../jQuery/js/jquery-1.4.2.js"></script>
+                </head>
+                
+                <body>
+                    <h2>Dataset submission successful</h2>
+                    <h3><a href="%(viewDatasetURL)s">View submitted dataset (%(datasetUnzippedName)s)</a></h3>
+                    <h3><a href="%(dataToolURL)s">Submit another dataset</a></h3>
+                    <h3><a href="%(mainURL)s">Back to front page</a></h3>
+                    <p>View Data in Dataset: %(datasetName)s - <a href="%(viewZippedURL)s">packaged data</a></p>
+                    <p>View Data in Dataset: %(datasetUnzippedName)s - <a href="%(viewUnzippedURL)s">original data</a></p>
+                </body>
+            </html>
+            """)
+        print (pageTemplate%
+            { 'viewDatasetURL':         viewDatasetURL
+            , 'datasetName':            datasetName
+            , 'dataToolURL':            dataToolURL
+            , 'mainURL':                mainURL
+            , 'viewZippedURL':          viewZippedURL
+            , 'datasetUnzippedName':    datasetUnzippedName
+            , 'viewUnzippedURL':        viewUnzippedURL
+            })
 
     except SubmitDatasetUtils.SubmitDatasetError, e:
-        SubmitDatasetUtils.generateErrorResponsePageFromException(e)
+        SubmitDatasetUtils.generateErrorResponsePageFromException(e) 
+        SubmitDatasetUtils.printStackTrace()
+        # (type, value, traceback) =  sys.exec_info()
+        # The following take Sys arguments implicitly
+        #  traceback.print_exc returns a file
+        #  traceback.format_exc returns a string
 
     except HttpUtils.HTTPUtilsError, e:
         SubmitDatasetUtils.generateErrorResponsePage(
             SubmitDatasetUtils.HTTP_ERROR,
             e.code, e.reason)
-        
+        SubmitDatasetUtils.printStackTrace()
+    
     finally:
         sys.stdout = save_stdout
 

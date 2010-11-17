@@ -55,7 +55,7 @@ admiral.listDatasets = function (host, silo, getlist, callback)
 	        var dataset = datasets[i];
 	        var newhtml = admiral.interpolate(
 	             "<tr><td><a href=\"%(datasetlink)s\">%(datasetname)s</a></td></tr>",
-	             { datasetlink: "../../DisplayDataset/html/DisplayDataset#"+dataset
+	             { datasetlink: "../../DisplayDataset/html/DisplayDataset.html#"+dataset
 	             , datasetname: dataset
 	             });
 	        var newelem = jQuery(newhtml);
