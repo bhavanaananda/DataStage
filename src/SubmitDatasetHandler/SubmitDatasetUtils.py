@@ -55,9 +55,6 @@ def generateErrorResponsePage(errType, errCode, errMsg):
     errCode    Error Code
     errorMsg   Error Message
     """
-    print "Content-type: text/html"
-    print                               # end of MIME headers
-
     print "<h2>"+errType+"</h2>"
     if errCode!=None:
         print str(errCode) + " : "
@@ -65,10 +62,17 @@ def generateErrorResponsePage(errType, errCode, errMsg):
         print errMsg
     return
 
+
+        # (type, value, traceback) =  sys.exec_info()
+        # The following take Sys arguments implicitly
+        #  traceback.print_exc returns a file
+        #  traceback.format_exc returns a string
 def printStackTrace():
     print "<p>"
     print "Stack trace: <br\>"
-    print repr(traceback.format_exc())
+    print "<pre>"
+    print traceback.format_exc()
+    print "</pre>"
     print "</p>"
     return
 

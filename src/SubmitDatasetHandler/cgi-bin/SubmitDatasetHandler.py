@@ -42,10 +42,16 @@ def processDatasetSubmissionForm(formdata, outputstr):
     """
     siloName= "admiral-test"
     save_stdout = sys.stdout
+
+    # Generate response headers
+    print "Content-type: text/html"
+    print "Cache-control: no-cache"
+    print
+
     #print repr(formdata)
+
     if outputstr:
         sys.stdout = outputstr
-  
     try:
         datasetName = SubmitDatasetUtils.getFormParam("datId",formdata)   
         dirName     = SubmitDatasetUtils.getFormParam("datDir",formdata)
@@ -71,7 +77,7 @@ def processDatasetSubmissionForm(formdata, outputstr):
         zipFilePath = "/tmp/" + zipFileName
         logger.debug("datasetName %s, dirName %s, zipFileName %s"%(datasetName,dirName,zipFileName))
 
-        #Check user credentiALS
+        # Set user credentials
         HttpUtils.setRequestUserPass(userName,userPass)
         # Creating a dataset
         SubmitDatasetUtils.createDataset(siloName, datasetName)
@@ -85,11 +91,6 @@ def processDatasetSubmissionForm(formdata, outputstr):
 
         # Unzip the contents into a new dataset
         datasetUnzippedName = SubmitDatasetUtils.unzipRemoteFileToNewDataset(siloName, datasetName, zipFileName)
-
-        # Generate response headers
-        print "Content-type: text/html"
-        print "Cache-control: no-cache"
-        print
 
         # Generate web page
         dataToolURL = "../../SubmitDatasetUI/html/SubmitDataset.html"                                 
@@ -126,17 +127,17 @@ def processDatasetSubmissionForm(formdata, outputstr):
 
     except SubmitDatasetUtils.SubmitDatasetError, e:
         SubmitDatasetUtils.generateErrorResponsePageFromException(e) 
-        SubmitDatasetUtils.printStackTrace()
-        # (type, value, traceback) =  sys.exec_info()
-        # The following take Sys arguments implicitly
-        #  traceback.print_exc returns a file
-        #  traceback.format_exc returns a string
 
     except HttpUtils.HTTPUtilsError, e:
         SubmitDatasetUtils.generateErrorResponsePage(
             SubmitDatasetUtils.HTTP_ERROR,
             e.code, e.reason)
+        
+    except:
+        print "<h2>Server error while processing dataset submission</h2>"
+        print "<p>Diagnostic stack trace follows</p>"
         SubmitDatasetUtils.printStackTrace()
+        raise
     
     finally:
         sys.stdout = save_stdout
