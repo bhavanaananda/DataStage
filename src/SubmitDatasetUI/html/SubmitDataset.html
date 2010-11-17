@@ -13,14 +13,16 @@
     </style>
  
 
-    <link rel="stylesheet" href="./../css/SubmitDataset.css" type="text/css" />
+    <link rel="stylesheet" href="./../css/SubmitDataset.css" type="text/css" />   
+    
     <!-- Import jQuery framework -->
+    <script type="text/javascript" src="./../js/DisplayDirectories.js"></script>
     <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.4/jquery.min.js"></script>
     <script src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8/jquery-ui.min.js"></script>
     <script type="text/javascript" src="../../jQuery/js/jquery-1.4.2.js"></script> 
 
     <!-- Import jQuery additional libraries -->
-    <script type="text/javascript" src="../../jQuery/jquery.json-2.2.jshttp://localhost/bhavana/google-admiral-jiscmrd/src/SubmitDatasetUI/html/SubmitDatasetPage.html"></script> 
+    <script type="text/javascript" src="../../jQuery/jquery.json-2.2.js"></script> 
  
     <!-- Import MochiKit modules: require MochiKit library functions to be fully qualified -->
     <script type="text/javascript">MochiKit = {__export__: false};</script>
@@ -36,65 +38,87 @@
     <script type="text/javascript" src="../../SelectDataset/ListDatasets.js"></script>
 
     <script type="text/javascript" src="../../SelectDataset/GetDatasets.js"></script>
-
-    <script>
+   <script>
     // Use jQuery via jQuery(...)
     jQuery.noConflict();
     </script>
 
     <!-- Execute the desired dataset listing logic -->
     <script>
-            $(document).ready(function() {
-               
-        	});
+            jQuery(document).ready( function ()
+            {                         
+                var m = new admiral.AsyncComputation();
+                m.eval(function(val,callback)
+                {
+                       admiral.displayDirectories(callback);           
+                });
+                m.eval(function(val,callback)
+                {                    
+                    // Populate directory listing box with results received
+                    jQuery("#dirlist").empty();
+                    for (i=0; i<val.length; i++)
+                    {  
+                       newjelem='<span class="dirlistitem">'+val[i]+'</span>';
+                       jQuery("#dirlist").append(newjelem);
+                    }
+                callback(val);
+                });    
+                m.eval(function(val, callback)
+                {
+                    // Set click handlers on directory items
+                    jQuery("#dirlist > .dirlistitem").click( function()
+                    {
+                        jQuery("#datDir").val(jQuery(this).text());
+                    });
+                });                    
+                m.exec(null,admiral.noop);
+            });                    
      </script>
 </head> 
 
 <body>
-
    <h1>Submit Datasets</h1>
    <form name="frm1" action="../../SubmitDatasetHandler/cgi-bin/SubmitDatasetHandler.py" method="post">
    <div class="box outer">
         <div class="box">
             <span class="label">Dataset Dir :</span>
-            <span class="labelval">
-            <div>
-                *<input name="datDir" id="datDir" type="text" value="/home/data/private"/> (ADMIRAL file System)(/private/user)
-            </div>
-                <div>
-                     <ul id="dirList">
-                        <li></li>
-                      </ul>
-                </div>
+            <span class="labelvalue">
+                <input name="datDir" id="datDir" type="text" value="" size="50" />
+            </span>
+            <span class="labelvalue withpadding">
+               <span id="dirlist" class="scrollbox">
+                   <span class="dirlistitem">directoryname</span>
+               </span>
+            </span> 
         </div>
         <div class="box">
            <span class="label">Dataset Id :</span>
-           <span class="labelval">*<input name="datId" id="datId" type="text"/>(username/rootDirName)</span>
+           <span class="labelvalue"><input name="datId" id="datId" type="text"/></span>
         </div>
         <div class="box">
            <span class="label">Title :</span>
-           <span class="labelval">*<input name="title" id="title" type="text"/>(rootDirName)</span>
+           <span class="labelvalue"><input name="title" id="title" type="text"/></span>
         </div>
         <div class="box">
            <span class="label">Description :</span>
-           <span class="labelval">
+           <span class="labelvalue">
                 <textarea rows="4"  cols="50"><optional></textarea>
            </span>
         </div>
         <div class="box">
             <span class="label">User :</span>
-            <span class="labelval">
-                *<input name="user" id="user" type="text"/>(username)
+            <span class="labelvalue">
+                <input name="user" id="user" type="text"/>
             </span>
         </div>
         <div class="box">
             <span class="label">Password :</span>
-            <span class="labelval">
-                *<input name="pass" id="pass" type="password"/>
+            <span class="labelvalue">
+                <input name="pass" id="pass" type="password"/>
             </span>
         </div>
         <div class="box">
-            <span class="labelval">
+            <span class="labelvalue">
                 <input name="submit" id="submit" type="submit" value="Submit"/>
                 <button  name="cancel" id="cancel" type="button"> Cancel </button>
                 <!-- 

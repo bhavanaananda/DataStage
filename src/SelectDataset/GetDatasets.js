@@ -1,6 +1,6 @@
 /**
  * @fileoverview
- *  ADMIRAL function to get datasets
+ *  ADMIRAL function to get list of datasets in a Databank silo
  *  
  * @author 
  * @version $Id: $
@@ -48,15 +48,17 @@ admiral.getDatasetList = function (host,siloName,callback)
         dataType:     "json",
         beforeSend:   function (xhr)
             {
+                //TODO: change to application/JSON when Databank handles this properly
                 xhr.setRequestHeader("Accept", "text/plain");
             },
         success:      function (data, status, xhr)
-            {  var datasets = [];
-               for (name in data)
+            {  
+               var datasets = [];
+               for (i in data)
                {          
-                  datasets.push(name);                
+                  datasets.push(data[i]);                
                }
-               log.debug("Dataset list: "+datasets);  
+               //log.debug("Dataset list: "+datasets);  
                callback(datasets);
             },
         error:        function (xhr, status) 

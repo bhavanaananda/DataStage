@@ -20,7 +20,7 @@ Support functions for creating, unpacking and managing datsets in RDF Databank.
 __author__ = "Bhavana Ananda"
 __version__ = "0.1"
 
-import sys, logging, zipfile, os.path, json
+import sys, traceback, logging, zipfile, os.path, json
 
 import HttpUtils
 from MiscLib.ScanFiles import *
@@ -55,14 +55,25 @@ def generateErrorResponsePage(errType, errCode, errMsg):
     errCode    Error Code
     errorMsg   Error Message
     """
-    print "Content-type: text/html"
-    print                               # end of MIME headers
-
     print "<h2>"+errType+"</h2>"
     if errCode!=None:
         print str(errCode) + " : "
     if errMsg!=None:
         print errMsg
+    return
+
+
+        # (type, value, traceback) =  sys.exec_info()
+        # The following take Sys arguments implicitly
+        #  traceback.print_exc returns a file
+        #  traceback.format_exc returns a string
+def printStackTrace():
+    print "<p>"
+    print "Stack trace: <br\>"
+    print "<pre>"
+    print traceback.format_exc()
+    print "</pre>"
+    print "</p>"
     return
 
 def getDatasetsListFromSilo(siloName):

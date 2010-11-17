@@ -75,8 +75,10 @@ def CollectDirectories(srcDir, baseDir, recursive=True):
     """
     #logger.debug("CollectDirectories: %s, %s, %s"%(srcDir,baseDir,str(os.path.sep)))
     collection = []
+    if (baseDir != "") and (not baseDir.endswith(os.path.sep)):
+        baseDir = baseDir+os.path.sep
     def Collect(path):
-        collection.append(path.replace(baseDir+os.path.sep,"",1))
+        collection.append(path.replace(baseDir,"",1))
     ScanDirectoriesEx(srcDir, Collect, recursive)
     return collection
 

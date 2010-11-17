@@ -21,7 +21,7 @@ an RDF Databank dataset.
 __author__ = "Bhavana Ananda"
 __version__ = "0.1"
 
-import cgi, sys, re, logging, os, os.path
+import cgi, sys, re, logging, os, os.path,traceback
 sys.path.append("..")
 sys.path.append("../..")
 
@@ -42,10 +42,16 @@ def processDatasetSubmissionForm(formdata, outputstr):
     """
     siloName= "admiral-test"
     save_stdout = sys.stdout
+
+    # Generate response headers
+    print "Content-type: text/html"
+    print "Cache-control: no-cache"
+    print
+
     #print repr(formdata)
+
     if outputstr:
         sys.stdout = outputstr
-  
     try:
         datasetName = SubmitDatasetUtils.getFormParam("datId",formdata)   
         dirName     = SubmitDatasetUtils.getFormParam("datDir",formdata)
@@ -71,7 +77,7 @@ def processDatasetSubmissionForm(formdata, outputstr):
         zipFilePath = "/tmp/" + zipFileName
         logger.debug("datasetName %s, dirName %s, zipFileName %s"%(datasetName,dirName,zipFileName))
 
-        #Check user credentiALS
+        # Set user credentials
         HttpUtils.setRequestUserPass(userName,userPass)
         # Creating a dataset
         SubmitDatasetUtils.createDataset(siloName, datasetName)
@@ -84,28 +90,55 @@ def processDatasetSubmissionForm(formdata, outputstr):
             SubmitDatasetUtils.deleteLocalFile(zipFilePath)
 
         # Unzip the contents into a new dataset
-        SubmitDatasetUtils.unzipRemoteFileToNewDataset(siloName, datasetName, zipFileName)
-        print "Content-type: text/html"
-        print                               # end of MIME headers
+        datasetUnzippedName = SubmitDatasetUtils.unzipRemoteFileToNewDataset(siloName, datasetName, zipFileName)
 
-        print "<h2>Form parameters supplied</h2>"
-        # print "<h3>Printing form dqata: " + str(formdata)+"</h3>"
-        print "<dl>"
-        print "<dt></dt><dd></dd>"
-        for k in formdata:
-            print "  <dt>%s</dt><dd>%s</dd>"%(k, formdata[k].value)
-        print "</dl>"
-    
-        print "Dataset submission handler to be implemented here"
+        # Generate web page
+        dataToolURL = "../../SubmitDatasetUI/html/SubmitDataset.html"                                 
+        mainURL = "http://zoo-admiral-devel.zoo.ox.ac.uk"
+        viewDatasetURL = "../../DisplayDataset/html/DisplayDataset.html#" + datasetUnzippedName
+        viewZippedURL = "/admiral-test/datasets/" + datasetName
+        viewUnzippedURL = "/admiral-test/datasets/" + datasetUnzippedName
+
+        pageTemplate = ("""
+            <html>
+                <head>
+                    <script type="text/javascript" src="../../jQuery/js/jquery-1.4.2.js"></script>
+                </head>
+                
+                <body>
+                    <h2>Dataset submission successful</h2>
+                    <h3><a href="%(viewDatasetURL)s">View submitted dataset (%(datasetUnzippedName)s)</a></h3>
+                    <h3><a href="%(dataToolURL)s">Submit another dataset</a></h3>
+                    <h3><a href="%(mainURL)s">Back to front page</a></h3>
+                    <p>View Data in Dataset: %(datasetName)s - <a href="%(viewZippedURL)s">packaged data</a></p>
+                    <p>View Data in Dataset: %(datasetUnzippedName)s - <a href="%(viewUnzippedURL)s">original data</a></p>
+                </body>
+            </html>
+            """)
+        print (pageTemplate%
+            { 'viewDatasetURL':         viewDatasetURL
+            , 'datasetName':            datasetName
+            , 'dataToolURL':            dataToolURL
+            , 'mainURL':                mainURL
+            , 'viewZippedURL':          viewZippedURL
+            , 'datasetUnzippedName':    datasetUnzippedName
+            , 'viewUnzippedURL':        viewUnzippedURL
+            })
 
     except SubmitDatasetUtils.SubmitDatasetError, e:
-        SubmitDatasetUtils.generateErrorResponsePageFromException(e)
+        SubmitDatasetUtils.generateErrorResponsePageFromException(e) 
 
     except HttpUtils.HTTPUtilsError, e:
         SubmitDatasetUtils.generateErrorResponsePage(
             SubmitDatasetUtils.HTTP_ERROR,
             e.code, e.reason)
         
+    except:
+        print "<h2>Server error while processing dataset submission</h2>"
+        print "<p>Diagnostic stack trace follows</p>"
+        SubmitDatasetUtils.printStackTrace()
+        raise
+    
     finally:
         sys.stdout = save_stdout
 
@@ -113,7 +146,8 @@ def processDatasetSubmissionForm(formdata, outputstr):
 
 
 if __name__ == "__main__":
-    form = cgi.FieldStorage() #parse the query
+    form = cgi.FieldStorage()   # Parse the query
+    os.chdir("/home")           # Base directory for admiral server data
     processDatasetSubmissionForm(form, sys.stdout)
 
 # End.
