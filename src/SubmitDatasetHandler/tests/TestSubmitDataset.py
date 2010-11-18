@@ -119,6 +119,32 @@ class TestDatasetSubmission(unittest.TestCase):
         SubmitDatasetUtils.deleteDataset(SiloName,TestDatasetName)  
         SubmitDatasetUtils.deleteDataset(SiloName,newDatasetname)
         return
+    
+    def testSubsequentDatasetSubmission(self):    
+        SubmitDatasetUtils.createDataset(SiloName,TestDatasetName)  
+        # Zip the required directory
+        zipFileName = SubmitDatasetUtils.zipLocalDirectory(DirName,TestPat,TestDatasetName+".zip")
+        #logger.debug("ZipFileName: " + zipFileName)
+        localZipFileContent  = SubmitDatasetUtils.getLocalFileContents(zipFileName)
+        SubmitDatasetUtils.submitFileToDataset(SiloName, TestDatasetName, zipFileName, ZipMimeType, zipFileName)
+
+        #Resubmit the File to Dataset skipping dataset creation as the dataset already exists
+        SubmitDatasetUtils.submitFileToDataset(SiloName, TestDatasetName, zipFileName, ZipMimeType, zipFileName)
+        # Read from the  updated Dataset
+        (remoteMimeType,remoteZipFileContent) = SubmitDatasetUtils.getFileFromDataset(SiloName, TestDatasetName, zipFileName)
+        
+        #logger.debug("LocalZipFileContents: " + localZipFileContent)
+        #logger.debug(" RemoteZipFileContents: " + remoteZipFileContent)
+        
+        # Check that the <localFileContent> = <remoteFileContents>
+        self.assertEqual(ZipMimeType, remoteMimeType, "Difference between local and remote zip MIME types") 
+        self.assertEqual(localZipFileContent, remoteZipFileContent, "Difference between local and remote zip files contents") 
+        
+        #unpack the contents
+        newDatasetname = SubmitDatasetUtils.unzipRemoteFileToNewDataset(SiloName, TestDatasetName, zipFileName)
+        SubmitDatasetUtils.deleteDataset(SiloName,TestDatasetName)  
+        SubmitDatasetUtils.deleteDataset(SiloName,newDatasetname)
+        return
 
     # To dotestDirectorySubmission
     def testEmptyDirectorySubmission(self):
@@ -149,6 +175,7 @@ class TestDatasetSubmission(unittest.TestCase):
         return
 
     def tearDown(self):
+        
         return
     
 def getTestSuite(select="unit"):
@@ -168,6 +195,7 @@ def getTestSuite(select="unit"):
               "testDatasetCreation"
             , "testSingleFileSubmission"
             , "testDirectorySubmission"
+            , "testSubsequentDatasetSubmission"
             , "testEmptyDirectorySubmission"
             , "testDatasetDeletion"
             ],

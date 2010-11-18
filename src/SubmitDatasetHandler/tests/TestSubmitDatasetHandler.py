@@ -13,7 +13,7 @@ import SubmitDatasetUtils
 import HttpUtils
 from MiscLib import TestUtils
 logger           =  logging.getLogger("TestSubmitDatasethandler")
-siloName         =  "admiral-test"
+SiloName         =  "admiral-test"
 DirName          =  "DatasetsTopDir"
 DatasetsEmptyDir =  "DatasetsEmptyDir"
 formdata         =  \
@@ -33,7 +33,7 @@ class TestSubmitDatasethandler(unittest.TestCase):
        
     def tearDown(self):
         try:
-            SubmitDatasetUtils.deleteDataset(siloName,  SubmitDatasetUtils.getFormParam('datId', formdata))
+            SubmitDatasetUtils.deleteDataset(SiloName,  SubmitDatasetUtils.getFormParam('datId', formdata))
         except:
             pass
         return
@@ -51,10 +51,10 @@ class TestSubmitDatasethandler(unittest.TestCase):
         # print "Output String from output stream: "+outputStr.getvalue()
         outputStr.seek(0, os.SEEK_SET)
         firstLine = outputStr.readline()
-
+        logger.debug( firstLine );
         self.assertEqual( firstLine, "Content-type: text/html\n", "Submission Handler could not action the client request!")
              
-        SubmitDatasetUtils.deleteDataset(siloName, datasetId+"-"+DirName)
+        SubmitDatasetUtils.deleteDataset(SiloName, datasetId+"-"+DirName)
         return
 
         # Test that the named dataset has been created in the databank
@@ -66,16 +66,12 @@ class TestSubmitDatasethandler(unittest.TestCase):
         SubmitDatasetHandler.processDatasetSubmissionForm(formdata, outputStr)
 
         # Check that the dataset is created
-        datasetsFromSilo = SubmitDatasetUtils.getDatasetsListFromSilo(siloName)
-        found = False
-        for dataset in datasetsFromSilo:
-            if dataset == datasetId :
-                found = True
-            
+        found = SubmitDatasetUtils.ifDatasetExists(SiloName, datasetId)
+          
         self.assertEquals(found, True, "Dataset Creation Failed!" )
         
         # Check that the new dataset can be dereferenced in the databank 
-        HttpUtils.doHTTP_GET(resource="/" + siloName +"/datasets/"+ datasetId, 
+        HttpUtils.doHTTP_GET(resource="/" + SiloName +"/datasets/"+ datasetId, 
             expect_status=200, expect_reason="OK", accept_type="application/json")
         
         # Check that a HTML Response page is returned
@@ -86,7 +82,7 @@ class TestSubmitDatasethandler(unittest.TestCase):
         
         datasetId  =  SubmitDatasetUtils.getFormParam('datId', formdata)
         datasetDir =  SubmitDatasetUtils.getFormParam('datDir', formdata)
-        SubmitDatasetUtils.deleteDataset(siloName, datasetId+"-"+DirName)
+        SubmitDatasetUtils.deleteDataset(SiloName, datasetId+"-"+DirName)
         return
         
         # Test that the named dataset has been created in the databank
@@ -97,19 +93,15 @@ class TestSubmitDatasethandler(unittest.TestCase):
         
         # Invoke dataset submission program, passing faked form submission parameters
         SubmitDatasetHandler.processDatasetSubmissionForm(formdata, outputStr)
-        SubmitDatasetUtils.deleteDataset(siloName, datasetId)
+        SubmitDatasetUtils.deleteDataset(SiloName, datasetId)
 
-        # Check that the dataset is delete
-        datasetsFromSilo = SubmitDatasetUtils.getDatasetsListFromSilo(siloName)
-        found = False
-        for dataset in datasetsFromSilo:
-            if dataset == datasetId :
-                found = True
+        # Check that the dataset is deleted
+        found = SubmitDatasetUtils.ifDatasetExists(SiloName, datasetId)
             
         self.assertEquals(found, False, "Dataset Deletion Failed!" )     
         
         # Check that the dataset deleted cannot be dereferenced in the databank 
-        HttpUtils.doHTTP_GET(resource="/" + siloName +"/datasets/"+ datasetId, 
+        HttpUtils.doHTTP_GET(resource="/" + SiloName +"/datasets/"+ datasetId, 
             expect_status=404, expect_reason="Not Found", accept_type="application/json")
         
         # Check that a HTML Response page is returned   
@@ -117,7 +109,7 @@ class TestSubmitDatasethandler(unittest.TestCase):
         firstLine = outputStr.readline()
         self.assertEqual( firstLine, "Content-type: text/html\n", "Submission Handler could not action the client request!")
 
-        SubmitDatasetUtils.deleteDataset(siloName, datasetId+"-"+DirName)
+        SubmitDatasetUtils.deleteDataset(SiloName, datasetId+"-"+DirName)
         return
     
     def testSubmitDatasetHandlerDirectorySubmission(self):
@@ -129,11 +121,22 @@ class TestSubmitDatasethandler(unittest.TestCase):
         # Check that the dataset created for unzipped data can be dereferenced in the databank 
         datasetId  =  SubmitDatasetUtils.getFormParam('datId', formdata)
         datasetDir =  SubmitDatasetUtils.getFormParam('datDir', formdata)
-        HttpUtils.doHTTP_GET(resource="/" + siloName +"/datasets/"+datasetId+"-"+DirName,
+        HttpUtils.doHTTP_GET(resource="/" + SiloName +"/datasets/"+datasetId+"-"+DirName,
+            expect_status=200, expect_reason="OK", accept_type="application/json")
+        
+        # Invoke dataset submission program yet again. 
+        # This time, bypassing the dataset creation but  continuing submittion of data to the already exiting dataset
+        SubmitDatasetHandler.processDatasetSubmissionForm(formdata, outputStr)
+         # Check that the dataset created for unzipped data can be dereferenced in the databank 
+         
+        datasetId  =  SubmitDatasetUtils.getFormParam('datId', formdata)
+        datasetDir =  SubmitDatasetUtils.getFormParam('datDir', formdata)
+        HttpUtils.doHTTP_GET(resource="/" + SiloName +"/datasets/"+datasetId+"-"+DatasetsEmptyDir, 
             expect_status=200, expect_reason="OK", accept_type="application/json")
             
-        SubmitDatasetUtils.deleteDataset(siloName, datasetId+"-"+DirName)
+        SubmitDatasetUtils.deleteDataset(SiloName, datasetId+"-"+DirName)
         return
+    
     
     def testSubmitDatasetHandlerEmptyDirectorySubmission(self):
         outputStr =  StringIO.StringIO() 
@@ -147,10 +150,20 @@ class TestSubmitDatasethandler(unittest.TestCase):
         # Check that the dataset created for unzipped data can be dereferenced in the databank 
         datasetId  =  SubmitDatasetUtils.getFormParam('datId', formdata)
         datasetDir =  SubmitDatasetUtils.getFormParam('datDir', formdata)
-        HttpUtils.doHTTP_GET(resource="/" + siloName +"/datasets/"+datasetId+"-"+DatasetsEmptyDir, 
+        HttpUtils.doHTTP_GET(resource="/" + SiloName +"/datasets/"+datasetId+"-"+DatasetsEmptyDir, 
             expect_status=200, expect_reason="OK", accept_type="application/json")
         
-        SubmitDatasetUtils.deleteDataset(siloName, datasetId+"-"+DatasetsEmptyDir)
+        # Invoke dataset submission program yet again. 
+        # This time, bypassing the dataset creation but  continuing submittion of data to the already exiting dataset
+        SubmitDatasetHandler.processDatasetSubmissionForm(formdata, outputStr)
+         # Check that the dataset created for unzipped data can be dereferenced in the databank 
+         
+        datasetId  =  SubmitDatasetUtils.getFormParam('datId', formdata)
+        datasetDir =  SubmitDatasetUtils.getFormParam('datDir', formdata)
+        HttpUtils.doHTTP_GET(resource="/" + SiloName +"/datasets/"+datasetId+"-"+DatasetsEmptyDir, 
+            expect_status=200, expect_reason="OK", accept_type="application/json")
+        
+        SubmitDatasetUtils.deleteDataset(SiloName, datasetId+"-"+DatasetsEmptyDir)
         return
     
 
