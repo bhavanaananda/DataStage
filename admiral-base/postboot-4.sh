@@ -13,6 +13,7 @@ if [[ "$1" == "test" ]]; then
   mkdir /mnt/lv-admiral-data/home
   mkdir /mnt/lv-admiral-data/data
   ln -s /mnt/lv-admiral-data/data /home/data
+fi
 
 echo ========================
 echo "Installing ADMIRAL tools"
@@ -33,3 +34,4 @@ echo =================================
 
 mkdir /root/admiralresearchgroupmembers
 
+# End.

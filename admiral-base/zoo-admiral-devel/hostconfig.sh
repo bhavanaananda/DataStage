@@ -5,9 +5,6 @@
 # (See also: admiralconfig.sh)
 #
 
-# Override IP address for testing (kos.zoo.x.ac.uk)
-# IPADDR="129.67.26.204"
-
 # Samba/Windows workgroup name for research group files
 WORKGROUP="EvolutionaryDevelopment"
 
@@ -15,6 +12,11 @@ WORKGROUP="EvolutionaryDevelopment"
 # (System scripts will attempt to ensure that there is always a user 
 # who is the designated research group leader)
 LEADERNAME="TestLeader"
+
+# Databank host and silo names
+
+DATABANKHOST="163.1.127.173"
+DATABANKSILO="admiral-test"
 
 # End.
 

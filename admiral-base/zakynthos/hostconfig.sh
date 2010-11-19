@@ -13,5 +13,13 @@ WORKGROUP="TestGroup"
 # who is the designated research group leader)
 LEADERNAME="TestLeader"
 
+# Databank host and silo names
+
+DATABANKHOST="163.1.127.173"
+DATABANKSILO="admiral-test"
+
+# Override IP address for testing (kos.zoo.x.ac.uk)
+# IPADDR="129.67.26.204"
+
 # End.
 

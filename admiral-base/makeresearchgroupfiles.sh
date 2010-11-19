@@ -79,9 +79,26 @@ for f in $FILELIST; do
         $REPORT "not blacklisted $f (dir:$f1, name:$f2, target:$f3)"
         if [ -d $TGTDIR/$f3 ]; then
             if [[ "$COPYTEST" == "copy" ]]; then
-                    sed -e "s/%{HOSTNAME}/$HOSTNAME/g" -e "s/%{PASSWORD}/$PASSWORD/g" -e "s/%{WORKGROUP}/$WORKGROUP/g" -e "s/%{IPADDR}/$IP/g" -e "s/%{LeaderName}/$LEADERNAME/g" -e "s/%{MD5PASS}/$MD5PASSWD/g" < $f >$TGTDIR/$f3$f2
+                    sed -e "s/%{HOSTNAME}/$HOSTNAME/g" \
+                        -e "s/%{PASSWORD}/$PASSWORD/g" \
+                        -e "s/%{WORKGROUP}/$WORKGROUP/g" \
+                        -e "s/%{IPADDR}/$IP/g" \
+                        -e "s/%{LeaderName}/$LEADERNAME/g" \
+                        -e "s/%{MD5PASS}/$MD5PASSWD/g" \
+                        -e "s/%{DATABANKHOST}/$DATABANKHOST/g" \
+                        -e "s/%{DATABANKSILO}/$DATABANKSILO/g" \
+                        <$f >$TGTDIR/$f3$f2
             else
-                    echo "sed -e 's/%{HOSTNAME}/$HOSTNAME/g' -e 's/%{PASSWORD}/$PASSWORD/g' -e 's/%{WORKGROUP}/$WORKGROUP/g' -e 's/%{IPADDR}/$IP/g' -e 's/%{LeaderName}/$LEADERNAME/g' -e 's/%{MD5PASS}/$MD5PASSWD/g' < $f >$TGTDIR/$f3$f2"
+                    echo "sed \
+                        -e 's/%{HOSTNAME}/$HOSTNAME/g' \
+                        -e 's/%{PASSWORD}/$PASSWORD/g' \
+                        -e 's/%{WORKGROUP}/$WORKGROUP/g' \
+                        -e 's/%{IPADDR}/$IP/g' \
+                        -e 's/%{LeaderName}/$LEADERNAME/g' \
+                        -e 's/%{MD5PASS}/$MD5PASSWD/g' \
+                        -e 's/%{DATABANKHOST}/$DATABANKHOST/g' \
+                        -e 's/%{DATABANKSILO}/$DATABANKSILO/g' \
+                        <$f >$TGTDIR/$f3$f2"
             fi
         else
             echo "Directory $TGTDIR/$f3 not found"

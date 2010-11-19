@@ -1,0 +1,32 @@
+# databank.host
+#
+# Reverse-proxy paths /silos and /%{DATABANKSILO} to the designated
+# Databank server running in Library Services
+#
+# See: http://httpd.apache.org/docs/2.0/mod/mod_proxy.html
+#
+# See also: http://httpd.apache.org/docs/2.0/vhosts/name-based.html
+#
+# Spurious warnings may be generated: see https://issues.apache.org/bugzilla/show_bug.cgi?id=44350
+#
+
+# See: 000-default.host
+
+ProxyRequests Off
+
+<Proxy *>
+  Order deny,allow
+  Allow from all
+</Proxy>
+
+ProxyPass        /silos http://%{DATABANKHOST}/silos
+ProxyPassReverse /silos http://%{DATABANKHOST}/silos
+ProxyPass        /silos/ http://%{DATABANKHOST}/silos/
+ProxyPassReverse /silos/ http://%{DATABANKHOST}/silos/
+
+ProxyPass        /admiral-test http://%{DATABANKHOST}/admiral-test
+ProxyPassReverse /admiral-test http://%{DATABANKHOST}/admiral-test
+ProxyPass        /admiral-test/ http://%{DATABANKHOST}/admiral-test/
+ProxyPassReverse /admiral-test/ http://%{DATABANKHOST}/admiral-test/
+
+#ProxyPreserveHost On

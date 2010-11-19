@@ -9,6 +9,7 @@ krb5.keytab /root/krb5.keytab
 ntp.conf /etc/ntp.conf
 apache-default-ssl /root/apache-default-ssl
 apache-default /root/apache-default
+apache-databank-proxy /root/apache-databank-proxy
 make-apache2-cert.sh /root/make-apache2-cert.sh
 ldapconfig/db.ldif /root/db.ldif
 ldapconfig/base.ldif /root/base.ldif
@@ -45,6 +46,7 @@ etcldap.conf /root/etcldap.conf
 admiralconfig.sh /root/admiralconfig.sh
 admiralRGLeader.sh /root/admiralRGLeader.sh
 admiraldatasetup.sh /root/admiraldatasetup.sh
+admiraltoolsetup.sh /root/admiraltoolsetup.sh
 admiraluseradd.sh /root/admiraluseradd.sh
 admiraluserdel.sh /root/admiraluserdel.sh
 admiralleaderchange.sh /root/admiralleaderchange.sh

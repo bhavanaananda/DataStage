@@ -13,5 +13,10 @@ WORKGROUP="SHOTTON"
 # who is the designated research group leader)
 LEADERNAME="DavidShotton"
 
+# Databank host and silo names
+
+DATABANKHOST="163.1.127.173"
+DATABANKSILO="admiral-test"
+
 # End.
 
