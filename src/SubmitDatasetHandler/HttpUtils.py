@@ -102,6 +102,16 @@ def getRequestPath(rel):
 def getRequestUri(rel):
         return "http://"+_endpointhost+getRequestPath(rel)
 
+def expectedReturnStatus(expected, actual):
+    return ( (expected == "*") or
+             (isinstance(expected,int)  and actual == expected) or
+             (isinstance(expected,list) and actual in expected) )
+
+def expectedReturnReason(expected, actual):
+    return ( (expected == "*") or
+             (isinstance(expected,str)  and actual == expected) or
+             (isinstance(expected,list) and actual in expected) )
+
 def doRequest(command, resource, reqdata=None, reqheaders={}, expect_status=200, expect_reason="OK"):
         logger.debug(command+" "+getRequestUri(resource))
         logger.debug("In request: "+command+" "+getRequestUri(resource))
@@ -130,10 +140,10 @@ def doRequest(command, resource, reqdata=None, reqheaders={}, expect_status=200,
                 hc = httplib.HTTPSConnection(_endpointhost)    # Assume same host for https:
             else:
                 response.read()  # Seems to be needed to free up connection for new request
-        logger.debug(" Response Status: %i %s" % (response.status, response.reason))
-        logger.debug(" Expected Status: %i %s" % (expect_status, expect_reason))
-        if ( (expect_status != "*" and response.status != expect_status) or
-             (expect_reason != "*" and response.reason != expect_reason) ):
+        logger.debug(" Response Status: %s %s" % (response.status, response.reason))
+        logger.debug(" Expected Status: %s %s" % (repr(expect_status), repr(expect_reason)))
+        if ( not expectedReturnStatus(expect_status, response.status) or
+             not expectedReturnReason(expect_reason, response.reason) ):
             raise HTTPUtilsError(response.status, response.reason)
         responsedata = response.read()
         hc.close()

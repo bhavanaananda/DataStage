@@ -43,16 +43,16 @@ def processDatasetSubmissionForm(formdata, outputstr):
     siloName= "admiral-test"
     save_stdout = sys.stdout
 
-    # Generate response headers
-    print "Content-type: text/html"
-    print "Cache-control: no-cache"
-    print
-
     #print repr(formdata)
 
     if outputstr:
         sys.stdout = outputstr
-    try:
+    try:    
+        # Generate response headers
+        print "Content-type: text/html"
+        print "Cache-control: no-cache"
+        print
+
         datasetName = SubmitDatasetUtils.getFormParam("datId",formdata)   
         dirName     = SubmitDatasetUtils.getFormParam("datDir",formdata)
         userName    = SubmitDatasetUtils.getFormParam("user",formdata)
@@ -79,8 +79,14 @@ def processDatasetSubmissionForm(formdata, outputstr):
 
         # Set user credentials
         HttpUtils.setRequestUserPass(userName,userPass)
-        # Creating a dataset
-        SubmitDatasetUtils.createDataset(siloName, datasetName)
+        
+        # Check if the dataset already exists
+        datasetFound = SubmitDatasetUtils.ifDatasetExists(siloName, datasetName)
+        
+        # Create a dataset if the dataset does not exist
+        if not datasetFound:              
+            SubmitDatasetUtils.createDataset(siloName, datasetName)
+            
         # Zip the selected Directory
         SubmitDatasetUtils.zipLocalDirectory(dirName, FilePat, zipFilePath)
         # Submit zip file to dataset
@@ -132,6 +138,7 @@ def processDatasetSubmissionForm(formdata, outputstr):
         SubmitDatasetUtils.generateErrorResponsePage(
             SubmitDatasetUtils.HTTP_ERROR,
             e.code, e.reason)
+        SubmitDatasetUtils.printStackTrace()
         
     except:
         print "<h2>Server error while processing dataset submission</h2>"

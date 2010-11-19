@@ -53,6 +53,10 @@ def generateErrorResponsePage(errType, errCode, errMsg):
     
     errType    Type of error: [INPUT_ERROR]
     errCode    Error Code
+        # (type, value, traceback) =  sys.exec_info()
+        # The following take Sys arguments implicitly
+        #  traceback.print_exc returns a file
+        #  traceback.format_exc returns a string
     errorMsg   Error Message
     """
     print "<h2>"+errType+"</h2>"
@@ -62,11 +66,6 @@ def generateErrorResponsePage(errType, errCode, errMsg):
         print errMsg
     return
 
-
-        # (type, value, traceback) =  sys.exec_info()
-        # The following take Sys arguments implicitly
-        #  traceback.print_exc returns a file
-        #  traceback.format_exc returns a string
 def printStackTrace():
     print "<p>"
     print "Stack trace: <br\>"
@@ -83,6 +82,22 @@ def getDatasetsListFromSilo(siloName):
     assert responsetype.lower() == "application/json", "Expected application/json, got "+responsetype
     datasetsListFromSilo = json.loads(datasetsListFromSilo)
     return datasetsListFromSilo
+
+def ifDatasetExists(siloName, datasetName):
+    """
+    Check if the dataset already exists.
+    
+    siloName    name of Databank silo in which the existence of dataset is being checked
+    datasetName name of the dataset whose existence is being checked
+    """
+    # Check if the dataset exists in the databank silo
+    datasetsFromSilo = getDatasetsListFromSilo(siloName)
+    found = False
+    for dataset in datasetsFromSilo:
+        if dataset == datasetName :
+            found = True
+        
+    return found
 
 def createDataset(siloName, datasetName):
     """
@@ -137,7 +152,7 @@ def submitFileToDataset(siloName, datasetName, fileName, mimeType, targetName):
     HttpUtils.doHTTP_POST(
         reqdata, reqtype, 
         resource = "/" + siloName + "/datasets/"+ datasetName, 
-        expect_status=201, expect_reason="Created")     
+        expect_status=[201,204], expect_reason=["Created","No Content"])
     return
 
 def unzipRemoteFileToNewDataset(siloName, datasetName, zipFileName):
@@ -163,7 +178,7 @@ def unzipRemoteFileToNewDataset(siloName, datasetName, zipFileName):
     HttpUtils.doHTTP_POST(
         reqdata, reqtype, 
         resource="/" + siloName +"/items/"+ datasetName, 
-        expect_status=201, expect_reason="Created")
+        expect_status=[200,201], expect_reason=["OK","Created"])
     return datasetName+"-"+zipFileName[:-4]
 
 def getFileFromDataset(siloName, datasetName, fileName):  
