@@ -9,6 +9,7 @@ krb5.keytab /root/krb5.keytab
 ntp.conf /etc/ntp.conf
 apache-default-ssl /root/apache-default-ssl
 apache-default /root/apache-default
+apache-databank-proxy /root/apache-databank-proxy
 make-apache2-cert.sh /root/make-apache2-cert.sh
 ldapconfig/db.ldif /root/db.ldif
 ldapconfig/base.ldif /root/base.ldif

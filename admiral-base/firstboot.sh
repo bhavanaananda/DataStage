@@ -41,6 +41,11 @@ chown -R www-data:www-data /usr/share/apache2/var
 mv /etc/apache2/sites-available/default /etc/apache2/sites-available/default_orig
 cp /root/apache-default /etc/apache2/sites-available/default
 
+a2enmod proxy
+a2enmod proxy_http
+cp /root/apache-databank-proxy /etc/apache2/sites-available/databank-proxy
+ln -s /etc/apache2/sites-available/databank-proxy /etc/apache2/sites-enabled/databank-proxy
+
 /etc/init.d/apache2 restart
 
 gunzip /usr/share/doc/smbldap-tools/configure.pl.gz
