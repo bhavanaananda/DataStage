@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<rdf:RDF
+  xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+  xmlns:OXDS="http://vocab.ox.ac.uk/dataset/schema#"
+  xmlns:DCTERMS="http://purl.org/dc/terms/"
+>
+  <OXDS:DataSet rdf:about="http://163.1.127.173/admiral-test/datasets/SubmissionHandlerTest">
+    <DCTERMS:identifier>SubmissionHandlerTest</DCTERMS:identifier>
+    <DCTERMS:description>Submission handler test description</DCTERMS:description>
+    <DCTERMS:title>Updated Submission handler test title</DCTERMS:title>
+    <DCTERMS:creator>admiral</DCTERMS:creator>
+    <DCTERMS:Description>Updated Submission handler test description</DCTERMS:Description>
+  </OXDS:DataSet>
+</rdf:RDF>
