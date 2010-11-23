@@ -28,12 +28,17 @@ from rdflib.graph import Graph
 from rdflib.plugins.memory import Memory
 from rdflib import Literal
 
-subject            =  URIRef("http://163.1.127.173/admiral-test/datasets/")
-dcterms            =  URIRef("http://purl.org/dc/terms/")
-oxds               =  URIRef("http://vocab.ox.ac.uk/dataset/schema#") 
-Logger = logging.getLogger("MaifestRDFUtils")
+subject  =  URIRef("http://163.1.127.173/admiral-test/datasets/")
+dcterms  =  URIRef("http://purl.org/dc/terms/")
+oxds     =  URIRef("http://vocab.ox.ac.uk/dataset/schema#") 
+Logger   = logging.getLogger("MaifestRDFUtils")
 
 def readManifestFile(manifestPath):
+    """
+    Read from the manifest file.   
+    
+    manifestPath    manifest file path
+    """
     # Read from the manifest.rdf file into an RDF Graph      
     rdfstream = manifestPath
     rdfGraph = Graph()
@@ -41,10 +46,22 @@ def readManifestFile(manifestPath):
     return rdfGraph
 
 def setSubject(datasetID):
+    """
+    Set the subject of the RDF triple.
+    
+    datasetID    datasetID of the dataset
+    """
     global subject
     subject  =  URIRef("http://163.1.127.173/admiral-test/datasets/" + datasetID )
 
 def writeToManifestFile(manifestPath,elementList,elementValueList):   
+    """
+    Write to the manifest file. 
+    
+    manifestPath      manifest file path
+    elementList       Element Names List to be written into the manifest files
+    elementValueList  Element Values List to be written into the manifest files
+    """
     # Create an empty RDF Graph 
     rdfGraph = Graph()
 
@@ -62,7 +79,13 @@ def writeToManifestFile(manifestPath,elementList,elementValueList):
     return rdfGraph
     
 def updateManifestFile(manifestPath, elementList, elementValueList):   
-    # Update the title and the description of the dataset submitted earlier
+    """
+    Update the manifest file. 
+    
+    manifestPath      manifest file path
+    elementList       Element Names List whose values need to be to be updated in the manifest files
+    elementValueList  Element Values List to be updated into the manifest files
+    """
   
     # Read the manifest File and update the title and the description
     rdfGraph = readManifestFile(manifestPath)
@@ -74,12 +97,25 @@ def updateManifestFile(manifestPath, elementList, elementValueList):
     return rdfGraph
     
 def saveToManifestFile(rdfGraph, manifestPath):
+    """
+    Save the RDF Graph into a manifest file. 
+    
+    rdfGraph          RDF Graph to be serialised into the manifest file
+    manifestPath      manifest file path
+    """
     # Serialise the RDf Graph into manifest.rdf file
     rdfGraph.serialize(destination=manifestPath, format='pretty-xml')
     return
 
 def compareRdfGraphs(graphA, graphB, assertEqual=False, elementsToCompare=[], compareLength=False):
-
+    """
+    Compare two RDG graphs
+    
+    graphA        RDF Graph of Graph A
+    graphB        RDF Graph of Graph B
+    assertEqual   Takes True/False; Generates assertions based on the value provided; Default: False
+    compareLength Tales true/false, Compares the lengths of the two graphs if provided with True and generates assertion; Default: False
+    """
     if assertEqual == True :
         if compareLength == True:
             assert len(graphA)==len(graphB),"Length of graphA = "+ repr(len(graphA))+ " and Length of graphB = " + repr(len(graphB))

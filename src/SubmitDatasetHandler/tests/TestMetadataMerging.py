@@ -37,7 +37,7 @@ ElementCreator     =  "creator"
 ElementIdentifier  =  "identifier"
 ElementTitle       =  "title"
 ElementDescription =  "description"
-ElementList        = [ElementCreator,ElementIdentifier,ElementTitle,ElementDescription]  
+ElementList        =  [ElementCreator,ElementIdentifier,ElementTitle,ElementDescription]  
 
 
 
@@ -51,7 +51,6 @@ class TestMetadataMerging(unittest.TestCase):
         return
     
     # Tests  
- 
     def testReadMetadata(self):    
        
         rdfGraphBeforeSerialisation = ManifestRDFUtils.writeToManifestFile(ManifestFilePath, ElementList, ElementValueList)
@@ -85,8 +84,6 @@ class TestMetadataMerging(unittest.TestCase):
         return    
     
     
-
-
 def getTestSuite(select="unit"):
     """
     Get test suite
@@ -115,6 +112,7 @@ def getTestSuite(select="unit"):
             ]
         }
     return TestUtils.getTestSuite(TestMetadataMerging, testdict, select=select)
+
 
 if __name__ == "__main__":
     TestUtils.runTests("TestMetadataMerging.log", getTestSuite, sys.argv)
