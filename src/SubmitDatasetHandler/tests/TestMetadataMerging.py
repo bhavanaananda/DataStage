@@ -4,29 +4,18 @@
 # See http://pyunit.sourceforge.net/pyunit.html
 #
 import sys, unittest, logging, re, StringIO, os, cgi, rdflib
-from rdflib.namespace import RDF
-from rdflib.graph import Graph
-from rdflib.plugins.memory import Memory
-from rdflib import URIRef, Namespace
-from rdflib import Literal
+from rdflib import URIRef, Namespace, RDF
 from os.path import normpath
 
 sys.path.append("..")
 sys.path.append("../cgi-bin")
 
-import SubmitDatasetHandler
+from MiscLib import TestUtils
 import SubmitDatasetUtils
 import ManifestRDFUtils
-import HttpUtils
-from MiscLib import TestUtils
 
 Logger             =  logging.getLogger("TestMetadataMerging")
-SiloName           =  "admiral-test"
-DirName            =  "DatasetsTopDir"
-DatasetsEmptyDir   =  "DatasetsEmptyDir"
-subject            =  URIRef("http://163.1.127.173/admiral-test/datasets/"+ DatasetId)
-dcterms            =  URIRef("http://purl.org/dc/terms/")
-oxds               =  URIRef("http://vocab.ox.ac.uk/dataset/schema#")
+
 ManifestFilePath   =  "./TestMetadataMergingManifest.rdf"
 Dict1              =  \
                       {  'datDir'      :  cgi.MiniFieldStorage('datDir'      ,  "./DatasetsTopDir")
@@ -41,127 +30,62 @@ DatasetId          =  SubmitDatasetUtils.getFormParam('datId', Dict1)
 DatasetDir         =  SubmitDatasetUtils.getFormParam('datDir', Dict1)
 Title              =  SubmitDatasetUtils.getFormParam('title', Dict1)
 Description        =  SubmitDatasetUtils.getFormParam('description', Dict1)
-User               =  SubmitDatasetUtils.getFormParam('user', Dict1) 
+User               =  SubmitDatasetUtils.getFormParam('user', Dict1)
 ElementValueList   =  [User, DatasetId, Title, Description]
 
 ElementCreator     =  "creator"
 ElementIdentifier  =  "identifier"
 ElementTitle       =  "title"
 ElementDescription =  "description"
-ElementList        = [ElementCreator,ElementIdentifier,ElementTitle,ElementDescription]   
+ElementList        = [ElementCreator,ElementIdentifier,ElementTitle,ElementDescription]  
+
+
 
 class TestMetadataMerging(unittest.TestCase):
 
     def setUp(self):
-     return
+        ManifestRDFUtils.setSubject(DatasetId)
+        return
        
     def tearDown(self):
-        try:
-            SubmitDatasetUtils.deleteDataset(SiloName,  SubmitDatasetUtils.getFormParam('datId', formdata))
-        except:
-            pass
         return
     
     # Tests  
  
     def testReadMetadata(self):    
        
-        rdfGraphBeforeSerialisation = writeToManifestFile(ManifestFilePath, ElementList, ElementValueList)
+        rdfGraphBeforeSerialisation = ManifestRDFUtils.writeToManifestFile(ManifestFilePath, ElementList, ElementValueList)
         
-        rdfGraphAfterSerialisation  = readManifestFile()
+        rdfGraphAfterSerialisation  = ManifestRDFUtils.readManifestFile(ManifestFilePath)
      
         # Compare the serialised graph obtained with the graph before serialisation
         self.assertEqual(len(rdfGraphBeforeSerialisation),5,'Graph length %i' %len(rdfGraphAfterSerialisation))
-        self.failUnless((subject,RDF.type,URIRef(oxds+"DataSet")) in rdfGraphAfterSerialisation, 'Testing submission type: '+subject+", "+ URIRef(oxds+"DataSet"))
-        self.failUnless((subject,URIRef(dcterms+ElementCreator),User) in rdfGraphAfterSerialisation, 'dcterms:creator')
-        self.failUnless((subject,URIRef(dcterms+ElementIdentifier),DatasetId) in rdfGraphAfterSerialisation, 'dcterms:identifier')
-        self.failUnless((subject,URIRef(dcterms+ElementTitle),Title) in rdfGraphAfterSerialisation, 'dcterms:title')
-        self.failUnless((subject,URIRef(dcterms+ElementDescription),Description) in rdfGraphAfterSerialisation, 'dcterms:Description')
+        self.failUnless((ManifestRDFUtils.subject,RDF.type,URIRef(ManifestRDFUtils.oxds+"DataSet")) in rdfGraphAfterSerialisation, 'Testing submission type: '+ManifestRDFUtils.subject+", "+ URIRef(ManifestRDFUtils.oxds+"DataSet"))
+        self.failUnless((ManifestRDFUtils.subject,URIRef(ManifestRDFUtils.dcterms+ElementCreator),User) in rdfGraphAfterSerialisation, 'ManifestRDFUtils.dcterms:creator')
+        self.failUnless((ManifestRDFUtils.subject,URIRef(ManifestRDFUtils.dcterms+ElementIdentifier),DatasetId) in rdfGraphAfterSerialisation, 'ManifestRDFUtils.dcterms:identifier')
+        self.failUnless((ManifestRDFUtils.subject,URIRef(ManifestRDFUtils.dcterms+ElementTitle),Title) in rdfGraphAfterSerialisation, 'ManifestRDFUtils.dcterms:title')
+        self.failUnless((ManifestRDFUtils.subject,URIRef(ManifestRDFUtils.dcterms+ElementDescription),Description) in rdfGraphAfterSerialisation, 'ManifestRDFUtils.dcterms:Description')
         return
     
     def testUpdateMetadata(self):
         updatedTitle      =  "Updated Submission handler test title"
         updatedDescription =  "Updated Submission handler test description" 
         
-        initialGraph = writeToManifestFile(ManifestFilePath, ElementList, ElementValueList)
+        initialGraph = ManifestRDFUtils.writeToManifestFile(ManifestFilePath, ElementList, ElementValueList)
 
-        updatedGraph = updateManifestFile(ManifestFilePath, [ElementTitle,ElementDescription], [updatedTitle, updatedDescription])
+        updatedGraph = ManifestRDFUtils.updateManifestFile(ManifestFilePath, [ElementTitle,ElementDescription], [updatedTitle, updatedDescription])
         
-        readGraph    = readManifestFile()
+        readGraph    = ManifestRDFUtils.readManifestFile(ManifestFilePath)
+
+        # Assert that (initialGraph != updatedGraph)          
+        self.assertEqual(False, ManifestRDFUtils.compareRdfGraphs(initialGraph, updatedGraph, assertEqual=False, compareLength=False))
         
-        # Assert that the graphs ar enot equal           
-        self.assertEqual(False, compareRdfGraphs(initialGraph, updatedGraph, assertEqual=False, ElementList))
-        
-        # Assert that the graphs are equal
-        self.assertEqual(True, compareRdfGraphs(updatedGraph, readGraph, assertEqual=True , ElementList))
+        # Assert that (updatedGraph == readGraph)
+        self.assertEqual(True, ManifestRDFUtils.compareRdfGraphs(updatedGraph, readGraph, assertEqual=True, compareLength=False))
         return    
     
     
-def writeToManifestFile(manifestPath,elementList,elementValueList):   
-    # Create an empty RDF Graph 
-    rdfGraph = Graph()
 
-    # Bind namespaces
-    rdfGraph.bind("dcterms", dcterms, override=True)
-    rdfGraph.bind("oxds", oxds, override=True)
-    
-    # Write to the RDF Graph
-    rdfGraph.add((subject, RDF.type, URIRef(oxds+"DataSet")))
-    for element in elementList and elementValue in elementValueList:
-        rdfGraph.add((subject, URIRef(dcterms+element), Literal(elementValue)))
-#    rdfGraphBeforeSerialisation.add((subject, URIRef(dcterms+ElementIdentifier), Literal(DatasetId)))
-#    rdfGraphBeforeSerialisation.add((subject, URIRef(dcterms+ElementTitle), Literal(Title)))
-#    rdfGraphBeforeSerialisation.add((subject, URIRef(dcterms+ElementDescription), Literal(Description)))
-    
-    # Serialise it to a manifest.rdf file
-    saveToManifestFile(rdfGraph, manifestPath)
-    return rdfGraph
-
-def readManifestFile(manifestPath):
-    # Read from the manifest.rdf file into an RDF Graph      
-    rdfstream = manifestPath
-    rdfGraph = Graph()
-    rdfGraph.parse(rdfstream)   
-    return rdfGraph
-    
-def updateManifestFile(manifestPath, elementList, elementValueList):   
-    # Update the title and the description of the dataset submitted earlier
-  
-    # Read the manifest File and update the title and the description
-    rdfGraph = readManifestFile(manifestPath)
-    
-    for element in elementList and elementValue in elementValueList:
-        rdfGraph.set((subject, URIRef(dcterms+element), Literal(elementValueList)))
-    
-    saveToManifestFile(rdfGraph,manifestPath)
-    return rdfGraph
-    
-def saveToManifestFile(rdfGraph, manifestPath):
-    # Serialise the RDf Graph into manifest.rdf file
-    rdfGraph.serialize(destination=manifestPath, format='pretty-xml')
-    return
-
-def compareRdfGraphs(graphA, graphB, assertEqual=False, elementsToCompare=[]):
-    # Compare the serialised graph obtained with the graph before serialisation
-    if equal == True :
-        assert len(graphA)==len(graphB),"Length of graphA = "+ repr(len(graphA))+ " and Length of graphB = " + repr(len(graphB))
-        assert set(graphA)==set(graphB)," GraphA is not same as GraphB!"
-        
-        for elementName in elementsToCompare :
-            assert graphA.value(subject,URIRef(dcterms+elementName),None)==graphB.value(subject,URIRef(dcterms+elementName),None),\
-            elementName +" in GraphA = " + graphA.value(subject,URIRef(dcterms+elementName),None) + \
-            " and"+ elementName +" in GraphB = " + graphB.value(subject,URIRef(dcterms+elementName),None)
-            
-    else :
-        assert len(graphA)!=len(graphB),"Length of graphA = "+ repr(len(graphA))+ " and Length of graphB = " + repr(len(graphB))
-        assert set(graphA)!=set(graphB)," GraphA is same as GraphB!"
-        
-        for elementName in elementsToCompare :
-            assert graphA.value(subject,URIRef(dcterms+elementName),None)!=graphB.value(subject,URIRef(dcterms+elementName),None),\
-            elementName +" in GraphA = " + graphA.value(subject,URIRef(dcterms+elementName),None) + \
-            " and"+ elementName +" in GraphB = " + graphB.value(subject,URIRef(dcterms+elementName),None)
-        
-    return True
 
 def getTestSuite(select="unit"):
     """
