@@ -24,9 +24,9 @@ if (typeof admiral == "undefined")
     admiral = {};
 }
 
-admiral.displayDirectories = function (callback)
+admiral.getMetadata = function (directorySelcted, callback)
 {
-    urlval = "../../SubmitDatasetHandler/cgi-bin/DirectoryListingHandler.py"
+    urlval = "../../SubmitDatasetHandler/cgi-bin/DirectoryListingHandler.py?directory="+directorySelcted
     jQuery.ajax({
         type:         "GET",
         url:           urlval,
@@ -37,7 +37,7 @@ admiral.displayDirectories = function (callback)
             },
         success:      function (data, status, xhr)
             {   
-                //log.debug("Display Directories: " + jQuery.toJSON(data))
+                //log.debug("Get Metadata: " + jQuery.toJSON(data))
                 callback(data);
             },
         error:        function (xhr, status) 

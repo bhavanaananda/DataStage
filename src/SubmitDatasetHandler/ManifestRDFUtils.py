@@ -21,17 +21,19 @@ Support functions for creating, reading, writing and updating manifest RDF file.
 __author__ = "Bhavana Ananda"
 __version__ = "0.1"
 
-import logging, rdflib
+import logging,  os, rdflib
+from os.path import isdir
 from rdflib import URIRef, Namespace
 from rdflib.namespace import RDF
 from rdflib.graph import Graph
 from rdflib.plugins.memory import Memory
 from rdflib import Literal
 
-subject  =  URIRef("http://163.1.127.173/admiral-test/datasets/")
-dcterms  =  URIRef("http://purl.org/dc/terms/")
-oxds     =  URIRef("http://vocab.ox.ac.uk/dataset/schema#") 
-Logger   = logging.getLogger("MaifestRDFUtils")
+subject              =  URIRef("http://163.1.127.173/admiral-test/datasets/")
+dcterms              =  URIRef("http://purl.org/dc/terms/")
+oxds                 =  URIRef("http://vocab.ox.ac.uk/dataset/schema#") 
+Logger               =  logging.getLogger("MaifestRDFUtils")
+DefaultManifestName  =  "manifest.rdf"
 
 def readManifestFile(manifestPath):
     """
@@ -44,15 +46,6 @@ def readManifestFile(manifestPath):
     rdfGraph = Graph()
     rdfGraph.parse(rdfstream)   
     return rdfGraph
-
-def setSubject(datasetID):
-    """
-    Set the subject of the RDF triple.
-    
-    datasetID    datasetID of the dataset
-    """
-    global subject
-    subject  =  URIRef("http://163.1.127.173/admiral-test/datasets/" + datasetID )
 
 def writeToManifestFile(manifestPath,elementList,elementValueList):   
     """
@@ -107,6 +100,17 @@ def saveToManifestFile(rdfGraph, manifestPath):
     rdfGraph.serialize(destination=manifestPath, format='pretty-xml')
     return
 
+
+def setSubject(datasetID):
+    """
+    Set the subject of the RDF triple.
+    
+    datasetID    datasetID of the dataset
+    """
+    global subject
+    subject  =  URIRef("http://163.1.127.173/admiral-test/datasets/" + datasetID )
+    return
+
 def compareRdfGraphs(graphA, graphB, assertEqual=False, elementsToCompare=[], compareLength=False):
     """
     Compare two RDG graphs
@@ -137,3 +141,45 @@ def compareRdfGraphs(graphA, graphB, assertEqual=False, elementsToCompare=[], co
             " and"+ elementName +" in GraphB = " + graphB.value(subject,URIRef(dcterms+elementName),None)   
              
     return assertEqual
+
+def getSubmitDatasetToolFieldsFromManifest(rdfGraph,elementList):
+    """
+    Get element values of the element list supplied from the RDF graph
+    
+    rdfGraph      RDF Graph
+    elementList   Element Names List whose values need to be to be extracted from the manifest files
+    """
+    elementValueList = []
+    for element in elementList:
+        elementValueList.append(rdfGraph.value(subject,URIRef(dcterms+element),None))   
+    return elementValueList
+
+def getManifestRDFAsJsonFromDirectory(dirName, basedir, elementList, manifestName = DefaultManifestName):
+    """
+    Gets the manifest.rdf as JSON formatted string from a given directory 
+    
+    dirName       directory in which the manifest.rdf is to be searched and returned; returns None if not found
+    basedir       base directory in which the dirName directory is found
+    elementList   Element Names List whose values need to be to be updated in the manifest files
+    """
+    manifestPath     =  None
+    file             =  None
+    elementValueList =  []
+    json             =  ""
+    directoryPath    =  basedir + os.path.sep + dirName
+   
+    if  isdir(directoryPath):
+        manifestPath = directoryPath + os.path.sep + manifestName
+        Logger.debug(repr(os.path.isfile(manifestPath)) +":"+ manifestPath)
+    if manifestPath != None and os.path.isfile(manifestPath):
+        rdfGraph = readManifestFile(manifestPath)
+        elementValueList = getSubmitDatasetToolFieldsFromManifest(rdfGraph, elementList)
+    
+    for index in range(len(elementValueList)):
+        json = json + elementList[index]+":"+ elementValueList[index]+","
+
+    if json != "":
+        return json[:-1]
+    
+    return json
+

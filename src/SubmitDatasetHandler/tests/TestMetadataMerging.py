@@ -16,7 +16,7 @@ import ManifestRDFUtils
 
 Logger             =  logging.getLogger("TestMetadataMerging")
 
-ManifestFilePath   =  "./TestMetadataMergingManifest.rdf"
+ManifestFileName   =  "TestMetadataMergingManifest.rdf"
 Dict1              =  \
                       {  'datDir'      :  cgi.MiniFieldStorage('datDir'      ,  "./DatasetsTopDir")
                        , 'datId'       :  cgi.MiniFieldStorage('datId'       ,  "SubmissionHandlerTest")
@@ -32,6 +32,10 @@ Title              =  SubmitDatasetUtils.getFormParam('title', Dict1)
 Description        =  SubmitDatasetUtils.getFormParam('description', Dict1)
 User               =  SubmitDatasetUtils.getFormParam('user', Dict1)
 ElementValueList   =  [User, DatasetId, Title, Description]
+
+BaseDir            =  "."
+SubmitToolDatDirFormField = "DatasetsTopDir"
+ManifestFilePath   =  SubmitToolDatDirFormField+ "/TestMetadataMergingManifest.rdf"
 
 ElementCreator     =  "creator"
 ElementIdentifier  =  "identifier"
@@ -67,7 +71,7 @@ class TestMetadataMerging(unittest.TestCase):
         return
     
     def testUpdateMetadata(self):
-        updatedTitle      =  "Updated Submission handler test title"
+        updatedTitle       =  "Updated Submission handler test title"
         updatedDescription =  "Updated Submission handler test description" 
         
         initialGraph = ManifestRDFUtils.writeToManifestFile(ManifestFilePath, ElementList, ElementValueList)
@@ -83,6 +87,25 @@ class TestMetadataMerging(unittest.TestCase):
         self.assertEqual(True, ManifestRDFUtils.compareRdfGraphs(updatedGraph, readGraph, assertEqual=True, compareLength=False))
         return    
     
+    def testGetSubmitDatasetToolFieldsFromManifest(self):
+        rdfGraph = ManifestRDFUtils.writeToManifestFile(ManifestFilePath, ElementList, ElementValueList)        
+        fields = ManifestRDFUtils.getSubmitDatasetToolFieldsFromManifest(rdfGraph, ElementList)
+        self.assertEquals(fields,ElementValueList,"Problem reading submit dataset utility Fields!")
+        return
+    
+    def testGetManifestRDFAsJsonFromDirectory(self):
+        rdfGraph = ManifestRDFUtils.writeToManifestFile(ManifestFilePath, ElementList, ElementValueList)
+        actualJSONString = ManifestRDFUtils.getManifestRDFAsJsonFromDirectory(SubmitToolDatDirFormField, BaseDir, ElementList, manifestName = ManifestFileName)
+        
+        expectedJSONString = ""
+        for index in range(len(ElementList)):
+            expectedJSONString = expectedJSONString + ElementList[index]+":"+ ElementValueList[index]+","
+        expectedJSONString = expectedJSONString[:-1]
+        
+        Logger.debug(" actual = "+actualJSONString)
+        Logger.debug(" expected = "+expectedJSONString )
+        self.assertEqual(actualJSONString,expectedJSONString,"Invalid JSON formatted String!")
+        return
     
 def getTestSuite(select="unit"):
     """
@@ -99,7 +122,9 @@ def getTestSuite(select="unit"):
         "unit":
             [
               "testReadMetadata",
-              "testUpdateMetadata"
+              "testUpdateMetadata",
+              "testGetSubmitDatasetToolFieldsFromManifest",
+              "testGetManifestRDFAsJsonFromDirectory"
             ],
         "component":
             [ #"testComponents"

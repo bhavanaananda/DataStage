@@ -15,8 +15,7 @@
 # $Id: $
 
 """
-Main CGI handler program for submitting data files from ADMIRAL to to stored as
-an RDF Databank dataset.
+Directory Lisiting handler thats lists all directories from ADMIRAL to the requesting module
 """
 __author__ = "Bhavana Ananda"
 __version__ = "0.1"
