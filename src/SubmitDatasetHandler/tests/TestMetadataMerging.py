@@ -26,6 +26,13 @@ Dict1              =  \
                        , 'pass'        :  cgi.MiniFieldStorage('pass'        ,  "admiral")
                        , 'submit'      :  cgi.MiniFieldStorage('submit'      ,  "Submit")
                       }
+                      
+ExpectedDictionary =  {
+                         "creator"     : "admiral"
+                       , "identifier"  : "SubmissionHandlerTest"
+                       , "title"       : "Submission handler test title"
+                       , "description" : "Submission handler test description"                     
+                      }
 DatasetId          =  SubmitDatasetUtils.getFormParam('datId', Dict1)
 DatasetDir         =  SubmitDatasetUtils.getFormParam('datDir', Dict1)
 Title              =  SubmitDatasetUtils.getFormParam('title', Dict1)
@@ -93,18 +100,21 @@ class TestMetadataMerging(unittest.TestCase):
         self.assertEquals(fields,ElementValueList,"Problem reading submit dataset utility Fields!")
         return
     
-    def testGetManifestRDFAsJsonFromDirectory(self):
+    def testGetDictionaryFromManifest(self):
         rdfGraph = ManifestRDFUtils.writeToManifestFile(ManifestFilePath, ElementList, ElementValueList)
-        actualJSONString = ManifestRDFUtils.getManifestRDFAsJsonFromDirectory(SubmitToolDatDirFormField, BaseDir, ElementList, manifestName = ManifestFileName)
-        
-        expectedJSONString = ""
-        for index in range(len(ElementList)):
-            expectedJSONString = expectedJSONString + ElementList[index]+":"+ ElementValueList[index]+","
-        expectedJSONString = expectedJSONString[:-1]
-        
-        Logger.debug(" actual = "+actualJSONString)
-        Logger.debug(" expected = "+expectedJSONString )
-        self.assertEqual(actualJSONString,expectedJSONString,"Invalid JSON formatted String!")
+        actualDictionary = ManifestRDFUtils.getDictionaryFromManifest(SubmitToolDatDirFormField, BaseDir, ElementList, manifestName = ManifestFileName)
+        Logger.debug(repr(actualDictionary))
+#        expectedJSONString = ""
+#        for index in range(len(ElementList)):
+#            expectedJSONString = expectedJSONString + ElementList[index]+":"+ ElementValueList[index]+","
+#        expectedJSONString = expectedJSONString[:-1]
+#        
+#        Logger.debug(" actual = "+actualJSONString)
+#        Logger.debug(" expected = "+expectedJSONString )
+#        self.assertEqual(actualJSONString,expectedJSONString,"Invalid JSON formatted String!")
+
+#        self.assertEqual(ElementValueList, values, "Error fetching element values from the metadata!")
+        self.assertEqual(ExpectedDictionary,actualDictionary, "Error fetching dictionary from the metadata!")
         return
     
 def getTestSuite(select="unit"):
@@ -124,7 +134,7 @@ def getTestSuite(select="unit"):
               "testReadMetadata",
               "testUpdateMetadata",
               "testGetSubmitDatasetToolFieldsFromManifest",
-              "testGetManifestRDFAsJsonFromDirectory"
+              "testGetDictionaryFromManifest"
             ],
         "component":
             [ #"testComponents"

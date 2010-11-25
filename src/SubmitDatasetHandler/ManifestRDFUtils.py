@@ -154,9 +154,9 @@ def getSubmitDatasetToolFieldsFromManifest(rdfGraph,elementList):
         elementValueList.append(rdfGraph.value(subject,URIRef(dcterms+element),None))   
     return elementValueList
 
-def getManifestRDFAsJsonFromDirectory(dirName, basedir, elementList, manifestName = DefaultManifestName):
+def getDictionaryFromManifest(dirName, basedir, elementList, manifestName = DefaultManifestName):
     """
-    Gets the manifest.rdf as JSON formatted string from a given directory 
+    Gets the dictionary of Field-Values from the manifest
     
     dirName       directory in which the manifest.rdf is to be searched and returned; returns None if not found
     basedir       base directory in which the dirName directory is found
@@ -165,21 +165,43 @@ def getManifestRDFAsJsonFromDirectory(dirName, basedir, elementList, manifestNam
     manifestPath     =  None
     file             =  None
     elementValueList =  []
+    dict             =  {}
     json             =  ""
     directoryPath    =  basedir + os.path.sep + dirName
-   
+    Logger.debug(directoryPath)
     if  isdir(directoryPath):
         manifestPath = directoryPath + os.path.sep + manifestName
         Logger.debug(repr(os.path.isfile(manifestPath)) +":"+ manifestPath)
+        
     if manifestPath != None and os.path.isfile(manifestPath):
         rdfGraph = readManifestFile(manifestPath)
         elementValueList = getSubmitDatasetToolFieldsFromManifest(rdfGraph, elementList)
+         
+        Logger.debug("Element List =" + repr(elementList))
+        Logger.debug("Element Value List =" + repr(elementValueList))
+        
+    if elementValueList!=[]:
+        dict = createDictionary(elementList, elementValueList)
+        
+    return dict
     
-    for index in range(len(elementValueList)):
-        json = json + elementList[index]+":"+ elementValueList[index]+","
+#    for index in range(len(elementValueList)):
+#        json = json + elementList[index]+":"+ elementValueList[index]+","
+#
+#    if json != "":
+#        return json[:-1]
 
-    if json != "":
-        return json[:-1]
+def createDictionary(keyList, valueList):   
+    """
+    Creates and returns a dictionary from the keyList and valueList supplied 
     
-    return json
+    keyList       List of keys
+    valueList     List of values
+    """
+    dict = {}
+    i = 0
+    for keyName in keyList:
+        dict[keyName] = valueList[i]
+        i += 1
+    return dict
 

@@ -27,11 +27,16 @@ sys.path.append("..")
 sys.path.append("../..")
 
 import ManifestRDFUtils
+import SubmitDatasetUtils
 from MiscLib import TestUtils
 
-ZipMimeType  =  "application/zip"
-FilePat      =  re.compile("^.*$(?<!\.zip)")
-logger       =  logging.getLogger("GetMetadata")
+try:
+    # Running Python 2.5 with simplejson?
+    import simplejson as json
+except ImportError:
+    import json as json
+    
+Logger       =  logging.getLogger("GetMetadata")
 
 ElementCreator     =  "creator"
 ElementIdentifier  =  "identifier"
@@ -39,7 +44,7 @@ ElementTitle       =  "title"
 ElementDescription =  "description"
 ElementList        =  [ElementCreator,ElementIdentifier,ElementTitle,ElementDescription]  
 
-def getMetadata(formdata, basedir, outputstr):
+def getMetadata(formdata, basedir, outputstr, manifestName):
     """
     Gets the metadata from the manifest.rdf file and formulates it into the JSON format.
     
@@ -50,15 +55,10 @@ def getMetadata(formdata, basedir, outputstr):
     outputstr.write("Content-type: application/JSON\n")
     outputstr.write("\n")      # end of MIME headers
 
-    dirs = getManifestRDFAsJsonFromDirectory(dirName , basedir)
-
-    #result = json.dumps(dirs)
-    #outputstr.write(result)
-
-    json.dump(dirs, outputstr, indent=4)
-
+    manifestDictionary = ManifestRDFUtils.getDictionaryFromManifest(dirName, basedir, ElementList, manifestName )
+    # Logger.debug("Manifest Dictionary = " + repr(manifestDictionary))
+    json.dump(manifestDictionary, outputstr)
     return
-
 
 
 
