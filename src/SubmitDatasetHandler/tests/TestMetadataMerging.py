@@ -15,8 +15,6 @@ import SubmitDatasetUtils
 import ManifestRDFUtils
 
 Logger             =  logging.getLogger("TestMetadataMerging")
-
-ManifestFileName   =  "TestMetadataMergingManifest.rdf"
 Dict1              =  \
                       {  'datDir'      :  cgi.MiniFieldStorage('datDir'      ,  "./DatasetsTopDir")
                        , 'datId'       :  cgi.MiniFieldStorage('datId'       ,  "SubmissionHandlerTest")
@@ -91,15 +89,15 @@ class TestMetadataMerging(unittest.TestCase):
         self.assertEqual(True, ManifestRDFUtils.compareRDFGraphs(updatedGraph, readGraph,ElementList),"Error in Updating the manifest file!")
         return    
     
-    def testGetSubmitDatasetToolFieldsFromManifest(self):
+    def testGetElementValuesFromManifest(self):
         rdfGraph = ManifestRDFUtils.writeToManifestFile(ManifestFilePath, ElementList, ElementValueList)        
-        fields = ManifestRDFUtils.getSubmitDatasetToolFieldsFromManifest(rdfGraph, ElementList)
+        fields = ManifestRDFUtils.getElementValuesFromManifest(rdfGraph, ElementList)
         self.assertEquals(fields,ElementValueList,"Problem reading submit dataset utility Fields!")
         return
     
     def testGetDictionaryFromManifest(self):
         rdfGraph = ManifestRDFUtils.writeToManifestFile(ManifestFilePath, ElementList, ElementValueList)
-        actualDictionary = ManifestRDFUtils.getDictionaryFromManifest(SubmitToolDatDirFormField, BaseDir, ElementList, manifestName = ManifestFileName)
+        actualDictionary = ManifestRDFUtils.getDictionaryFromManifest(ManifestFilePath, ElementList)
         Logger.debug(repr(actualDictionary))
         self.assertEqual(ExpectedDictionary,actualDictionary, "Error fetching dictionary from the metadata!")
         return
@@ -120,7 +118,7 @@ def getTestSuite(select="unit"):
             [
               "testReadMetadata",
               "testUpdateMetadata",
-              "testGetSubmitDatasetToolFieldsFromManifest",
+              "testGetElementValuesFromManifest",
               "testGetDictionaryFromManifest"
             ],
         "component":

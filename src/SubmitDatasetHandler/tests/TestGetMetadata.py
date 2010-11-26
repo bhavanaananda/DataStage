@@ -23,8 +23,9 @@ from MiscLib import TestUtils
 Logger                    =  logging.getLogger("TestGetMetadata")
 BaseDir                   =  "."
 SubmitToolDatDirFormField =  "DatasetsTopDir"
+ManifestName              = "TestGetMetadataManifest.rdf"
 ManifestFilePath          =  SubmitToolDatDirFormField+ "/TestGetMetadataManifest.rdf"
-ManifestFileName          =  "TestGetMetadataManifest.rdf"
+
 formdata                     =  \
                               {  'datDir'      :  cgi.MiniFieldStorage('datDir'      ,  "./DatasetsTopDir")
                                , 'datId'       :  cgi.MiniFieldStorage('datId'       ,  "SubmissionHandlerTest")
@@ -69,13 +70,13 @@ class TestGetMetadata(unittest.TestCase):
         ManifestRDFUtils.writeToManifestFile(ManifestFilePath, ElementList, ElementValueList)
 
         # Invoke get mtatadata submission program, passing faked dataset directory
-        GetMetadata.getMetadata(formdata, baseDir, outputStr, ManifestFileName)
+        GetMetadata.getMetadata(formdata, BaseDir, ManifestName, outputStr)
     
         outputStr.seek(0, os.SEEK_SET)
         firstLine = outputStr.readline()
         self.assertEqual( firstLine, "Content-type: application/JSON\n", "Expected Metadata as application/JSON")
         
-        Logger.debug("Output String from output stream: "+outputStr.getvalue())
+        Logger.debug("Output String from output stream: " + outputStr.getvalue())
 
         # Check retrieving metadata
         metadata = json.load(outputStr)

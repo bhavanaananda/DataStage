@@ -9,23 +9,43 @@ sys.path.append("..")
 sys.path.append("../cgi-bin")
 
 import SubmitDatasetHandler
+import ManifestRDFUtils
 import SubmitDatasetUtils
 import HttpUtils
 from MiscLib import TestUtils
-logger           =  logging.getLogger("TestSubmitDatasethandler")
-SiloName         =  "admiral-test"
-DirName          =  "DatasetsTopDir"
-DatasetsEmptyDir =  "DatasetsEmptyDir"
-formdata         =  \
-                    { 'datDir'      :  cgi.MiniFieldStorage('datDir'      ,  "./DatasetsTopDir")
-                    , 'datId'       :  cgi.MiniFieldStorage('datId'       ,  "SubmissionHandlerTest")
-                    , 'title'       :  cgi.MiniFieldStorage('title'       ,  "Submission handler test")
-                    , 'description' :  cgi.MiniFieldStorage('description' ,  "Submission handler test description")
-                    , 'user'        :  cgi.MiniFieldStorage('user'        ,  "admiral")
-                    , 'pass'        :  cgi.MiniFieldStorage('pass'        ,  "admiral")
-                    , 'submit'      :  cgi.MiniFieldStorage('submit'      ,  "Submit")
-                    }
-    
+logger                   =  logging.getLogger("TestSubmitDatasethandler")
+SiloName                 =  "admiral-test"
+DirName                  =  "DatasetsTopDir"
+DatasetsEmptyDir         =  "DatasetsEmptyDir"
+formdata                 =  \
+                            { 'datDir'      :  cgi.MiniFieldStorage('datDir'      ,  "./DatasetsTopDir")
+                            , 'datId'       :  cgi.MiniFieldStorage('datId'       ,  "SubmissionHandlerTest")
+                            , 'title'       :  cgi.MiniFieldStorage('title'       ,  "Submission handler test")
+                            , 'description' :  cgi.MiniFieldStorage('description' ,  "Submission handler test description")
+                            , 'user'        :  cgi.MiniFieldStorage('user'        ,  "admiral")
+                            , 'pass'        :  cgi.MiniFieldStorage('pass'        ,  "admiral")
+                            , 'submit'      :  cgi.MiniFieldStorage('submit'      ,  "Submit")
+                            }
+DatasetId                 =  SubmitDatasetUtils.getFormParam('datId', formdata)
+DatasetDir                =  SubmitDatasetUtils.getFormParam('datDir', formdata)
+Title                     =  SubmitDatasetUtils.getFormParam('title', formdata)
+Description               =  SubmitDatasetUtils.getFormParam('description', formdata)
+User                      =  SubmitDatasetUtils.getFormParam('user', formdata)
+ElementValueList          =  [User, DatasetId, Title, Description]
+
+UpdatedTitle              =  "Updated Title"
+UpdatedDescription        =  "Updated Description"
+ElementValueUpdatedList   =  [User, DatasetId, UpdatedTitle, UpdatedDescription]
+
+ElementCreator            =  "creator"
+ElementIdentifier         =  "identifier"
+ElementTitle              =  "title"
+ElementDescription        =  "description"
+ElementList               =  [ElementCreator,ElementIdentifier,ElementTitle,ElementDescription]  
+
+BaseDir                   =  "."
+ManifestFilePath          =  BaseDir + os.path.sep + DirName + "/TestMetadataMergingManifest.rdf"
+
 class TestSubmitDatasethandler(unittest.TestCase):
 
     def setUp(self):
@@ -160,12 +180,24 @@ class TestSubmitDatasethandler(unittest.TestCase):
          
         datasetId  =  SubmitDatasetUtils.getFormParam('datId', formdata)
         datasetDir =  SubmitDatasetUtils.getFormParam('datDir', formdata)
-        HttpUtils.doHTTP_GET(resource="/" + SiloName +"/datasets/"+datasetId+"-"+DatasetsEmptyDir, 
-            expect_status=200, expect_reason="OK", accept_type="application/json")
+        HttpUtils.doHTTP_GET(resource="/" + SiloName +"/datasets/"+datasetId+"-"+DatasetsEmptyDir, expect_status=200, expect_reason="OK", accept_type="application/json")
         
         SubmitDatasetUtils.deleteDataset(SiloName, datasetId+"-"+DatasetsEmptyDir)
         return
     
+    def testSubmitDatasetHandlerUpdateMetadataBeforeSubmission(self):
+        # the initial manifest file 
+        SubmitDatasetHandler.updateMetadataInDirectoryBeforeSubmission(ManifestFilePath, ElementList, ElementValueList)
+        # Assert that the manifets has been created
+        self.assertEqual(True,ManifestRDFUtils.ifFileExists(ManifestFilePath),"Manifest file was not successfully created!")
+        # Update the manifets contents 
+        SubmitDatasetHandler.updateMetadataInDirectoryBeforeSubmission(ManifestFilePath, ElementList, ElementValueUpdatedList)   
+        
+        # Read the manifest again
+        rdfGraph = ManifestRDFUtils. readManifestFile(ManifestFilePath)
+        # Assert that the Updated Value list from metadata == "ElementValueUpdatedList"
+        self.assertEqual(ManifestRDFUtils.getElementValuesFromManifest(rdfGraph,ElementList),ElementValueUpdatedList,"Error updating the metadata!")       
+        return
 
 def getTestSuite(select="unit"):
     """
@@ -174,7 +206,7 @@ def getTestSuite(select="unit"):
     select  is one of the following:
             "unit"      return suite of unit tests only
             "component" return suite of unit and component tests
-            "all"       return suite of unit, component and integration tests
+            "all"       return suite of udirName, baseDir,nit, component and integration tests
             "pending"   return suite of pending tests
             name        a single named test to be run
     """
@@ -186,6 +218,7 @@ def getTestSuite(select="unit"):
              ,"testSubmitDatasetHandlerDatasetDeletion"
              ,"testSubmitDatasetHandlerDirectorySubmission"
              ,"testSubmitDatasetHandlerEmptyDirectorySubmission"
+             ,"testSubmitDatasetHandlerUpdateMetadataBeforeSubmission"
             ],
         "component":
             [ #"testComponents"

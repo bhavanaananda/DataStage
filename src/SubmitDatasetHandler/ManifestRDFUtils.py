@@ -33,7 +33,6 @@ subject              =  URIRef("http://163.1.127.173/admiral-test/datasets/")
 dcterms              =  URIRef("http://purl.org/dc/terms/")
 oxds                 =  URIRef("http://vocab.ox.ac.uk/dataset/schema#") 
 Logger               =  logging.getLogger("MaifestRDFUtils")
-DefaultManifestName  =  "manifest.rdf"
 
 def readManifestFile(manifestPath):
     """
@@ -111,38 +110,6 @@ def setSubject(datasetID):
     subject  =  URIRef("http://163.1.127.173/admiral-test/datasets/" + datasetID )
     return
 
-def oldcompareRdfGraphs(graphA, graphB, assertEqual=False, elementsToCompare=[], compareLength=False):
-    """
-    Compare two RDG graphs
-    
-    graphA        RDF Graph of Graph A
-    graphB        RDF Graph of Graph B
-    assertEqual   Takes True/False; Generates assertions based on the value provided; Default: False
-    compareLength Tales true/false, Compares the lengths of the two graphs if provided with True and generates assertion; Default: False
-    """
-    if assertEqual == True :
-        if compareLength == True:
-            assert len(graphA)==len(graphB),"Length of graphA = "+ repr(len(graphA))+ " and Length of graphB = " + repr(len(graphB))
-        assert set(graphA)==set(graphB)," GraphA is not same as GraphB!"
-        
-        for elementName in elementsToCompare :
-            assert graphA.value(subject,URIRef(dcterms+elementName),None)==graphB.value(subject,URIRef(dcterms+elementName),None),\
-            elementName +" in GraphA = " + graphA.value(subject,URIRef(dcterms+elementName),None) + \
-            " and"+ elementName +" in GraphB = " + graphB.value(subject,URIRef(dcterms+elementName),None)
-            
-    else :
-        if compareLength == True:
-            assert len(graphA)!=len(graphB),"Length of graphA = "+ repr(len(graphA))+ " and Length of graphB = " + repr(len(graphB))
-        assert set(graphA)!=set(graphB)," GraphA is same as GraphB!"
-        
-        for elementName in elementsToCompare :
-            assert graphA.value(subject,URIRef(dcterms+elementName),None)!=graphB.value(subject,URIRef(dcterms+elementName),None),\
-            elementName +" in GraphA = " + graphA.value(subject,URIRef(dcterms+elementName),None) + \
-            " and"+ elementName +" in GraphB = " + graphB.value(subject,URIRef(dcterms+elementName),None)   
-             
-    return assertEqual
-
-
 def compareRDFGraphs(graphA, graphB, elementsToCompare=[]):
     """
     Compare two RDG graphs
@@ -163,7 +130,7 @@ def compareRDFGraphs(graphA, graphB, elementsToCompare=[]):
 
     return graphsEqual
 
-def getSubmitDatasetToolFieldsFromManifest(rdfGraph,elementList):
+def getElementValuesFromManifest(rdfGraph,elementList):
     """
     Get element values of the element list supplied from the RDF graph
     
@@ -175,29 +142,24 @@ def getSubmitDatasetToolFieldsFromManifest(rdfGraph,elementList):
         elementValueList.append(rdfGraph.value(subject,URIRef(dcterms+element),None))   
     return elementValueList
 
-def getDictionaryFromManifest(dirName, basedir, elementList, manifestName = DefaultManifestName):
+def getDictionaryFromManifest(manifestPath, elementList):
     """
     Gets the dictionary of Field-Values from the manifest RDF
     
-    dirName       directory in which the manifest.rdf is to be searched and returned; returns None if not found
-    basedir       base directory in which the dirName directory is found
-    elementList   Element Names List whose values need to be to be updated in the manifest files
-    manifestName  manifest file name
+    manifestPath   path of the manifest file
+    elementList    Element Names List whose values need to be to be updated in the manifest files
     """
-    manifestPath     =  None
+
     file             =  None
     elementValueList =  []
     dict             =  {}
     json             =  ""
-    directoryPath    =  basedir + os.path.sep + dirName
-    Logger.debug(directoryPath)
-    if  isdir(directoryPath):
-        manifestPath = directoryPath + os.path.sep + manifestName
-        Logger.debug(repr(os.path.isfile(manifestPath)) +":"+ manifestPath)
+
+    Logger.debug(manifestPath)
         
-    if manifestPath != None and os.path.isfile(manifestPath):
+    if manifestPath != None and ifFileExists(manifestPath):
         rdfGraph = readManifestFile(manifestPath)
-        elementValueList = getSubmitDatasetToolFieldsFromManifest(rdfGraph, elementList)
+        elementValueList = getElementValuesFromManifest(rdfGraph, elementList)
          
         Logger.debug("Element List =" + repr(elementList))
         Logger.debug("Element Value List =" + repr(elementValueList))
@@ -206,7 +168,17 @@ def getDictionaryFromManifest(dirName, basedir, elementList, manifestName = Defa
         dict = createDictionary(elementList, elementValueList)
         
     return dict
+
+
+def ifFileExists(filePath):
+    """
+    Cheks if the file exists; returns True/False
     
+    filePath     File Path
+    """
+   
+    return os.path.isfile(filePath)
+
 def createDictionary(keyList, valueList):   
     """
     Creates and returns a dictionary from the keyList and valueList supplied 
