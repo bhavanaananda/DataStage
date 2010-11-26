@@ -15,18 +15,18 @@ from MiscLib import TestUtils
 import HttpUtils
 import SubmitDatasetUtils
 
-SiloName         =  "admiral-test"
-FileName         =  "file1.txt"
-Username         =  "admiral"
-Password         =  "admiral"
-TestDatasetName  =  "TestSubmitDataset"
-EmptyTestDatasetName = "Empty"+TestDatasetName
-FileMimeType     =  "text/plain"
-ZipMimeType      =  "application/zip"
-DirName          =  "DatasetsTopDir"
-EmptyDirName     =  "DatasetsEmptyDir"
-TestPat          =  re.compile("^.*$(?<!\.zip)")
-logger           =  logging.getLogger(TestDatasetName)
+SiloName             =  "admiral-test"
+FileName             =  "file1.txt"
+Username             =  "admiral"
+Password             =  "admiral"
+TestDatasetName      =  "TestSubmitDataset"
+EmptyTestDatasetName =  "Empty"
+FileMimeType         =  "text/plain"
+ZipMimeType          =  "application/zip"
+DirName              =  "DatasetsTopDir"
+EmptyDirName         =  "DatasetsEmptyDir"
+TestPat              =  re.compile("^.*$(?<!\.zip)")
+logger               =  logging.getLogger(TestDatasetName)
 
 class TestDatasetSubmission(unittest.TestCase):
   

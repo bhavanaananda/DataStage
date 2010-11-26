@@ -111,7 +111,7 @@ def setSubject(datasetID):
     subject  =  URIRef("http://163.1.127.173/admiral-test/datasets/" + datasetID )
     return
 
-def compareRdfGraphs(graphA, graphB, assertEqual=False, elementsToCompare=[], compareLength=False):
+def oldcompareRdfGraphs(graphA, graphB, assertEqual=False, elementsToCompare=[], compareLength=False):
     """
     Compare two RDG graphs
     
@@ -142,6 +142,27 @@ def compareRdfGraphs(graphA, graphB, assertEqual=False, elementsToCompare=[], co
              
     return assertEqual
 
+
+def compareRDFGraphs(graphA, graphB, elementsToCompare=[]):
+    """
+    Compare two RDG graphs
+    
+    graphA        RDF Graph of Graph A
+    graphB        RDF Graph of Graph B
+    
+    graphsEqual   Return True if the two graphs are equal or false otherwise
+    """
+    graphsEqual = True
+    
+    if len(graphA)!=len(graphB) or set(graphA)!=set(graphB):
+        graphsEqual = False
+                
+    for elementName in elementsToCompare :
+        if graphA.value(subject,URIRef(dcterms+elementName),None)!=graphB.value(subject,URIRef(dcterms+elementName),None) :
+           graphsEqual = False
+
+    return graphsEqual
+
 def getSubmitDatasetToolFieldsFromManifest(rdfGraph,elementList):
     """
     Get element values of the element list supplied from the RDF graph
@@ -156,11 +177,12 @@ def getSubmitDatasetToolFieldsFromManifest(rdfGraph,elementList):
 
 def getDictionaryFromManifest(dirName, basedir, elementList, manifestName = DefaultManifestName):
     """
-    Gets the dictionary of Field-Values from the manifest
+    Gets the dictionary of Field-Values from the manifest RDF
     
     dirName       directory in which the manifest.rdf is to be searched and returned; returns None if not found
     basedir       base directory in which the dirName directory is found
     elementList   Element Names List whose values need to be to be updated in the manifest files
+    manifestName  manifest file name
     """
     manifestPath     =  None
     file             =  None
@@ -185,18 +207,12 @@ def getDictionaryFromManifest(dirName, basedir, elementList, manifestName = Defa
         
     return dict
     
-#    for index in range(len(elementValueList)):
-#        json = json + elementList[index]+":"+ elementValueList[index]+","
-#
-#    if json != "":
-#        return json[:-1]
-
 def createDictionary(keyList, valueList):   
     """
     Creates and returns a dictionary from the keyList and valueList supplied 
     
-    keyList       List of keys
-    valueList     List of values
+    keyList     List of keys
+    valueList   List of values
     """
     dict = {}
     i = 0

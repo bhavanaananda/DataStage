@@ -15,7 +15,7 @@
 # $Id: $
 
 """
-Data submission Handler program for populating metadata for the requested dataset
+Data submission Handler program for populating metadata for the requested dataset directory
 """
 __author__ = "Bhavana Ananda"
 __version__ = "0.1"
@@ -36,15 +36,15 @@ try:
 except ImportError:
     import json as json
     
-Logger       =  logging.getLogger("GetMetadata")
+Logger               =  logging.getLogger("GetMetadata")
+DefaultManifestName  =  "manifest.rdf"
+ElementCreator       =  "creator"
+ElementIdentifier    =  "identifier"
+ElementTitle         =  "title"
+ElementDescription   =  "description"
+ElementList          =  [ElementCreator,ElementIdentifier,ElementTitle,ElementDescription]  
 
-ElementCreator     =  "creator"
-ElementIdentifier  =  "identifier"
-ElementTitle       =  "title"
-ElementDescription =  "description"
-ElementList        =  [ElementCreator,ElementIdentifier,ElementTitle,ElementDescription]  
-
-def getMetadata(formdata, basedir, outputstr, manifestName):
+def getMetadata(formdata, basedir, outputstr, manifestName=DefaultManifestName):
     """
     Gets the metadata from the manifest.rdf file and formulates it into the JSON format.
     
@@ -57,15 +57,16 @@ def getMetadata(formdata, basedir, outputstr, manifestName):
 
     manifestDictionary = ManifestRDFUtils.getDictionaryFromManifest(dirName, basedir, ElementList, manifestName )
     # Logger.debug("Manifest Dictionary = " + repr(manifestDictionary))
-    json.dump(manifestDictionary, outputstr)
-    return
+    json.dump(manifestDictionary, outputstr, indent=4)
 
+    Logger.debug("Manifest Dictionary = " + repr(manifestDictionary))
+    return
 
 
 if __name__ == "__main__":
     form = cgi.FieldStorage()   # Parse the query
     os.chdir("/home")           # Base directory for admiral server data
     
-    getMetadata(form,"/home/data", "/home", sys.stdout)
+    getMetadata(form,"/home/data", sys.stdout, DefaultManifestName)
 
 # End.

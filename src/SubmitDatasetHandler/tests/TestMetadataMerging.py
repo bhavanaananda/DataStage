@@ -64,8 +64,7 @@ class TestMetadataMerging(unittest.TestCase):
     # Tests  
     def testReadMetadata(self):    
        
-        rdfGraphBeforeSerialisation = ManifestRDFUtils.writeToManifestFile(ManifestFilePath, ElementList, ElementValueList)
-        
+        rdfGraphBeforeSerialisation = ManifestRDFUtils.writeToManifestFile(ManifestFilePath, ElementList, ElementValueList)       
         rdfGraphAfterSerialisation  = ManifestRDFUtils.readManifestFile(ManifestFilePath)
      
         # Compare the serialised graph obtained with the graph before serialisation
@@ -82,16 +81,14 @@ class TestMetadataMerging(unittest.TestCase):
         updatedDescription =  "Updated Submission handler test description" 
         
         initialGraph = ManifestRDFUtils.writeToManifestFile(ManifestFilePath, ElementList, ElementValueList)
-
-        updatedGraph = ManifestRDFUtils.updateManifestFile(ManifestFilePath, [ElementTitle,ElementDescription], [updatedTitle, updatedDescription])
-        
+        updatedGraph = ManifestRDFUtils.updateManifestFile(ManifestFilePath, [ElementTitle,ElementDescription], [updatedTitle, updatedDescription])       
         readGraph    = ManifestRDFUtils.readManifestFile(ManifestFilePath)
 
         # Assert that (initialGraph != updatedGraph)          
-        self.assertEqual(False, ManifestRDFUtils.compareRdfGraphs(initialGraph, updatedGraph, assertEqual=False, compareLength=False))
+        self.assertEqual(False, ManifestRDFUtils.compareRDFGraphs(initialGraph, updatedGraph,ElementList),"Error in Updating the manifest file!")
         
         # Assert that (updatedGraph == readGraph)
-        self.assertEqual(True, ManifestRDFUtils.compareRdfGraphs(updatedGraph, readGraph, assertEqual=True, compareLength=False))
+        self.assertEqual(True, ManifestRDFUtils.compareRDFGraphs(updatedGraph, readGraph,ElementList),"Error in Updating the manifest file!")
         return    
     
     def testGetSubmitDatasetToolFieldsFromManifest(self):
@@ -104,16 +101,6 @@ class TestMetadataMerging(unittest.TestCase):
         rdfGraph = ManifestRDFUtils.writeToManifestFile(ManifestFilePath, ElementList, ElementValueList)
         actualDictionary = ManifestRDFUtils.getDictionaryFromManifest(SubmitToolDatDirFormField, BaseDir, ElementList, manifestName = ManifestFileName)
         Logger.debug(repr(actualDictionary))
-#        expectedJSONString = ""
-#        for index in range(len(ElementList)):
-#            expectedJSONString = expectedJSONString + ElementList[index]+":"+ ElementValueList[index]+","
-#        expectedJSONString = expectedJSONString[:-1]
-#        
-#        Logger.debug(" actual = "+actualJSONString)
-#        Logger.debug(" expected = "+expectedJSONString )
-#        self.assertEqual(actualJSONString,expectedJSONString,"Invalid JSON formatted String!")
-
-#        self.assertEqual(ElementValueList, values, "Error fetching element values from the metadata!")
         self.assertEqual(ExpectedDictionary,actualDictionary, "Error fetching dictionary from the metadata!")
         return
     
@@ -126,7 +113,7 @@ def getTestSuite(select="unit"):
             "component" return suite of unit and component tests
             "all"       return suite of unit, component and integration tests
             "pending"   return suite of pending tests
-            name        a single named test to be run
+             name       a single named test to be run
     """
     testdict = {
         "unit":

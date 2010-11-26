@@ -61,7 +61,7 @@
                        newjelem='<span class="dirlistitem">'+value[i]+'</span>';
                        jQuery("#dirlist").append(newjelem);
                     }
-                callback(val);
+                callback(value);
                 });    
                 m.eval(function(value, callback)
                 {
@@ -72,7 +72,7 @@
                         
                         n.eval(function(valu,callback)
                         { 
-                          directorySelected = jQuery(this).text();
+                          directorySelected = "data/TestScanDir1"; //jQuery("#dirlist").text();
                           jQuery("#datDir").val(directorySelected);
                           callback(directorySelected);
                         });
@@ -85,7 +85,16 @@
                         // Populate the other fields with the value received
                          n.eval(function(valu,callback)
                         {
-                           
+                                  data = {
+                        "title": "Submission handler test title", 
+                        "identifier": "SubmissionHandlerTest", 
+                        "description": "Submission handler test description", 
+                        "creator": "admiral"
+                       };
+                       
+                          jQuery("#datId").val(valu["identifier"]);
+                          jQuery("#description").val(valu["description"]);
+                          jQuery("#user").val(valu["creator"]);
                         });
                         n.exec(null,admiral.noop);
                         
@@ -123,7 +132,7 @@
         <div class="box">
            <span class="label">Description :</span>
            <span class="labelvalue">
-                <textarea rows="4"  cols="50"></textarea>
+                <textarea rows="4"  cols="50" id="description"></textarea>
            </span>
         </div>
         <div class="box">

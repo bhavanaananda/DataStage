@@ -24,20 +24,26 @@ if (typeof admiral == "undefined")
     admiral = {};
 }
 
-admiral.getMetadata = function (directorySelcted, callback)
+admiral.getMetadata = function (directorySelected, callback)
 {
-    urlval = "../../SubmitDatasetHandler/cgi-bin/DirectoryListingHandler.py?directory="+directorySelcted
+    urlval = "../../SubmitDatasetHandler/cgi-bin/GetMetadata.py?directory="+directorySelected
     jQuery.ajax({
         type:         "GET",
         url:           urlval,
         dataType:     "json",
         beforeSend:   function (xhr)
             {
-                xhr.setRequestHeader("Accept", "application/JSON");
+                xhr.setRequestHeader("Accept", "application/json");
             },
         success:      function (data, status, xhr)
             {   
-                //log.debug("Get Metadata: " + jQuery.toJSON(data))
+                log.debug("Get Metadata: " + jQuery.toJSON(data))
+//                       data = {
+//                        "title": "Submission handler test title", 
+//                        "identifier": "SubmissionHandlerTest", 
+//                        "description": "Submission handler test description", 
+//                        "creator": "admiral"
+//                       };
                 callback(data);
             },
         error:        function (xhr, status) 
