@@ -68,35 +68,25 @@
                     // Set click handlers on directory items
                     jQuery("#dirlist > .dirlistitem").click( function()
                     {   
+                        var here  = this;
                         var n = new admiral.AsyncComputation();
                         
-                        n.eval(function(valu,callback)
+                        n.eval(function(directorySelected,callback)
                         { 
-                          directorySelected = "data/TestScanDir1"; //jQuery("#dirlist").text();
                           jQuery("#datDir").val(directorySelected);
-                          callback(directorySelected);
-                        });
-                        
-                        n.eval(function(valu,callback)
-                        {
-                           admiral.getMetadata(valu,callback); 
+                          admiral.getMetadata(directorySelected,callback); 
                         });
                         
                         // Populate the other fields with the value received
-                         n.eval(function(valu,callback)
+                         n.eval(function(directoryValues,callback)
                         {
-                                  data = {
-                        "title": "Submission handler test title", 
-                        "identifier": "SubmissionHandlerTest", 
-                        "description": "Submission handler test description", 
-                        "creator": "admiral"
-                       };
-                       
-                          jQuery("#datId").val(valu["identifier"]);
-                          jQuery("#description").val(valu["description"]);
-                          jQuery("#user").val(valu["creator"]);
+                                               
+                          jQuery("#datId").val(directoryValues["identifier"]);
+                          jQuery("#description").val(directoryValues["description"]);
+                          jQuery("#user").val(directoryValues["creator"]);
+                          jQuery("#title").val(directoryValues["title"]);
                         });
-                        n.exec(null,admiral.noop);
+                        n.exec( jQuery(this).text(),admiral.noop);
                         
                     });
                 });                    
@@ -132,7 +122,7 @@
         <div class="box">
            <span class="label">Description :</span>
            <span class="labelvalue">
-                <textarea rows="4"  cols="50" id="description"></textarea>
+                <textarea rows="4"  cols="50" id="description" name="description"></textarea>
            </span>
         </div>
         <div class="box">

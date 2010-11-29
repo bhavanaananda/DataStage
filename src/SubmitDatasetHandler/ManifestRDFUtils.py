@@ -23,13 +23,12 @@ __version__ = "0.1"
 
 import logging,  os, rdflib
 from os.path import isdir
-from rdflib import URIRef, Namespace
+from rdflib import URIRef, Namespace, BNode
 from rdflib.namespace import RDF
 from rdflib.graph import Graph
 from rdflib.plugins.memory import Memory
 from rdflib import Literal
 
-subject              =  URIRef("http://163.1.127.173/admiral-test/datasets/")
 dcterms              =  URIRef("http://purl.org/dc/terms/")
 oxds                 =  URIRef("http://vocab.ox.ac.uk/dataset/schema#") 
 Logger               =  logging.getLogger("MaifestRDFUtils")
@@ -41,9 +40,9 @@ def readManifestFile(manifestPath):
     manifestPath    manifest file path
     """
     # Read from the manifest.rdf file into an RDF Graph      
-    rdfstream = manifestPath
+
     rdfGraph = Graph()
-    rdfGraph.parse(rdfstream)   
+    rdfGraph.parse(manifestPath)   
     return rdfGraph
 
 def writeToManifestFile(manifestPath,elementList,elementValueList):   
@@ -62,6 +61,7 @@ def writeToManifestFile(manifestPath,elementList,elementValueList):
     rdfGraph.bind("oxds", oxds, override=True)
     
     # Write to the RDF Graph
+    subject =  BNode()
     rdfGraph.add((subject, RDF.type, URIRef(oxds+"DataSet")))
     for index in range(len(elementList)):
         rdfGraph.add((subject, URIRef(dcterms+elementList[index]), Literal(elementValueList[index])))
@@ -81,10 +81,11 @@ def updateManifestFile(manifestPath, elementList, elementValueList):
   
     # Read the manifest File and update the title and the description
     rdfGraph = readManifestFile(manifestPath)
-    
+    subject  = rdfGraph.value(None,RDF.type, URIRef(oxds+"DataSet"))
+    if subject == None :
+        subject = BNode()
     for index in range(len(elementList)):
         rdfGraph.set((subject, URIRef(dcterms+elementList[index]), Literal(elementValueList[index])))
-    
     saveToManifestFile(rdfGraph,manifestPath)
     return rdfGraph
     
@@ -99,17 +100,6 @@ def saveToManifestFile(rdfGraph, manifestPath):
     rdfGraph.serialize(destination=manifestPath, format='pretty-xml')
     return
 
-
-def setSubject(datasetID):
-    """
-    Set the subject of the RDF triple.
-    
-    datasetID    datasetID of the dataset
-    """
-    global subject
-    subject  =  URIRef("http://163.1.127.173/admiral-test/datasets/" + datasetID )
-    return
-
 def compareRDFGraphs(graphA, graphB, elementsToCompare=[]):
     """
     Compare two RDG graphs
@@ -119,13 +109,25 @@ def compareRDFGraphs(graphA, graphB, elementsToCompare=[]):
     
     graphsEqual   Return True if the two graphs are equal or false otherwise
     """
-    graphsEqual = True
+    def graphContains(graph, statement):
+        (s,p,o) = statement
+        if isinstance(s, BNode): s = None
+        if isinstance(p, BNode): p = None
+        if isinstance(o, BNode): o = None
+        return (s,p,o) in graph
     
-    if len(graphA)!=len(graphB) or set(graphA)!=set(graphB):
-        graphsEqual = False
+    graphsEqual = True
+
+    for statement in graphA:
+        if not graphContains(graphB, statement) : return False
+
+    for statement in graphB:
+        if not graphContains(graphA, statement) : return False
                 
+    subjectA  = graphA.value(None,RDF.type, URIRef(oxds+"DataSet"))
+    subjectB  = graphB.value(None,RDF.type, URIRef(oxds+"DataSet"))
     for elementName in elementsToCompare :
-        if graphA.value(subject,URIRef(dcterms+elementName),None)!=graphB.value(subject,URIRef(dcterms+elementName),None) :
+        if graphA.value(subjectA,URIRef(dcterms+elementName),None)!=graphB.value(subjectB,URIRef(dcterms+elementName),None) :
            graphsEqual = False
 
     return graphsEqual
@@ -138,6 +140,7 @@ def getElementValuesFromManifest(rdfGraph,elementList):
     elementList   Element Names List whose values need to be to be extracted from the manifest files
     """
     elementValueList = []
+    subject  = rdfGraph.value(None, RDF.type, URIRef(oxds+"DataSet"))
     for element in elementList:
         elementValueList.append(rdfGraph.value(subject,URIRef(dcterms+element),None))   
     return elementValueList
@@ -160,7 +163,6 @@ def getDictionaryFromManifest(manifestPath, elementList):
     if manifestPath != None and ifFileExists(manifestPath):
         rdfGraph = readManifestFile(manifestPath)
         elementValueList = getElementValuesFromManifest(rdfGraph, elementList)
-         
         Logger.debug("Element List =" + repr(elementList))
         Logger.debug("Element Value List =" + repr(elementValueList))
         

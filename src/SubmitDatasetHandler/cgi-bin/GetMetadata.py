@@ -44,14 +44,14 @@ ElementTitle         =  "title"
 ElementDescription   =  "description"
 ElementList          =  [ElementCreator,ElementIdentifier,ElementTitle,ElementDescription]  
 
-def getMetadata(formdata, basedir, manifestName ,outputstr):
+def getMetadata(formdata, manifestName ,outputstr):
     """
     Gets the metadata from the manifest.rdf file and formulates it into the JSON format.
     
     formdata    is a dictionary containing parameters from the dataset submission form
     """
     dirName      = SubmitDatasetUtils.getFormParam("directory",formdata)
-    manifestPath = basedir  + str(os.path.sep) + dirName  + str(os.path.sep) + manifestName
+    manifestPath = dirName  + str(os.path.sep) + manifestName
     Logger.debug("Manifest Path = " + manifestPath)
     outputstr.write("Content-type: application/JSON\n")
     outputstr.write("\n")      # end of MIME headers
@@ -65,9 +65,10 @@ def getMetadata(formdata, basedir, manifestName ,outputstr):
 
 
 if __name__ == "__main__":
+    logging.basicConfig(level=logging.DEBUG)
     form = cgi.FieldStorage()   # Parse the query
     os.chdir("/home")           # Base directory for admiral server data
     
-    getMetadata(form,"/home/data", DefaultManifestName, sys.stdout)
+    getMetadata(form, DefaultManifestName, sys.stdout)
 
 # End.

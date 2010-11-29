@@ -21,7 +21,6 @@ import HttpUtils
 from MiscLib import TestUtils
 
 Logger                    =  logging.getLogger("TestGetMetadata")
-BaseDir                   =  "."
 SubmitToolDatDirFormField =  "DatasetsTopDir"
 ManifestName              = "TestGetMetadataManifest.rdf"
 ManifestFilePath          =  SubmitToolDatDirFormField+ "/TestGetMetadataManifest.rdf"
@@ -61,16 +60,13 @@ class TestGetMetadata(unittest.TestCase):
 
     # Test that the GetMetResponse      
     def testGetMetadataResponse(self):
-        SubmitToolDatDirFormField = "DatasetsTopDir" 
-        srcDir                    = SubmitToolDatDirFormField
-        baseDir                   = "."     
         outputStr                 = StringIO.StringIO()
         
         # Create a manifest file from mocked up form data
         ManifestRDFUtils.writeToManifestFile(ManifestFilePath, ElementList, ElementValueList)
 
         # Invoke get mtatadata submission program, passing faked dataset directory
-        GetMetadata.getMetadata(formdata, BaseDir, ManifestName, outputStr)
+        GetMetadata.getMetadata(formdata, ManifestName, outputStr)
     
         outputStr.seek(0, os.SEEK_SET)
         firstLine = outputStr.readline()

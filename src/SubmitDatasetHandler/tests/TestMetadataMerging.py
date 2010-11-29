@@ -53,7 +53,6 @@ ElementList        =  [ElementCreator,ElementIdentifier,ElementTitle,ElementDesc
 class TestMetadataMerging(unittest.TestCase):
 
     def setUp(self):
-        ManifestRDFUtils.setSubject(DatasetId)
         return
        
     def tearDown(self):
@@ -67,11 +66,13 @@ class TestMetadataMerging(unittest.TestCase):
      
         # Compare the serialised graph obtained with the graph before serialisation
         self.assertEqual(len(rdfGraphBeforeSerialisation),5,'Graph length %i' %len(rdfGraphAfterSerialisation))
-        self.failUnless((ManifestRDFUtils.subject,RDF.type,URIRef(ManifestRDFUtils.oxds+"DataSet")) in rdfGraphAfterSerialisation, 'Testing submission type: '+ManifestRDFUtils.subject+", "+ URIRef(ManifestRDFUtils.oxds+"DataSet"))
-        self.failUnless((ManifestRDFUtils.subject,URIRef(ManifestRDFUtils.dcterms+ElementCreator),User) in rdfGraphAfterSerialisation, 'ManifestRDFUtils.dcterms:creator')
-        self.failUnless((ManifestRDFUtils.subject,URIRef(ManifestRDFUtils.dcterms+ElementIdentifier),DatasetId) in rdfGraphAfterSerialisation, 'ManifestRDFUtils.dcterms:identifier')
-        self.failUnless((ManifestRDFUtils.subject,URIRef(ManifestRDFUtils.dcterms+ElementTitle),Title) in rdfGraphAfterSerialisation, 'ManifestRDFUtils.dcterms:title')
-        self.failUnless((ManifestRDFUtils.subject,URIRef(ManifestRDFUtils.dcterms+ElementDescription),Description) in rdfGraphAfterSerialisation, 'ManifestRDFUtils.dcterms:Description')
+        
+        subject = rdfGraphAfterSerialisation.value(None,RDF.type,URIRef(ManifestRDFUtils.oxds+"DataSet"))
+        self.failUnless((subject,RDF.type,URIRef(ManifestRDFUtils.oxds+"DataSet")) in rdfGraphAfterSerialisation, 'Testing submission type: '+subject+", "+ URIRef(ManifestRDFUtils.oxds+"DataSet"))
+        self.failUnless((subject,URIRef(ManifestRDFUtils.dcterms+ElementCreator),User) in rdfGraphAfterSerialisation, 'ManifestRDFUtils.dcterms:creator')
+        self.failUnless((subject,URIRef(ManifestRDFUtils.dcterms+ElementIdentifier),DatasetId) in rdfGraphAfterSerialisation, 'ManifestRDFUtils.dcterms:identifier')
+        self.failUnless((subject,URIRef(ManifestRDFUtils.dcterms+ElementTitle),Title) in rdfGraphAfterSerialisation, 'ManifestRDFUtils.dcterms:title')
+        self.failUnless((subject,URIRef(ManifestRDFUtils.dcterms+ElementDescription),Description) in rdfGraphAfterSerialisation, 'ManifestRDFUtils.dcterms:Description')
         return
     
     def testUpdateMetadata(self):
@@ -83,10 +84,10 @@ class TestMetadataMerging(unittest.TestCase):
         readGraph    = ManifestRDFUtils.readManifestFile(ManifestFilePath)
 
         # Assert that (initialGraph != updatedGraph)          
-        self.assertEqual(False, ManifestRDFUtils.compareRDFGraphs(initialGraph, updatedGraph,ElementList),"Error in Updating the manifest file!")
+        self.assertEqual(False, ManifestRDFUtils.compareRDFGraphs(initialGraph, updatedGraph,ElementList),"Error updating the manifest file!")
         
         # Assert that (updatedGraph == readGraph)
-        self.assertEqual(True, ManifestRDFUtils.compareRDFGraphs(updatedGraph, readGraph,ElementList),"Error in Updating the manifest file!")
+        self.assertEqual(True, ManifestRDFUtils.compareRDFGraphs(updatedGraph, readGraph,ElementList),"Error updating the manifest file!")
         return    
     
     def testGetElementValuesFromManifest(self):
@@ -99,6 +100,8 @@ class TestMetadataMerging(unittest.TestCase):
         rdfGraph = ManifestRDFUtils.writeToManifestFile(ManifestFilePath, ElementList, ElementValueList)
         actualDictionary = ManifestRDFUtils.getDictionaryFromManifest(ManifestFilePath, ElementList)
         Logger.debug(repr(actualDictionary))
+        #print "ExpectedDictionary: "+repr(ExpectedDictionary)
+        #print "actualDictionary: "+repr(actualDictionary)
         self.assertEqual(ExpectedDictionary,actualDictionary, "Error fetching dictionary from the metadata!")
         return
     

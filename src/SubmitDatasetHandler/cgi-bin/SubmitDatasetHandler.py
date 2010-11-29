@@ -40,6 +40,7 @@ ElementTitle         =  "title"
 ElementDescription   =  "description"
 ElementList          =  [ElementCreator,ElementIdentifier,ElementTitle,ElementDescription]
 
+DefaultManifestName  = "manifest.rdf"
 BaseDir              =  "/home/"
 
 
@@ -60,6 +61,7 @@ def processDatasetSubmissionForm(formdata, outputstr):
     description          =  SubmitDatasetUtils.getFormParam("description",formdata)  
     dirName              =  SubmitDatasetUtils.getFormParam("datDir",formdata)
     ElementValueList     =  [userName, datasetName, title, description]
+    
     #print repr(formdata)
 
     if outputstr:
@@ -84,13 +86,8 @@ def processDatasetSubmissionForm(formdata, outputstr):
                 SubmitDatasetUtils.INPUT_ERROR,
                 None,
                 "Expecting no trailing '/' on directory name: '"+dirName+"' supplied")
-          
-        zipFileName = os.path.basename(dirName) +".zip"
-        zipFilePath = "/tmp/" + zipFileName
-        Logger.debug("datasetName %s, dirName %s, zipFileName %s"%(datasetName,dirName,zipFileName))
-
-        # Set user credentials
-        
+ 
+        # Set user credentials       
         HttpUtils.setRequestUserPass(userName,userPass)
         
         # Check if the dataset already exists
@@ -99,8 +96,17 @@ def processDatasetSubmissionForm(formdata, outputstr):
         # Create a dataset if the dataset does not exist
         if not datasetFound:              
             SubmitDatasetUtils.createDataset(siloName, datasetName)
-            
+                             
+        # Update the local manifest
+        manifestFilePath     = dirName + str(os.path.sep) + DefaultManifestName
+        Logger.debug("Element List = " + repr(ElementList))
+        Logger.debug("Element Value List = " + repr(ElementValueList))
+        updateMetadataInDirectoryBeforeSubmission(manifestFilePath, ElementList, ElementValueList)
+        
         # Zip the selected Directory
+        zipFileName = os.path.basename(dirName) +".zip"
+        zipFilePath = "/tmp/" + zipFileName
+        Logger.debug("datasetName %s, dirName %s, zipFileName %s"%(datasetName,dirName,zipFileName))
         SubmitDatasetUtils.zipLocalDirectory(dirName, FilePat, zipFilePath)
         # Submit zip file to dataset
         try:
@@ -182,8 +188,9 @@ def updateMetadataInDirectoryBeforeSubmission(manifestFilePath, elementList, ele
     return
 
 if __name__ == "__main__":
+    logging.basicConfig(level=logging.DEBUG)
     form = cgi.FieldStorage()   # Parse the query
-    os.chdir("/home")           # Base directory for admiral server data
+    os.chdir("/home/")           # Base directory for admiral server data
     processDatasetSubmissionForm(form, sys.stdout)
 
 # End.
