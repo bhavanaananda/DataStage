@@ -7,6 +7,11 @@ if [[ "$1" == "" || "$2" == "" || "$3" == "" ]]; then
   exit 1
 fi
 
+if [[ -e "/home/$1" || -e "/mnt/lv-admiral-data/home/$1" ]]; then
+  echo "User $1 already exists (or home directory exists)"
+  exit 1
+fi
+
 if [[ "$3" != "RGCollaborator" ]]; then
 
   # Create new user account
@@ -20,18 +25,25 @@ $6
 END
   fi
   smbldap-userinfo -f "$2" -r $4 -w $5 $1
-#smbldap-usermod -G $3 $1
+  #smbldap-usermod -G $3 $1
 
   cp -ax /home/$1 /mnt/lv-admiral-data/home/
   mv /home/$1 /home/$1-saved
   ln -s /mnt/lv-admiral-data/home/$1 /home/$1
 
+  # Create a record of the new user details in /root/admiralresearchgroupmembers
+  cat > /root/admiralresearchgroupmembers/$1.sh <<EOF
+username="$1"
+userfullname="$2"
+userrole="$3"
+
+EOF
+
   # Create directory areas for the new user
 
-  mkdir /home/data/private/$1
-  mkdir /home/data/shared/$1
-  mkdir /home/data/collab/$1
-  ln -s /home/data/private/$1 /home/data/$1   # For compatibility with Silk Group
+  mkdir -p /home/data/private/$1
+  mkdir -p /home/data/shared/$1
+  mkdir -p /home/data/collab/$1
 
   # Set default file system access modes (overridden by access control lists)
 
@@ -82,54 +94,44 @@ END
 
   cat << EOF > /etc/apache2/conf.d/user.$1
 
-<Location /data/$1>
-    Order Deny,Allow
-    Allow from all
-    <LimitExcept REPORT GET OPTIONS PROPFIND>
-      Require user $1
-    </LimitExcept>
-    <Limit PROPFIND OPTIONS GET REPORT>
-      Require user $1 $RGLeaderName
-    </Limit>
-</Location>
-
 <Location /data/private/$1>
     Order Deny,Allow
     Allow from all
-	<LimitExcept REPORT GET OPTIONS PROPFIND>
-	  Require user $1
-	</LimitExcept>
-	<Limit PROPFIND OPTIONS GET REPORT>
-	  # NOTE:
-	  # Tried to use a combination of "Require user" and "Require ldap-attribute"
-	  # here, but this caused access failures for all users.
-    Require user $1 $RGLeaderName
-	</Limit>
+    <LimitExcept REPORT GET OPTIONS PROPFIND>
+        Require user $1
+    </LimitExcept>
+    <Limit PROPFIND OPTIONS GET REPORT>
+        # NOTE:
+        # Tried to use a combination of "Require user" and "Require ldap-attribute"
+        # here, but this caused access failures for all users.
+        # TestLeader is included here for testing only.
+        Require user $1 $RGLeaderName TestLeader
+    </Limit>
 </Location>
 
 <Location /data/shared/$1>
     Order Deny,Allow
     Allow from all
-	<LimitExcept REPORT GET OPTIONS PROPFIND>
-	  Require user $1
-	</LimitExcept>
-	<Limit PROPFIND OPTIONS GET REPORT>
-    Require ldap-attribute gidNumber=$RGLeaderGID
-    Require ldap-attribute gidNumber=$RGMemberGID
-	</Limit>
+    <LimitExcept REPORT GET OPTIONS PROPFIND>
+        Require user $1
+    </LimitExcept>
+    <Limit PROPFIND OPTIONS GET REPORT>
+        Require ldap-attribute gidNumber=$RGLeaderGID
+        Require ldap-attribute gidNumber=$RGMemberGID
+    </Limit>
 </Location>
 
 <Location /data/collab/$1>
     Order Deny,Allow
     Allow from all
-	<LimitExcept REPORT GET OPTIONS PROPFIND>
-  	Require user $1
-	</LimitExcept>
-	<Limit PROPFIND OPTIONS GET REPORT>
-    Require ldap-attribute gidNumber=$RGLeaderGID
-  	Require ldap-attribute gidNumber=$RGMemberGID
-  	Require ldap-attribute gidNumber=$RGCollabGID
-	</Limit>
+    <LimitExcept REPORT GET OPTIONS PROPFIND>
+        Require user $1
+    </LimitExcept>
+    <Limit PROPFIND OPTIONS GET REPORT>
+        Require ldap-attribute gidNumber=$RGLeaderGID
+        Require ldap-attribute gidNumber=$RGMemberGID
+        Require ldap-attribute gidNumber=$RGCollabGID
+    </Limit>
 </Location>
 
 EOF
@@ -148,3 +150,5 @@ END
   fi
   smbldap-userinfo -f "$2" -r $4 -w $5 $1
 fi
+
+# End.

@@ -7,6 +7,11 @@ if [[ "$1" == "" || "$2" == "" || "$3" == "" ]]; then
   exit 1
 fi
 
+if [[ -e "/home/$1" || -e "/mnt/lv-admiral-data/home/$1" ]]; then
+  echo "User $1 already exists (or home directory exists)"
+  exit 1
+fi
+
 if [[ "$3" != "RGCollaborator" ]]; then
 
   # Create new user account
@@ -20,7 +25,7 @@ $6
 END
   fi
   smbldap-userinfo -f "$2" -r $4 -w $5 $1
-#smbldap-usermod -G $3 $1
+  #smbldap-usermod -G $3 $1
 
   cp -ax /home/$1 /mnt/lv-admiral-data/home/
   mv /home/$1 /home/$1-saved
@@ -34,12 +39,11 @@ userrole="$3"
 
 EOF
 
-
   # Create directory areas for the new user
 
-  mkdir /home/data/private/$1
-  mkdir /home/data/shared/$1
-  mkdir /home/data/collab/$1
+  mkdir -p /home/data/private/$1
+  mkdir -p /home/data/shared/$1
+  mkdir -p /home/data/collab/$1
 
   # Set default file system access modes (overridden by access control lists)
 
@@ -146,3 +150,5 @@ END
   fi
   smbldap-userinfo -f "$2" -r $4 -w $5 $1
 fi
+
+# End.
