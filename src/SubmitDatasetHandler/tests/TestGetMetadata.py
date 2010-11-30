@@ -72,7 +72,7 @@ class TestGetMetadata(unittest.TestCase):
         # Create a manifest file from mocked up form data
         ManifestRDFUtils.writeToManifestFile(ManifestFilePath, NamespaceDictionary,ElementUriList, ElementValueList)
 
-        # Invoke get mtatadata submission program, passing faked dataset directory
+        # Invoke get metatadata submission program, passing faked dataset directory
         GetMetadata.getMetadata(formdata, ManifestName, outputStr)
     
         outputStr.seek(0, os.SEEK_SET)

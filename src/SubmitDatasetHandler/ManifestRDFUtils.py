@@ -166,6 +166,7 @@ def getDictionaryFromManifest(manifestPath, elementUriList):
 
     file             =  None
     elementValueList =  []
+    elementList      =  [] 
     dict             =  {}
     json             =  ""
 
@@ -176,9 +177,18 @@ def getDictionaryFromManifest(manifestPath, elementUriList):
         elementValueList = getElementValuesFromManifest(rdfGraph, elementUriList)
      #   Logger.debug("Element URi List =" + repr(elementUriList))
      #   Logger.debug("Element Value List =" + repr(elementValueList))
+     
+
+    for index  in range(len(elementUriList)): 
+        Logger.debug("Index = " + repr(index))
+        elementUri = elementUriList[index]
+        position   = elementUri.rfind("/") +1
+        elementList.append(elementUri[position:])
+        Logger.debug("substring = " + elementUri[position:])
+         
         
     if elementValueList!=[]:
-        dict = createDictionary(elementUriList, elementValueList)
+        dict = createDictionary(elementList, elementValueList)
         
     return dict
 
@@ -192,7 +202,7 @@ def ifFileExists(filePath):
    
     return os.path.isfile(filePath)
 
-def createDictionary(keyUriList, valueList):   
+def createDictionary(keyList, valueList):   
     """
     Creates and returns a dictionary from the keyList and valueList supplied 
     
@@ -200,8 +210,8 @@ def createDictionary(keyUriList, valueList):
     valueList   List of values
     """
     dict = {}
-    for index in range(len(keyUriList)):
-        dict[keyUriList[index]] = valueList[index]
+    for index in range(len(keyList)):
+        dict[keyList[index]] = valueList[index]
    # Logger.debug(" Key Uri List = "+ repr(keyUriList))
    # Logger.debug(" Key value list = "+ repr(valueList))
     return dict

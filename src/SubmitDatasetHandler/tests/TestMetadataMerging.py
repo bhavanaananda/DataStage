@@ -14,47 +14,47 @@ from MiscLib import TestUtils
 import SubmitDatasetUtils
 import ManifestRDFUtils
 
-Logger             =  logging.getLogger("TestMetadataMerging")
-Dict1              =  \
-                      {  'datDir'      :  cgi.MiniFieldStorage('datDir'      ,  "./DatasetsTopDir")
-                       , 'datId'       :  cgi.MiniFieldStorage('datId'       ,  "SubmissionHandlerTest")
-                       , 'title'       :  cgi.MiniFieldStorage('title'       ,  "Submission handler test title")
-                       , 'description' :  cgi.MiniFieldStorage('description' ,  "Submission handler test description")
-                       , 'user'        :  cgi.MiniFieldStorage('user'        ,  "admiral")
-                       , 'pass'        :  cgi.MiniFieldStorage('pass'        ,  "admiral")
-                       , 'submit'      :  cgi.MiniFieldStorage('submit'      ,  "Submit")
-                      }
+Logger                    =  logging.getLogger("TestMetadataMerging")
+Dict1                     =  \
+                             { 
+                                'datDir'      :  cgi.MiniFieldStorage('datDir'      ,  "./DatasetsTopDir")
+                              , 'datId'       :  cgi.MiniFieldStorage('datId'       ,  "SubmissionHandlerTest")
+                              , 'title'       :  cgi.MiniFieldStorage('title'       ,  "Submission handler test title")
+                              , 'description' :  cgi.MiniFieldStorage('description' ,  "Submission handler test description")
+                              , 'user'        :  cgi.MiniFieldStorage('user'        ,  "admiral")
+                              , 'pass'        :  cgi.MiniFieldStorage('pass'        ,  "admiral")
+                              , 'submit'      :  cgi.MiniFieldStorage('submit'      ,  "Submit")
+                             }
 
-DatasetId          =  SubmitDatasetUtils.getFormParam('datId', Dict1)
-DatasetDir         =  SubmitDatasetUtils.getFormParam('datDir', Dict1)
-Title              =  SubmitDatasetUtils.getFormParam('title', Dict1)
-Description        =  SubmitDatasetUtils.getFormParam('description', Dict1)
-User               =  SubmitDatasetUtils.getFormParam('user', Dict1)
-ElementValueList   =  [User, DatasetId, Title, Description]
+DatasetId                 =  SubmitDatasetUtils.getFormParam('datId', Dict1)
+DatasetDir                =  SubmitDatasetUtils.getFormParam('datDir', Dict1)
+Title                     =  SubmitDatasetUtils.getFormParam('title', Dict1)
+Description               =  SubmitDatasetUtils.getFormParam('description', Dict1)
+User                      =  SubmitDatasetUtils.getFormParam('user', Dict1)
+ElementValueList          =  [User, DatasetId, Title, Description]
 
-BaseDir            =  "."
+BaseDir                   =  "."
 SubmitToolDatDirFormField = "DatasetsTopDir"
-ManifestFilePath   =  SubmitToolDatDirFormField+ "/TestMetadataMergingManifest.rdf"
+ManifestFilePath          =  SubmitToolDatDirFormField+ "/TestMetadataMergingManifest.rdf"
 
-dcterms                =  URIRef("http://purl.org/dc/terms/")
-oxds                   =  URIRef("http://vocab.ox.ac.uk/dataset/schema#") 
-NamespaceDictionary    =  {
-                             "dcterms"   : dcterms ,
-                             "oxds"      : oxds                    
-                          }
-ElementCreatorUri      =  URIRef(dcterms + "creator")
-ElementIdentifierUri   =  URIRef(dcterms + "identifier")
-ElementTitleUri        =  URIRef(dcterms + "title")
-ElementDescriptionUri  =  URIRef(dcterms + "description")
-ElementUriList         =  [ElementCreatorUri, ElementIdentifierUri, ElementTitleUri, ElementDescriptionUri]
-
-                      
-ExpectedDictionary =  {
-                         ElementCreatorUri     : "admiral"
-                       , ElementIdentifierUri  : "SubmissionHandlerTest"
-                       , ElementTitleUri       : "Submission handler test title"
-                       , ElementDescriptionUri : "Submission handler test description"                     
-                      }
+dcterms                   =  URIRef("http://purl.org/dc/terms/")
+oxds                      =  URIRef("http://vocab.ox.ac.uk/dataset/schema#") 
+NamespaceDictionary       =  {
+                              "dcterms"   : dcterms ,
+                              "oxds"      : oxds                    
+                             }
+ElementCreatorUri         =  URIRef(dcterms + "creator")
+ElementIdentifierUri      =  URIRef(dcterms + "identifier")
+ElementTitleUri           =  URIRef(dcterms + "title")
+ElementDescriptionUri     =  URIRef(dcterms + "description")
+ElementUriList            =  [ElementCreatorUri, ElementIdentifierUri, ElementTitleUri, ElementDescriptionUri]
+             
+ExpectedDictionary        =  {
+                                 "creator"     : "admiral"
+                               , "identifier"  : "SubmissionHandlerTest"
+                               , "title"       : "Submission handler test title"
+                               , "description" : "Submission handler test description"                     
+                             }
 
 class TestMetadataMerging(unittest.TestCase):
 

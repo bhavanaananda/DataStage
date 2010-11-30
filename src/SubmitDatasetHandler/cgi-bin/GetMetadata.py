@@ -21,7 +21,7 @@ __author__ = "Bhavana Ananda"
 __version__ = "0.1"
 
 import cgi, sys, logging, os, os.path,traceback, rdflib
-from rdflib.graph import Graph
+from rdflib.graph import Graph,URIRef
 
 sys.path.append("..")
 sys.path.append("../..")
@@ -36,13 +36,18 @@ try:
 except ImportError:
     import json as json
     
-Logger               =  logging.getLogger("GetMetadata")
-DefaultManifestName  =  "manifest.rdf"
-ElementCreator       =  "creator"
-ElementIdentifier    =  "identifier"
-ElementTitle         =  "title"
-ElementDescription   =  "description"
-ElementList          =  [ElementCreator,ElementIdentifier,ElementTitle,ElementDescription]  
+Logger                    =  logging.getLogger("GetMetadata")
+DefaultManifestName       =  "manifest.rdf"
+
+dcterms                   =  URIRef("http://purl.org/dc/terms/")
+oxds                      =  URIRef("http://vocab.ox.ac.uk/dataset/schema#") 
+
+ElementCreatorUri         =  URIRef(dcterms + "creator")
+ElementIdentifierUri      =  URIRef(dcterms + "identifier")
+ElementTitleUri           =  URIRef(dcterms + "title")
+ElementDescriptionUri     =  URIRef(dcterms + "description")
+ElementUriList            =  [ElementCreatorUri, ElementIdentifierUri, ElementTitleUri, ElementDescriptionUri]
+    
 
 def getMetadata(formdata, manifestName ,outputstr):
     """
@@ -56,7 +61,7 @@ def getMetadata(formdata, manifestName ,outputstr):
     outputstr.write("Content-type: application/JSON\n")
     outputstr.write("\n")      # end of MIME headers
 
-    manifestDictionary = ManifestRDFUtils.getDictionaryFromManifest(manifestPath, ElementList)
+    manifestDictionary = ManifestRDFUtils.getDictionaryFromManifest(manifestPath, ElementUriList)
     Logger.debug("Manifest Dictionary = " + repr(manifestDictionary))
     json.dump(manifestDictionary, outputstr, indent=4)
 

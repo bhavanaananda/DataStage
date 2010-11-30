@@ -61,17 +61,17 @@ ElementDescriptionUri     =  URIRef(dcterms + "description")
 ElementUriList            =  [ElementCreatorUri, ElementIdentifierUri, ElementTitleUri, ElementDescriptionUri]
 
 ExpectedDictionary        =  {
-                                ElementCreatorUri     : "admiral"
-                              , ElementIdentifierUri  : "SubmissionHandlerTest"
-                              , ElementTitleUri       : "Submission handler test title"
-                              , ElementDescriptionUri : "Submission handler test description"                     
-                             }   
+                                 "creator"     : "admiral"
+                               , "identifier"  : "SubmissionHandlerTest"
+                               , "title"       : "Submission handler test title"
+                               , "description" : "Submission handler test description"                     
+                             } 
 
 ExpectedUpdatedDictionary = {
-                                ElementCreatorUri     : "admiral"
-                              , ElementIdentifierUri  : "SubmissionHandlerTest"
-                              , ElementTitleUri       : "Submission handler updated test title"
-                              , ElementDescriptionUri : "Submission handler updated test description"                     
+                                 "creator"     : "admiral"
+                              ,  "identifier"  : "SubmissionHandlerTest"
+                              ,  "title"       : "Submission handler updated test title"
+                              ,  "description" : "Submission handler updated test description"                     
                             }     
                  
 
