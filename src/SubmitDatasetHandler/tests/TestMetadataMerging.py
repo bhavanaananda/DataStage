@@ -24,13 +24,7 @@ Dict1              =  \
                        , 'pass'        :  cgi.MiniFieldStorage('pass'        ,  "admiral")
                        , 'submit'      :  cgi.MiniFieldStorage('submit'      ,  "Submit")
                       }
-                      
-ExpectedDictionary =  {
-                         "creator"     : "admiral"
-                       , "identifier"  : "SubmissionHandlerTest"
-                       , "title"       : "Submission handler test title"
-                       , "description" : "Submission handler test description"                     
-                      }
+
 DatasetId          =  SubmitDatasetUtils.getFormParam('datId', Dict1)
 DatasetDir         =  SubmitDatasetUtils.getFormParam('datDir', Dict1)
 Title              =  SubmitDatasetUtils.getFormParam('title', Dict1)
@@ -42,13 +36,25 @@ BaseDir            =  "."
 SubmitToolDatDirFormField = "DatasetsTopDir"
 ManifestFilePath   =  SubmitToolDatDirFormField+ "/TestMetadataMergingManifest.rdf"
 
-ElementCreator     =  "creator"
-ElementIdentifier  =  "identifier"
-ElementTitle       =  "title"
-ElementDescription =  "description"
-ElementList        =  [ElementCreator,ElementIdentifier,ElementTitle,ElementDescription]  
+dcterms                =  URIRef("http://purl.org/dc/terms/")
+oxds                   =  URIRef("http://vocab.ox.ac.uk/dataset/schema#") 
+NamespaceDictionary    =  {
+                             "dcterms"   : dcterms ,
+                             "oxds"      : oxds                    
+                          }
+ElementCreatorUri      =  URIRef(dcterms + "creator")
+ElementIdentifierUri   =  URIRef(dcterms + "identifier")
+ElementTitleUri        =  URIRef(dcterms + "title")
+ElementDescriptionUri  =  URIRef(dcterms + "description")
+ElementUriList         =  [ElementCreatorUri, ElementIdentifierUri, ElementTitleUri, ElementDescriptionUri]
 
-
+                      
+ExpectedDictionary =  {
+                         ElementCreatorUri     : "admiral"
+                       , ElementIdentifierUri  : "SubmissionHandlerTest"
+                       , ElementTitleUri       : "Submission handler test title"
+                       , ElementDescriptionUri : "Submission handler test description"                     
+                      }
 
 class TestMetadataMerging(unittest.TestCase):
 
@@ -61,44 +67,44 @@ class TestMetadataMerging(unittest.TestCase):
     # Tests  
     def testReadMetadata(self):    
        
-        rdfGraphBeforeSerialisation = ManifestRDFUtils.writeToManifestFile(ManifestFilePath, ElementList, ElementValueList)       
+        rdfGraphBeforeSerialisation = ManifestRDFUtils.writeToManifestFile(ManifestFilePath,NamespaceDictionary, ElementUriList, ElementValueList)       
         rdfGraphAfterSerialisation  = ManifestRDFUtils.readManifestFile(ManifestFilePath)
      
         # Compare the serialised graph obtained with the graph before serialisation
         self.assertEqual(len(rdfGraphBeforeSerialisation),5,'Graph length %i' %len(rdfGraphAfterSerialisation))
         
-        subject = rdfGraphAfterSerialisation.value(None,RDF.type,URIRef(ManifestRDFUtils.oxds+"DataSet"))
-        self.failUnless((subject,RDF.type,URIRef(ManifestRDFUtils.oxds+"DataSet")) in rdfGraphAfterSerialisation, 'Testing submission type: '+subject+", "+ URIRef(ManifestRDFUtils.oxds+"DataSet"))
-        self.failUnless((subject,URIRef(ManifestRDFUtils.dcterms+ElementCreator),User) in rdfGraphAfterSerialisation, 'ManifestRDFUtils.dcterms:creator')
-        self.failUnless((subject,URIRef(ManifestRDFUtils.dcterms+ElementIdentifier),DatasetId) in rdfGraphAfterSerialisation, 'ManifestRDFUtils.dcterms:identifier')
-        self.failUnless((subject,URIRef(ManifestRDFUtils.dcterms+ElementTitle),Title) in rdfGraphAfterSerialisation, 'ManifestRDFUtils.dcterms:title')
-        self.failUnless((subject,URIRef(ManifestRDFUtils.dcterms+ElementDescription),Description) in rdfGraphAfterSerialisation, 'ManifestRDFUtils.dcterms:Description')
+        subject = rdfGraphAfterSerialisation.value(None,RDF.type,URIRef(ManifestRDFUtils.oxds+"Grouping"))
+        self.failUnless((subject,RDF.type,URIRef(oxds+"Grouping")) in rdfGraphAfterSerialisation, 'Testing submission type: '+subject+", "+ URIRef(oxds+"Grouping"))
+        self.failUnless((subject,ElementCreatorUri,User) in rdfGraphAfterSerialisation, 'dcterms:creator')
+        self.failUnless((subject,ElementIdentifierUri,DatasetId) in rdfGraphAfterSerialisation, 'ManifestRDFUtils.dcterms:identifier')
+        self.failUnless((subject,ElementTitleUri,Title) in rdfGraphAfterSerialisation, 'dcterms:title')
+        self.failUnless((subject,ElementDescriptionUri,Description) in rdfGraphAfterSerialisation, 'dcterms:Description')
         return
     
     def testUpdateMetadata(self):
         updatedTitle       =  "Updated Submission handler test title"
         updatedDescription =  "Updated Submission handler test description" 
         
-        initialGraph = ManifestRDFUtils.writeToManifestFile(ManifestFilePath, ElementList, ElementValueList)
-        updatedGraph = ManifestRDFUtils.updateManifestFile(ManifestFilePath, [ElementTitle,ElementDescription], [updatedTitle, updatedDescription])       
+        initialGraph = ManifestRDFUtils.writeToManifestFile(ManifestFilePath, NamespaceDictionary,ElementUriList, ElementValueList)
+        updatedGraph = ManifestRDFUtils.updateManifestFile(ManifestFilePath, [ElementTitleUri,ElementDescriptionUri], [updatedTitle, updatedDescription])       
         readGraph    = ManifestRDFUtils.readManifestFile(ManifestFilePath)
 
         # Assert that (initialGraph != updatedGraph)          
-        self.assertEqual(False, ManifestRDFUtils.compareRDFGraphs(initialGraph, updatedGraph,ElementList),"Error updating the manifest file!")
+        self.assertEqual(False, ManifestRDFUtils.compareRDFGraphs(initialGraph, updatedGraph,ElementUriList),"Error updating the manifest file!")
         
         # Assert that (updatedGraph == readGraph)
-        self.assertEqual(True, ManifestRDFUtils.compareRDFGraphs(updatedGraph, readGraph,ElementList),"Error updating the manifest file!")
+        self.assertEqual(True, ManifestRDFUtils.compareRDFGraphs(updatedGraph, readGraph,ElementUriList),"Error updating the manifest file!")
         return    
     
     def testGetElementValuesFromManifest(self):
-        rdfGraph = ManifestRDFUtils.writeToManifestFile(ManifestFilePath, ElementList, ElementValueList)        
-        fields = ManifestRDFUtils.getElementValuesFromManifest(rdfGraph, ElementList)
+        rdfGraph = ManifestRDFUtils.writeToManifestFile(ManifestFilePath, NamespaceDictionary, ElementUriList, ElementValueList)        
+        fields = ManifestRDFUtils.getElementValuesFromManifest(rdfGraph, ElementUriList)
         self.assertEquals(fields,ElementValueList,"Problem reading submit dataset utility Fields!")
         return
     
     def testGetDictionaryFromManifest(self):
-        rdfGraph = ManifestRDFUtils.writeToManifestFile(ManifestFilePath, ElementList, ElementValueList)
-        actualDictionary = ManifestRDFUtils.getDictionaryFromManifest(ManifestFilePath, ElementList)
+        rdfGraph = ManifestRDFUtils.writeToManifestFile(ManifestFilePath, NamespaceDictionary, ElementUriList, ElementValueList)
+        actualDictionary = ManifestRDFUtils.getDictionaryFromManifest(ManifestFilePath, ElementUriList)
         Logger.debug(repr(actualDictionary))
         #print "ExpectedDictionary: "+repr(ExpectedDictionary)
         #print "actualDictionary: "+repr(actualDictionary)

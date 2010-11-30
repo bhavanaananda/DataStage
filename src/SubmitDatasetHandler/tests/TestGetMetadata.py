@@ -5,6 +5,7 @@
 #
 import sys, unittest, logging, zipfile, re, StringIO, os, logging, cgi
 from os.path import normpath, abspath
+from rdflib import URIRef
 sys.path.append("..")
 sys.path.append("../cgi-bin")
 
@@ -42,11 +43,17 @@ Description               =  SubmitDatasetUtils.getFormParam('description', form
 User                      =  SubmitDatasetUtils.getFormParam('user', formdata)
 ElementValueList          =  [User, DatasetId, Title, Description]
 
-ElementCreator            =  "creator"
-ElementIdentifier         =  "identifier"
-ElementTitle              =  "title"
-ElementDescription        =  "description"
-ElementList               =  [ElementCreator,ElementIdentifier,ElementTitle,ElementDescription]  
+dcterms                =  URIRef("http://purl.org/dc/terms/")
+oxds                   =  URIRef("http://vocab.ox.ac.uk/dataset/schema#") 
+NamespaceDictionary    =  {
+                             "dcterms"   : dcterms ,
+                             "oxds"      : oxds                    
+                          }
+ElementCreatorUri         =  URIRef(dcterms + "creator")
+ElementIdentifierUri      =  URIRef(dcterms + "identifier")
+ElementTitleUri           =  URIRef(dcterms + "title")
+ElementDescriptionUri     =  URIRef(dcterms + "description")
+ElementUriList            =  [ElementCreatorUri, ElementIdentifierUri, ElementTitleUri, ElementDescriptionUri]
     
 class TestGetMetadata(unittest.TestCase):
 
@@ -63,7 +70,7 @@ class TestGetMetadata(unittest.TestCase):
         outputStr                 = StringIO.StringIO()
         
         # Create a manifest file from mocked up form data
-        ManifestRDFUtils.writeToManifestFile(ManifestFilePath, ElementList, ElementValueList)
+        ManifestRDFUtils.writeToManifestFile(ManifestFilePath, NamespaceDictionary,ElementUriList, ElementValueList)
 
         # Invoke get mtatadata submission program, passing faked dataset directory
         GetMetadata.getMetadata(formdata, ManifestName, outputStr)

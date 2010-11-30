@@ -29,9 +29,20 @@ from rdflib.graph import Graph
 from rdflib.plugins.memory import Memory
 from rdflib import Literal
 
-dcterms              =  URIRef("http://purl.org/dc/terms/")
-oxds                 =  URIRef("http://vocab.ox.ac.uk/dataset/schema#") 
-Logger               =  logging.getLogger("MaifestRDFUtils")
+Logger  =  logging.getLogger("MaifestRDFUtils")
+oxds    =  URIRef("http://vocab.ox.ac.uk/dataset/schema#")
+oxdsGroupingUri =  URIRef(oxds+"Grouping")
+
+def bindNamespaces(rdfGraph, namespaceDict):
+    # Bind namespaces
+    for key in namespaceDict:
+        keyValue = namespaceDict[key]
+        Logger.debug(key+":"+keyValue)
+        rdfGraph.bind( key,  keyValue , override=True)
+    # rdfGraph.bind("dcterms", dcterms, override=True)
+    # rdfGraph.bind("oxds", oxds, override=True)
+    # URIRef(dcterms+elementList[index])
+    return rdfGraph
 
 def readManifestFile(manifestPath):
     """
@@ -45,47 +56,45 @@ def readManifestFile(manifestPath):
     rdfGraph.parse(manifestPath)   
     return rdfGraph
 
-def writeToManifestFile(manifestPath,elementList,elementValueList):   
+def writeToManifestFile(manifestPath, namespaceDict, elementUriList,elementValueList):   
     """
     Write to the manifest file. 
     
     manifestPath      manifest file path
-    elementList       Element Names List to be written into the manifest files
+    elementUriList    Element Uri List to be written into the manifest files
     elementValueList  Element Values List to be written into the manifest files
     """
     # Create an empty RDF Graph 
     rdfGraph = Graph()
-
-    # Bind namespaces
-    rdfGraph.bind("dcterms", dcterms, override=True)
-    rdfGraph.bind("oxds", oxds, override=True)
-    
-    # Write to the RDF Graph
     subject =  BNode()
-    rdfGraph.add((subject, RDF.type, URIRef(oxds+"DataSet")))
-    for index in range(len(elementList)):
-        rdfGraph.add((subject, URIRef(dcterms+elementList[index]), Literal(elementValueList[index])))
+    rdfGraph = bindNamespaces(rdfGraph, namespaceDict)
+    # Write to the RDF Graph
+    
+    rdfGraph.add((subject, RDF.type, oxdsGroupingUri))
+    for index in range(len(elementUriList)):
+        rdfGraph.add((subject,elementUriList[index], Literal(elementValueList[index])))
  
     # Serialise it to a manifest.rdf file
     saveToManifestFile(rdfGraph, manifestPath)
     return rdfGraph
     
-def updateManifestFile(manifestPath, elementList, elementValueList):   
+def updateManifestFile(manifestPath, elementUriList, elementValueList):   
     """
     Update the manifest file. 
     
     manifestPath      manifest file path
-    elementList       Element Names List whose values need to be to be updated in the manifest files
+    elementUriList    Element Uri List whose values need to be to be updated in the manifest files
     elementValueList  Element Values List to be updated into the manifest files
     """
   
-    # Read the manifest File and update the title and the description
+    # Read the manifest file and update the title and the description
     rdfGraph = readManifestFile(manifestPath)
-    subject  = rdfGraph.value(None,RDF.type, URIRef(oxds+"DataSet"))
+
+    subject  = rdfGraph.value(None,RDF.type, oxdsGroupingUri)
     if subject == None :
         subject = BNode()
-    for index in range(len(elementList)):
-        rdfGraph.set((subject, URIRef(dcterms+elementList[index]), Literal(elementValueList[index])))
+    for index in range(len(elementUriList)):
+        rdfGraph.set((subject, elementUriList[index], Literal(elementValueList[index])))
     saveToManifestFile(rdfGraph,manifestPath)
     return rdfGraph
     
@@ -100,7 +109,7 @@ def saveToManifestFile(rdfGraph, manifestPath):
     rdfGraph.serialize(destination=manifestPath, format='pretty-xml')
     return
 
-def compareRDFGraphs(graphA, graphB, elementsToCompare=[]):
+def compareRDFGraphs(graphA, graphB, elementUriListToCompare=[]):
     """
     Compare two RDG graphs
     
@@ -124,28 +133,30 @@ def compareRDFGraphs(graphA, graphB, elementsToCompare=[]):
     for statement in graphB:
         if not graphContains(graphA, statement) : return False
                 
-    subjectA  = graphA.value(None,RDF.type, URIRef(oxds+"DataSet"))
-    subjectB  = graphB.value(None,RDF.type, URIRef(oxds+"DataSet"))
-    for elementName in elementsToCompare :
-        if graphA.value(subjectA,URIRef(dcterms+elementName),None)!=graphB.value(subjectB,URIRef(dcterms+elementName),None) :
+    subjectA  = graphA.value(None,RDF.type, oxdsGroupingUri)
+    subjectB  = graphB.value(None,RDF.type, oxdsGroupingUri)
+    for elementUri in elementUriListToCompare :
+        if graphA.value(subjectA,elementUri,None)!=graphB.value(subjectB,elementUri,None) :
            graphsEqual = False
 
     return graphsEqual
 
-def getElementValuesFromManifest(rdfGraph,elementList):
+def getElementValuesFromManifest(rdfGraph,elementUriList):
     """
     Get element values of the element list supplied from the RDF graph
     
-    rdfGraph      RDF Graph
-    elementList   Element Names List whose values need to be to be extracted from the manifest files
+    rdfGraph         RDF Graph
+    elementUriList   Element Uri List whose values need to be to be extracted from the manifest files
     """
     elementValueList = []
-    subject  = rdfGraph.value(None, RDF.type, URIRef(oxds+"DataSet"))
-    for element in elementList:
-        elementValueList.append(rdfGraph.value(subject,URIRef(dcterms+element),None))   
+    subject  = rdfGraph.value(None, RDF.type, oxdsGroupingUri)
+    for elementUri in elementUriList:
+        elementValueList.append(rdfGraph.value(subject,elementUri,None))   
+    Logger.debug("Element Uri List =" + repr(elementUriList))
+    Logger.debug("Element Value List =" + repr(elementValueList))
     return elementValueList
 
-def getDictionaryFromManifest(manifestPath, elementList):
+def getDictionaryFromManifest(manifestPath, elementUriList):
     """
     Gets the dictionary of Field-Values from the manifest RDF
     
@@ -162,12 +173,12 @@ def getDictionaryFromManifest(manifestPath, elementList):
         
     if manifestPath != None and ifFileExists(manifestPath):
         rdfGraph = readManifestFile(manifestPath)
-        elementValueList = getElementValuesFromManifest(rdfGraph, elementList)
-        Logger.debug("Element List =" + repr(elementList))
-        Logger.debug("Element Value List =" + repr(elementValueList))
+        elementValueList = getElementValuesFromManifest(rdfGraph, elementUriList)
+     #   Logger.debug("Element URi List =" + repr(elementUriList))
+     #   Logger.debug("Element Value List =" + repr(elementValueList))
         
     if elementValueList!=[]:
-        dict = createDictionary(elementList, elementValueList)
+        dict = createDictionary(elementUriList, elementValueList)
         
     return dict
 
@@ -181,23 +192,17 @@ def ifFileExists(filePath):
    
     return os.path.isfile(filePath)
 
-def createDictionary(keyList, valueList):   
+def createDictionary(keyUriList, valueList):   
     """
     Creates and returns a dictionary from the keyList and valueList supplied 
     
-    keyList     List of keys
+    keyUriList  List of key uris
     valueList   List of values
     """
     dict = {}
-# i = 0
-    for index in range(len(keyList)):
-        dict[keyList[index]] = valueList[index]
-    Logger.debug(" Key List = "+ repr(keyList))
-    Logger.debug(" Key value list = "+ repr(valueList))
-  #  dict([keyList,valueList])
-#       rdfGraph.set((subject, URIRef(dcterms+elementList[index]), Literal(elementValueList[index])))
-#    for keyName in keyList:
-#        dict[keyName] = valueList[i]
-#        i += 1
+    for index in range(len(keyUriList)):
+        dict[keyUriList[index]] = valueList[index]
+   # Logger.debug(" Key Uri List = "+ repr(keyUriList))
+   # Logger.debug(" Key value list = "+ repr(valueList))
     return dict
 

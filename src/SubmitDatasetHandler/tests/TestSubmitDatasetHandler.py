@@ -5,6 +5,7 @@
 #
 import sys, unittest, logging, zipfile, re, StringIO, os, logging, cgi
 from os.path import normpath
+from rdflib import URIRef
 sys.path.append("..")
 sys.path.append("../cgi-bin")
 
@@ -27,7 +28,7 @@ formdata                 =  \
                              , 'submit'      :  cgi.MiniFieldStorage('submit'      ,  "Submit")
                             }
 updatedformdata          =   \
-                            {  'datDir'     :  cgi.MiniFieldStorage('datDir'      ,  "./DatasetsTopDir")
+                            {  'datDir'      :  cgi.MiniFieldStorage('datDir'      ,  "./DatasetsTopDir")
                              , 'datId'       :  cgi.MiniFieldStorage('datId'       ,  "SubmissionHandlerTest")
                              , 'title'       :  cgi.MiniFieldStorage('title'       ,  "Submission handler updated test title")
                              , 'description' :  cgi.MiniFieldStorage('description' ,  "Submission handler updated test description")
@@ -35,20 +36,7 @@ updatedformdata          =   \
                              , 'pass'        :  cgi.MiniFieldStorage('pass'        ,  "admiral")
                              , 'submit'      :  cgi.MiniFieldStorage('submit'      ,  "Submit")      
                             }                      
-ExpectedDictionary       =  {
-                               "creator"     : "admiral"
-                             , "identifier"  : "SubmissionHandlerTest"
-                             , "title"       : "Submission handler test title"
-                             , "description" : "Submission handler test description"                     
-                            }   
 
-ExpectedUpdatedDictionary =  {
-                                "creator"     : "admiral"
-                              , "identifier"  : "SubmissionHandlerTest"
-                              , "title"       : "Submission handler updated test title"
-                              , "description" : "Submission handler updated test description"                     
-                             }     
-                 
 DatasetId                 =  SubmitDatasetUtils.getFormParam('datId', formdata)
 DatasetDir                =  SubmitDatasetUtils.getFormParam('datDir', formdata)
 Title                     =  SubmitDatasetUtils.getFormParam('title', formdata)
@@ -60,11 +48,32 @@ UpdatedTitle              =  "Updated Title"
 UpdatedDescription        =  "Updated Description"
 ElementValueUpdatedList   =  [User, DatasetId, UpdatedTitle, UpdatedDescription]
 
-ElementCreator            =  "creator"
-ElementIdentifier         =  "identifier"
-ElementTitle              =  "title"
-ElementDescription        =  "description"
-ElementList               =  [ElementCreator,ElementIdentifier,ElementTitle,ElementDescription]  
+dcterms                   =  URIRef("http://purl.org/dc/terms/")
+oxds                      =  URIRef("http://vocab.ox.ac.uk/dataset/schema#") 
+NamespaceDictionary       =  {
+                               "dcterms"   : dcterms ,
+                               "oxds"      : oxds                    
+                             }
+ElementCreatorUri         =  URIRef(dcterms + "creator")
+ElementIdentifierUri      =  URIRef(dcterms + "identifier")
+ElementTitleUri           =  URIRef(dcterms + "title")
+ElementDescriptionUri     =  URIRef(dcterms + "description")
+ElementUriList            =  [ElementCreatorUri, ElementIdentifierUri, ElementTitleUri, ElementDescriptionUri]
+
+ExpectedDictionary        =  {
+                                ElementCreatorUri     : "admiral"
+                              , ElementIdentifierUri  : "SubmissionHandlerTest"
+                              , ElementTitleUri       : "Submission handler test title"
+                              , ElementDescriptionUri : "Submission handler test description"                     
+                             }   
+
+ExpectedUpdatedDictionary = {
+                                ElementCreatorUri     : "admiral"
+                              , ElementIdentifierUri  : "SubmissionHandlerTest"
+                              , ElementTitleUri       : "Submission handler updated test title"
+                              , ElementDescriptionUri : "Submission handler updated test description"                     
+                            }     
+                 
 
 BaseDir                   =  "."
 ManifestFilePath          =  BaseDir + os.path.sep + DirName + "/TestMetadataMergingManifest.rdf"
@@ -210,16 +219,16 @@ class TestSubmitDatasethandler(unittest.TestCase):
     
     def testSubmitDatasetHandlerUpdateMetadataBeforeSubmission(self):
         # the initial manifest file 
-        SubmitDatasetHandler.updateMetadataInDirectoryBeforeSubmission(ManifestFilePath, ElementList, ElementValueList)
+        SubmitDatasetHandler.updateMetadataInDirectoryBeforeSubmission(ManifestFilePath, ElementUriList, ElementValueList)
         # Assert that the manifets has been created
         self.assertEqual(True,ManifestRDFUtils.ifFileExists(ManifestFilePath),"Manifest file was not successfully created!")
         # Update the manifets contents 
-        SubmitDatasetHandler.updateMetadataInDirectoryBeforeSubmission(ManifestFilePath, ElementList, ElementValueUpdatedList)   
+        SubmitDatasetHandler.updateMetadataInDirectoryBeforeSubmission(ManifestFilePath, ElementUriList, ElementValueUpdatedList)   
         
         # Read the manifest again
         rdfGraph = ManifestRDFUtils. readManifestFile(ManifestFilePath)
         # Assert that the Updated Value list from metadata == "ElementValueUpdatedList"
-        self.assertEqual(ManifestRDFUtils.getElementValuesFromManifest(rdfGraph,ElementList),ElementValueUpdatedList,"Error updating the metadata!")       
+        self.assertEqual(ManifestRDFUtils.getElementValuesFromManifest(rdfGraph,ElementUriList),ElementValueUpdatedList,"Error updating the metadata!")       
         return
     
     def testUpdateLocalManifestAndDatasetSubmission(self):
@@ -230,7 +239,7 @@ class TestSubmitDatasethandler(unittest.TestCase):
 
         SubmitDatasetHandler.processDatasetSubmissionForm(formdata, outputStr)
         # Read the dictionary from the manifest
-        actualDictionary   = ManifestRDFUtils.getDictionaryFromManifest(manifestFilePath, ElementList)
+        actualDictionary   = ManifestRDFUtils.getDictionaryFromManifest(manifestFilePath, ElementUriList)
         Logger.debug("\n Expected Dictionary after form submission= " + repr(ExpectedDictionary))
         Logger.debug("\n Actual Dictionary after form submission =  " + repr(actualDictionary))
         
@@ -240,7 +249,7 @@ class TestSubmitDatasethandler(unittest.TestCase):
         # Invoke dataset submission program with updated information, passing faked updated form submission parameters
         SubmitDatasetHandler.processDatasetSubmissionForm(updatedformdata, outputStr)
         # Read the dictionary from the manifest after processing the form submission with the updated faked  form  data
-        actualUpdatedDictionary   = ManifestRDFUtils.getDictionaryFromManifest(manifestFilePath, ElementList)
+        actualUpdatedDictionary   = ManifestRDFUtils.getDictionaryFromManifest(manifestFilePath, ElementUriList)
         Logger.debug("\n Expected Updated Dictionary after form resubmission = " + repr(ExpectedUpdatedDictionary))
         Logger.debug("\n Actual Updated Dictionary after form resubmission =  " + repr(actualUpdatedDictionary))
         
