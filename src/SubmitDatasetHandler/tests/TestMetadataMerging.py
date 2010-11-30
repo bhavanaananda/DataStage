@@ -105,6 +105,7 @@ class TestMetadataMerging(unittest.TestCase):
         self.assertEqual(ExpectedDictionary,actualDictionary, "Error fetching dictionary from the metadata!")
         return
     
+    
 def getTestSuite(select="unit"):
     """
     Get test suite

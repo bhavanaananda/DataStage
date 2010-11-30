@@ -189,9 +189,15 @@ def createDictionary(keyList, valueList):
     valueList   List of values
     """
     dict = {}
-    i = 0
-    for keyName in keyList:
-        dict[keyName] = valueList[i]
-        i += 1
+# i = 0
+    for index in range(len(keyList)):
+        dict[keyList[index]] = valueList[index]
+    Logger.debug(" Key List = "+ repr(keyList))
+    Logger.debug(" Key value list = "+ repr(valueList))
+  #  dict([keyList,valueList])
+#       rdfGraph.set((subject, URIRef(dcterms+elementList[index]), Literal(elementValueList[index])))
+#    for keyName in keyList:
+#        dict[keyName] = valueList[i]
+#        i += 1
     return dict
 

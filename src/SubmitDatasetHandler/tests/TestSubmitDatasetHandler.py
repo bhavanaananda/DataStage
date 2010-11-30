@@ -13,19 +13,42 @@ import ManifestRDFUtils
 import SubmitDatasetUtils
 import HttpUtils
 from MiscLib import TestUtils
-logger                   =  logging.getLogger("TestSubmitDatasethandler")
+Logger                   =  logging.getLogger("TestSubmitDatasethandler")
 SiloName                 =  "admiral-test"
 DirName                  =  "DatasetsTopDir"
 DatasetsEmptyDir         =  "DatasetsEmptyDir"
 formdata                 =  \
-                            { 'datDir'      :  cgi.MiniFieldStorage('datDir'      ,  "./DatasetsTopDir")
-                            , 'datId'       :  cgi.MiniFieldStorage('datId'       ,  "SubmissionHandlerTest")
-                            , 'title'       :  cgi.MiniFieldStorage('title'       ,  "Submission handler test")
-                            , 'description' :  cgi.MiniFieldStorage('description' ,  "Submission handler test description")
-                            , 'user'        :  cgi.MiniFieldStorage('user'        ,  "admiral")
-                            , 'pass'        :  cgi.MiniFieldStorage('pass'        ,  "admiral")
-                            , 'submit'      :  cgi.MiniFieldStorage('submit'      ,  "Submit")
+                            {  'datDir'      :  cgi.MiniFieldStorage('datDir'      ,  "./DatasetsTopDir")
+                             , 'datId'       :  cgi.MiniFieldStorage('datId'       ,  "SubmissionHandlerTest")
+                             , 'title'       :  cgi.MiniFieldStorage('title'       ,  "Submission handler test title")
+                             , 'description' :  cgi.MiniFieldStorage('description' ,  "Submission handler test description")
+                             , 'user'        :  cgi.MiniFieldStorage('user'        ,  "admiral")
+                             , 'pass'        :  cgi.MiniFieldStorage('pass'        ,  "admiral")
+                             , 'submit'      :  cgi.MiniFieldStorage('submit'      ,  "Submit")
                             }
+updatedformdata          =   \
+                            {  'datDir'     :  cgi.MiniFieldStorage('datDir'      ,  "./DatasetsTopDir")
+                             , 'datId'       :  cgi.MiniFieldStorage('datId'       ,  "SubmissionHandlerTest")
+                             , 'title'       :  cgi.MiniFieldStorage('title'       ,  "Submission handler updated test title")
+                             , 'description' :  cgi.MiniFieldStorage('description' ,  "Submission handler updated test description")
+                             , 'user'        :  cgi.MiniFieldStorage('user'        ,  "admiral")
+                             , 'pass'        :  cgi.MiniFieldStorage('pass'        ,  "admiral")
+                             , 'submit'      :  cgi.MiniFieldStorage('submit'      ,  "Submit")      
+                            }                      
+ExpectedDictionary       =  {
+                               "creator"     : "admiral"
+                             , "identifier"  : "SubmissionHandlerTest"
+                             , "title"       : "Submission handler test title"
+                             , "description" : "Submission handler test description"                     
+                            }   
+
+ExpectedUpdatedDictionary =  {
+                                "creator"     : "admiral"
+                              , "identifier"  : "SubmissionHandlerTest"
+                              , "title"       : "Submission handler updated test title"
+                              , "description" : "Submission handler updated test description"                     
+                             }     
+                 
 DatasetId                 =  SubmitDatasetUtils.getFormParam('datId', formdata)
 DatasetDir                =  SubmitDatasetUtils.getFormParam('datDir', formdata)
 Title                     =  SubmitDatasetUtils.getFormParam('title', formdata)
@@ -67,11 +90,11 @@ class TestSubmitDatasethandler(unittest.TestCase):
         # Invoke dataset submission program, passing faked form submission parameters
         SubmitDatasetHandler.processDatasetSubmissionForm(formdata, outputStr)
 
-        #logger.debug("Output String from output stream: "+outputStr.getvalue())
+        #Logger.debug("Output String from output stream: "+outputStr.getvalue())
         # print "Output String from output stream: "+outputStr.getvalue()
         outputStr.seek(0, os.SEEK_SET)
         firstLine = outputStr.readline()
-        logger.debug( firstLine );
+        Logger.debug( firstLine );
         self.assertEqual( firstLine, "Content-type: text/html\n", "Submission Handler could not action the client request!")
              
         SubmitDatasetUtils.deleteDataset(SiloName, datasetId+"-"+DirName)
@@ -198,6 +221,33 @@ class TestSubmitDatasethandler(unittest.TestCase):
         # Assert that the Updated Value list from metadata == "ElementValueUpdatedList"
         self.assertEqual(ManifestRDFUtils.getElementValuesFromManifest(rdfGraph,ElementList),ElementValueUpdatedList,"Error updating the metadata!")       
         return
+    
+    def testUpdateLocalManifestAndDatasetSubmission(self):
+        outputStr =  StringIO.StringIO()
+        # Manifest file prodiuced by the form ha the name=manifest.rdf as default
+        manifestFilePath  =   DirName + "/manifest.rdf"
+        # Invoke dataset submission program, passing faked form submission parameters
+
+        SubmitDatasetHandler.processDatasetSubmissionForm(formdata, outputStr)
+        # Read the dictionary from the manifest
+        actualDictionary   = ManifestRDFUtils.getDictionaryFromManifest(manifestFilePath, ElementList)
+        Logger.debug("\n Expected Dictionary after form submission= " + repr(ExpectedDictionary))
+        Logger.debug("\n Actual Dictionary after form submission =  " + repr(actualDictionary))
+        
+        # Assert that the ExpectedDictionary == actualDictionary
+        self.assertEqual(ExpectedDictionary,actualDictionary, "The submit Utils Tool is unable to fetch metadata information!")
+        
+        # Invoke dataset submission program with updated information, passing faked updated form submission parameters
+        SubmitDatasetHandler.processDatasetSubmissionForm(updatedformdata, outputStr)
+        # Read the dictionary from the manifest after processing the form submission with the updated faked  form  data
+        actualUpdatedDictionary   = ManifestRDFUtils.getDictionaryFromManifest(manifestFilePath, ElementList)
+        Logger.debug("\n Expected Updated Dictionary after form resubmission = " + repr(ExpectedUpdatedDictionary))
+        Logger.debug("\n Actual Updated Dictionary after form resubmission =  " + repr(actualUpdatedDictionary))
+        
+        # Assert that the  ExpectedUpdatedDictionary == actualUpdatedDictionary
+        self.assertEqual(ExpectedUpdatedDictionary,actualUpdatedDictionary, "The submit Utils Tool was unable to update form data information in the metadata file!")
+        
+        return
 
 def getTestSuite(select="unit"):
     """
@@ -219,6 +269,7 @@ def getTestSuite(select="unit"):
              ,"testSubmitDatasetHandlerDirectorySubmission"
              ,"testSubmitDatasetHandlerEmptyDirectorySubmission"
              ,"testSubmitDatasetHandlerUpdateMetadataBeforeSubmission"
+             ,"testUpdateLocalManifestAndDatasetSubmission"
             ],
         "component":
             [ #"testComponents"

@@ -39,6 +39,9 @@ ElementIdentifier    =  "identifier"
 ElementTitle         =  "title"
 ElementDescription   =  "description"
 ElementList          =  [ElementCreator,ElementIdentifier,ElementTitle,ElementDescription]
+#TODO...
+#??? ElementKeyList       =  []  # Element dictionary keys 
+ElementUriList       =  []  # Element property URIs
 
 DefaultManifestName  = "manifest.rdf"
 BaseDir              =  "/home/"
@@ -62,7 +65,7 @@ def processDatasetSubmissionForm(formdata, outputstr):
     dirName              =  SubmitDatasetUtils.getFormParam("datDir",formdata)
     ElementValueList     =  [userName, datasetName, title, description]
     
-    #print repr(formdata)
+    # print repr(formdata)
 
     if outputstr:
         sys.stdout = outputstr
@@ -116,6 +119,16 @@ def processDatasetSubmissionForm(formdata, outputstr):
 
         # Unzip the contents into a new dataset
         datasetUnzippedName = SubmitDatasetUtils.unzipRemoteFileToNewDataset(siloName, datasetName, zipFileName)
+
+#        print "Status: 303 Dataset submission successful"
+#        print "Location: SubmitDatasetSummary.py?id=%s&zipid=%s&status=%s"%(
+#                    datasetUnzippedName,
+#                    datasetName,
+#                    "submission%20successful"
+#                    )
+#        print
+#        print "Dataset submission suceeded"
+#        return
 
         # Generate web page
         dataToolURL = "../../SubmitDatasetUI/html/SubmitDataset.html"                                 
@@ -180,8 +193,7 @@ def updateMetadataInDirectoryBeforeSubmission(manifestFilePath, elementList, ele
         Logger.debug("Manifest File Exists... skipping creation!")
         manifestDict = ManifestRDFUtils.getDictionaryFromManifest(manifestFilePath, elementList) 
         if inputDict!= manifestDict:
-            ManifestRDFUtils.updateManifestFile(manifestFilePath, elementList, elementValueList)
-        updatedGraph = ManifestRDFUtils.updateManifestFile(manifestFilePath, elementList, elementValueList)    
+            ManifestRDFUtils.updateManifestFile(manifestFilePath, elementList, elementValueList)   
     else:
         Logger.debug("Creating Manifest File...")
         ManifestRDFUtils.writeToManifestFile(manifestFilePath, elementList, elementValueList)     
