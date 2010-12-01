@@ -12,7 +12,6 @@
     }
     </style>
  
-
     <link rel="stylesheet" href="./../css/SubmitDataset.css" type="text/css" />   
     
     <!-- Import jQuery framework -->
@@ -27,13 +26,13 @@
     <script type="text/javascript">MochiKit = {__export__: false};</script>
     <script type="text/javascript" src="../../MochiKit/Base.js"></script>
     <script type="text/javascript" src="../../MochiKit/Iter.js"></script>
-
     <script type="text/javascript" src="../../MochiKit/Logging.js"></script>
 
     <!-- Import Admiral functions -->
     <script type="text/javascript" src="../../Admiral/admiral-base.js"></script>
     <script type="text/javascript" src="../../Admiral/Error.js"></script>
     <script type="text/javascript" src="../../Admiral/AsyncComputation.js"></script>
+    <script type="text/javascript" src="./../js/SubmitDatasetBase.js"></script>
     <script type="text/javascript" src="./../js/DisplayDirectories.js"></script>
     <script type="text/javascript" src="./../js/GetMetadata.js"></script>
     <script type="text/javascript" src="../../SelectDataset/ListDatasets.js"></script>
@@ -42,58 +41,6 @@
     // Use jQuery via jQuery(...)
     jQuery.noConflict();
     </script>
-
-    <!-- Execute the desired dataset listing logic -->
-    <script>
-            jQuery(document).ready( function ()
-            {                         
-                var m = new admiral.AsyncComputation();
-                m.eval(function(value,callback)
-                {
-                       admiral.displayDirectories(callback);           
-                });
-                m.eval(function(value,callback)
-                {                    
-                    // Populate directory listing box with results received
-                    jQuery("#dirlist").empty();
-                    for (i=0; i<value.length; i++)
-                    {  
-                       newjelem='<span class="dirlistitem">'+value[i]+'</span>';
-                       jQuery("#dirlist").append(newjelem);
-                    }
-                callback(value);
-                });    
-                m.eval(function(value, callback)
-                {
-                    // Set click handlers on directory items
-                    jQuery("#dirlist > .dirlistitem").click( function()
-                    {   
-                        var here  = this;
-                        var n = new admiral.AsyncComputation();
-                        
-                        n.eval(function(directorySelected,callback)
-                        { 
-                          jQuery("#datDir").val(directorySelected);
-                          admiral.getMetadata(directorySelected,callback); 
-                        });
-                        
-                        // Populate the other fields with the value received
-                         n.eval(function(directoryValues,callback)
-                        {
-                                               
-                          jQuery("#datId").val(directoryValues["identifier"]);
-                          jQuery("#description").val(directoryValues["description"]);
-                          jQuery("#user").val(directoryValues["creator"]);
-                          jQuery("#title").val(directoryValues["title"]);
-                        });
-                        n.exec( jQuery(this).text(),admiral.noop);
-                        
-                    });
-                });                    
-                
-                m.exec(null,admiral.noop);
-            });                    
-     </script>
 </head> 
 
 <body>
@@ -141,9 +88,6 @@
             <span class="labelvalue">
                 <input name="submit" id="submit" type="submit" value="Submit"/>
                 <button  name="cancel" id="cancel" type="button"> Cancel </button>
-                <!-- 
-                onClick="navigateto('http://localhost/bhavana/google-admiral-jiscmrd/spike/applications/Admiral/ViewOrSubmitDatasets/index.html')
-                -->
            </span>
         </div>
    </div>
