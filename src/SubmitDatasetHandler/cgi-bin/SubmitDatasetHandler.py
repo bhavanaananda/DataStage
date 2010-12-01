@@ -127,48 +127,15 @@ def processDatasetSubmissionForm(formdata, outputstr):
         # Unzip the contents into a new dataset
         datasetUnzippedName = SubmitDatasetUtils.unzipRemoteFileToNewDataset(siloName, datasetName, zipFileName)
 
-#        print "Status: 303 Dataset submission successful"
-#        print "Location: SubmitDatasetSummary.py?id=%s&zipid=%s&status=%s"%(
-#                    datasetUnzippedName,
-#                    datasetName,
-#                    "submission%20successful"
-#                    )
-#        print
-#        print "Dataset submission suceeded"
-#        return
-
-        # Generate web page
-        dataToolURL = "../../SubmitDatasetUI/html/SubmitDataset.html"                                 
-        mainURL = "http://zoo-admiral-devel.zoo.ox.ac.uk"
-        viewDatasetURL = "../../DisplayDataset/html/DisplayDataset.html#" + datasetUnzippedName
-        viewZippedURL = "/admiral-test/datasets/" + datasetName
-        viewUnzippedURL = "/admiral-test/datasets/" + datasetUnzippedName
-
-        pageTemplate = ("""
-            <html>
-                <head>
-                    <script type="text/javascript" src="../../jQuery/js/jquery-1.4.2.js"></script>
-                </head>
-                
-                <body>
-                    <h2>Dataset submission successful</h2>
-                    <h3><a href="%(viewDatasetURL)s">View submitted dataset (%(datasetUnzippedName)s)</a></h3>
-                    <h3><a href="%(dataToolURL)s">Submit another dataset</a></h3>
-                    <h3><a href="%(mainURL)s">Back to front page</a></h3>
-                    <p>View Data in Dataset: %(datasetName)s - <a href="%(viewZippedURL)s">packaged data</a></p>
-                    <p>View Data in Dataset: %(datasetUnzippedName)s - <a href="%(viewUnzippedURL)s">original data</a></p>
-                </body>
-            </html>
-            """)
-        print (pageTemplate%
-            { 'viewDatasetURL':         viewDatasetURL
-            , 'datasetName':            datasetName
-            , 'dataToolURL':            dataToolURL
-            , 'mainURL':                mainURL
-            , 'viewZippedURL':          viewZippedURL
-            , 'datasetUnzippedName':    datasetUnzippedName
-            , 'viewUnzippedURL':        viewUnzippedURL
-            })
+        print "Status: 303 Dataset submission successful"
+        print "Location: SubmitDatasetSummary.py?id=%s&unzipid=%s&status=%s"%(
+                    datasetUnzippedName,
+                    datasetName,
+                    "Dataset%20submission%20suceeded"
+                    )
+        print
+        print "Dataset submission suceeded"
+        return
 
     except SubmitDatasetUtils.SubmitDatasetError, e:
         SubmitDatasetUtils.generateErrorResponsePageFromException(e) 
