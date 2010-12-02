@@ -20,11 +20,11 @@ FileName             =  "file1.txt"
 Username             =  "admiral"
 Password             =  "admiral"
 TestDatasetName      =  "TestSubmitDataset"
-EmptyTestDatasetName =  "Empty"
+EmptyTestDatasetName =  "EmptyTestSubmitDataset"
 FileMimeType         =  "text/plain"
 ZipMimeType          =  "application/zip"
 DirName              =  "DatasetsTopDir"
-EmptyDirName         =  "DatasetsEmptyDir"
+EmptyDirName         =  "DatasetsTopDir/DatasetsEmptySubDir"
 TestPat              =  re.compile("^.*$(?<!\.zip)")
 logger               =  logging.getLogger(TestDatasetName)
 

@@ -51,11 +51,10 @@ class TestDirectoryListingHandler(unittest.TestCase):
         # Check retrieving sub-directories
         directoryCollection = json.load(outputStr)
 
-        logger.debug(repr(directoryCollection))
-        self.assertEquals(len(directoryCollection), 4, "Expected 4 directories to be returned")
+        logger.debug("Directory Collection = " + repr(directoryCollection))
+        self.assertEquals(len(directoryCollection), 3, "Expected 4 directories to be returned")
         expectdirs = \
-            [ "tests/DatasetsEmptyDir"
-            , "tests/DatasetsTopDir"
+            [ "tests/DatasetsTopDir"
             , "tests/DatasetsTopDir/DatasetsSubDir"
             , "tests/DatasetsTopDir/DatasetsEmptySubDir"
             ]

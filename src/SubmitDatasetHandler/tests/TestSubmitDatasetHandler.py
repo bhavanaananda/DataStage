@@ -17,7 +17,8 @@ from MiscLib import TestUtils
 Logger                   =  logging.getLogger("TestSubmitDatasethandler")
 SiloName                 =  "admiral-test"
 DirName                  =  "DatasetsTopDir"
-DatasetsEmptyDir         =  "DatasetsEmptyDir"
+DatasetsEmptyDir         =  "DatasetsTopDir/DatasetsEmptySubDir"
+DatasetsEmptyDirName     =  "DatasetsEmptySubDir"
 formdata                 =  \
                             {  'datDir'      :  cgi.MiniFieldStorage('datDir'      ,  "./DatasetsTopDir")
                              , 'datId'       :  cgi.MiniFieldStorage('datId'       ,  "SubmissionHandlerTest")
@@ -103,9 +104,10 @@ class TestSubmitDatasethandler(unittest.TestCase):
         # print "Output String from output stream: "+outputStr.getvalue()
         outputStr.seek(0, os.SEEK_SET)
         firstLine = outputStr.readline()
-        Logger.debug( firstLine );
-        self.assertEqual( firstLine, "Content-type: text/html\n", "Submission Handler could not action the client request!")
-             
+        Logger.debug("FirstLine = " + firstLine);
+        #self.assertEqual( firstLine, "Content-type: text/html\n", "Submission Handler could not action the client request!")
+        self.assertEqual( firstLine.strip(), "Status: 303 Dataset submission successful","Submission Handler could not action the client request!")
+           
         SubmitDatasetUtils.deleteDataset(SiloName, datasetId+"-"+DirName)
         return
 
@@ -130,8 +132,9 @@ class TestSubmitDatasethandler(unittest.TestCase):
         outputStr.seek(0, os.SEEK_SET)
         firstLine = outputStr.readline()
 
-        self.assertEqual( firstLine, "Content-type: text/html\n", "Submission Handler could not action the client request!")
-        
+        # self.assertEqual( firstLine, "Content-type: text/html\n", "Submission Handler could not action the client request!")
+        self.assertEqual( firstLine.strip(), "Status: 303 Dataset submission successful","Submission Handler could not action the client request!")
+         
         datasetId  =  SubmitDatasetUtils.getFormParam('datId', formdata)
         datasetDir =  SubmitDatasetUtils.getFormParam('datDir', formdata)
         SubmitDatasetUtils.deleteDataset(SiloName, datasetId+"-"+DirName)
@@ -159,8 +162,9 @@ class TestSubmitDatasethandler(unittest.TestCase):
         # Check that a HTML Response page is returned   
         outputStr.seek(0, os.SEEK_SET)
         firstLine = outputStr.readline()
-        self.assertEqual( firstLine, "Content-type: text/html\n", "Submission Handler could not action the client request!")
-
+        # self.assertEqual( firstLine, "Content-type: text/html\n", "Submission Handler could not action the client request!")
+        self.assertEqual( firstLine.strip(), "Status: 303 Dataset submission successful","Submission Handler could not action the client request!")
+ 
         SubmitDatasetUtils.deleteDataset(SiloName, datasetId+"-"+DirName)
         return
     
@@ -202,7 +206,7 @@ class TestSubmitDatasethandler(unittest.TestCase):
         # Check that the dataset created for unzipped data can be dereferenced in the databank 
         datasetId  =  SubmitDatasetUtils.getFormParam('datId', formdata)
         datasetDir =  SubmitDatasetUtils.getFormParam('datDir', formdata)
-        HttpUtils.doHTTP_GET(resource="/" + SiloName +"/datasets/"+datasetId+"-"+DatasetsEmptyDir, 
+        HttpUtils.doHTTP_GET(resource="/" + SiloName +"/datasets/"+datasetId+"-"+DatasetsEmptyDirName, 
             expect_status=200, expect_reason="OK", accept_type="application/json")
         
         # Invoke dataset submission program yet again. 
@@ -212,9 +216,9 @@ class TestSubmitDatasethandler(unittest.TestCase):
          
         datasetId  =  SubmitDatasetUtils.getFormParam('datId', formdata)
         datasetDir =  SubmitDatasetUtils.getFormParam('datDir', formdata)
-        HttpUtils.doHTTP_GET(resource="/" + SiloName +"/datasets/"+datasetId+"-"+DatasetsEmptyDir, expect_status=200, expect_reason="OK", accept_type="application/json")
+        HttpUtils.doHTTP_GET(resource="/" + SiloName +"/datasets/"+datasetId+"-"+DatasetsEmptyDirName, expect_status=200, expect_reason="OK", accept_type="application/json")
         
-        SubmitDatasetUtils.deleteDataset(SiloName, datasetId+"-"+DatasetsEmptyDir)
+        SubmitDatasetUtils.deleteDataset(SiloName, datasetId+"-"+DatasetsEmptyDirName)
         return
     
     def testSubmitDatasetHandlerUpdateMetadataBeforeSubmission(self):
