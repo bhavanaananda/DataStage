@@ -25,12 +25,13 @@ import cgi, sys, re, logging, os, os.path,traceback
 from rdflib import URIRef
 sys.path.append("..")
 sys.path.append("../..")
-
 import SubmitDatasetUtils
 import ManifestRDFUtils
 import HttpUtils
 from MiscLib import TestUtils
 
+siloName             = "admiral-test"
+save_stdout          = sys.stdout
 dcterms                  =  URIRef("http://purl.org/dc/terms/")
 oxds                     =  URIRef("http://vocab.ox.ac.uk/dataset/schema#") 
 NamespaceDictionary      =  {
@@ -40,19 +41,14 @@ NamespaceDictionary      =  {
 ZipMimeType              =  "application/zip"
 FilePat                  =  re.compile("^.*$(?<!\.zip)")
 Logger                   =  logging.getLogger("SubmitDatasetHandler")
-
 ElementCreatorUri        =  URIRef(dcterms + "creator")
 ElementIdentifierUri     =  URIRef(dcterms + "identifier")
 ElementTitleUri          =  URIRef(dcterms + "title")
 ElementDescriptionUri    =  URIRef(dcterms + "description")
 ElementUriList           =  [ElementCreatorUri, ElementIdentifierUri, ElementTitleUri, ElementDescriptionUri]
-#TODO...
-#??? ElementKeyList      =  []  # Element dictionary keys 
-#ElementUriList          =  []  # Element property URIs
-
 DefaultManifestName      =  "manifest.rdf"
 BaseDir                  =  "/home/"
-
+SuccessStatus            =  "Dataset Submission Successful"
 
 def processDatasetSubmissionForm(formdata, outputstr):
     """
@@ -61,9 +57,6 @@ def processDatasetSubmissionForm(formdata, outputstr):
     
     formdata    is a dictionary containing parameters from the dataset submission form
     """
-    siloName             = "admiral-test"
-    save_stdout          = sys.stdout
-
     userName             =  SubmitDatasetUtils.getFormParam("user"        ,  formdata)
     userPass             =  SubmitDatasetUtils.getFormParam("pass"        ,  formdata)
     datasetName          =  SubmitDatasetUtils.getFormParam("datId"       ,  formdata)  
@@ -71,68 +64,36 @@ def processDatasetSubmissionForm(formdata, outputstr):
     description          =  SubmitDatasetUtils.getFormParam("description" ,  formdata)  
     dirName              =  SubmitDatasetUtils.getFormParam("datDir"      ,  formdata)
     ElementValueList     =  [userName, datasetName, title, description]
-    
-    # print repr(formdata)
-
+ 
     if outputstr:
         sys.stdout = outputstr
     try:    
-
-        datIDPattern = re.compile("^[a-zA-Z0-9._:-]+$")
-        matchedString = datIDPattern.match(datasetName)
-        
-        if matchedString==None:
-            raise SubmitDatasetUtils.SubmitDatasetError(
-                SubmitDatasetUtils.INPUT_ERROR,
-                None,
-                "Not a valid Dataset ID: '"+datasetName+"' supplied")
-
-        if dirName.endswith('/'):
-            raise SubmitDatasetUtils.SubmitDatasetError(
-                SubmitDatasetUtils.INPUT_ERROR,
-                None,
-                "Expecting no trailing '/' on directory name: '"+dirName+"' supplied")
- 
+        # Validate the dataset name and dataset directory fields
+        validateFields(dirName, datasetName)
         # Set user credentials       
-        HttpUtils.setRequestUserPass(userName,userPass)
-        
+        HttpUtils.setRequestUserPass(userName,userPass)       
         # Check if the dataset already exists
-        datasetFound = SubmitDatasetUtils.ifDatasetExists(siloName, datasetName)
-        
+        datasetFound = SubmitDatasetUtils.ifDatasetExists(siloName, datasetName)    
         # Create a dataset if the dataset does not exist
         if not datasetFound:              
-            SubmitDatasetUtils.createDataset(siloName, datasetName)
-                             
+            SubmitDatasetUtils.createDataset(siloName, datasetName)                             
         # Update the local manifest
         manifestFilePath     = dirName + str(os.path.sep) + DefaultManifestName
         Logger.debug("Element List = " + repr(ElementUriList))
         Logger.debug("Element Value List = " + repr(ElementValueList))
-        updateMetadataInDirectoryBeforeSubmission(manifestFilePath, ElementUriList, ElementValueList)
-        
+        updateMetadataInDirectoryBeforeSubmission(manifestFilePath, ElementUriList, ElementValueList)       
         # Zip the selected Directory
         zipFileName = os.path.basename(dirName) +".zip"
         zipFilePath = "/tmp/" + zipFileName
-        Logger.debug("datasetName %s, dirName %s, zipFileName %s"%(datasetName,dirName,zipFileName))
+        #Logger.debug("datasetName %s, dirName %s, zipFileName %s"%(datasetName,dirName,zipFileName))
         SubmitDatasetUtils.zipLocalDirectory(dirName, FilePat, zipFilePath)
         # Submit zip file to dataset
-        try:
-            SubmitDatasetUtils.submitFileToDataset(siloName, datasetName, zipFilePath, ZipMimeType, zipFileName)
-        finally:
-            SubmitDatasetUtils.deleteLocalFile(zipFilePath)
-
+        SubmitDatasetUtils.submitFileToDataset(siloName, datasetName, zipFilePath, ZipMimeType, zipFileName)
         # Unzip the contents into a new dataset
-        datasetUnzippedName = SubmitDatasetUtils.unzipRemoteFileToNewDataset(siloName, datasetName, zipFileName)
-
-        print "Status: 303 Dataset submission successful"
-        print "Location: SubmitDatasetSummary.py?id=%s&unzipid=%s&status=%s"%(
-                    datasetUnzippedName,
-                    datasetName,
-                    "Dataset%20submission%20successful"
-                    )
-        print
+        datasetUnzippedName = SubmitDatasetUtils.unzipRemoteFileToNewDataset(siloName, datasetName, zipFileName)       
+        # Redirect to the Dataset Summary page
+        redirectToSubmissionSummaryPage(datasetName, datasetUnzippedName, convertToUriString(SuccessStatus))
         return
-
-
         
     except SubmitDatasetUtils.SubmitDatasetError, e:
         SubmitDatasetUtils.printHTMLHeaders()
@@ -155,9 +116,38 @@ def processDatasetSubmissionForm(formdata, outputstr):
     finally:
         print "</body>"
         print "</html>"
+        SubmitDatasetUtils.deleteLocalFile(zipFilePath)# Dete the local zip file after submission
         sys.stdout = save_stdout
-
     return
+
+
+def validateFields(datasetDirectoryName, datasetName):
+    datIDPattern = re.compile("^[a-zA-Z0-9._:-]+$")
+    matchedString = datIDPattern.match(datasetName)
+    
+    if matchedString==None:
+        raise SubmitDatasetUtils.SubmitDatasetError(
+            SubmitDatasetUtils.INPUT_ERROR,
+            None,
+            "Not a valid Dataset ID: '"+datasetName+"' supplied")
+
+    if datasetDirectoryName.endswith('/'):
+        raise SubmitDatasetUtils.SubmitDatasetError(
+            SubmitDatasetUtils.INPUT_ERROR,
+            None,
+            "Expecting no trailing '/' on directory name: '"+datasetDirectoryName+"' supplied")
+    return
+
+def convertToUriString(statusString):
+    statusString = SuccessStatus.replace(" ", "%20")
+    return statusString
+
+def redirectToSubmissionSummaryPage(datasetName, datasetUnzippedName, statusText):
+    print "Status: 303 Dataset submission successful"
+    print "Location: SubmitDatasetSummary.py?id=%s&unzipid=%s&status=%s" % (datasetUnzippedName, 
+        datasetName, 
+        "statusText")
+    print
 
 def updateMetadataInDirectoryBeforeSubmission(manifestFilePath, elementUriList, elementValueList) :
     """
