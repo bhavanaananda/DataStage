@@ -271,5 +271,13 @@ def zipLocalDirectory(dirName,filePat,zipFileName):
     z.close()
     return zipFileName
 
+def printHTMLHeaders():
+    # Generate error response headers
+    print "Content-type: text/html"
+    print "Cache-control: no-cache"
+    print
 
+    print "<html>"
+    print "<body>"   
+    return
 # End.

@@ -20,7 +20,7 @@ Main CGI program that handles response summary page after dataset submission to 
 __author__ = "Bhavana Ananda"
 __version__ = "0.1"
 
-import cgi, sys, logging
+import cgi, sys, os, logging
 
 sys.path.append("..")
 sys.path.append("../..")
@@ -65,7 +65,7 @@ def datasetSummaryForm(formdata, outputstr):
                 </head>
                 
                 <body>
-                    <h2>%(status)</h2>
+                    <h2>%(status)s</h2>
                     <h3><a href="%(viewDatasetURL)s">View submitted dataset (%(datasetUnzippedName)s)</a></h3>
                     <h3><a href="%(dataToolURL)s">Submit another dataset</a></h3>
                     <h3><a href="%(mainURL)s">Back to front page</a></h3>

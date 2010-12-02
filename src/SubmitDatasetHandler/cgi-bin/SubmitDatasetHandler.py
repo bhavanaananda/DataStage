@@ -77,10 +77,6 @@ def processDatasetSubmissionForm(formdata, outputstr):
     if outputstr:
         sys.stdout = outputstr
     try:    
-        # Generate response headers
-        print "Content-type: text/html"
-        print "Cache-control: no-cache"
-        print
 
         datIDPattern = re.compile("^[a-zA-Z0-9._:-]+$")
         matchedString = datIDPattern.match(datasetName)
@@ -131,28 +127,34 @@ def processDatasetSubmissionForm(formdata, outputstr):
         print "Location: SubmitDatasetSummary.py?id=%s&unzipid=%s&status=%s"%(
                     datasetUnzippedName,
                     datasetName,
-                    "Dataset%20submission%20suceeded"
+                    "Dataset%20submission%20successful"
                     )
         print
-        print "Dataset submission suceeded"
         return
 
+
+        
     except SubmitDatasetUtils.SubmitDatasetError, e:
+        SubmitDatasetUtils.printHTMLHeaders()
         SubmitDatasetUtils.generateErrorResponsePageFromException(e) 
 
     except HttpUtils.HTTPUtilsError, e:
+        SubmitDatasetUtils.printHTMLHeaders()
         SubmitDatasetUtils.generateErrorResponsePage(
             SubmitDatasetUtils.HTTP_ERROR,
             e.code, e.reason)
         SubmitDatasetUtils.printStackTrace()
         
     except:
+        SubmitDatasetUtils.printHTMLHeaders()
         print "<h2>Server error while processing dataset submission</h2>"
         print "<p>Diagnostic stack trace follows</p>"
         SubmitDatasetUtils.printStackTrace()
         raise
     
     finally:
+        print "</body>"
+        print "</html>"
         sys.stdout = save_stdout
 
     return
