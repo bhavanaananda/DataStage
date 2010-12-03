@@ -52,11 +52,11 @@ def datasetSummaryForm(formdata, outputstr):
         print
 
         # Generate web page
-        dataToolURL = "../../SubmitDatasetUI/html/SubmitDataset.html"                                 
-        mainURL = "http://zoo-admiral-devel.zoo.ox.ac.uk"
-        viewDatasetURL = "../../DisplayDataset/html/DisplayDataset.html#" + datasetUnzippedName
-        viewZippedURL = "/admiral-test/datasets/" + datasetName
-        viewUnzippedURL = "/admiral-test/datasets/" + datasetUnzippedName
+        dataToolURL      =  "../../SubmitDatasetUI/html/SubmitDataset.html"                                 
+        mainURL          =  "http://zoo-admiral-devel.zoo.ox.ac.uk"
+        viewDatasetURL   =  "../../DisplayDataset/html/DisplayDataset.html#" + datasetUnzippedName
+        viewZippedURL    =  "/admiral-test/datasets/" + datasetName
+        viewUnzippedURL  =  "/admiral-test/datasets/" + datasetUnzippedName
 
         pageTemplate = ("""
             <html>

@@ -25,6 +25,7 @@ import cgi, sys, re, logging, os, os.path,traceback
 from rdflib import URIRef
 sys.path.append("..")
 sys.path.append("../..")
+
 import SubmitDatasetUtils
 import ManifestRDFUtils
 import HttpUtils
@@ -49,6 +50,7 @@ ElementUriList           =  [ElementCreatorUri, ElementIdentifierUri, ElementTit
 DefaultManifestName      =  "manifest.rdf"
 BaseDir                  =  "/home/"
 SuccessStatus            =  "Dataset Submission Successful"
+
 
 def processDatasetSubmissionForm(formdata, outputstr):
     """
@@ -145,8 +147,7 @@ def convertToUriString(statusString):
 def redirectToSubmissionSummaryPage(datasetName, datasetUnzippedName, statusText):
     print "Status: 303 Dataset submission successful"
     print "Location: SubmitDatasetSummary.py?id=%s&unzipid=%s&status=%s" % (datasetUnzippedName, 
-        datasetName, 
-        "statusText")
+        datasetName, statusText)
     print
 
 def updateMetadataInDirectoryBeforeSubmission(manifestFilePath, elementUriList, elementValueList) :
