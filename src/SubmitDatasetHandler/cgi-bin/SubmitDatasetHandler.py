@@ -146,8 +146,7 @@ def convertToUriString(statusString):
 
 def redirectToSubmissionSummaryPage(datasetName, datasetUnzippedName, statusText):
     print "Status: 303 Dataset submission successful"
-    print "Location: SubmitDatasetSummary.py?id=%s&unzipid=%s&status=%s" % (datasetUnzippedName, 
-        datasetName, statusText)
+    print "Location: SubmitDatasetSummary.py?id=%s&unzipid=%s&status=%s" % (datasetName,datasetUnzippedName, statusText)
     print
 
 def updateMetadataInDirectoryBeforeSubmission(manifestFilePath, elementUriList, elementValueList) :

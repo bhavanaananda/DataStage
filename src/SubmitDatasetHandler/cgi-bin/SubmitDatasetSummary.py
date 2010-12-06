@@ -53,7 +53,7 @@ def datasetSummaryForm(formdata, outputstr):
 
         # Generate web page
         dataToolURL      =  "../../SubmitDatasetUI/html/SubmitDataset.html"                                 
-        mainURL          =  "http://zoo-admiral-devel.zoo.ox.ac.uk"
+        mainURL          =  "/data/index.html"
         viewDatasetURL   =  "../../DisplayDataset/html/DisplayDataset.html#" + datasetUnzippedName
         viewZippedURL    =  "/admiral-test/datasets/" + datasetName
         viewUnzippedURL  =  "/admiral-test/datasets/" + datasetUnzippedName
