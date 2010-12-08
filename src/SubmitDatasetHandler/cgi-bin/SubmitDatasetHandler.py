@@ -94,7 +94,7 @@ def processDatasetSubmissionForm(formdata, outputstr):
         # Unzip the contents into a new dataset
         datasetUnzippedName = SubmitDatasetUtils.unzipRemoteFileToNewDataset(siloName, datasetName, zipFileName)       
         # Redirect to the Dataset Summary page
-        redirectToSubmissionSummaryPage(datasetName, datasetUnzippedName, convertToUriString(SuccessStatus))
+        redirectToSubmissionSummaryPage(dirName, datasetName, datasetUnzippedName, convertToUriString(SuccessStatus))
         return
         
     except SubmitDatasetUtils.SubmitDatasetError, e:
@@ -144,9 +144,9 @@ def convertToUriString(statusString):
     statusString = SuccessStatus.replace(" ", "%20")
     return statusString
 
-def redirectToSubmissionSummaryPage(datasetName, datasetUnzippedName, statusText):
+def redirectToSubmissionSummaryPage(dirName, datasetName, datasetUnzippedName, statusText):
     print "Status: 303 Dataset submission successful"
-    print "Location: SubmitDatasetSummary.py?id=%s&unzipid=%s&status=%s" % (datasetName,datasetUnzippedName, statusText)
+    print "Location: SubmitDatasetSummary.py?dir=%s&id=%s&unzipid=%s&status=%s" % (dirName,datasetName,datasetUnzippedName, statusText)
     print
 
 def updateMetadataInDirectoryBeforeSubmission(manifestFilePath, elementUriList, elementValueList) :

@@ -37,6 +37,7 @@ def datasetSummaryForm(formdata, outputstr):
     """
     siloName             =  "admiral-test"
     save_stdout          =  sys.stdout
+    dirName              =  SubmitDatasetUtils.getFormParam("dir"     , formdata)
     datasetName          =  SubmitDatasetUtils.getFormParam("id"      , formdata)
     datasetUnzippedName  =  SubmitDatasetUtils.getFormParam("unzipid" , formdata)
     status               =  SubmitDatasetUtils.getFormParam("status"  , formdata)  
@@ -54,6 +55,7 @@ def datasetSummaryForm(formdata, outputstr):
         # Generate web page
         dataToolURL      =  "../../SubmitDatasetUI/html/SubmitDataset.html"                                 
         mainURL          =  "../../../.."
+        resetURL         =  "../../SubmitDatasetUI/html/SubmitDataset.html?dir="+dirName
         viewDatasetURL   =  "../../DisplayDataset/html/DisplayDataset.html#" + datasetUnzippedName
         viewZippedURL    =  "/admiral-test/datasets/" + datasetName
         viewUnzippedURL  =  "/admiral-test/datasets/" + datasetUnzippedName
@@ -68,7 +70,8 @@ def datasetSummaryForm(formdata, outputstr):
                     <h2>%(status)s</h2>
                     <h3><a href="%(viewDatasetURL)s">View submitted dataset (%(datasetUnzippedName)s)</a></h3>
                     <h3><a href="%(dataToolURL)s">Submit another dataset</a></h3>
-                    <h3><a href="%(mainURL)s">Back to front page</a></h3>
+                    <h3><a href="%(resetURL)s" id="revised">Submit revised version</a></h3>
+                    <h3><a href="%(mainURL)s">Return to ADMIRAL front page</a></h3>
                     <p>View Data in Dataset: %(datasetName)s - <a href="%(viewZippedURL)s">packaged data</a></p>
                     <p>View Data in Dataset: %(datasetUnzippedName)s - <a href="%(viewUnzippedURL)s">original data</a></p>
                 </body>
@@ -82,7 +85,8 @@ def datasetSummaryForm(formdata, outputstr):
             , 'viewZippedURL'       : viewZippedURL
             , 'datasetUnzippedName' : datasetUnzippedName
             , 'viewUnzippedURL'     : viewUnzippedURL
-            , 'status'              : status               
+            , 'status'              : status
+            , 'resetURL'            : resetURL               
             })
 
     return
