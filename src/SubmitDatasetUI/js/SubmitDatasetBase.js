@@ -1,6 +1,18 @@
 
 jQuery(document).ready( function ()
-{                         
+{
+   jQuery("#submitForm").submit( function()
+   {   data = "The following values were entered . Click Ok to confirm submit or Cancel to return.  \n\n"
+       data = data +"Dataset Dir = "+ jQuery("#datDir").val()+"\nDataset ID  = "+ jQuery("#datId").val()+"\nTitle            = "+jQuery("#title").val()+"\nDescription = "+jQuery("#description").val() ;
+       //confirm(data);
+       //jQuery.
+       confirmValue =  confirm(data);
+       if (confirmValue)
+        return true;
+       else
+        return false;
+   });
+                           
    var m = new admiral.AsyncComputation();
    m.eval(function(value,callback)
    {    // Execute the desired dataset listing logic

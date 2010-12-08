@@ -42,10 +42,10 @@
     jQuery.noConflict();
     </script>
 </head> 
-
+<!-- SubmitDatasetConfirmation.html -->
 <body>
    <h1>Submit Datasets</h1>
-   <form name="frm1" action="../../SubmitDatasetHandler/cgi-bin/SubmitDatasetHandler.py" method="post">
+   <form id="submitForm" action="../../SubmitDatasetHandler/cgi-bin/SubmitDatasetHandler.py" method="post">
    <div class="box outer">
         <div class="box">
             <span class="label">Dataset Dir :</span>
@@ -87,7 +87,7 @@
         <div class="box">
             <span class="labelvalue">
                 <input name="submit" id="submit" type="submit" value="Submit"/>
-                <button  name="cancel" id="cancel" type="button"> Cancel </button>
+                <button  name="submitt" id="submitt" type="button"> Cancel </button>
            </span>
         </div>
    </div>
