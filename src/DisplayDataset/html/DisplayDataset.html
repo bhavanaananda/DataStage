@@ -65,6 +65,12 @@
     <script>
     jQuery(document).ready( function () 
     {
+        url = document.URL;
+        dirUrl      =   url.split("#");
+        dir         =   dirUrl[0].split("=")[1];
+        reviseURL   =  "../../SubmitDatasetUI/html/SubmitDataset.html?dir="+dir
+        jQuery("#revise").attr('href', reviseURL);
+
         log.debug(admiral.objectString(window.location));
         var datasetName = window.location.hash;
         if( datasetName.length <= 1)
@@ -73,7 +79,7 @@
              jQuery("#pageLoadStatus").addClass('error');
         }
         else
-        {   
+        {
             datasetName = datasetName.slice(1);     // Remove '#'
             var dataSet = "/admiral-test/datasets/"+datasetName;
             var m = new admiral.AsyncComputation();
@@ -111,6 +117,8 @@
    </div>
    <h2>Contents</h2>
    <div class="manifest">(to be replaced)</div>
+
+   <h3><a href="" id="revise">Submit revised version</a></h3>
 </body>
 
 </html>

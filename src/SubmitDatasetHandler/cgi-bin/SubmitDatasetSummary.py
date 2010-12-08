@@ -56,7 +56,7 @@ def datasetSummaryForm(formdata, outputstr):
         dataToolURL      =  "../../SubmitDatasetUI/html/SubmitDataset.html"                                 
         mainURL          =  "../../../.."
         resetURL         =  "../../SubmitDatasetUI/html/SubmitDataset.html?dir="+dirName
-        viewDatasetURL   =  "../../DisplayDataset/html/DisplayDataset.html#" + datasetUnzippedName
+        viewDatasetURL   =  "../../DisplayDataset/html/DisplayDataset.html?dir="+ dirName + "#"+ datasetUnzippedName 
         viewZippedURL    =  "/admiral-test/datasets/" + datasetName
         viewUnzippedURL  =  "/admiral-test/datasets/" + datasetUnzippedName
 
