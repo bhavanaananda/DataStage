@@ -8,14 +8,13 @@ jQuery(document).ready( function ()
    { 
        displayValues(dir[1]);
    }
+  
    jQuery("#submitForm").submit( function()
-   {   data = "The following values were entered . Click Ok to confirm submit or Cancel to return.  \n\n"
-       data = data +"Dataset Dir = "+ jQuery("#datDir").val()+"\nDataset ID  = "+ jQuery("#datId").val()+"\nTitle            = "+jQuery("#title").val()+"\nDescription = "+jQuery("#description").val() ;
-       confirmValue =  confirm(data);
-       if (confirmValue)
-        return true;
-       else
-        return false;
+   {   
+       keyPairs = "datDir="+ jQuery("#datDir").val()+"&datId="+ jQuery("#datId").val()+"&title="+jQuery("#title").val()+"&description="+jQuery("#description").val() ;     
+       revisedSubmitURL   =  "./SubmitDatasetConfirmation.html?"+keyPairs;
+       jQuery("#submitForm").attr('action',revisedSubmitURL); 
+       return true;
    });
                            
    var m = new admiral.AsyncComputation();
@@ -48,7 +47,6 @@ jQuery(document).ready( function ()
     m.exec(null,admiral.noop);
 });       
 
-
 function displayValues(directorySelected,callback)
 {       
       var n = new admiral.AsyncComputation(); 
@@ -64,8 +62,9 @@ function displayValues(directorySelected,callback)
       {                                 
        jQuery("#datId").val(formValues["identifier"]);
        jQuery("#description").val(formValues["description"]);
-       jQuery("#user").val(formValues["creator"]);
        jQuery("#title").val(formValues["title"]);
+       
+       
       });    
       n.exec( directorySelected,admiral.noop);          
 }            

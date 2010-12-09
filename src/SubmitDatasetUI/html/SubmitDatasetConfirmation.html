@@ -32,65 +32,55 @@
     <script type="text/javascript" src="../../Admiral/admiral-base.js"></script>
     <script type="text/javascript" src="../../Admiral/Error.js"></script>
     <script type="text/javascript" src="../../Admiral/AsyncComputation.js"></script>
-    <script type="text/javascript" src="./../js/SubmitDatasetBase.js"></script>
-    <script type="text/javascript" src="./../js/DisplayDirectories.js"></script>
+    <script type="text/javascript" src="./../js/SubmitDatasetConfirm.js"></script>
     <script type="text/javascript" src="./../js/GetMetadata.js"></script>
     <script type="text/javascript" src="./../js/URIUtils.js"></script>
-    <script type="text/javascript" src="../../SelectDataset/ListDatasets.js"></script>
-    <script type="text/javascript" src="../../SelectDataset/GetDatasets.js"></script>
-    
     <script>
     // Use jQuery via jQuery(...)
     jQuery.noConflict();
     </script>
 </head> 
-<!-- SubmitDatasetConfirmation.html -->
+
 <body>
    <h1>Submit Datasets</h1>
-   <form id="submitForm" name="submitForm" action="SubmitDatasetConfirmation.html" method="post">
+   <form id="confirmForm" action="../../SubmitDatasetHandler/cgi-bin/SubmitDatasetHandler.py" method="post">
    <div class="box outer">
         <div class="box">
             <span class="label">Dataset Dir :</span>
-            <span class="labelvalue">
-                <input name="datDir" id="datDir" type="text" value="" size="50" />
-            </span>
-            <span class="labelvalue withpadding">
-               <span id="dirlist" class="scrollbox">
-                   <span class="dirlistitem">directoryname</span>
-               </span>
-            </span> 
+            <span class="labelvalue" id="datasetDir" name="datasetDir"></span>
+            <input  name="datDir" id="datDir" type="hidden"/>
         </div>
         <div class="box">
            <span class="label">Dataset Id :</span>
-           <span class="labelvalue"><input name="datId" id="datId" type="text"/></span>
+           <span class="labelvalue" id="datasetId"  name="datasetId"></span>
+           <input  name="datId" id="datId" type="hidden"/>
         </div>
         <div class="box">
            <span class="label">Title :</span>
-           <span class="labelvalue"><input name="title" id="title" type="text"/></span>
+           <span class="labelvalue" id="datasetTitle" name="datasetTitle"></span>
+           <input  name="title" id="title" type="hidden"/>
         </div>
         <div class="box">
            <span class="label">Description :</span>
-           <span class="labelvalue">
-                <textarea rows="4"  cols="50" id="description" name="description"></textarea>
-           </span>
-        </div>
-        <!-- <div class="box">
+           <span class="labelvalue" id="datasetDescription" name="datasetDescription"></span>
+           <input  name="description" id="description" type="hidden"/>
+        </div>       
+        <div class="box">
             <span class="label">User :</span>
-            <span class="labelvalue">
+           <span class="labelvalue">
                 <input name="user" id="user" type="text"/>
-            </span>
-            </div>
-            <div class="box">
-                <span class="label">Password :</span>
-                <span class="labelvalue">
+            </span>       
+        </div>
+        <div class="box">
+            <span class="label">Password :</span>
+            <span class="labelvalue">
                     <input name="pass" id="pass" type="password"/>
-                </span>
-            </div>
-         -->
+            </span>
+        </div> 
         <div class="box">
             <span class="labelvalue">
-                <input name="submit" id="submit" type="submit" value="Submit"/>
-                <button  name="submitt" id="submitt" type="button"> Cancel </button>
+                <input name="submit" id="submit" type="submit" value="Confirm"/>
+                 <input name="cancel" id="cancel" type="submit" value="Cancel"/>
            </span>
         </div>
    </div>
