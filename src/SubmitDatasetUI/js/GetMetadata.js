@@ -35,29 +35,23 @@ admiral.getMetadata = function (directorySelected, callback)
 {
     urlval = "../../SubmitDatasetHandler/cgi-bin/GetMetadata.py?directory="+directorySelected
     jQuery.ajax({
-        type:         "GET",
-        url:           urlval,
-        dataType:     "json",
-        beforeSend:   function (xhr)
-            {
-                xhr.setRequestHeader("Accept", "application/json");
-            },
-        success:      function (data, status, xhr)
-            {   
-                log.debug("Get Metadata: " + jQuery.toJSON(data))
-//                       data = {
-//                        "title": "Submission handler test title", 
-//                        "identifier": "SubmissionHandlerTest", 
-//                        "description": "Submission handler test description", 
-//                        "creator": "admiral"
-//                       };
-                callback(data);
-            },
-        error:        function (xhr, status) 
-            { 
-                jQuery("#pageLoadStatus").text("HTTP GET "+urlval+" failed: "+status+"; HTTP status: "+xhr.status+" "+xhr.statusText);
-                jQuery("#pageLoadStatus").addClass('error');
-            },
-        cache:        false
+                    type:         "GET",
+                    url:           urlval,
+                    dataType:     "json",
+                    beforeSend:   function (xhr)
+                        {
+                            xhr.setRequestHeader("Accept", "application/json");
+                        },
+                    success:      function (data, status, xhr)
+                        {   
+                            log.debug("Get Metadata: " + jQuery.toJSON(data))                                   
+                            callback(data);
+                        },
+                    error:        function (xhr, status) 
+                        { 
+                            jQuery("#pageLoadStatus").text("HTTP GET "+urlval+" failed: "+status+"; HTTP status: "+xhr.status+" "+xhr.statusText);
+                            jQuery("#pageLoadStatus").addClass('error');
+                        },
+                    cache:        false
     });
 }

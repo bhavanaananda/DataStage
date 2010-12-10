@@ -40,8 +40,6 @@ admiral.unescapeURIString = function (string)
  * @param num      number that needs to be converted to a char
  */
 unEscapeUnicodeChar = function(str,num)
-{
-    
-    return String.fromCharCode(parseInt(num,16));
-    
+{   
+   return String.fromCharCode(parseInt(num,16));    
 }    
