@@ -26,33 +26,41 @@ if (typeof admiral == "undefined")
 }
  
 jQuery(document).ready( function ()
-{                         
-    url = document.URL;
-    var data  = url.split("?")[1];
-    data =  admiral.unescapeURIString(data); 
-    // Get Dir value from the url to get metadata information for the dataset dir and to display the default username in the page
-    var values = data.split("&");
-    if(values.length>1)
-    {        
-        for( i=0; i< values.length; i++)
-        {
-          var keyValuePair = values[i];
-          key = "#"+keyValuePair.split("=")[0];
-          value = convertUriToString(keyValuePair.split("=")[1]);       
-          jQuery(key).val(value);
-        }
-        
-        var displayTextnames = ["datasetDir", "datasetId", "datasetTitle", "datasetDescription"];
-        for( i=0; i< values.length; i++)
-        {
-           var keyValuePair = values[i]; 
-           value = convertUriToString(keyValuePair.split("=")[1]);            
-           jQuery("#"+displayTextnames[i]).text(value);
-        }
-         displayValues(jQuery("#datasetDir").text());
-    }
-    
-       jQuery("#cancel").click( function()
+{         
+   url = document.URL;
+   // Get Dir value from the url to display as default and get metadata information for the dataset dir
+   var dir = url.split("=");
+   if(dir.length>1)
+   { 
+       displayValues(dir[1]);
+   }
+                  
+//    url = document.URL;
+//    var data  = url.split("?")[1];
+//    data =  admiral.unescapeURIString(data); 
+//    // Get Dir value from the url to get metadata information for the dataset dir and to display the default username in the page
+//    var values = data.split("&");
+//    if(values.length>1)
+//    {        
+//        for( i=0; i< values.length; i++)
+//        {
+//          var keyValuePair = values[i];
+//          key = "#"+keyValuePair.split("=")[0];
+//          value = convertUriToString(keyValuePair.split("=")[1]);       
+//          jQuery(key).val(value);
+//        }
+//        
+//        var displayTextnames = ["datasetDir", "datasetId", "datasetTitle", "datasetDescription"];
+//        for( i=0; i< values.length; i++)
+//        {
+//           var keyValuePair = values[i]; 
+//           value = convertUriToString(keyValuePair.split("=")[1]);            
+//           jQuery("#"+displayTextnames[i]).text(value);
+//        }
+//         displayValues(jQuery("#datasetDir").text());
+//  }  
+   
+   jQuery("#cancel").click( function()
    {   
        cancelURL = "SubmitDataset.html?dir="+ jQuery("#datDir").val();
        jQuery("#confirmForm").attr('action',cancelURL); 
@@ -74,14 +82,18 @@ function displayValues(directorySelected,callback)
       // Populate the other fields with the value received
       n.eval(function(formValues,callback)
       {                                   
+        jQuery("#datId").val(formValues["identifier"]);
+        jQuery("#description").val(formValues["description"]);
+        jQuery("#title").val(formValues["title"]);
         jQuery("#user").val(formValues["creator"]);
+        
+        var displayTextnames = ["datasetDir", "datasetId", "datasetTitle", "datasetDescription"];
+        var inputValues      = ["datDir", "datId", "title", "description"];
+        for( i=0; i< inputValues.length; i++)
+        {  value =  jQuery("#"+inputValues[i]).val();        
+           jQuery("#"+displayTextnames[i]).text(value);
+        }
       });    
       n.exec( directorySelected,admiral.noop);          
 }  
 
-
-function convertUriToString(str)
-{
-    stringValue = str.replace("%20"," ");
-    return stringValue;
-}

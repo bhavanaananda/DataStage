@@ -26,6 +26,7 @@ from rdflib import URIRef
 sys.path.append("..")
 sys.path.append("../..")
 
+import SaveMetadata
 import SubmitDatasetUtils
 import ManifestRDFUtils
 import HttpUtils
@@ -50,7 +51,6 @@ ElementUriList           =  [ElementCreatorUri, ElementIdentifierUri, ElementTit
 DefaultManifestName      =  "manifest.rdf"
 BaseDir                  =  "/home/"
 SuccessStatus            =  "Dataset Submission Successful"
-
 
 def processDatasetSubmissionForm(formdata, outputstr):
     """
@@ -83,10 +83,11 @@ def processDatasetSubmissionForm(formdata, outputstr):
         manifestFilePath     = dirName + str(os.path.sep) + DefaultManifestName
         Logger.debug("Element List = " + repr(ElementUriList))
         Logger.debug("Element Value List = " + repr(ElementValueList))
-        updateMetadataInDirectoryBeforeSubmission(manifestFilePath, ElementUriList, ElementValueList)       
+        SaveMetadata.updateMetadataInDirectoryBeforeSubmission(manifestFilePath, ElementUriList, ElementValueList)       
         # Zip the selected Directory
         zipFileName = os.path.basename(dirName) +".zip"
         zipFilePath = "/tmp/" + zipFileName
+        #Logger.debug("zipFilePath = "+zipFilePath)
         #Logger.debug("datasetName %s, dirName %s, zipFileName %s"%(datasetName,dirName,zipFileName))
         SubmitDatasetUtils.zipLocalDirectory(dirName, FilePat, zipFilePath)
         # Submit zip file to dataset
@@ -118,10 +119,9 @@ def processDatasetSubmissionForm(formdata, outputstr):
     finally:
         print "</body>"
         print "</html>"
-        SubmitDatasetUtils.deleteLocalFile(zipFilePath)# Dete the local zip file after submission
+        SubmitDatasetUtils.deleteLocalFile(zipFilePath)# Delete the local zip file after submission
         sys.stdout = save_stdout
     return
-
 
 def validateFields(datasetDirectoryName, datasetName):
     datIDPattern = re.compile("^[a-zA-Z0-9._:-]+$")
@@ -148,22 +148,6 @@ def redirectToSubmissionSummaryPage(dirName, datasetName, datasetUnzippedName, s
     print "Status: 303 Dataset submission successful"
     print "Location: SubmitDatasetSummary.py?dir=%s&id=%s&unzipid=%s&status=%s" % (dirName,datasetName,datasetUnzippedName, statusText)
     print
-
-def updateMetadataInDirectoryBeforeSubmission(manifestFilePath, elementUriList, elementValueList) :
-    """
-    Update the metadata RDF with the form data obtained from the dataset submission tool.
-    """
-    Logger.debug("Manifest Path = " + manifestFilePath)
-    inputDict    = ManifestRDFUtils.createDictionary(elementUriList, elementValueList)   
-    if ManifestRDFUtils.ifFileExists(manifestFilePath):
-        Logger.debug("Manifest File Exists... skipping creation!")
-        manifestDict = ManifestRDFUtils.getDictionaryFromManifest(manifestFilePath, elementUriList) 
-        if inputDict!= manifestDict:
-            ManifestRDFUtils.updateManifestFile(manifestFilePath, elementUriList, elementValueList)   
-    else:
-        Logger.debug("Creating Manifest File...")
-        ManifestRDFUtils.writeToManifestFile(manifestFilePath, NamespaceDictionary, elementUriList, elementValueList)     
-    return
 
 if __name__ == "__main__":
     logging.basicConfig(level=logging.DEBUG)

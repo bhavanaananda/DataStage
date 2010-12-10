@@ -8,7 +8,7 @@ from os.path import normpath
 from rdflib import URIRef
 sys.path.append("..")
 sys.path.append("../cgi-bin")
-
+import SaveMetadata
 import SubmitDatasetHandler
 import ManifestRDFUtils
 import SubmitDatasetUtils
@@ -223,11 +223,11 @@ class TestSubmitDatasethandler(unittest.TestCase):
     
     def testSubmitDatasetHandlerUpdateMetadataBeforeSubmission(self):
         # the initial manifest file 
-        SubmitDatasetHandler.updateMetadataInDirectoryBeforeSubmission(ManifestFilePath, ElementUriList, ElementValueList)
+        SaveMetadata.updateMetadataInDirectoryBeforeSubmission(ManifestFilePath, ElementUriList, ElementValueList)
         # Assert that the manifets has been created
         self.assertEqual(True,ManifestRDFUtils.ifFileExists(ManifestFilePath),"Manifest file was not successfully created!")
         # Update the manifets contents 
-        SubmitDatasetHandler.updateMetadataInDirectoryBeforeSubmission(ManifestFilePath, ElementUriList, ElementValueUpdatedList)   
+        SaveMetadata.updateMetadataInDirectoryBeforeSubmission(ManifestFilePath, ElementUriList, ElementValueUpdatedList)   
         
         # Read the manifest again
         rdfGraph = ManifestRDFUtils. readManifestFile(ManifestFilePath)

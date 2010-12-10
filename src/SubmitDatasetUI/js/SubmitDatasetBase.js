@@ -9,13 +9,13 @@ jQuery(document).ready( function ()
        displayValues(dir[1]);
    }
   
-   jQuery("#submitForm").submit( function()
-   {   
-       keyPairs = "datDir="+ jQuery("#datDir").val()+"&datId="+ jQuery("#datId").val()+"&title="+jQuery("#title").val()+"&description="+jQuery("#description").val() ;     
-       revisedSubmitURL   =  "./SubmitDatasetConfirmation.html?"+keyPairs;
-       jQuery("#submitForm").attr('action',revisedSubmitURL); 
-       return true;
-   });
+//   jQuery("#submitForm").submit( function()
+//   {   
+//       keyPairs = "datDir="+ jQuery("#datDir").val()+"&datId="+ jQuery("#datId").val()+"&title="+jQuery("#title").val()+"&description="+jQuery("#description").val() ;     
+//       revisedSubmitURL   =  "./SubmitDatasetConfirmation.html?"+keyPairs;
+//       jQuery("#submitForm").attr('action',revisedSubmitURL); 
+//       return true;
+//   });
                            
    var m = new admiral.AsyncComputation();
    m.eval(function(value,callback)
