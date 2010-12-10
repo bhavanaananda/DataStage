@@ -1,9 +1,8 @@
 /**
  * @fileoverview
- *  CGI Python program to list dirctories in a data area, as part of selecting a 
- *  dataset for submission to the Databank service.
+ * Populate the form fields from the ADMIRAL metadata and submit the dataset to the databank.
  *  
- * @author 
+ * @author Bhavana Ananda
  * @version $Id: $
  * 
  * Coypyright (C) 2010, University of Oxford
@@ -18,13 +17,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-    
 
 if (typeof admiral == "undefined")
 {
     admiral = {};
 }
- 
+
+/**
+ * Populate the form fields from the ADMIRAL metadata and submit the dataset to the databank.
+ */
 jQuery(document).ready( function ()
 {         
    url = document.URL;
@@ -35,31 +36,6 @@ jQuery(document).ready( function ()
        displayValues(dir[1]);
    }
                   
-//    url = document.URL;
-//    var data  = url.split("?")[1];
-//    data =  admiral.unescapeURIString(data); 
-//    // Get Dir value from the url to get metadata information for the dataset dir and to display the default username in the page
-//    var values = data.split("&");
-//    if(values.length>1)
-//    {        
-//        for( i=0; i< values.length; i++)
-//        {
-//          var keyValuePair = values[i];
-//          key = "#"+keyValuePair.split("=")[0];
-//          value = convertUriToString(keyValuePair.split("=")[1]);       
-//          jQuery(key).val(value);
-//        }
-//        
-//        var displayTextnames = ["datasetDir", "datasetId", "datasetTitle", "datasetDescription"];
-//        for( i=0; i< values.length; i++)
-//        {
-//           var keyValuePair = values[i]; 
-//           value = convertUriToString(keyValuePair.split("=")[1]);            
-//           jQuery("#"+displayTextnames[i]).text(value);
-//        }
-//         displayValues(jQuery("#datasetDir").text());
-//  }  
-   
    jQuery("#cancel").click( function()
    {   
        cancelURL = "SubmitDataset.html?dir="+ jQuery("#datDir").val();
@@ -69,6 +45,14 @@ jQuery(document).ready( function ()
  
 });
 
+
+/**
+ * Get the form field information from the ADMIRAL metadata.
+ * Make a call to the ADMIRAL metadata handler to get the ADMIRAL metadata.
+ *  
+ * @param directorySelected   Directory name for which the ADMIRAL metadata needs to be extracted.
+ * @param callback            Callback function.
+ */
 function displayValues(directorySelected,callback)
 {       
       var n = new admiral.AsyncComputation(); 
@@ -79,7 +63,7 @@ function displayValues(directorySelected,callback)
        admiral.getMetadata(directorySelected,callback); 
       });
      
-      // Populate the other fields with the value received
+      // Populate the other form  fields with the value received
       n.eval(function(formValues,callback)
       {                                   
         jQuery("#datId").val(formValues["identifier"]);

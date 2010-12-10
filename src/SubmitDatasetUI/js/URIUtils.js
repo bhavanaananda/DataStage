@@ -1,9 +1,8 @@
 /**
  * @fileoverview
- *  CGI Python program to list dirctories in a data area, as part of selecting a 
- *  dataset for submission to the Databank service.
+ * URI Helper Utility functions.
  *  
- * @author 
+ * @author Bhavana Ananda
  * @version $Id: $
  * 
  * Coypyright (C) 2010, University of Oxford
@@ -24,11 +23,22 @@ if (typeof admiral == "undefined")
     admiral = {};
 }
 
+/**
+ * Converts the URI with unicode to a displayable string
+ *  
+ * @param string   URI/string that needs to be converted.
+ */
 admiral.unescapeURIString = function (string)
 {
    return string.replace(/%([0-9a-fA-F][0-9a-fA-F])/g,unEscapeUnicodeChar);
 }
 
+/**
+ * Converts a hexadecimal number to a char
+ *  
+ * @param string   string
+ * @param num      number that needs to be converted to a char
+ */
 unEscapeUnicodeChar = function(str,num)
 {
     

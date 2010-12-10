@@ -1,9 +1,8 @@
 /**
  * @fileoverview
- *  CGI Python program to list dirctories in a data area, as part of selecting a 
- *  dataset for submission to the Databank service.
+ * Get the form field information from the ADMIRAL metadata.
  *  
- * @author 
+ * @author Bhavana Ananda
  * @version $Id: $
  * 
  * Coypyright (C) 2010, University of Oxford
@@ -24,6 +23,14 @@ if (typeof admiral == "undefined")
     admiral = {};
 }
 
+/**
+ * Get the form field information from the ADMIRAL metadata.
+ * Make a call to the ADMIRAL metadata handler.
+ *  
+ * @param directorySelected   Directory name for which the ADMIRAL metadata needs to be extracted.
+ * @param callback            Callback function.
+ */
+ 
 admiral.getMetadata = function (directorySelected, callback)
 {
     urlval = "../../SubmitDatasetHandler/cgi-bin/GetMetadata.py?directory="+directorySelected

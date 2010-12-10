@@ -1,25 +1,41 @@
+/**
+ * @fileoverview
+ * Read from the admiral manifest if any exists and populate form fields and provide a directory listing for selection.
+ * Create a manifest if one does not exist.
+ * 
+ * 
+ * @author Bhavana Ananda
+ * @version $Id: $
+ * 
+ * Coypyright (C) 2010, University of Oxford
+ *
+ * Licensed under the MIT License.  You may obtain a copy of the License at:
+ *
+ *     http://www.opensource.org/licenses/mit-license.php
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 
+/**
+ * Read from the ADMIRAL manifest and populate the form fields and provide a directory listing for selection.
+ */
 jQuery(document).ready( function ()
 {
    url = document.URL;
    // Get Dir value from the url to display as default and get metadata information for the dataset dir
    var dir = url.split("=");
    if(dir.length>1)
-   { 
+   {   // Display all the form fields associated with the directory supplied in the url
        displayValues(dir[1]);
    }
-  
-//   jQuery("#submitForm").submit( function()
-//   {   
-//       keyPairs = "datDir="+ jQuery("#datDir").val()+"&datId="+ jQuery("#datId").val()+"&title="+jQuery("#title").val()+"&description="+jQuery("#description").val() ;     
-//       revisedSubmitURL   =  "./SubmitDatasetConfirmation.html?"+keyPairs;
-//       jQuery("#submitForm").attr('action',revisedSubmitURL); 
-//       return true;
-//   });
                            
    var m = new admiral.AsyncComputation();
    m.eval(function(value,callback)
-   {    // Execute the desired dataset listing logic
+   {    // Execute the dataset listing logic
         admiral.displayDirectories(callback);           
    });
     
@@ -39,7 +55,7 @@ jQuery(document).ready( function ()
    {
         // Set click handlers on directory items
         jQuery("#dirlist > .dirlistitem").click( function()
-        {   
+        {  // Display all the form fields associated with the directory selected from the list 
            displayValues(jQuery(this).text());                    
         });
     }); 
@@ -47,13 +63,20 @@ jQuery(document).ready( function ()
     m.exec(null,admiral.noop);
 });       
 
+
+/**
+ * Read from the admiral manifest and display the form fields.
+ * 
+ * @param directorySelected   Directory name for which the ADMIRAL metadata needs to be extracted.
+ * @param callback            Callback function.
+ */
 function displayValues(directorySelected,callback)
 {       
       var n = new admiral.AsyncComputation(); 
       n.eval(function(directorySelected,callback)
       { 
        jQuery("#datDir").val(directorySelected);
-       // Get the persisted informaton from the server for display for the directory selected from the list
+       // Get the manifest informaton from the server for display
        admiral.getMetadata(directorySelected,callback); 
       });
      
@@ -62,10 +85,8 @@ function displayValues(directorySelected,callback)
       {                                 
        jQuery("#datId").val(formValues["identifier"]);
        jQuery("#description").val(formValues["description"]);
-       jQuery("#title").val(formValues["title"]);
-       
-       
+       jQuery("#title").val(formValues["title"]);      
       });    
       n.exec( directorySelected,admiral.noop);          
-}            
-                             
+}  
+                                 

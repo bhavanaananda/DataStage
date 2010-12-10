@@ -1,9 +1,8 @@
 /**
  * @fileoverview
- *  CGI Python program to list dirctories in a data area, as part of selecting a 
- *  dataset for submission to the Databank service.
+ * Provide a dataset directory listing to select from.
  *  
- * @author 
+ * @author Bhavana Ananda
  * @version $Id: $
  * 
  * Coypyright (C) 2010, University of Oxford
@@ -18,12 +17,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
+ 
 if (typeof admiral == "undefined")
 {
     admiral = {};
 }
 
+
+/**
+ * Make a call to the ADMIRAL directory listing handler to provide a directory listing for dataset selection.
+ */
 admiral.displayDirectories = function (callback)
 {
     urlval = "../../SubmitDatasetHandler/cgi-bin/DirectoryListingHandler.py"
