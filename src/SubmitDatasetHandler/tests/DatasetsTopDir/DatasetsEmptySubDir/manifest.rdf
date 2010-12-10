@@ -5,9 +5,9 @@
   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
 >
   <oxds:Grouping>
-    <dcterms:identifier>SubmissionHandlerTest</dcterms:identifier>
-    <dcterms:title>Submission handler test title</dcterms:title>
     <dcterms:creator>admiral</dcterms:creator>
+    <dcterms:title>Submission handler test title</dcterms:title>
     <dcterms:description>Submission handler test description</dcterms:description>
+    <dcterms:identifier>SubmissionHandlerTest</dcterms:identifier>
   </oxds:Grouping>
 </rdf:RDF>

@@ -21,7 +21,7 @@
  */
 
 /**
- * Read from the ADMIRAL manifest and populate the form fields and provide a directory listing for selection.
+ * Read from the admiral manifest if any exists and populate form fields and provide a directory listing for selection.
  */
 jQuery(document).ready( function ()
 {
