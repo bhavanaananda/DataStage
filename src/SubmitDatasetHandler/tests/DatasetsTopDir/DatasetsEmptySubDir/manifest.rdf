@@ -6,8 +6,8 @@
 >
   <oxds:Grouping>
     <dcterms:description>Submission handler test description</dcterms:description>
-    <dcterms:title>Submission handler test title</dcterms:title>
     <dcterms:identifier>SubmissionHandlerTest</dcterms:identifier>
     <dcterms:creator>admiral</dcterms:creator>
+    <dcterms:title>Submission handler test title</dcterms:title>
   </oxds:Grouping>
 </rdf:RDF>

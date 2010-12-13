@@ -39,6 +39,24 @@
     // Use jQuery via jQuery(...)
     jQuery.noConflict();
     </script>
+    
+    <script>
+    jQuery(document).ready( function ()
+    {
+       url = document.URL;
+       
+       // Get Dir value from the url to display as default and get metadata information for the dataset dir
+       var pos = url.indexOf("=");
+       var dir="" ;
+       if(pos > 0)
+       {
+         dir= url.slice(url.indexOf("=")+1);
+        //var dir = url.split("=");
+       }
+       admiral.displayFormFieldsFromMetadata(dir);    
+    });
+    </script>
+    
 </head> 
 
 <body>

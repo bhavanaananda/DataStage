@@ -23,17 +23,20 @@
 /**
  * Read from the admiral manifest if any exists and populate form fields and provide a directory listing for selection.
  */
-jQuery(document).ready( function ()
+ 
+ 
+if (typeof admiral == "undefined")
 {
-   url = document.URL;
+    admiral = {};
+}
+
+admiral.displayFormFieldsFromMetadata = function (directorySelected)
+{
    
-   // Get Dir value from the url to display as default and get metadata information for the dataset dir
-   var dir = url.split("=");
-   
-   if(dir.length>1)
+   if(directorySelected.length>1)
    {   
        // Display all the form fields associated with the directory supplied in the url
-       displayValues(dir[1]);
+       displayValues(directorySelected);
    }
                            
    var m = new admiral.AsyncComputation();
@@ -67,7 +70,7 @@ jQuery(document).ready( function ()
    }); 
                        
    m.exec(null,admiral.noop);
-});       
+}      
 
 
 /**
