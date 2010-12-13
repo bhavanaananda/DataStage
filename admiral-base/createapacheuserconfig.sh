@@ -23,7 +23,7 @@ function generateuserconfigfile()
       # Tried to use a combination of "Require user" and "Require ldap-attribute"
       # here, but this caused access failures for all users.
       # TestLeader is included here for testing only.
-    Require user $username $RGLeaderName TestLeader
+    Require user $username $RGLeaderName
     </Limit>
 </Location>
 
@@ -34,8 +34,8 @@ function generateuserconfigfile()
       Require user $username
     </LimitExcept>
     <Limit PROPFIND OPTIONS GET REPORT>
-    Require ldap-attribute gidNumber=$RGLeaderGID
-    Require ldap-attribute gidNumber=$RGMemberGID
+      Require ldap-attribute gidNumber=$RGLeaderGID
+      Require ldap-attribute gidNumber=$RGMemberGID
     </Limit>
 </Location>
 
@@ -43,12 +43,12 @@ function generateuserconfigfile()
     Order Deny,Allow
     Allow from all
     <LimitExcept REPORT GET OPTIONS PROPFIND>
-    Require user $username
+      Require user $username
     </LimitExcept>
     <Limit PROPFIND OPTIONS GET REPORT>
-    Require ldap-attribute gidNumber=$RGLeaderGID
-    Require ldap-attribute gidNumber=$RGMemberGID
-    Require ldap-attribute gidNumber=$RGCollabGID
+      Require ldap-attribute gidNumber=$RGLeaderGID
+      Require ldap-attribute gidNumber=$RGMemberGID
+      Require ldap-attribute gidNumber=$RGCollabGID
     </Limit>
 </Location>
 
