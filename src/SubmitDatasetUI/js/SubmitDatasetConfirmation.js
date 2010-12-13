@@ -39,7 +39,7 @@ jQuery(document).ready( function ()
                   
    jQuery("#cancel").click( function()
    {   
-       cancelURL = "SubmitDataset.html?dir="+ jQuery("#datDir").val();
+       cancelURL = "SubmitDatasetDetails.html?dir="+ jQuery("#datDir").val();
        jQuery("#confirmForm").attr('action',cancelURL); 
        return true;
    });
@@ -61,7 +61,7 @@ function displayValues(directorySelected,callback)
        { 
            jQuery("#datDir").val(directorySelected);
            // Get the persisted informaton from the server for display for the directory selected from the list
-           admiral.getMetadata(directorySelected,callback); 
+           admiral.getDatasetMetadata(directorySelected,callback); 
        });
      
        // Populate the other form  fields with the value received

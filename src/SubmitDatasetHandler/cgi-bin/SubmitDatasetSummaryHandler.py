@@ -27,7 +27,7 @@ sys.path.append("../..")
 
 import SubmitDatasetUtils
 
-Logger                   =  logging.getLogger("SubmitDatasetSummary")
+Logger                   =  logging.getLogger("SubmitDatasetSummaryHandler")
 
 def datasetSummaryForm(formdata, outputstr):
     """
@@ -53,9 +53,9 @@ def datasetSummaryForm(formdata, outputstr):
         print
 
         # Generate web page
-        dataToolURL      =  "../../SubmitDatasetUI/html/SubmitDataset.html"                                 
+        dataToolURL      =  "../../SubmitDatasetUI/html/SubmitDatasetDetails.html"                                 
         mainURL          =  "../../../.."
-        resetURL         =  "../../SubmitDatasetUI/html/SubmitDataset.html?dir="+dirName
+        resetURL         =  "../../SubmitDatasetUI/html/SubmitDatasetDetails.html?dir="+dirName
         viewDatasetURL   =  "../../DisplayDataset/html/DisplayDataset.html?dir="+ dirName + "#"+ datasetUnzippedName 
         viewZippedURL    =  "/admiral-test/datasets/" + datasetName
         viewUnzippedURL  =  "/admiral-test/datasets/" + datasetUnzippedName

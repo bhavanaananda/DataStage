@@ -29,9 +29,9 @@
     <script type="text/javascript" src="../../Admiral/admiral-base.js"></script>
     <script type="text/javascript" src="../../Admiral/Error.js"></script>
     <script type="text/javascript" src="../../Admiral/AsyncComputation.js"></script>
-    <script type="text/javascript" src="./../js/SubmitDatasetBase.js"></script>
-    <script type="text/javascript" src="./../js/DisplayDirectories.js"></script>
-    <script type="text/javascript" src="./../js/GetMetadata.js"></script>
+    <script type="text/javascript" src="./../js/SubmitDatasetDetails.js"></script>
+    <script type="text/javascript" src="./../js/DirectoryListing.js"></script>
+    <script type="text/javascript" src="./../js/GetDatasetMetadata.js"></script>
     <script type="text/javascript" src="../../SelectDataset/ListDatasets.js"></script>
     <script type="text/javascript" src="../../SelectDataset/GetDatasets.js"></script>
     
@@ -40,10 +40,10 @@
     jQuery.noConflict();
     </script>
 </head> 
-<!-- SubmitDatasetConfirmation.html -->
+
 <body>
    <h1>Submit Datasets</h1>
-   <form id="submitForm" name="submitForm" action="../../SubmitDatasetHandler/cgi-bin/SaveMetadata.py" method="post">
+   <form id="submitForm" name="submitForm" action="../../SubmitDatasetHandler/cgi-bin/SubmitDatasetDetailsHandler.py" method="post">
    <div class="box outer">
         <div class="box">
             <span class="label">Dataset Dir :</span>

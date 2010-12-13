@@ -26,7 +26,7 @@ from rdflib import URIRef
 sys.path.append("..")
 sys.path.append("../..")
 
-import SaveMetadata
+import SubmitDatasetDetailsHandler
 import SubmitDatasetUtils
 import ManifestRDFUtils
 import HttpUtils
@@ -42,7 +42,7 @@ NamespaceDictionary      =  {
                             }
 ZipMimeType              =  "application/zip"
 FilePat                  =  re.compile("^.*$(?<!\.zip)")
-Logger                   =  logging.getLogger("SubmitDatasetHandler")
+Logger                   =  logging.getLogger("SubmitDatasetConfirmationHandler")
 ElementCreatorUri        =  URIRef(dcterms + "creator")
 ElementIdentifierUri     =  URIRef(dcterms + "identifier")
 ElementTitleUri          =  URIRef(dcterms + "title")
@@ -83,7 +83,7 @@ def processDatasetSubmissionForm(formdata, outputstr):
         manifestFilePath     = dirName + str(os.path.sep) + DefaultManifestName
         Logger.debug("Element List = " + repr(ElementUriList))
         Logger.debug("Element Value List = " + repr(ElementValueList))
-        SaveMetadata.updateMetadataInDirectoryBeforeSubmission(manifestFilePath, ElementUriList, ElementValueList)       
+        SubmitDatasetDetailsHandler.updateMetadataInDirectoryBeforeSubmission(manifestFilePath, ElementUriList, ElementValueList)       
         # Zip the selected Directory
         zipFileName = os.path.basename(dirName) +".zip"
         zipFilePath = "/tmp/" + zipFileName
@@ -146,7 +146,7 @@ def convertToUriString(statusString):
 
 def redirectToSubmissionSummaryPage(dirName, datasetName, datasetUnzippedName, statusText):
     print "Status: 303 Dataset submission successful"
-    print "Location: SubmitDatasetSummary.py?dir=%s&id=%s&unzipid=%s&status=%s" % (dirName,datasetName,datasetUnzippedName, statusText)
+    print "Location: SubmitDatasetSummaryHandler.py?dir=%s&id=%s&unzipid=%s&status=%s" % (dirName,datasetName,datasetUnzippedName, statusText)
     print
 
 if __name__ == "__main__":

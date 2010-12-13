@@ -40,7 +40,7 @@ jQuery(document).ready( function ()
    
    m.eval(function(value,callback)
    {   // Execute the dataset listing logic
-       admiral.displayDirectories(callback);           
+       admiral.directoryListing(callback);           
    });
     
    m.eval(function(value,callback)
@@ -83,7 +83,7 @@ function displayValues(directorySelected,callback)
       { 
            jQuery("#datDir").val(directorySelected);
            // Get the manifest informaton from the server for display
-           admiral.getMetadata(directorySelected,callback); 
+           admiral.getDatasetMetadata(directorySelected,callback); 
       });
      
       // Populate the other fields with the value received

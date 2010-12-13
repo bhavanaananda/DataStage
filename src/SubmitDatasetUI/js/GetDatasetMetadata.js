@@ -31,9 +31,9 @@ if (typeof admiral == "undefined")
  * @param callback            Callback function.
  */
  
-admiral.getMetadata = function (directorySelected, callback)
+admiral.getDatasetMetadata = function (directorySelected, callback)
 {
-    urlval = "../../SubmitDatasetHandler/cgi-bin/GetMetadata.py?directory="+directorySelected
+    urlval = "../../SubmitDatasetHandler/cgi-bin/GetDatasetMetadataHandler.py?directory="+directorySelected
     jQuery.ajax({
                     type:         "GET",
                     url:           urlval,

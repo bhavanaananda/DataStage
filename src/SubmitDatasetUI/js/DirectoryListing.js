@@ -27,7 +27,7 @@ if (typeof admiral == "undefined")
 /**
  * Make a call to the ADMIRAL directory listing handler to provide a directory listing for dataset selection.
  */
-admiral.displayDirectories = function (callback)
+admiral.directoryListing = function (callback)
 {
     urlval = "../../SubmitDatasetHandler/cgi-bin/DirectoryListingHandler.py"
     jQuery.ajax({

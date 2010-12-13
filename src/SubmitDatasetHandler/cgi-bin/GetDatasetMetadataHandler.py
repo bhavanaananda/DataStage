@@ -36,7 +36,7 @@ try:
 except ImportError:
     import json as json
     
-Logger                    =  logging.getLogger("GetMetadata")
+Logger                    =  logging.getLogger("GetDatasetMetadataHandler")
 DefaultManifestName       =  "manifest.rdf"
 
 dcterms                   =  URIRef("http://purl.org/dc/terms/")
@@ -49,7 +49,7 @@ ElementDescriptionUri     =  URIRef(dcterms + "description")
 ElementUriList            =  [ElementCreatorUri, ElementIdentifierUri, ElementTitleUri, ElementDescriptionUri]
     
 
-def getMetadata(formdata, manifestName ,outputstr):
+def getDatasetMetadata(formdata, manifestName ,outputstr):
     """
     Gets the metadata from the manifest.rdf file and formulates it into the JSON format.
     
@@ -74,6 +74,6 @@ if __name__ == "__main__":
     form = cgi.FieldStorage()   # Parse the query
     os.chdir("/home")           # Base directory for admiral server data
     
-    getMetadata(form, DefaultManifestName, sys.stdout)
+    getDatasetMetadata(form, DefaultManifestName, sys.stdout)
 
 # End.
