@@ -126,7 +126,7 @@ class TestSubmitDatasetHandler(unittest.TestCase):
         self.assertEquals(found, True, "Dataset Creation Failed!" )
         
         # Check that the new dataset can be dereferenced in the databank 
-        HttpUtils.doHTTP_GET(resource="/" + SiloName +"/datasets/"+ datasetId, 
+        HttpUtils.doHTTP_GET(resource="/" + SiloName +"/datasets/"+ datasetId+"-packed", 
             expect_status=200, expect_reason="OK", accept_type="application/json")
         
         # Check that a HTML Response page is returned

@@ -57,8 +57,6 @@ def datasetSummaryForm(formdata, outputstr):
         mainURL          =  "../../../.."
         resetURL         =  "../../SubmitDatasetUI/html/SubmitDatasetDetails.html?dir="+dirName
         viewDatasetURL   =  "../../DisplayDataset/html/DisplayDataset.html?dir="+ dirName + "#"+ datasetUnzippedName 
-        viewZippedURL    =  "/admiral-test/datasets/" + datasetName
-        viewUnzippedURL  =  "/admiral-test/datasets/" + datasetUnzippedName
 
         pageTemplate = ("""
             <html>
@@ -69,11 +67,9 @@ def datasetSummaryForm(formdata, outputstr):
                 <body>
                     <h2>%(status)s</h2>
                     <h3><a href="%(viewDatasetURL)s">View submitted dataset - %(datasetUnzippedName)s</a></h3>
-                    <h3><a href="%(dataToolURL)s">Submit another dataset</a></h3>
                     <h3><a href="%(resetURL)s" id="revised">Submit revised version</a></h3>
+                    <h3><a href="%(dataToolURL)s">Submit another dataset</a></h3>
                     <h3><a href="%(mainURL)s">Return to ADMIRAL front page</a></h3>
-                    <p>View Data in Dataset: %(datasetName)s - <a href="%(viewZippedURL)s">packaged data</a></p>
-                    <p>View Data in Dataset: %(datasetUnzippedName)s - <a href="%(viewUnzippedURL)s">original data</a></p>
                 </body>
             </html>
             """)
@@ -82,9 +78,7 @@ def datasetSummaryForm(formdata, outputstr):
             , 'datasetName'         : datasetName
             , 'dataToolURL'         : dataToolURL
             , 'mainURL'             : mainURL
-            , 'viewZippedURL'       : viewZippedURL
             , 'datasetUnzippedName' : datasetUnzippedName
-            , 'viewUnzippedURL'     : viewUnzippedURL
             , 'status'              : status
             , 'resetURL'            : resetURL               
             })
