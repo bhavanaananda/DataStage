@@ -1,5 +1,21 @@
 #!/bin/bash
 
+if [[ "$1" == "" ]]; then
+    echo "Usage:"
+    echo "  $0 username"
+    echo "      Generate Apache access configuration for named user" 
+    echo ""
+    echo "  $0 all"
+    echo "      Generate Apache access configuration for all configured ADMIRAL users" 
+    echo ""
+    exit
+fi
+ 
+if [[ ! -e /root/admiralresearchgroupmembers/$1.sh ]]; then
+    echo "No such user: $1"
+    exit
+fi
+ 
 source admiralconfig.sh
 
 function generateuserconfigfile()
@@ -59,6 +75,13 @@ EOF
 
 # Process all user files in /root/admiralresearchgroupmembers
 
-for u in `ls /root/admiralresearchgroupmembers/*.sh`; do
-    generateuserconfigfile $u
-done
+if [[ "$1" == "all" ]]; then
+    for u in `ls /root/admiralresearchgroupmembers/*.sh`; do
+        generateuserconfigfile $u
+    done
+else
+    generateuserconfigfile /root/admiralresearchgroupmembers/$1.sh    
+fi
+
+# End.
+  

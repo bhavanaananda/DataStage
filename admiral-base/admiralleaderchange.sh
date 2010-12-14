@@ -52,6 +52,6 @@ EOF
 
 # Regenerate the apache user access control files
   
-  /root/createapacheuserconfig.sh
+  /root/createapacheuserconfig.sh all
 
 fi
