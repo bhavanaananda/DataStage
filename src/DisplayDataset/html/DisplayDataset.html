@@ -86,8 +86,8 @@
             var packedLink = "/admiral-test/datasets/"+datasetName+"-packed";
             jQuery("#unpackedLink").attr('href', unpackedLink);  
             jQuery("#packedLink").attr('href', packedLink);  
-            jQuery("#datasetPackedName").text(datasetName);  
-            jQuery("#datasetUnpackedName").text(datasetName+"-packed");          
+            jQuery("#datasetPackedName").text(datasetName+"-packed");  
+            jQuery("#datasetUnpackedName").text(datasetName);          
 
             var m = new admiral.AsyncComputation();
             m.eval(function (val, callback)
@@ -126,8 +126,8 @@
    <div class="manifest">(to be replaced)</div>
 
 
-   <h3>View Data in Dataset: <span id="datasetPackedName"></span> - <a href="" id="unpackedLink">packaged data</a></h3>
-   <h3>View Data in Dataset: <span id="datasetUnpackedName"></span> - <a href="" id="packedLink">original data</a></h3>
+   <h3>View Data in Dataset: <span id="datasetUnpackedName"></span> - <a href="" id="unpackedLink">data</a></h3>
+   <h3>View Data in Dataset: <span id="datasetPackedName"></span> - <a href="" id="packedLink">packaged data</a></h3>
    <h3><a href="" id="revise">Submit revised version</a></h3>
 </body>
 
