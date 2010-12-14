@@ -5,6 +5,7 @@ source admiralconfig.sh
 smbldap-groupadd -a -g $RGLeaderGID RGLeader
 smbldap-groupadd -a -g $RGMemberGID RGMember
 smbldap-groupadd -a -g $RGCollabGID RGCollaborator
+smbldap-groupadd -a -g $RGOrphanGID RGOrphan
 
 echo =========================
 echo Allowing file access
