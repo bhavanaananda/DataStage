@@ -144,22 +144,22 @@ admiral.nestedListBuilder = function (baseUri, tree)
   	    for (var i = 0 ; i < tree.length ; i++)
   	    {
             var fileName = tree[i].segment;
-	    	if (tree[i].subtree == null)
-	    	{
-        		var href = fileName;
-        		if (fileName != "")
-        		{
-        		    href = "<a href=\""+rebuiltBaseUri+"/"+fileName+"\">"+fileName+"</a>";
-        		}
-                jelem.append("<li><span 'class='file'>"+href+"</span></li>");
-	    	}
-            else
-	    	{
-        		// New branch here == new directory level
+    	    	if (tree[i].subtree == null)
+    	    	{
+            		var href = fileName;
+            		if (fileName != "")
+            		{
+            		    href = "<a href=\""+rebuiltBaseUri+"/"+fileName+"\">"+fileName+"</a>";
+            		}
+                jelem.append("<li><span class='file'>"+href+"</span></li>");
+    	    	}
+                else
+    	    	{
+            		// New branch here == new directory level
                 href = "<a href=\""+rebuiltBaseUri+"/"+fileName+"/\">"+fileName+"</a>";
                 jelem.append("<li><span class='folder'>"+href+"</span><ul/></li>");
                 appendTree(tree[i].subtree, jelem.find("li:last > ul"), rebuiltBaseUri + "/" + fileName);
-	    	}
+    	    	}
   	    }
     }
     // Start witjh empty list
