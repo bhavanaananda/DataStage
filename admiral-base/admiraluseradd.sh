@@ -91,6 +91,7 @@ EOF
   chown $1:RGMember /home/data/private/$1/ADMIRAL.README
 
   # Set up Apache access control configuration
+  # @@TODO: use createapacheuserconfig.sh
 
   cat << EOF > /etc/apache2/conf.d/user.$1
 

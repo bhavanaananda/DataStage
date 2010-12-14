@@ -34,7 +34,9 @@ appropriate permissions set.</p>
 <blockquote>
 <code>/root/admiraluserddel.sh <cite>username</cite></code>
 </blockquote>
-The user will be removed form the filesystem and (at present) all their files will be deleted.
+The user will be removed form the filesystem and all their files will be changed to ownership by a special "orphaned data" account (admiral-orphan).
+The effect of this is that the original owners access rights are removed.  Specifically, only the group leader
+can access the users private files.
 </p>
 
 <p>In the future it is intended that there will be a web-interface to these commands so no magic incantations need be remembered!</p>

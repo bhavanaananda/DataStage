@@ -24,10 +24,10 @@ else
 
   else
 
-    chown -R $RGLeaderName:RGLeader /home/data/private/$1
-    chown -R $RGLeaderName:RGLeader /home/data/shared/$1
-    chown -R $RGLeaderName:RGLeader /home/data/collab/$1
-    chown -R $RGLeaderName:RGLeader /mnt/lv-admiral-data/home/$1
+    chown -R admiral-orphan:RGOrphan /home/data/private/$1
+    chown -R admiral-orphan:RGOrphan /home/data/shared/$1
+    chown -R admiral-orphan:RGOrphan /home/data/collab/$1
+    chown -R admiral-orphan:RGOrphan /mnt/lv-admiral-data/home/$1
     if [[ -L "/home/$1" ]]; then
       rm "/home/$1"
     elif [[ -e "/home/$1" ]]; then

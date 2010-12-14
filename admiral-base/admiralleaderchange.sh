@@ -19,8 +19,8 @@ elif [[ "$1" != "$RGLeaderName" ]]; then
   exit 1
 else
   if [[ "$3" == "-d" ]]; then 
-# Old RGLeader leaving/no longer research-active/died
-    chown -R $2:RGLeader /home/data/$1
+    # Old RGLeader leaving/no longer research-active/died
+    chown -R $2:RGLeader /home/data/private/$1
     chown -R $2:RGLeader /home/data/shared/$1
     chown -R $2:RGLeader /home/data/collab/$1
     chown -R $2:RGLeader /mnt/lv-admiral-data/home/$1
@@ -28,16 +28,17 @@ else
     rm -rf /home/$1-saved
     rm /etc/apache2/conf.d/user.$1
   else
-# Old RGLeader doesn't want administrative hassle, but remains valid member of research group
+    # Old RGLeader doesn't want administrative hassle, but remains valid member of research group
     smbldap-usermod -G RGMember -g 601 $1
-    chown -R $1:RGLeader /home/data/$1
+    chown -R $1:RGMember /home/data/private/$1
     chown -R $1:RGMember /home/data/shared/$1
     chown -R $1:RGMember /home/data/collab/$1
     chown -R $1:RGMember /mnt/lv-admiral-data/home/$1
   fi
-# Appoint new RGLeader
+
+  # Appoint new RGLeader
   smbldap-usermod -G RGLeader -g 600 $2
-  chown -R $2:RGLeader /home/data/$2
+  chown -R $2:RGLeader /home/data/private/$2
   chown -R $2:RGLeader /home/data/shared/$2
   chown -R $2:RGLeader /home/data/collab/$2
   chown -R $2:RGLeader /mnt/lv-admiral-data/home/$2
@@ -52,6 +53,5 @@ EOF
 # Regenerate the apache user access control files
   
   /root/createapacheuserconfig.sh
-
 
 fi
