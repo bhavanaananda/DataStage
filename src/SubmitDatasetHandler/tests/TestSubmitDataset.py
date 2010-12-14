@@ -61,7 +61,7 @@ class TestDatasetSubmission(unittest.TestCase):
        
         # Test that the length <updatedDatasetListFromSilo> = length<initialDatasetsListFromSilo> + 1
         self.assertEquals(len(updatedDatasetsListFromSilo), len(initialDatasetsListFromSilo)+1, "Dataset Created Successfully")
-        SubmitDatasetUtils.deleteDataset(SiloName,TestDatasetName) 
+        SubmitDatasetUtils.deleteDataset(SiloName,TestDatasetName+"-packed") 
         return
  
         # Test the Dataset Deletion :<TestSubmission>  
@@ -69,13 +69,13 @@ class TestDatasetSubmission(unittest.TestCase):
         SubmitDatasetUtils.createDataset(SiloName,TestDatasetName)
         # Check dataset exists
         response = HttpUtils.doHTTP_GET(
-            resource = "/" + SiloName + "/datasets/" + TestDatasetName, 
+            resource = "/" + SiloName + "/datasets/" + TestDatasetName+"-packed", 
             expect_status=200, expect_reason="OK", accept_type="application/json")
         # Test the dataset deletion      
-        SubmitDatasetUtils.deleteDataset(SiloName,TestDatasetName) 
+        SubmitDatasetUtils.deleteDataset(SiloName,TestDatasetName+"-packed") 
         # Test dataset no longer exists
         response = HttpUtils.doHTTP_GET(
-            resource = "/" + SiloName + "/datasets/" + TestDatasetName, 
+            resource = "/" + SiloName + "/datasets/" + TestDatasetName+"-packed", 
             expect_status=404, expect_reason="Not Found")
         return
     
@@ -88,12 +88,12 @@ class TestDatasetSubmission(unittest.TestCase):
         SubmitDatasetUtils.submitFileToDataset(SiloName, TestDatasetName, FileName, localMimeType, FileName)
         
         # Read from the  updated Dataset
-        (remoteMimeType,remoteFileContent) = SubmitDatasetUtils.getFileFromDataset(SiloName, TestDatasetName, FileName)
+        (remoteMimeType,remoteFileContent) = SubmitDatasetUtils.getFileFromDataset(SiloName, TestDatasetName+"-packed", FileName)
         
         # Check that the <localFileContent> = <remoteFileContents>
         self.assertEqual(localMimeType, remoteMimeType, "Difference between local and remote MIME types")
         self.assertEqual(localFileContent, remoteFileContent, "Difference between local and remote file contents")
-        SubmitDatasetUtils.deleteDataset(SiloName,TestDatasetName)  
+        SubmitDatasetUtils.deleteDataset(SiloName,TestDatasetName+"-packed")  
         return
     
     def testDirectorySubmission(self):    
@@ -105,7 +105,7 @@ class TestDatasetSubmission(unittest.TestCase):
         SubmitDatasetUtils.submitFileToDataset(SiloName, TestDatasetName, zipFileName, ZipMimeType, zipFileName)
 
         # Read from the  updated Dataset
-        (remoteMimeType,remoteZipFileContent) = SubmitDatasetUtils.getFileFromDataset(SiloName, TestDatasetName, zipFileName)
+        (remoteMimeType,remoteZipFileContent) = SubmitDatasetUtils.getFileFromDataset(SiloName, TestDatasetName+"-packed", zipFileName)
         
         #logger.debug("LocalZipFileContents: " + localZipFileContent)
         #logger.debug(" RemoteZipFileContents: " + remoteZipFileContent)
@@ -116,7 +116,7 @@ class TestDatasetSubmission(unittest.TestCase):
         
         #unpack the contents
         newDatasetname = SubmitDatasetUtils.unzipRemoteFileToNewDataset(SiloName, TestDatasetName, zipFileName)
-        SubmitDatasetUtils.deleteDataset(SiloName,TestDatasetName)  
+        SubmitDatasetUtils.deleteDataset(SiloName,TestDatasetName+"-packed")  
         SubmitDatasetUtils.deleteDataset(SiloName,newDatasetname)
         return
     
@@ -131,7 +131,7 @@ class TestDatasetSubmission(unittest.TestCase):
         #Resubmit the File to Dataset skipping dataset creation as the dataset already exists
         SubmitDatasetUtils.submitFileToDataset(SiloName, TestDatasetName, zipFileName, ZipMimeType, zipFileName)
         # Read from the  updated Dataset
-        (remoteMimeType,remoteZipFileContent) = SubmitDatasetUtils.getFileFromDataset(SiloName, TestDatasetName, zipFileName)
+        (remoteMimeType,remoteZipFileContent) = SubmitDatasetUtils.getFileFromDataset(SiloName, TestDatasetName+"-packed", zipFileName)
         
         #logger.debug("LocalZipFileContents: " + localZipFileContent)
         #logger.debug(" RemoteZipFileContents: " + remoteZipFileContent)
@@ -142,7 +142,7 @@ class TestDatasetSubmission(unittest.TestCase):
         
         #unpack the contents
         newDatasetname = SubmitDatasetUtils.unzipRemoteFileToNewDataset(SiloName, TestDatasetName, zipFileName)
-        SubmitDatasetUtils.deleteDataset(SiloName,TestDatasetName)  
+        SubmitDatasetUtils.deleteDataset(SiloName,TestDatasetName+"-packed")  
         SubmitDatasetUtils.deleteDataset(SiloName,newDatasetname)
         return
 
@@ -159,7 +159,7 @@ class TestDatasetSubmission(unittest.TestCase):
         SubmitDatasetUtils.submitFileToDataset(SiloName,EmptyTestDatasetName, zipFileName, ZipMimeType, zipFileName)
 
         # Read from the  updated Dataset
-        (remoteMimeType, remoteZipFileContent) = SubmitDatasetUtils.getFileFromDataset(SiloName, EmptyTestDatasetName, zipFileName)
+        (remoteMimeType, remoteZipFileContent) = SubmitDatasetUtils.getFileFromDataset(SiloName, EmptyTestDatasetName+"-packed", zipFileName)
         
         #logger.debug("LocalZipFileContents: " + localZipFileContent)
         #logger.debug(" RemoteZipFileContents: " + remoteZipFileContent)
@@ -170,7 +170,7 @@ class TestDatasetSubmission(unittest.TestCase):
         
         #unpack the contents
         newDatasetName = SubmitDatasetUtils.unzipRemoteFileToNewDataset(SiloName, EmptyTestDatasetName, zipFileName)
-        SubmitDatasetUtils.deleteDataset(SiloName,EmptyTestDatasetName)
+        SubmitDatasetUtils.deleteDataset(SiloName,EmptyTestDatasetName+"-packed")
         SubmitDatasetUtils.deleteDataset(SiloName,newDatasetName)
         return
 

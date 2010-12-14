@@ -74,11 +74,8 @@ def processDatasetSubmissionForm(formdata, outputstr):
         validateFields(dirName, datasetName)
         # Set user credentials       
         HttpUtils.setRequestUserPass(userName,userPass)       
-        # Check if the dataset already exists
-        datasetFound = SubmitDatasetUtils.ifDatasetExists(siloName, datasetName)    
-        # Create a dataset if the dataset does not exist
-        if not datasetFound:              
-            SubmitDatasetUtils.createDataset(siloName, datasetName)                             
+                   
+        SubmitDatasetUtils.createDataset(siloName, datasetName)                             
         # Update the local manifest
         manifestFilePath     = dirName + str(os.path.sep) + DefaultManifestName
         Logger.debug("Element List = " + repr(ElementUriList))
@@ -95,7 +92,7 @@ def processDatasetSubmissionForm(formdata, outputstr):
         # Unzip the contents into a new dataset
         datasetUnzippedName = SubmitDatasetUtils.unzipRemoteFileToNewDataset(siloName, datasetName, zipFileName)       
         # Redirect to the Dataset Summary page
-        redirectToSubmissionSummaryPage(dirName, datasetName, datasetUnzippedName, convertToUriString(SuccessStatus))
+        redirectToSubmissionSummaryPage(dirName, datasetName+"-packed", datasetUnzippedName, convertToUriString(SuccessStatus))
         return
         
     except SubmitDatasetUtils.SubmitDatasetError, e:

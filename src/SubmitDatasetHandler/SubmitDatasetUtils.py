@@ -106,16 +106,20 @@ def createDataset(siloName, datasetName):
     siloName    name of Databank silo in which dataset is created
     datasetName name for the new dataset 
     """
-    logger.debug("createDataset: siloName %s, datasetName %s"%(siloName, datasetName))
-    fields = \
-        [ ("id", datasetName)
-        ]
-    files =[]
-    (reqtype, reqdata) = HttpUtils.encode_multipart_formdata(fields, files)
-    HttpUtils.doHTTP_POST(
-        reqdata, reqtype, 
-        resource = "/" + siloName + "/datasets/", 
-        expect_status=201, expect_reason="Created")
+    #Check if the dataset already exists
+    datasetFound = ifDatasetExists(siloName, datasetName+"-packed")    
+    # Create a dataset if the dataset does not exist
+    if not datasetFound: 
+        logger.debug("createDataset: siloName %s, datasetName %s"%(siloName, datasetName))
+        fields = \
+            [ ("id", datasetName+"-packed")
+            ]
+        files =[]
+        (reqtype, reqdata) = HttpUtils.encode_multipart_formdata(fields, files)
+        HttpUtils.doHTTP_POST(
+            reqdata, reqtype, 
+            resource = "/" + siloName + "/datasets/", 
+            expect_status=201, expect_reason="Created")
     return
 
 def deleteDataset(siloName, datasetName):      
@@ -141,7 +145,7 @@ def submitFileToDataset(siloName, datasetName, fileName, mimeType, targetName):
     mimeType    MIME content type of file data to be submitted
     targetName  file path and name to be used for storage in Databank dataset
     """
-    logger.debug("submitFileToDataset: siloName %s, datasetName %s, fileName %s, targetName %s"%(siloName, datasetName, fileName, targetName))
+    logger.debug("submitFileToDataset: siloName %s, datasetName %s, fileName %s, targetName %s"%(siloName, datasetName+"-packed", fileName, targetName))
     assert os.path.basename(targetName) == targetName, "No directories allowed in targetName: "+targetName
     fields = []
     fileData = getLocalFileContents(fileName)
@@ -151,7 +155,7 @@ def submitFileToDataset(siloName, datasetName, fileName, mimeType, targetName):
     (reqtype, reqdata) = HttpUtils.encode_multipart_formdata(fields, files)
     HttpUtils.doHTTP_POST(
         reqdata, reqtype, 
-        resource = "/" + siloName + "/datasets/"+ datasetName, 
+        resource = "/" + siloName + "/datasets/"+ datasetName+"-packed", 
         expect_status=[201,204], expect_reason=["Created","No Content"])
     return
 
@@ -171,15 +175,16 @@ def unzipRemoteFileToNewDataset(siloName, datasetName, zipFileName):
     """
     logger.debug("unzipRemoteFileToNewDataset: siloName %s, datasetName %s, zipFileName %s"%(siloName, datasetName, zipFileName))
     fields = \
-        [ ("filename", zipFileName)
+        [ ("filename", zipFileName),
+          ("id",datasetName )
         ]
     files = []
     (reqtype, reqdata) = HttpUtils.encode_multipart_formdata(fields, files)
     HttpUtils.doHTTP_POST(
         reqdata, reqtype, 
-        resource="/" + siloName +"/items/"+ datasetName, 
+        resource="/" + siloName +"/items/"+ datasetName+"-packed", 
         expect_status=[200,201], expect_reason=["OK","Created"])
-    return datasetName+"-"+zipFileName[:-4]
+    return datasetName
 
 def getFileFromDataset(siloName, datasetName, fileName):  
     """
