@@ -5,6 +5,12 @@
 
 source admiralRGLeader.sh
 
+if [[ 0 ]]; then
+  echo "Current leader: $RGLeaderName"
+  echo "Change from: $1"
+  echo "Change to:   $2"
+fi
+
 if [[ "$1" == "" ]] || [[ "$2" == "" ]]; then
   echo "Usage: $0 oldleadername newleadername [-d]"
   echo "Use the -d option only if you wish to remove the old"
