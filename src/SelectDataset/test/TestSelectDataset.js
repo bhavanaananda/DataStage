@@ -86,25 +86,25 @@ TestSelectDataset = function()
     test("testMultipleListDatasets", function ()
     {
         logtest("testMultipleListDatasets");
-	    function getlist(host, silo, callback)
-	    {
-	        var datasetArray =  ['a','b','c'];
-	        callback(datasetArray);          
-	    }
+  	    function getlist(host, silo, callback)
+  	    {
+  	        var datasetArray =  ['a','b','c'];
+  	        callback(datasetArray);          
+  	    }
         var m = new admiral.AsyncComputation();
         m.eval(function(val, callback)
-	    {
-	        getlist(host,silo,callback);       
-	    });
+  	    {
+  	        getlist(host,silo,callback);       
+  	    });
         m.eval(function(val,callback)
-	    {
+  	    {
             this.datasetlist = val;
             var jqelem = admiral.listDatasets(host, silo, getlist, callback);           
-	    });
+  	    });
         m.eval(function(val, callback)
         {
-        	log.debug(val.html());
-        	// test val jQuery object contains expected HTML; e.g.
+          	log.debug(val.html());
+          	// test val jQuery object contains expected HTML; e.g.
             //
             //       <table id="tableDatasets">
             //         <tr><td><a href="somehost/somesilo/dataset/somedatasets1">somedataset1</a></td></tr>
@@ -123,7 +123,7 @@ TestSelectDataset = function()
                 equals(tablerows.eq(i).find("a").text(), expected, "Table contains element: " + rowdata);
                 
                 // test for row data hyperlink
-                var expected = "../../DisplayDataset/html/DisplayDataset#"+ rowdata;
+                var expected = "../../DisplayDataset/html/DisplayDataset.html#"+ rowdata;
                 var rowdatalink = tablerows.eq(i).find("a").attr('href');
                 equals(rowdatalink, expected, "Table contains one element with hyperlink: " +  rowdatalink);
             }   
@@ -137,49 +137,48 @@ TestSelectDataset = function()
         stop(2000);
     });
         
-        
     test("testSingletonDataset", function ()
     {
         logtest("testSingletonDataset");
-	    function getlist(host, silo, callback)
-	    {
-	        var datasetArray =  ['a'];
-	        callback(datasetArray);	       
-	    }
+  	    function getlist(host, silo, callback)
+  	    {
+  	        var datasetArray =  ['a'];
+  	        callback(datasetArray);	       
+  	    }
 
         var m = new admiral.AsyncComputation();
-	    m.eval(function(val, callback)
-	    {
-	    	getlist(host,silo,callback);	    	
-	    });
-	    m.eval(function(val,callback)
-	    {
-	    	this.datasetlist = val;
-	        var jqelem = admiral.listDatasets(host, silo, getlist, callback);           
-	    });
-	    m.eval(function(val, callback)
-	    {
-	        //log.debug(val.html());
-	        // test val jQuery object contains expected HTML; e.g.
-	        //
-	        //       <table id="tableDatasets">
-	        //         <tr><td><a href="somehost/somesilo/dataset/somedatasets1">somedataset1</a></td></tr>
-	        //         <tr><td><a href="somehost/somesilo/dataset/somedatasets2">somedataset2</a></td></tr>
-	        //       </table>   
-	        //
-	        var table    = val.find("table")
-	        equals(table.length, 1, "HTML page contains single table");
-	        var tablerows = val.find("table tr");
-	        // test for row data
-	        var expected = this.datasetlist[0];
-	        var rowdata =  tablerows.eq(0).find("a").text();
-	        equals(tablerows.eq(0).find("a").text(), expected, "Table contains one element: " + rowdata);
-	        // test for row data hyperlink
-	        var expected = "../../DisplayDataset/html/DisplayDataset#"+ rowdata;
-	        var rowdatalink = tablerows.eq(0).find("a").attr('href');
-	        equals(rowdatalink, expected, "Table contains one element with hyperlink: " +  rowdatalink);   
-	        callback(null); 
-	    });
+  	    m.eval(function(val, callback)
+  	    {
+    	    	getlist(host,silo,callback);	    	
+  	    });
+  	    m.eval(function(val,callback)
+  	    {
+    	    	this.datasetlist = val;
+  	        var jqelem = admiral.listDatasets(host, silo, getlist, callback);           
+  	    });
+  	    m.eval(function(val, callback)
+  	    {
+  	        //log.debug(val.html());
+  	        // test val jQuery object contains expected HTML; e.g.
+  	        //
+  	        //       <table id="tableDatasets">
+  	        //         <tr><td><a href="somehost/somesilo/dataset/somedatasets1">somedataset1</a></td></tr>
+  	        //         <tr><td><a href="somehost/somesilo/dataset/somedatasets2">somedataset2</a></td></tr>
+  	        //       </table>   
+  	        //
+  	        var table    = val.find("table")
+  	        equals(table.length, 1, "HTML page contains single table");
+  	        var tablerows = val.find("table tr");
+  	        // test for row data
+  	        var expected = this.datasetlist[0];
+  	        var rowdata =  tablerows.eq(0).find("a").text();
+  	        equals(tablerows.eq(0).find("a").text(), expected, "Table contains one element: " + rowdata);
+  	        // test for row data hyperlink
+  	        var expected = "../../DisplayDataset/html/DisplayDataset.html#"+ rowdata;
+  	        var rowdatalink = tablerows.eq(0).find("a").attr('href');
+  	        equals(rowdatalink, expected, "Table contains one element with hyperlink: " +  rowdatalink);   
+  	        callback(null); 
+  	    });
         m.exec(null, function (val)
         {
             log.debug("testSingletonDataset complete");
@@ -220,7 +219,7 @@ TestSelectDataset = function()
                 var rowdata =  tablerows.eq(i).find("a").text();
                 equals(rowdata, expected, "Row "+i+" text: " + rowdata);
                 // test for row hyperlink
-                var expected = "../../DisplayDataset/html/DisplayDataset#"+ rowdata;
+                var expected = "../../DisplayDataset/html/DisplayDataset.html#"+ rowdata;
                 var rowdatalink = tablerows.eq(i).find("a").attr('href');
                 equals(rowdatalink, expected, "Row "+i+" hyperlink: " +  rowdatalink); 
             }
