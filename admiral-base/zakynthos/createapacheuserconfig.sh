@@ -23,7 +23,8 @@ function generateuserconfigfile()
       # Tried to use a combination of "Require user" and "Require ldap-attribute"
       # here, but this caused access failures for all users.
       # TestLeader is included here for testing only.
-    Require user $username $RGLeaderName
+      #Ê@@TODO: fix to use RG leader group id (to follow leader)
+      Require user $username $RGLeaderName
     </Limit>
 </Location>
 

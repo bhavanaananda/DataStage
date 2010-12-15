@@ -2,7 +2,17 @@
 <html>
 
 <head>
-<title>ADMIRAL file organization</title>
+  <title>ADMIRAL file organization</title>
+  <link rel="stylesheet" href="../css/jquery.treeview.css" type="text/css" />   
+  <script type="text/javascript" src="../js/jquery-1.4.2.min.js"></script> 
+  <script type="text/javascript" src="../js/jquery.treeview.min.js"></script> 
+  <script>
+  jQuery(document).ready( function () 
+  {
+      jQuery("#filelayout").treeview();
+  });
+  </script>
+  
 </head>
 
 <body>
@@ -11,33 +21,70 @@
 
 <h1>ADMIRAL file organization</h1>
 
+<!--
 <dl>
-<dt><code>data</code></dt>
-<dd>base for research data files</dd>
+<dt><code>data/</code></dt>
+<dd>base for research data files:</dd>
+  <blockquote>
   <dl>
-  <dt><cite>username</cite></dt>
-  <dd>private area for files belonging to <cite>username</cite></dd>
+  <dt><code>private/</code></dt>
+  <dd>area for research group members private files:</dd>
+    <blockquote>
+    <dl>
+    <dt><cite>username</cite></dt>
+    <dd>private area for files belonging to <cite>username</cite></dd>
+    </dl>
+    </blockquote>
   </dl>
-
   <dl>
-  <dt><code>shared</code></dt>
-  <dd>area for sharing files between research group members</dd>
+  <dt><code>shared/</code></dt>
+  <dd>area for sharing files between research group members:</dd>
+    <blockquote>
     <dl>
     <dt><cite>username</cite></dt>
     <dd>shared files created by <cite>username</cite></dd>
     </dl>
+    </blockquote>
   </dl>
-
   <dl>
-  <dt><code>collab</code></dt>
-  <dd>area for sharing files with selected external collaborators</dd>
+  <dt><code>collab/</code></dt>
+  <dd>area for sharing files with selected external collaborators:</dd>
+    <blockquote>
     <dl>
     <dt><cite>username</cite></dt>
     <dd>collaborator-shared files created by <cite>username</cite></dd>
     </dl>
+    </blockquote>
   </dl>
-
+  </blockquote>
 </dl>
+-->
+
+<ul id="filelayout" class="filetree">
+  <li><span class="folder"><code>&nbsp;data/</code> - base for research data files:</span>
+    <ul>
+      <li><span class="folder"><code>&nbsp;private/</code> - area for research group members private files:</span>
+        <ul>
+        <li><span class="file"><code><cite>&nbsp;username</cite></code> - private area for files belonging to <code><cite>username</cite></code></span></li>
+        </ul>
+      </li>
+    </ul>
+    <ul>
+      <li><span class="folder"><code>&nbsp;shared/</code> - area for sharing files between research group members:</span>
+        <ul>
+        <li><span class="file"><code><cite>&nbsp;username</cite></code> - shared files created by <code><cite>username</cite></code></span></li>
+        </ul>
+      </li>
+    </ul>
+    <ul>
+      <li><span class="folder"><code>&nbsp;collab/</code> - area for sharing files with selected external collaborators:</span>
+        <ul>
+        <li><span class="file"><code><cite>&nbsp;username</cite></code> - collaborator-shared files created by <code><cite>username</cite></code></span></li>
+        </ul>
+      </li>
+    </ul>
+    </li>
+</ul>
 
 </body>
 

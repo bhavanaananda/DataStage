@@ -29,8 +29,9 @@
     <script type="text/javascript" src="../../Admiral/Error.js"></script>
     <script type="text/javascript" src="../../Admiral/AsyncComputation.js"></script>
     <script type="text/javascript" src="../../SelectDataset/ListDatasets.js"></script>
-    <script type="text/javascript" src="../../SelectDataset/GetDatasets.js"></script>
-
+    <script type="text/javascript" src="../../SelectDataset/GetDatasetsList.js"></script>
+    <script type="text/javascript" src="../../SelectDataset/GetDatasetDetails.js"></script>
+    
     <script>
     // Use jQuery via jQuery(...)
     jQuery.noConflict();
@@ -48,6 +49,9 @@
 	    {
 	        // val supplies a <div> element containing a <table> to be displayed
 	        jQuery("#tableDatasets").html("");
+	        
+	        //var dataSet = "/admiral-test/datasets/"+datasetName;
+	        log.debug(val);
 	        jQuery("#tableDatasets").append(val.find("table"));
 	    });    
 	    m.exec(null,admiral.noop);
@@ -58,14 +62,32 @@
 
 <body>
    <h1>Datasets</h1>
-
-   <div>
-     <table id="tableDatasets">
-       <tr><td><a href="somehost/somesilo/dataset/somedatasets1">somedataset1</a></td></tr>
-       <tr><td><a href="somehost/somesilo/dataset/somedatasets2">somedataset2</a></td></tr>
-     </table>   
-   </div>
-   
+   <div>   
+	    <table id="tableDatasets">
+		     <thead>
+		         <tr>
+		           <th> Dataset </th>
+		           <th> Version number </th>
+		           <th> Submitted on   </th>
+		           <th> Submitted by   </th>
+		        </tr>
+		    </thead>
+		    <tbody>
+		        <tr>
+		           <td><a href="somehost/somesilo/dataset/somedatasets1">somedataset1</a></td>
+		           <td>nn</td>
+		           <td>yyyy-mm-dd</td>
+		           <td>submitter name </td>
+		        </tr>
+		        <tr>
+		           <td><a href="somehost/somesilo/dataset/somedatasets2">somedataset2</a></td>
+		           <td>nn</td>
+		           <td>yyyy-mm-dd</td>
+		           <td>submitter name </td>
+		        </tr>
+		     </tbody>
+	      </table> 
+   </div>   
 </body>
 
 </html>

@@ -91,55 +91,12 @@ EOF
   chown $1:RGMember /home/data/private/$1/ADMIRAL.README
 
   # Set up Apache access control configuration
+  /root/createapacheuserconfig.sh $1
 
-  cat << EOF > /etc/apache2/conf.d/user.$1
-
-<Location /data/private/$1>
-    Order Deny,Allow
-    Allow from all
-    <LimitExcept REPORT GET OPTIONS PROPFIND>
-        Require user $1
-    </LimitExcept>
-    <Limit PROPFIND OPTIONS GET REPORT>
-        # NOTE:
-        # Tried to use a combination of "Require user" and "Require ldap-attribute"
-        # here, but this caused access failures for all users.
-        # TestLeader is included here for testing only.
-        Require user $1 $RGLeaderName TestLeader
-    </Limit>
-</Location>
-
-<Location /data/shared/$1>
-    Order Deny,Allow
-    Allow from all
-    <LimitExcept REPORT GET OPTIONS PROPFIND>
-        Require user $1
-    </LimitExcept>
-    <Limit PROPFIND OPTIONS GET REPORT>
-        Require ldap-attribute gidNumber=$RGLeaderGID
-        Require ldap-attribute gidNumber=$RGMemberGID
-    </Limit>
-</Location>
-
-<Location /data/collab/$1>
-    Order Deny,Allow
-    Allow from all
-    <LimitExcept REPORT GET OPTIONS PROPFIND>
-        Require user $1
-    </LimitExcept>
-    <Limit PROPFIND OPTIONS GET REPORT>
-        Require ldap-attribute gidNumber=$RGLeaderGID
-        Require ldap-attribute gidNumber=$RGMemberGID
-        Require ldap-attribute gidNumber=$RGCollabGID
-    </Limit>
-</Location>
-
-EOF
-  chown root:root /etc/apache2/conf.d/user.$1
-  chmod 644 /etc/apache2/conf.d/user.$1
 fi
 
 if [[ "$3" == "RGCollaborator" ]]; then
+
   if [[ "$6" == "" ]]; then
     smbldap-useradd -a -P -m -s /bin/false -g $3 $1
   else
@@ -148,7 +105,9 @@ $6
 $6
 END
   fi
+
   smbldap-userinfo -f "$2" -r $4 -w $5 $1
+
 fi
 
 # End.

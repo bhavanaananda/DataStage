@@ -28,6 +28,13 @@ echo ===========================================
 ./admiraldatasetup.sh
 /etc/init.d/apache2 restart
 
+echo ===========================================
+echo "Create user account for orphaned data files"
+echo ===========================================
+
+smbldap-useradd -a -P -m -s /bin/false -g RGOrphan admiral-orphan
+smbldap-userinfo -f "Orphaned data" admiral-orphan
+
 echo =================================
 echo "Next step: configure system users"
 echo =================================

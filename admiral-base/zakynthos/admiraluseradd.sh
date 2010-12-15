@@ -105,6 +105,7 @@ EOF
         # Tried to use a combination of "Require user" and "Require ldap-attribute"
         # here, but this caused access failures for all users.
         # TestLeader is included here for testing only.
+        # @@TODO: need to let this follow the RG leader 
         Require user $1 $RGLeaderName TestLeader
     </Limit>
 </Location>
