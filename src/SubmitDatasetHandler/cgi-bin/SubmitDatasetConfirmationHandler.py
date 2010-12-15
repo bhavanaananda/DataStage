@@ -26,7 +26,7 @@ from rdflib import URIRef
 sys.path.append("..")
 sys.path.append("../..")
 
-import SaveMetadata
+import SubmitDatasetDetailsHandler
 import SubmitDatasetUtils
 import ManifestRDFUtils
 import HttpUtils
@@ -42,7 +42,7 @@ NamespaceDictionary      =  {
                             }
 ZipMimeType              =  "application/zip"
 FilePat                  =  re.compile("^.*$(?<!\.zip)")
-Logger                   =  logging.getLogger("SubmitDatasetHandler")
+Logger                   =  logging.getLogger("SubmitDatasetConfirmationHandler")
 ElementCreatorUri        =  URIRef(dcterms + "creator")
 ElementIdentifierUri     =  URIRef(dcterms + "identifier")
 ElementTitleUri          =  URIRef(dcterms + "title")
@@ -74,16 +74,13 @@ def processDatasetSubmissionForm(formdata, outputstr):
         validateFields(dirName, datasetName)
         # Set user credentials       
         HttpUtils.setRequestUserPass(userName,userPass)       
-        # Check if the dataset already exists
-        datasetFound = SubmitDatasetUtils.ifDatasetExists(siloName, datasetName)    
-        # Create a dataset if the dataset does not exist
-        if not datasetFound:              
-            SubmitDatasetUtils.createDataset(siloName, datasetName)                             
+                   
+        SubmitDatasetUtils.createDataset(siloName, datasetName)                             
         # Update the local manifest
         manifestFilePath     = dirName + str(os.path.sep) + DefaultManifestName
         Logger.debug("Element List = " + repr(ElementUriList))
         Logger.debug("Element Value List = " + repr(ElementValueList))
-        SaveMetadata.updateMetadataInDirectoryBeforeSubmission(manifestFilePath, ElementUriList, ElementValueList)       
+        SubmitDatasetDetailsHandler.updateMetadataInDirectoryBeforeSubmission(manifestFilePath, ElementUriList, ElementValueList)       
         # Zip the selected Directory
         zipFileName = os.path.basename(dirName) +".zip"
         zipFilePath = "/tmp/" + zipFileName
@@ -95,7 +92,7 @@ def processDatasetSubmissionForm(formdata, outputstr):
         # Unzip the contents into a new dataset
         datasetUnzippedName = SubmitDatasetUtils.unzipRemoteFileToNewDataset(siloName, datasetName, zipFileName)       
         # Redirect to the Dataset Summary page
-        redirectToSubmissionSummaryPage(dirName, datasetName, datasetUnzippedName, convertToUriString(SuccessStatus))
+        redirectToSubmissionSummaryPage(dirName, datasetName+"-packed", datasetUnzippedName, convertToUriString(SuccessStatus))
         return
         
     except SubmitDatasetUtils.SubmitDatasetError, e:
@@ -146,7 +143,7 @@ def convertToUriString(statusString):
 
 def redirectToSubmissionSummaryPage(dirName, datasetName, datasetUnzippedName, statusText):
     print "Status: 303 Dataset submission successful"
-    print "Location: SubmitDatasetSummary.py?dir=%s&id=%s&unzipid=%s&status=%s" % (dirName,datasetName,datasetUnzippedName, statusText)
+    print "Location: SubmitDatasetSummaryHandler.py?dir=%s&id=%s&unzipid=%s&status=%s" % (dirName,datasetName,datasetUnzippedName, statusText)
     print
 
 if __name__ == "__main__":

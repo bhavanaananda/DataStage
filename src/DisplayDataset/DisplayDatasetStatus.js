@@ -74,10 +74,20 @@ admiral.displayDatasetStatus = function (dataSetPath, callback)
              jQuery("#datasetName").text(data.state.item_id);
              jQuery("#createdBy").text(data.state.metadata.createdby);
              jQuery("#currentVersion").text(data.state.currentversion);
+
              //lastModified populated by DataSetManifest.js
-             jQuery("#isEmbargoed").text(embargo);
-             if (embargo == true) {
-                jQuery("#embargoExpiryDate").text(data.state.metadata.embargoed_until);
+             //jQuery("#isEmbargoed").text(embargo);
+             if (embargo == true)
+             {
+                 var edate = data.state.metadata.embargoed_until.match(/\d\d\d\d-\d\d-\d\d/)[0];
+                 jQuery("#embargoed").show();
+                 jQuery("#published").hide();
+                 jQuery("#embargoExpiryDate").text(edate);
+             }
+             else
+             {
+                 jQuery("#embargoed").hide();
+                 jQuery("#published").show();
              }
              //<td> element "derivedFrom" in dataSet table populated by DataSetManifest.js
  

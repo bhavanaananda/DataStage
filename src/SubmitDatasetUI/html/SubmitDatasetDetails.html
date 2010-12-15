@@ -1,7 +1,6 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
 <html>
-
 <head>
     <title>ADMIRAL: Data Submission</title>
 
@@ -15,8 +14,6 @@
     <link rel="stylesheet" href="./../css/SubmitDataset.css" type="text/css" />   
     
     <!-- Import jQuery framework -->
-    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.4/jquery.min.js"></script>
-    <script src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8/jquery-ui.min.js"></script>
     <script type="text/javascript" src="../../jQuery/js/jquery-1.4.2.js"></script> 
 
     <!-- Import jQuery additional libraries -->
@@ -32,10 +29,9 @@
     <script type="text/javascript" src="../../Admiral/admiral-base.js"></script>
     <script type="text/javascript" src="../../Admiral/Error.js"></script>
     <script type="text/javascript" src="../../Admiral/AsyncComputation.js"></script>
-    <script type="text/javascript" src="./../js/SubmitDatasetBase.js"></script>
-    <script type="text/javascript" src="./../js/DisplayDirectories.js"></script>
-    <script type="text/javascript" src="./../js/GetMetadata.js"></script>
-    <script type="text/javascript" src="./../js/URIUtils.js"></script>
+    <script type="text/javascript" src="./../js/SubmitDatasetDetails.js"></script>
+    <script type="text/javascript" src="./../js/DirectoryListing.js"></script>
+    <script type="text/javascript" src="./../js/GetDatasetMetadata.js"></script>
     <script type="text/javascript" src="../../SelectDataset/ListDatasets.js"></script>
     <script type="text/javascript" src="../../SelectDataset/GetDatasets.js"></script>
     
@@ -43,11 +39,29 @@
     // Use jQuery via jQuery(...)
     jQuery.noConflict();
     </script>
+    
+    <script>
+    jQuery(document).ready( function ()
+    {
+       url = document.URL;
+       
+       // Get Dir value from the url to display as default and get metadata information for the dataset dir
+       var pos = url.indexOf("=");
+       var dir="" ;
+       if(pos > 0)
+       {
+         dir= url.slice(url.indexOf("=")+1);
+        //var dir = url.split("=");
+       }
+       admiral.displayFormFieldsFromMetadata(dir);    
+    });
+    </script>
+    
 </head> 
-<!-- SubmitDatasetConfirmation.html -->
+
 <body>
    <h1>Submit Datasets</h1>
-   <form id="submitForm" name="submitForm" action="../../SubmitDatasetHandler/cgi-bin/SaveMetadata.py" method="post">
+   <form id="submitForm" name="submitForm" action="../../SubmitDatasetHandler/cgi-bin/SubmitDatasetDetailsHandler.py" method="post">
    <div class="box outer">
         <div class="box">
             <span class="label">Dataset Dir :</span>
@@ -74,19 +88,6 @@
                 <textarea rows="4"  cols="50" id="description" name="description"></textarea>
            </span>
         </div>
-        <!-- <div class="box">
-            <span class="label">User :</span>
-            <span class="labelvalue">
-                <input name="user" id="user" type="text"/>
-            </span>
-            </div>
-            <div class="box">
-                <span class="label">Password :</span>
-                <span class="labelvalue">
-                    <input name="pass" id="pass" type="password"/>
-                </span>
-            </div>
-         -->
         <div class="box">
             <span class="labelvalue">
                 <input name="submit" id="submit" type="submit" value="Submit"/>
@@ -96,6 +97,5 @@
    </div>
 </form>  
 </body>
-
 </html>
 

@@ -15,16 +15,16 @@ try:
 except ImportError:
     import json as json
 
-import GetMetadata
+import GetDatasetMetadataHandler
 import ManifestRDFUtils
 import SubmitDatasetUtils
 import HttpUtils
 from MiscLib import TestUtils
 
-Logger                    =  logging.getLogger("TestGetMetadata")
+Logger                    =  logging.getLogger("TestGetDatasetMetadataHandler")
 SubmitToolDatDirFormField =  "DatasetsTopDir"
-ManifestName              = "TestGetMetadataManifest.rdf"
-ManifestFilePath          =  SubmitToolDatDirFormField+ "/TestGetMetadataManifest.rdf"
+ManifestName              = "TestGetDatasetMetadataManifest.rdf"
+ManifestFilePath          =  SubmitToolDatDirFormField+ "/TestGetDatasetMetadataManifest.rdf"
 
 formdata                     =  \
                               {  'datDir'      :  cgi.MiniFieldStorage('datDir'      ,  "./DatasetsTopDir")
@@ -55,7 +55,7 @@ ElementTitleUri           =  URIRef(dcterms + "title")
 ElementDescriptionUri     =  URIRef(dcterms + "description")
 ElementUriList            =  [ElementCreatorUri, ElementIdentifierUri, ElementTitleUri, ElementDescriptionUri]
     
-class TestGetMetadata(unittest.TestCase):
+class TestGetDatasetMetadataHandler(unittest.TestCase):
 
     def setUp(self):
         return
@@ -66,14 +66,14 @@ class TestGetMetadata(unittest.TestCase):
     # Tests  
 
     # Test that the GetMetResponse      
-    def testGetMetadataResponse(self):
+    def testGetDatasetMetadataResponse(self):
         outputStr                 = StringIO.StringIO()
         
         # Create a manifest file from mocked up form data
         ManifestRDFUtils.writeToManifestFile(ManifestFilePath, NamespaceDictionary,ElementUriList, ElementValueList)
 
         # Invoke get metatadata submission program, passing faked dataset directory
-        GetMetadata.getMetadata(formdata, ManifestName, outputStr)
+        GetDatasetMetadataHandler.getDatasetMetadata(formdata, ManifestName, outputStr)
     
         outputStr.seek(0, os.SEEK_SET)
         firstLine = outputStr.readline()
@@ -106,7 +106,7 @@ def getTestSuite(select="unit"):
     testdict = {
         "unit":
             [ #"testUnits"
-              "testGetMetadataResponse"
+              "testGetDatasetMetadataResponse"
             ],
         "component":
             [ #"testComponents"
@@ -118,10 +118,10 @@ def getTestSuite(select="unit"):
             [ #"testPending"
             ]
         }
-    return TestUtils.getTestSuite(TestGetMetadata, testdict, select=select)
+    return TestUtils.getTestSuite(TestGetDatasetMetadataHandler, testdict, select=select)
 
 if __name__ == "__main__":
     #logging.basicConfig(level=logging.DEBUG)
-    TestUtils.runTests("TestGetMetadata.log", getTestSuite, sys.argv)
+    TestUtils.runTests("TestGetDatasetMetadataHandler.log", getTestSuite, sys.argv)
     #runner = unittest.TextTestRunner()
     #runner.run(getTestSuite())

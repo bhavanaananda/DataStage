@@ -68,7 +68,7 @@
         url = document.URL;
         dirUrl      =   url.split("#");
         dir         =   dirUrl[0].split("=")[1];
-        reviseURL   =  "../../SubmitDatasetUI/html/SubmitDataset.html?dir="+dir
+        reviseURL   =  "../../SubmitDatasetUI/html/SubmitDatasetDetails.html?dir="+dir
         jQuery("#revise").attr('href', reviseURL);
 
         log.debug(admiral.objectString(window.location));
@@ -101,18 +101,18 @@
 
 <body>
    <h1>Dataset <a id="datasetLink" href="dummy"><span id="datasetName">...</span></a></h1>
-   <div class="subTitle">Created by <span id="createdBy">...</span></div>
-   <div class="subTitle">Last modified <span id="lastModified">...</span></div>
-   <h2>Status</h2>
    <div class="dataset">
      <div id="pageLoadStatus"></div>
-     <br />
-     <table >
-        <tr ><td>Submission identifier &nbsp;</td><td id="submissionIdentifier">...</td></tr>
-        <tr><td>Current version</td><td id="currentVersion">...</td></tr>
-        <tr><td>Embargoed?</td><td id="isEmbargoed">...</td></tr>
-        <tr><td>Embargo expiry date</td><td id ="embargoExpiryDate">...</td></tr>
-        <tr><td>Derived from</td><td><span id="derivedFrom"><a href="dummy">...</a></span></td></tr>
+     <table name="submissionStatus" id = "submissionStatus" >
+        <tr><td>Submission identifier</td><td id="submissionIdentifier">...</td></tr>
+        <tr><td>Submitted by</td><td id="createdBy">...</td></tr>
+        <tr><td>Submitted on</td><td><span id="lastModified">yyyy-mm-dd</span> (version <span id="currentVersion">nn</span>)</td></tr>
+        <tr><td>Status</td>
+            <td><span id="embargoed">Embargoed until <span id="embargoExpiryDate">(embargoed)</span></span>
+                <span id="published">Published</span>
+            </td>
+        </tr>
+        <tr><td>Packed data</td><td><span id="derivedFrom"><a href="link">...</a></span></td></tr>
      </table>
    </div>
    <h2>Contents</h2>

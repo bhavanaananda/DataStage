@@ -1,8 +1,8 @@
 /**
  * @fileoverview
- *  ADMIRAL css styles for dataset submit application
+ * Used by the Submit Dataset Tool
  *  
- * @author bhavana
+ * @author Bhavana Ananda
  * @version $Id: $
  * 
  * Coypyright (C) 2010, University of Oxford
@@ -19,59 +19,56 @@
  */
 
 
-.outer {  
-            margin: 2px 2px 2px 2px; 
-            padding: 2px 2px 2px 2px;  
-            border: 2px 2px 2px 2px; 
-            height: 40%;
-       }
+.outer         {  
+                    margin: 2px 2px 2px 2px; 
+                    padding: 2px 2px 2px 2px;  
+                    border: 2px 2px 2px 2px; 
+                    height: 40%;
+               }
        
      
-.box {  
-        padding: 20px 20px 20px 20px; 
-        width: 40em;
-        clear: both;
-     }
+.box           {  
+                    padding: 20px 20px 20px 20px; 
+                    width: 40em;
+                    clear: both;
+               }
 
 
-.label {
-        font-size:large;
-        font-weight:bolder;  
-        width: 25%;
-       }
+.label         {
+                    font-size:large;
+                    font-weight:bolder;  
+                    width: 25%;
+               }
        
        
-.labelvalue {  
-             width: 75%;
-             float: right;     
-            }
+.labelvalue    {  
+                    width: 75%;
+                    float: right;     
+               }
        
-.withpadding {  
-            padding: 1px 1px 1px 1px;  
-         }
+       
+.withpadding   {  
+                    padding: 1px 1px 1px 1px;  
+               }
 
-input#datDir {
-    width: 100%;
-    }
+
+input#datDir   {
+                    width: 100%;
+               }
          
-.scrollbox {
-             display  : block;
-             height   : 6em ;
-             width    : 100%;
-             overflow : auto;
-           }
-       
-.dirlistitem{
-             display: block;
-            }    
-       
-dirlinstitem.ui-selecting {
-                         background: silver;
-                        }
-    
-dirlinstitem.ui-selected {
-                        background: gray;
-                       }
+         
+.scrollbox     {
+                    display  : block;
+                    height   : 6em ;
+                    width    : 100%;
+                    overflow : auto;
+               }
+               
+           
+.dirlistitem   {
+                    display: block;
+               }    
+                       
    
        
        

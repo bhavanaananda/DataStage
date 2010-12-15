@@ -86,6 +86,7 @@ admiral.displayDatasetManifest = function (datasetPath, datasetName, callback)
         jQuery("#datasetLink").attr("href", rq[0].s.value);
 
         var baseUri           = "";
+        var subdate           = "";
         var fileAbsolutePaths = new Array();
         var fileRelativePaths = new Array();
 
@@ -99,7 +100,8 @@ admiral.displayDatasetManifest = function (datasetPath, datasetName, callback)
             else if (this.p.value.toString()=="http://purl.org/dc/terms/modified")
             {
                 baseUri = this.s.value.toString();
-                jQuery("#lastModified").text(this.o.value);
+                subdate = this.o.value.match(/\d\d\d\d-\d\d-\d\d/)[0];
+                jQuery("#lastModified").text(subdate);
             }
             else if (this.p.value.toString()=="http://www.openarchives.org/ore/terms/aggregates")
             {

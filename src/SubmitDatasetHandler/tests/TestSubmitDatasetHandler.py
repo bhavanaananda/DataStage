@@ -8,13 +8,13 @@ from os.path import normpath
 from rdflib import URIRef
 sys.path.append("..")
 sys.path.append("../cgi-bin")
-import SaveMetadata
-import SubmitDatasetHandler
+import SubmitDatasetDetailsHandler
+import SubmitDatasetConfirmationHandler
 import ManifestRDFUtils
 import SubmitDatasetUtils
 import HttpUtils
 from MiscLib import TestUtils
-Logger                   =  logging.getLogger("TestSubmitDatasethandler")
+Logger                   =  logging.getLogger("TestSubmitDatasetHandler")
 SiloName                 =  "admiral-test"
 DirName                  =  "DatasetsTopDir"
 DatasetsEmptyDir         =  "DatasetsTopDir/DatasetsEmptySubDir"
@@ -79,7 +79,7 @@ ExpectedUpdatedDictionary = {
 BaseDir                   =  "."
 ManifestFilePath          =  BaseDir + os.path.sep + DirName + "/TestMetadataMergingManifest.rdf"
 
-class TestSubmitDatasethandler(unittest.TestCase):
+class TestSubmitDatasetHandler(unittest.TestCase):
 
     def setUp(self):
         return
@@ -98,7 +98,7 @@ class TestSubmitDatasethandler(unittest.TestCase):
         datasetId  =  SubmitDatasetUtils.getFormParam('datId', formdata)
         datasetDir =  SubmitDatasetUtils.getFormParam('datDir', formdata)
         # Invoke dataset submission program, passing faked form submission parameters
-        SubmitDatasetHandler.processDatasetSubmissionForm(formdata, outputStr)
+        SubmitDatasetConfirmationHandler.processDatasetSubmissionForm(formdata, outputStr)
 
         #Logger.debug("Output String from output stream: "+outputStr.getvalue())
         # print "Output String from output stream: "+outputStr.getvalue()
@@ -108,7 +108,8 @@ class TestSubmitDatasethandler(unittest.TestCase):
         #self.assertEqual( firstLine, "Content-type: text/html\n", "Submission Handler could not action the client request!")
         self.assertEqual( firstLine.strip(), "Status: 303 Dataset submission successful","Submission Handler could not action the client request!")
            
-        SubmitDatasetUtils.deleteDataset(SiloName, datasetId+"-"+DirName)
+        SubmitDatasetUtils.deleteDataset(SiloName, datasetId+"-packed");
+        #SubmitDatasetUtils.deleteDataset(SiloName, datasetId);
         return
 
         # Test that the named dataset has been created in the databank
@@ -117,7 +118,7 @@ class TestSubmitDatasethandler(unittest.TestCase):
         datasetId  =  SubmitDatasetUtils.getFormParam('datId', formdata)
 
         # Invoke dataset submission program, passing faked form submission parameters
-        SubmitDatasetHandler.processDatasetSubmissionForm(formdata, outputStr)
+        SubmitDatasetConfirmationHandler.processDatasetSubmissionForm(formdata, outputStr)
 
         # Check that the dataset is created
         found = SubmitDatasetUtils.ifDatasetExists(SiloName, datasetId)
@@ -137,7 +138,7 @@ class TestSubmitDatasethandler(unittest.TestCase):
          
         datasetId  =  SubmitDatasetUtils.getFormParam('datId', formdata)
         datasetDir =  SubmitDatasetUtils.getFormParam('datDir', formdata)
-        SubmitDatasetUtils.deleteDataset(SiloName, datasetId+"-"+DirName)
+        SubmitDatasetUtils.deleteDataset(SiloName, datasetId+"-packed")
         return
         
         # Test that the named dataset has been created in the databank
@@ -147,7 +148,7 @@ class TestSubmitDatasethandler(unittest.TestCase):
         datasetDir =  SubmitDatasetUtils.getFormParam('datDir', formdata)
         
         # Invoke dataset submission program, passing faked form submission parameters
-        SubmitDatasetHandler.processDatasetSubmissionForm(formdata, outputStr)
+        SubmitDatasetConfirmationHandler.processDatasetSubmissionForm(formdata, outputStr)
         SubmitDatasetUtils.deleteDataset(SiloName, datasetId)
 
         # Check that the dataset is deleted
@@ -165,32 +166,32 @@ class TestSubmitDatasethandler(unittest.TestCase):
         # self.assertEqual( firstLine, "Content-type: text/html\n", "Submission Handler could not action the client request!")
         self.assertEqual( firstLine.strip(), "Status: 303 Dataset submission successful","Submission Handler could not action the client request!")
  
-        SubmitDatasetUtils.deleteDataset(SiloName, datasetId+"-"+DirName)
+        SubmitDatasetUtils.deleteDataset(SiloName, datasetId+"-packed")
         return
     
     def testSubmitDatasetHandlerDirectorySubmission(self):
         outputStr  =  StringIO.StringIO()
          
         # Invoke dataset submission program, passing faked form submission parameters
-        SubmitDatasetHandler.processDatasetSubmissionForm(formdata, outputStr)
+        SubmitDatasetConfirmationHandler.processDatasetSubmissionForm(formdata, outputStr)
         
         # Check that the dataset created for unzipped data can be dereferenced in the databank 
         datasetId  =  SubmitDatasetUtils.getFormParam('datId', formdata)
         datasetDir =  SubmitDatasetUtils.getFormParam('datDir', formdata)
-        HttpUtils.doHTTP_GET(resource="/" + SiloName +"/datasets/"+datasetId+"-"+DirName,
+        HttpUtils.doHTTP_GET(resource="/" + SiloName +"/datasets/"+datasetId+"-packed",
             expect_status=200, expect_reason="OK", accept_type="application/json")
         
         # Invoke dataset submission program yet again. 
         # This time, bypassing the dataset creation but  continuing submittion of data to the already exiting dataset
-        SubmitDatasetHandler.processDatasetSubmissionForm(formdata, outputStr)
+        SubmitDatasetConfirmationHandler.processDatasetSubmissionForm(formdata, outputStr)
          # Check that the dataset created for unzipped data can be dereferenced in the databank 
          
         datasetId  =  SubmitDatasetUtils.getFormParam('datId', formdata)
         datasetDir =  SubmitDatasetUtils.getFormParam('datDir', formdata)
-        HttpUtils.doHTTP_GET(resource="/" + SiloName +"/datasets/"+datasetId+"-"+DatasetsEmptyDir, 
+        HttpUtils.doHTTP_GET(resource="/" + SiloName +"/datasets/"+datasetId+"-packed", 
             expect_status=200, expect_reason="OK", accept_type="application/json")
             
-        SubmitDatasetUtils.deleteDataset(SiloName, datasetId+"-"+DirName)
+        SubmitDatasetUtils.deleteDataset(SiloName, datasetId+"-packed")
         return
     
     
@@ -201,33 +202,33 @@ class TestSubmitDatasethandler(unittest.TestCase):
         formdata['datDir'] = cgi.MiniFieldStorage('datDir', DatasetsEmptyDir)
 
         # Invoke dataset submission program, passing faked form submission parameters
-        SubmitDatasetHandler.processDatasetSubmissionForm(formdata, outputStr)
+        SubmitDatasetConfirmationHandler.processDatasetSubmissionForm(formdata, outputStr)
         
         # Check that the dataset created for unzipped data can be dereferenced in the databank 
         datasetId  =  SubmitDatasetUtils.getFormParam('datId', formdata)
         datasetDir =  SubmitDatasetUtils.getFormParam('datDir', formdata)
-        HttpUtils.doHTTP_GET(resource="/" + SiloName +"/datasets/"+datasetId+"-"+DatasetsEmptyDirName, 
+        HttpUtils.doHTTP_GET(resource="/" + SiloName +"/datasets/"+datasetId+"-packed", 
             expect_status=200, expect_reason="OK", accept_type="application/json")
         
         # Invoke dataset submission program yet again. 
         # This time, bypassing the dataset creation but  continuing submittion of data to the already exiting dataset
-        SubmitDatasetHandler.processDatasetSubmissionForm(formdata, outputStr)
+        SubmitDatasetConfirmationHandler.processDatasetSubmissionForm(formdata, outputStr)
          # Check that the dataset created for unzipped data can be dereferenced in the databank 
          
         datasetId  =  SubmitDatasetUtils.getFormParam('datId', formdata)
         datasetDir =  SubmitDatasetUtils.getFormParam('datDir', formdata)
-        HttpUtils.doHTTP_GET(resource="/" + SiloName +"/datasets/"+datasetId+"-"+DatasetsEmptyDirName, expect_status=200, expect_reason="OK", accept_type="application/json")
+        HttpUtils.doHTTP_GET(resource="/" + SiloName +"/datasets/"+datasetId+"-packed", expect_status=200, expect_reason="OK", accept_type="application/json")
         
-        SubmitDatasetUtils.deleteDataset(SiloName, datasetId+"-"+DatasetsEmptyDirName)
+        SubmitDatasetUtils.deleteDataset(SiloName, datasetId+"-packed")
         return
     
     def testSubmitDatasetHandlerUpdateMetadataBeforeSubmission(self):
         # the initial manifest file 
-        SaveMetadata.updateMetadataInDirectoryBeforeSubmission(ManifestFilePath, ElementUriList, ElementValueList)
+        SubmitDatasetDetailsHandler.updateMetadataInDirectoryBeforeSubmission(ManifestFilePath, ElementUriList, ElementValueList)
         # Assert that the manifets has been created
         self.assertEqual(True,ManifestRDFUtils.ifFileExists(ManifestFilePath),"Manifest file was not successfully created!")
         # Update the manifets contents 
-        SaveMetadata.updateMetadataInDirectoryBeforeSubmission(ManifestFilePath, ElementUriList, ElementValueUpdatedList)   
+        SubmitDatasetDetailsHandler.updateMetadataInDirectoryBeforeSubmission(ManifestFilePath, ElementUriList, ElementValueUpdatedList)   
         
         # Read the manifest again
         rdfGraph = ManifestRDFUtils. readManifestFile(ManifestFilePath)
@@ -241,7 +242,7 @@ class TestSubmitDatasethandler(unittest.TestCase):
         manifestFilePath  =   DirName + "/manifest.rdf"
         # Invoke dataset submission program, passing faked form submission parameters
 
-        SubmitDatasetHandler.processDatasetSubmissionForm(formdata, outputStr)
+        SubmitDatasetConfirmationHandler.processDatasetSubmissionForm(formdata, outputStr)
         # Read the dictionary from the manifest
         actualDictionary   = ManifestRDFUtils.getDictionaryFromManifest(manifestFilePath, ElementUriList)
         Logger.debug("\n Expected Dictionary after form submission= " + repr(ExpectedDictionary))
@@ -251,7 +252,7 @@ class TestSubmitDatasethandler(unittest.TestCase):
         self.assertEqual(ExpectedDictionary,actualDictionary, "The submit Utils Tool is unable to fetch metadata information!")
         
         # Invoke dataset submission program with updated information, passing faked updated form submission parameters
-        SubmitDatasetHandler.processDatasetSubmissionForm(updatedformdata, outputStr)
+        SubmitDatasetConfirmationHandler.processDatasetSubmissionForm(updatedformdata, outputStr)
         # Read the dictionary from the manifest after processing the form submission with the updated faked  form  data
         actualUpdatedDictionary   = ManifestRDFUtils.getDictionaryFromManifest(manifestFilePath, ElementUriList)
         Logger.debug("\n Expected Updated Dictionary after form resubmission = " + repr(ExpectedUpdatedDictionary))
@@ -294,9 +295,9 @@ def getTestSuite(select="unit"):
             [ #"testPending"
             ]
         }
-    return TestUtils.getTestSuite(TestSubmitDatasethandler, testdict, select=select)
+    return TestUtils.getTestSuite(TestSubmitDatasetHandler, testdict, select=select)
 
 if __name__ == "__main__":
-    TestUtils.runTests("TestSubmitDatasethandler.log", getTestSuite, sys.argv)
+    TestUtils.runTests("TestSubmitDatasetHandler.log", getTestSuite, sys.argv)
     #runner = unittest.TextTestRunner()
     #runner.run(getTestSuite())

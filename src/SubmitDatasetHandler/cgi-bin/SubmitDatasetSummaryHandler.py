@@ -27,7 +27,7 @@ sys.path.append("../..")
 
 import SubmitDatasetUtils
 
-Logger                   =  logging.getLogger("SubmitDatasetSummary")
+Logger                   =  logging.getLogger("SubmitDatasetSummaryHandler")
 
 def datasetSummaryForm(formdata, outputstr):
     """
@@ -53,9 +53,9 @@ def datasetSummaryForm(formdata, outputstr):
         print
 
         # Generate web page
-        dataToolURL      =  "../../SubmitDatasetUI/html/SubmitDataset.html"                                 
+        dataToolURL      =  "../../SubmitDatasetUI/html/SubmitDatasetDetails.html"                                 
         mainURL          =  "../../../.."
-        resetURL         =  "../../SubmitDatasetUI/html/SubmitDataset.html?dir="+dirName
+        resetURL         =  "../../SubmitDatasetUI/html/SubmitDatasetDetails.html?dir="+dirName
         viewDatasetURL   =  "../../DisplayDataset/html/DisplayDataset.html?dir="+ dirName + "#"+ datasetUnzippedName 
         viewZippedURL    =  "/admiral-test/datasets/" + datasetName
         viewUnzippedURL  =  "/admiral-test/datasets/" + datasetUnzippedName
@@ -68,7 +68,7 @@ def datasetSummaryForm(formdata, outputstr):
                 
                 <body>
                     <h2>%(status)s</h2>
-                    <h3><a href="%(viewDatasetURL)s">View submitted dataset (%(datasetUnzippedName)s)</a></h3>
+                    <h3><a href="%(viewDatasetURL)s">View submitted dataset - %(datasetUnzippedName)s</a></h3>
                     <h3><a href="%(dataToolURL)s">Submit another dataset</a></h3>
                     <h3><a href="%(resetURL)s" id="revised">Submit revised version</a></h3>
                     <h3><a href="%(mainURL)s">Return to ADMIRAL front page</a></h3>
