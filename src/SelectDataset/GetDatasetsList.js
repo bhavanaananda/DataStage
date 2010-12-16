@@ -28,9 +28,8 @@ if (typeof admiral == "undefined")
  * 
  * @param host      Databank hostname to query for list of datasets
  * @param silo      name of Databank silo to query for list of datasets
- * @param callback  function called with a new jQuery element containing the
- *                  HTML page data with dataset names hyperlinked to the 
- *                  corresponding viewer page.
+ * @param callback  function called with a list of dictonary objects, each
+ *                  containing: {datasetname: (name), ...}
  */
 admiral.getDatasetList = function (host,siloName,callback)
 {
@@ -40,33 +39,73 @@ admiral.getDatasetList = function (host,siloName,callback)
     log.debug("Get datasets for "+ dataseturl);
     jQuery("#pageLoadStatus").text("Fetching dataset information...");
     //log.debug("Fetching dataset information...");
-    jQuery.ajax({
-        type:         "GET",
-        url:          dataseturl,
-        username:     "admiral",
-        password:     "admiral",
-        dataType:     "json",
-        beforeSend:   function (xhr)
-            {
-                //TODO: change to application/JSON when Databank handles this properly
-                xhr.setRequestHeader("Accept", "text/plain");
-            },
-        success:      function (data, status, xhr)
-            {  
-               var datasets = [];
-               for (i in data)
-               {          
-                  datasets.push(data[i]);                
-               }
-               //log.debug("Dataset list: "+datasets);  
-               callback(datasets);
-            },
-        error:        function (xhr, status) 
-            { 
-                jQuery("#pageLoadStatus").text("HTTP GET "+ "/admiral-test/datasets"+" failed: "+status+"; HTTP status: "+xhr.status+" "+xhr.statusText);
-                jQuery("#pageLoadStatus").addClass('error');
-            },
-        cache:        false
+    var m = new admiral.AsyncComputation();
+    m.eval(function(val,callback)
+    {
+        // Retrieve list of dataset names
+        jQuery.ajax({
+            type:         "GET",
+            url:          dataseturl,
+            username:     "admiral",
+            password:     "admiral",
+            dataType:     "json",
+            beforeSend:   function (xhr)
+                {
+                    //TODO: change to application/JSON when Databank handles this properly
+                    xhr.setRequestHeader("Accept", "text/plain");
+                },
+            success:      function (data, status, xhr)
+                {  
+                   var datasets = [];
+                   for (var i in data)
+                   {          
+                      datasets.push({ datasetname: data[i] });                
+                   }
+                   log.debug("Dataset list: "+data);  
+                   callback(datasets);
+                },
+            error:        function (xhr, status) 
+                { 
+                    jQuery("#pageLoadStatus").text("HTTP GET "+ "/admiral-test/datasets"+" failed: "+status+"; HTTP status: "+xhr.status+" "+xhr.statusText);
+                    jQuery("#pageLoadStatus").addClass('error');
+                },
+            cache:        false
+        });
     });
-}
+    m.eval(function(val,callback)
+    {   
+        log.debug("Dataset list: "+val);  
+        // Retrieve associated values
+        var m2 = new admiral.AsyncComputation();
+        for (var i in val)
+        {
+            function fnGetDatasetDetails(datasetname)
+            {
+                function doGetDatasetDetails(v, callback)
+                {
+                    var dataSetPath = "/admiral-test/datasets/"+datasetname;
+                    log.debug("Dataset path: "+dataSetPath);
+                    admiral.getDatasetDetails(dataSetPath, callback);
+                }
+                
+                return doGetDatasetDetails;
+            }
+            function fnSaveDatasetDetails(datasetdetails)
+            {
+                function doSaveDatasetDetails(v, callback)
+                {
+                    datasetdetails.version = v.state.currentversion;
+                    datasetdetails.submittedby = v.state.metadata.createdby;
+                    callback(val);
+                }
+                return doSaveDatasetDetails;
+            }
+            m2.eval(fnGetDatasetDetails(val[i].datasetname))
+            m2.eval(fnSaveDatasetDetails(val[i]))
+        }
+        m2.exec(null, callback);
+    });
+    m.exec(null, callback);
+};
 
+// End.

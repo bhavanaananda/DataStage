@@ -30,7 +30,9 @@ if (typeof admiral == "undefined")
  * @param silo      name of Databank silo to query for list of datasets
  * @param getlist   function to call to retrieve a list of datasets, called
  *                  as 'getlist(host, silo, callback)', where callback is invoked with
- *                  a list of datset name strings when the data is available.
+ *                  a list of dictionary objects containing 
+ *                  {datasetname: (name), ...} for each existing dataset,
+ *                  when the data is available.
  * @param callback  function called with a new jQuery element containing the
  *                  HTML page datawith dataset names hyperlinked to the 
  *                  corresponding viewer page.
@@ -50,13 +52,33 @@ admiral.listDatasets = function (host, silo, getlist, callback)
 	    // Build display with links to datasets
 	    var tablediv= jQuery("<div><table/></div>");
 	    var tableelem = tablediv.find("table");
+	    if(datasets.length > 0)
+	    {
+    	    tableelem.append("  <thead>\
+                                     <tr>\
+                                       <th> Dataset </th>\
+                                       <th> Version number </th>\
+                                       <th> Submitted on   </th>\
+                                       <th> Submitted by   </th>\
+                                    </tr>\
+                               </thead>\
+                               ");
+	    }
 	    for (var i in datasets)
 	    {
-	        var dataset = datasets[i];
+	        var datasetname = datasets[i].datasetname;
 	        var newhtml = admiral.interpolate(
-	             "<tr><td><a href=\"%(datasetlink)s\">%(datasetname)s</a></td></tr>",
-	             { datasetlink: "../../DisplayDataset/html/DisplayDataset.html#"+dataset
-	             , datasetname: dataset
+	             "<tr>"+
+	             "<td><a href=\"%(datasetlink)s\">%(datasetname)s</a></td>"+
+	             "<td>%(datasetvers)s</td>"+
+	             "<td>%(datasetsubmittedon)s</td>"+
+	             "<td>%(datasetsubmittedby)s</td>"+
+	             "</tr>",
+	             { datasetlink: "../../DisplayDataset/html/DisplayDataset.html#"+datasetname
+	             , datasetname: datasetname
+	             , datasetvers: datasets[i].version
+	             , datasetsubmittedon: datasets[i].sumittedon
+	             , datasetsubmittedby: datasets[i].submittedby 
 	             });
 	        var newelem = jQuery(newhtml);
 	        tableelem.append(newelem);

@@ -62,13 +62,6 @@ TestSelectDataset = function()
         });
         m.eval(function(val, callback)
         {
-            // test val jQuery object contains expected HTML; e.g.
-            //
-            //	     <table id="tableDatasets">
-            //	       <tr><td><a href="somehost/somesilo/dataset/somedatasets1">somedataset1</a></td></tr>
-            //	       <tr><td><a href="somehost/somesilo/dataset/somedatasets2">somedataset2</a></td></tr>
-            //	     </table>   
-            //
             var table    = val.find("table")
             equals(table.length, 1, "HTML page contains single table");
             var tablerows = val.find("table tr")
@@ -88,7 +81,11 @@ TestSelectDataset = function()
         logtest("testMultipleListDatasets");
   	    function getlist(host, silo, callback)
   	    {
-  	        var datasetArray =  ['a','b','c'];
+  	        var datasetArray = 
+  	          [ { datasetname:'a', version:1, submittedby:"aa" }
+  	          , { datasetname:'b', version:2, submittedby:"bb" }
+  	          , { datasetname:'c', version:3, submittedby:"cc" }
+  	          ];
   	        callback(datasetArray);          
   	    }
         var m = new admiral.AsyncComputation();
@@ -104,29 +101,12 @@ TestSelectDataset = function()
         m.eval(function(val, callback)
         {
           	log.debug(val.html());
-          	// test val jQuery object contains expected HTML; e.g.
-            //
-            //       <table id="tableDatasets">
-            //         <tr><td><a href="somehost/somesilo/dataset/somedatasets1">somedataset1</a></td></tr>
-            //         <tr><td><a href="somehost/somesilo/dataset/somedatasets2">somedataset2</a></td></tr>
-            //       </table>   
-            //
             var table    = val.find("table")
             equals(table.length, 1, "HTML page contains single table");
             var tablerows = val.find("table tr")
-            equals(tablerows.length, 3, "Table contains three elements: "+tablerows);
-            for (var i in this.datasetlist)
-            {
-                // test for row data    
-                var expected = this.datasetlist[i];
-                var rowdata =  tablerows.eq(i).find("a").text();
-                equals(tablerows.eq(i).find("a").text(), expected, "Table contains element: " + rowdata);
-                
-                // test for row data hyperlink
-                var expected = "../../DisplayDataset/html/DisplayDataset.html#"+ rowdata;
-                var rowdatalink = tablerows.eq(i).find("a").attr('href');
-                equals(rowdatalink, expected, "Table contains one element with hyperlink: " +  rowdatalink);
-            }   
+            // 1 Header row and 3 data rows
+            equals(tablerows.length, 4, "Table contains three elements: "+tablerows);
+            test.tableContents(this.datasetlist);
             callback(null); 
         });
         m.exec(null, function (val)
@@ -142,7 +122,9 @@ TestSelectDataset = function()
         logtest("testSingletonDataset");
   	    function getlist(host, silo, callback)
   	    {
-  	        var datasetArray =  ['a'];
+            var datasetArray = 
+              [ { datasetname:'a', version:1, submittedby:"aa" }
+              ];
   	        callback(datasetArray);	       
   	    }
 
@@ -153,29 +135,34 @@ TestSelectDataset = function()
   	    });
   	    m.eval(function(val,callback)
   	    {
-    	    	this.datasetlist = val;
+	    	this.datasetlist = val;
   	        var jqelem = admiral.listDatasets(host, silo, getlist, callback);           
   	    });
   	    m.eval(function(val, callback)
   	    {
-  	        //log.debug(val.html());
-  	        // test val jQuery object contains expected HTML; e.g.
-  	        //
-  	        //       <table id="tableDatasets">
-  	        //         <tr><td><a href="somehost/somesilo/dataset/somedatasets1">somedataset1</a></td></tr>
-  	        //         <tr><td><a href="somehost/somesilo/dataset/somedatasets2">somedataset2</a></td></tr>
-  	        //       </table>   
-  	        //
   	        var table    = val.find("table")
   	        equals(table.length, 1, "HTML page contains single table");
   	        var tablerows = val.find("table tr");
   	        // test for row data
-  	        var expected = this.datasetlist[0];
-  	        var rowdata =  tablerows.eq(0).find("a").text();
-  	        equals(tablerows.eq(0).find("a").text(), expected, "Table contains one element: " + rowdata);
-  	        // test for row data hyperlink
-  	        var expected = "../../DisplayDataset/html/DisplayDataset.html#"+ rowdata;
-  	        var rowdatalink = tablerows.eq(0).find("a").attr('href');
+  	        var expectedname = this.datasetlist[0].datasetname;
+            var expectedvers = this.datasetlist[0].version;
+            var expectedsubmittedby = this.datasetlist[0].submittedby;
+            
+            //tablerows.eq(0) yields the header row
+            //tablerows.eq(1) yields the first data row
+  	        var rowname =  tablerows.eq(1).find("a").text();
+  	        var rowvers =  tablerows.eq(1).find("td").eq(1).text();
+            var rowsubmittedby =  tablerows.eq(1).find("td").eq(2).text();
+                
+
+            //test for the tds in a row
+            equals(rowname, expectedname, "Table contains one element: " + rowname);
+            equals(rowvers, expectedvers, "Row "+ 1 +" version: " + rowvers);
+            equals(rowsubmittedby, expectedsubmittedby, "Row "+ 1 +" version: " + rowsubmittedby);
+            
+            // test for row hyperlink
+            var expected = "../../DisplayDataset/html/DisplayDataset.html#"+ rowname;
+  	        var rowdatalink = tablerows.eq(1).find("a").attr('href');
   	        equals(rowdatalink, expected, "Table contains one element with hyperlink: " +  rowdatalink);   
   	        callback(null); 
   	    });
@@ -211,18 +198,9 @@ TestSelectDataset = function()
             var table     = val.find("table");
             equals(table.length, 1, "HTML page contains single table");
             var tablerows = val.find("table tr");
-            equals(tablerows.length,this.datasetlist.length,"One row for each dataset");
-            for (var i = 0 ; i<this.datasetlist.length ; i++)
-            {
-                // test for row text
-                var expected = this.datasetlist[i];
-                var rowdata =  tablerows.eq(i).find("a").text();
-                equals(rowdata, expected, "Row "+i+" text: " + rowdata);
-                // test for row hyperlink
-                var expected = "../../DisplayDataset/html/DisplayDataset.html#"+ rowdata;
-                var rowdatalink = tablerows.eq(i).find("a").attr('href');
-                equals(rowdatalink, expected, "Row "+i+" hyperlink: " +  rowdatalink); 
-            }
+            // Add the 1 to the datasetlist count  to matach the tablerow length( which contains the header row )
+            equals(tablerows.length,this.datasetlist.length +1,"One row for each dataset");
+            test.tableContents(this.datasetlist);
             callback(null);
         });
         m.exec(null, function (val)
@@ -232,6 +210,35 @@ TestSelectDataset = function()
         });
         stop(2000);
     });
+    
+
+    test.tableContents = function (datasetlist)
+    {
+        for (var i in this.datasetlist)
+        {
+            // test for row text
+            //    <tr>
+            //       <td><a href="somehost/somesilo/dataset/somedatasets1">somedataset1</a></td>
+            //       <td>nn</td>
+            //       <td>yyyy-mm-dd</td>
+            //       <td>submitter name </td>
+            //    </tr>
+            // test for row data    
+            var expectedname = this.datasetlist[i].datasetname;
+            var expectedvers = this.datasetlist[i].version;
+            var expectedsubmittedby = this.datasetlist[i].submittedby;
+            var rowname =  tablerows.eq(i).find("a").text();
+            var rowvers =  tablerows.eq(i).find("td").eq(1).text();
+            var rowsubmittedby =  tablerows.eq(i).find("td").eq(2).text();
+            equals(rowname, expectedname, "Row "+ i +" name: " + rowname);
+            equals(rowvers, expectedvers, "Row "+ i +" version: " + rowvers);
+            equals(rowsubmittedby, expectedsubmittedby, "Row "+ i +" version: " + rowsubmittedby);
+            // test for row hyperlink
+            var expected = "../../DisplayDataset/html/DisplayDataset.html#"+ rowname;
+            var rowdatalink = tablerows.eq(i).find("a").attr('href');
+            equals(rowdatalink, expected, "Row "+i+" hyperlink: " +  rowdatalink); 
+        } 
+    }
 }
 
 // End
