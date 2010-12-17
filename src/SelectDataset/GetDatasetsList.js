@@ -102,6 +102,29 @@ admiral.getDatasetList = function (host,siloName,callback)
             }
             m2.eval(fnGetDatasetDetails(val[i].datasetname))
             m2.eval(fnSaveDatasetDetails(val[i]))
+            
+            function fnGetDatasetManifestDetails(datasetname)
+            {
+                function doGetDatasetManifestDetails(v, callback)
+                {
+                    var dataSetPath = "/admiral-test/datasets/"+datasetname;
+                    log.debug("Dataset path: "+dataSetPath);
+                    admiral.displayDatasetManifest((datasetPath, datasetName, callback);
+                }
+                
+                return doGetDatasetDetails;
+            }
+            function fnSaveDatasetDetails(datasetManifestdetails)
+            {
+                function doSaveDatasetManifestDetails(v, callback)
+                {
+                    datasetdetails.submittedon = v ;
+                    callback(val);
+                }
+                return doSaveDatasetDetails;
+            }
+            m2.eval(fnGetDatasetManifestDetails(val[i].datasetname))
+            m2.eval(fnSaveDatasetManifestDetails(val[i]))
         }
         m2.exec(null, callback);
     });
