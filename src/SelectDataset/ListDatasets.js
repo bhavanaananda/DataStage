@@ -39,16 +39,16 @@ if (typeof admiral == "undefined")
  */
 admiral.listDatasets = function (host, silo, getlist, callback)
 {
-    log.debug("admiral.listDatasets "+host+", "+silo);
+    // log.debug("admiral.listDatasets "+host+", "+silo);
     var m = new admiral.AsyncComputation();
     m.eval(function(val,callback)
     {
-        log.debug("admiral.listDatasets calling getlist");
+        //log.debug("admiral.listDatasets calling getlist");
         var datasets = getlist(host, silo, callback);
     });
     m.eval(function(datasets,callback)
     {
-        log.debug("admiral.listDatasets getlist result: "+datasets);
+        //log.debug("admiral.listDatasets getlist result: "+datasets);
 	    // Build display with links to datasets
 	    var tablediv= jQuery("<div><table/></div>");
 	    var tableelem = tablediv.find("table");
@@ -77,13 +77,13 @@ admiral.listDatasets = function (host, silo, getlist, callback)
 	             { datasetlink: "../../DisplayDataset/html/DisplayDataset.html#"+datasetname
 	             , datasetname: datasetname
 	             , datasetvers: datasets[i].version
-	             , datasetsubmittedon: datasets[i].sumittedon
+	             , datasetsubmittedon: datasets[i].submittedon
 	             , datasetsubmittedby: datasets[i].submittedby 
 	             });
 	        var newelem = jQuery(newhtml);
 	        tableelem.append(newelem);
 	    }
-	    log.debug("admiral.listDatasets final callback");
+	    //log.debug("admiral.listDatasets final callback");
 	    callback(tablediv);
     });
     m.exec(null,callback);

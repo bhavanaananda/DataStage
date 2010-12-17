@@ -76,6 +76,7 @@ admiral.getDatasetList = function (host,siloName,callback)
     {   
         log.debug("Dataset list: "+val);  
         // Retrieve associated values
+        var datasetdetailsList = []
         var m2 = new admiral.AsyncComputation();
         for (var i in val)
         {
@@ -83,9 +84,9 @@ admiral.getDatasetList = function (host,siloName,callback)
             {
                 function doGetDatasetDetails(v, callback)
                 {
-                    var dataSetPath = "/admiral-test/datasets/"+datasetname;
-                    log.debug("Dataset path: "+dataSetPath);
-                    admiral.getDatasetDetails(dataSetPath, callback);
+                    var datasetPath = "/admiral-test/datasets/"+datasetname;
+                    log.debug("Dataset path: "+datasetPath);
+                    admiral.getDatasetDetails(datasetPath, callback);
                 }
                 
                 return doGetDatasetDetails;
@@ -93,9 +94,9 @@ admiral.getDatasetList = function (host,siloName,callback)
             function fnSaveDatasetDetails(datasetdetails)
             {
                 function doSaveDatasetDetails(v, callback)
-                {
-                    datasetdetails.version = v.state.currentversion;
-                    datasetdetails.submittedby = v.state.metadata.createdby;
+                {   datasetdetailsList = datasetdetails;
+                    datasetdetailsList.version = v.state.currentversion;
+                    datasetdetailsList.submittedby = v.state.metadata.createdby;
                     callback(val);
                 }
                 return doSaveDatasetDetails;
@@ -103,28 +104,29 @@ admiral.getDatasetList = function (host,siloName,callback)
             m2.eval(fnGetDatasetDetails(val[i].datasetname))
             m2.eval(fnSaveDatasetDetails(val[i]))
             
-            function fnGetDatasetManifestDetails(datasetname)
+           function fnGetDatasetManifestDetails(datasetname)
             {
                 function doGetDatasetManifestDetails(v, callback)
                 {
-                    var dataSetPath = "/admiral-test/datasets/"+datasetname;
-                    log.debug("Dataset path: "+dataSetPath);
-                    admiral.displayDatasetManifest((datasetPath, datasetName, callback);
+                    var datasetPath = "/admiral-test/datasets/"+datasetname;
+                    log.debug("Dataset path: "+datasetPath);//datasetName,
+                    admiral.displayDatasetManifest(datasetPath,datasetname,callback);
                 }
                 
-                return doGetDatasetDetails;
+                return doGetDatasetManifestDetails;
             }
-            function fnSaveDatasetDetails(datasetManifestdetails)
+            function fnSaveDatasetManifestDetails(datasetManifestdetails)
             {
                 function doSaveDatasetManifestDetails(v, callback)
                 {
-                    datasetdetails.submittedon = v ;
+                    log.debug(v);
+                    datasetdetailsList.submittedon = v ;
                     callback(val);
                 }
-                return doSaveDatasetDetails;
+                return doSaveDatasetManifestDetails;
             }
             m2.eval(fnGetDatasetManifestDetails(val[i].datasetname))
-            m2.eval(fnSaveDatasetManifestDetails(val[i]))
+            m2.eval(fnSaveDatasetManifestDetails(val[i]))  
         }
         m2.exec(null, callback);
     });
