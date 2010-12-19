@@ -82,9 +82,9 @@ TestSelectDataset = function()
   	    function getlist(host, silo, callback)
   	    {
   	        var datasetArray = 
-  	          [ { datasetname:'a', version:1, submittedby:"aa" }
-  	          , { datasetname:'b', version:2, submittedby:"bb" }
-  	          , { datasetname:'c', version:3, submittedby:"cc" }
+  	          [ { datasetname:'a', version:1, submittedon:"2010-11-10", submittedby:"aa" }
+  	          , { datasetname:'b', version:2, submittedon:"2010-10-15", submittedby:"bb" }
+  	          , { datasetname:'c', version:3, submittedon:"2010-12-17", submittedby:"cc" }
   	          ];
   	        callback(datasetArray);          
   	    }
@@ -121,9 +121,9 @@ TestSelectDataset = function()
     {
         logtest("testSingletonDataset");
   	    function getlist(host, silo, callback)
-  	    {
+  	    {// submittedon="2010-11-10",
             var datasetArray = 
-              [ { datasetname:'a', version:1, submittedby:"aa" }
+              [ { datasetname:'a', version:1,submittedon:"2010-11-10", submittedby:"aa" }
               ];
   	        callback(datasetArray);	       
   	    }
@@ -146,19 +146,22 @@ TestSelectDataset = function()
   	        // test for row data
   	        var expectedname = this.datasetlist[0].datasetname;
             var expectedvers = this.datasetlist[0].version;
+            var expectedsubmittedon = this.datasetlist[0].submittedon;
             var expectedsubmittedby = this.datasetlist[0].submittedby;
             
             //tablerows.eq(0) yields the header row
             //tablerows.eq(1) yields the first data row
   	        var rowname =  tablerows.eq(1).find("a").text();
   	        var rowvers =  tablerows.eq(1).find("td").eq(1).text();
-            var rowsubmittedby =  tablerows.eq(1).find("td").eq(2).text();
+  	        var rowsubmittedon =  tablerows.eq(1).find("td").eq(2).text();
+            var rowsubmittedby =  tablerows.eq(1).find("td").eq(3).text();
                 
 
             //test for the tds in a row
             equals(rowname, expectedname, "Table contains one element: " + rowname);
-            equals(rowvers, expectedvers, "Row "+ 1 +" version: " + rowvers);
-            equals(rowsubmittedby, expectedsubmittedby, "Row "+ 1 +" version: " + rowsubmittedby);
+            equals(rowvers, expectedvers, "Row 1"+ " version: " + rowvers);
+            equals(rowsubmittedon, expectedsubmittedon, "Row 1"+" submitted on: " + rowsubmittedon);
+            equals(rowsubmittedby, expectedsubmittedby, "Row 1"+" submitted by: " + rowsubmittedby);
             
             // test for row hyperlink
             var expected = "../../DisplayDataset/html/DisplayDataset.html#"+ rowname;
@@ -187,10 +190,11 @@ TestSelectDataset = function()
         {   
             admiral.getDatasetList(host,silo,callback);            
         });
+        admiral.displayDatasetManifest = function (datasetPath, datasetName, callback)
         m.eval(function(val,callback)
         {
             this.datasetlist = val;
-            var jqelem = admiral.listDatasets(host, silo, admiral.getDatasetList, callback);           
+            var jqelem = admiral.listDatasets(host, silo, admiral.getDatasetList, callback);        
         });
         m.eval(function(val, callback)
         {
@@ -226,13 +230,16 @@ TestSelectDataset = function()
             // test for row data    
             var expectedname = this.datasetlist[i].datasetname;
             var expectedvers = this.datasetlist[i].version;
+            var expectedsubmittedon = this.datasetlist[i].submittedon;
             var expectedsubmittedby = this.datasetlist[i].submittedby;
             var rowname =  tablerows.eq(i).find("a").text();
             var rowvers =  tablerows.eq(i).find("td").eq(1).text();
-            var rowsubmittedby =  tablerows.eq(i).find("td").eq(2).text();
+            var rowsubmittedon =  tablerows.eq(i).find("td").eq(2).text();
+            var rowsubmittedby =  tablerows.eq(i).find("td").eq(3).text();
             equals(rowname, expectedname, "Row "+ i +" name: " + rowname);
             equals(rowvers, expectedvers, "Row "+ i +" version: " + rowvers);
-            equals(rowsubmittedby, expectedsubmittedby, "Row "+ i +" version: " + rowsubmittedby);
+            equals(rowsubmittedon, expectedsubmittedon, "Row "+ i +" submitted on : " + rowsubmittedby);
+            equals(rowsubmittedby, expectedsubmittedby, "Row "+ i +" version: submitted by " + rowsubmittedby);
             // test for row hyperlink
             var expected = "../../DisplayDataset/html/DisplayDataset.html#"+ rowname;
             var rowdatalink = tablerows.eq(i).find("a").attr('href');
