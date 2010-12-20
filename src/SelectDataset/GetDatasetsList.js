@@ -96,6 +96,8 @@ admiral.getDatasetList = function (host,siloName,callback)
                 function doSaveDatasetDetails(v, callback)
                 {   datasetdetailsList = datasetdetails;
                     datasetdetailsList.version = v.state.currentversion;
+                    subdate = v.state.date.match(/\d\d\d\d-\d\d-\d\d/)[0];
+                    datasetdetailsList.submittedon= subdate;
                     datasetdetailsList.submittedby = v.state.metadata.createdby;
                     callback(val);
                 }
@@ -103,30 +105,6 @@ admiral.getDatasetList = function (host,siloName,callback)
             }
             m2.eval(fnGetDatasetDetails(val[i].datasetname))
             m2.eval(fnSaveDatasetDetails(val[i]))
-            
-           function fnGetDatasetManifestDetails(datasetname)
-            {
-                function doGetDatasetManifestDetails(v, callback)
-                {
-                    var datasetPath = "/admiral-test/datasets/"+datasetname;
-                    log.debug("Dataset path: "+datasetPath);//datasetName,
-                    admiral.displayDatasetManifest(datasetPath,datasetname,callback);
-                }
-                
-                return doGetDatasetManifestDetails;
-            }
-            function fnSaveDatasetManifestDetails(datasetManifestdetails)
-            {
-                function doSaveDatasetManifestDetails(v, callback)
-                {
-                    log.debug(v);
-                    datasetdetailsList.submittedon = v ;
-                    callback(val);
-                }
-                return doSaveDatasetManifestDetails;
-            }
-            m2.eval(fnGetDatasetManifestDetails(val[i].datasetname))
-            m2.eval(fnSaveDatasetManifestDetails(val[i]))  
         }
         m2.exec(null, callback);
     });

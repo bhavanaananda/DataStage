@@ -190,7 +190,7 @@ TestSelectDataset = function()
         {   
             admiral.getDatasetList(host,silo,callback);            
         });
-        admiral.displayDatasetManifest = function (datasetPath, datasetName, callback)
+
         m.eval(function(val,callback)
         {
             this.datasetlist = val;
@@ -202,8 +202,8 @@ TestSelectDataset = function()
             var table     = val.find("table");
             equals(table.length, 1, "HTML page contains single table");
             var tablerows = val.find("table tr");
-            // Add the 1 to the datasetlist count  to matach the tablerow length( which contains the header row )
-            equals(tablerows.length,this.datasetlist.length +1,"One row for each dataset");
+            // Add the 1 to the datasetlist count  to match the tablerow length( which contains the header row )
+            equals(tablerows.length-1,this.datasetlist.length,"One row for each dataset");
             test.tableContents(this.datasetlist);
             callback(null);
         });
