@@ -20,40 +20,47 @@
 
 
 .outer         {  
-                    margin: 2px 2px 2px 2px; 
+                    margin:  2px 2px 2px 2px; 
                     padding: 2px 2px 2px 2px;  
-                    border: 2px 2px 2px 2px; 
-                    height: 40%;
+                    border:  2px 2px 2px 2px; 
+                    height:  40%;
+                    width:   75%;
                }
        
      
 .box           {  
-                    padding: 20px 20px 20px 20px; 
-                    width: 40em;
+                    padding: 20px 20px 20px 20px;              
                     clear: both;
                }
 
 
 .label         {
-                    font-size:large;
+                    font-size: medium;
                     font-weight:bolder;  
                     width: 25%;
                }
-       
+               
+.sublabel      {    clear:both;
+                    font-size: small;
+               }
+             
        
 .labelvalue    {  
                     width: 75%;
                     float: right;     
                }
        
-       
+.inputfield    {    
+                    clear:both;
+               }
+                    
 .withpadding   {  
                     padding: 1px 1px 1px 1px;  
                }
 
 
 input#datDir   {
-                    width: 100%;
+                    width: 50%;
                }
          
          
@@ -68,7 +75,11 @@ input#datDir   {
 .dirlistitem   {
                     display: block;
                }    
+               
+
                        
+                       
+                    
    
        
        

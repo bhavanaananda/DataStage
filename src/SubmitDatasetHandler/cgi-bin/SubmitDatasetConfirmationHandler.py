@@ -50,7 +50,7 @@ ElementDescriptionUri    =  URIRef(dcterms + "description")
 ElementUriList           =  [ElementCreatorUri, ElementIdentifierUri, ElementTitleUri, ElementDescriptionUri]
 DefaultManifestName      =  "manifest.rdf"
 BaseDir                  =  "/home/"
-SuccessStatus            =  "Dataset Submission Successful"
+SuccessStatus            =  "Dataset Submission to Oxford Databank successful"
 
 def processDatasetSubmissionForm(formdata, outputstr):
     """

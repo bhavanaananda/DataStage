@@ -42,29 +42,30 @@
 </head> 
 
 <body>
-   <h1>Submit Dataset</h1>
+   <h1>Submit ADMIRAL dataset to Databank</h1>
+   <h2>Confirm dataset details for submission</h2>
    <form id="confirmForm" action="../../SubmitDatasetHandler/cgi-bin/SubmitDatasetConfirmationHandler.py" method="post">
    <div class="box outer">
         <div class="box">
-            <span class="label">Dataset Dir :</span>
+            <span class="label">Selected ADMIRAL directory :</span>
             <span class="labelvalue" id="datasetDir" name="datasetDir"></span>
             <input  name="datDir" id="datDir" type="hidden"/>
         </div>
         <div class="box">
-           <span class="label">Dataset Id :</span>
+           <span class="label">Description for dataset :</span>
+           <span class="labelvalue" id="datasetDescription" name="datasetDescription"></span>
+           <input  name="description" id="description" type="hidden"/>
+        </div>   
+        <div class="box">
+           <span class="label">Databank dataset identifier :</span>
            <span class="labelvalue" id="datasetId"  name="datasetId"></span>
            <input  name="datId" id="datId" type="hidden"/>
         </div>
         <div class="box">
-           <span class="label">Title :</span>
+           <span class="label">Title for dataset:</span>
            <span class="labelvalue" id="datasetTitle" name="datasetTitle"></span>
            <input  name="title" id="title" type="hidden"/>
-        </div>
-        <div class="box">
-           <span class="label">Description :</span>
-           <span class="labelvalue" id="datasetDescription" name="datasetDescription"></span>
-           <input  name="description" id="description" type="hidden"/>
-        </div>       
+        </div>    
         <div class="box">
             <span class="label">User :</span>
            <span class="labelvalue">
@@ -79,8 +80,8 @@
         </div> 
         <div class="box">
             <span class="labelvalue">
-                <input name="submit" id="submit" type="submit" value="Confirm"/>
-                <input name="cancel" id="cancel" type="submit" value="Cancel"/>
+                <input name="submit" id="submit" type="submit" value="Confirm submission"/>
+                <input name="cancel" id="cancel" type="submit" value="Back"/>
            </span>
         </div>
    </div>

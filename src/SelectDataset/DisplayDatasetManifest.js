@@ -31,7 +31,7 @@ if (typeof admiral == "undefined")
  */
 admiral.displayDatasetManifest = function (datasetPath, datasetName, callback)
 {
-    log.debug("admiral.displayDatasetManifest "+datasetPath+", "+datasetName);
+    //log.debug("admiral.displayDatasetManifest "+datasetPath+", "+datasetName);
     var m = new admiral.AsyncComputation();
 
     // Read manifest RDF/XML
@@ -54,7 +54,7 @@ admiral.displayDatasetManifest = function (datasetPath, datasetName, callback)
                     callback(data);
                 },
             error:        function (xhr, status) 
-                {   log.debug("HTTP GET "+val+" failed: "+status+"; HTTP status: "+xhr.status+" "+xhr.statusText);
+                {   //log.debug("HTTP GET "+val+" failed: "+status+"; HTTP status: "+xhr.status+" "+xhr.statusText);
                     jQuery("#pageLoadStatus").text("HTTP GET "+val+" failed: "+status+"; HTTP status: "+xhr.status+" "+xhr.statusText);
                     jQuery("#pageLoadStatus").addClass('error');
                 },
@@ -73,7 +73,7 @@ admiral.displayDatasetManifest = function (datasetPath, datasetName, callback)
             callback(jQuery.rdf({databank: databank}));
         } 
         catch(e)
-        {   log.debug("Error: Databank decode: "+e);
+        {   //log.debug("Error: Databank decode: "+e);
             jQuery("#pageLoadStatus").text("Databank decode: "+e);
             jQuery("#pageLoadStatus").addClass('error');
         }

@@ -107,11 +107,13 @@
 </head>
 
 <body>
-   <h1>Dataset <a id="datasetLink" href="dummy"><span id="datasetName">...</span></a></h1>
+   <h1>Dataset Identifier : <a id="datasetLink" href="dummy"><span id="datasetName">...</span></a></h1>
    <div class="dataset">
      <div id="pageLoadStatus"></div>
      <table name="submissionStatus" id = "submissionStatus" >
-        <tr><td>Submission identifier</td><td id="submissionIdentifier">...</td></tr>
+        <!--<tr><td>Submission identifier</td><td id="submissionIdentifier">...</td></tr> -->
+        <tr><td>Title</td><td id="title">...</td></tr>
+        <tr><td>Description</td><td id="description">...</td></tr>
         <tr><td>Submitted by</td><td id="createdBy">...</td></tr>
         <tr><td>Submitted on</td><td><span id="lastModified">yyyy-mm-dd</span> (version <span id="currentVersion">nn</span>)</td></tr>
         <tr><td>Status</td>
@@ -119,16 +121,16 @@
                 <span id="published">Published</span>
             </td>
         </tr>
-        <tr><td>Packed data</td><td><span id="derivedFrom"><a href="link">...</a></span></td></tr>
+        <tr><td>URL to download dataset</td><td><span id="derivedFrom"><a href="link">...</a></span></td></tr>
      </table>
    </div>
-   <h2>Contents</h2>
+   <h2>Contents of dataset</h2>
    <div class="manifest">(to be replaced)</div>
 
 
-   <h3>View Data in Dataset: <span id="datasetUnpackedName"></span> - <a href="" id="unpackedLink">data</a></h3>
-   <h3>View Data in Dataset: <span id="datasetPackedName"></span> - <a href="" id="packedLink">packaged data</a></h3>
-   <h3><a href="" id="revise">Submit revised version</a></h3>
+   <h5>View Data in Dataset: <span id="datasetUnpackedName"></span> - <a href="" id="unpackedLink">data</a></h5>
+   <h5>View Data in Dataset: <span id="datasetPackedName"></span> - <a href="" id="packedLink">packaged data</a></h5>
+   <h5><a href="" id="revise">Submit revised version</a></h5>
 </body>
 
 </html>

@@ -66,7 +66,7 @@ admiral.displayDatasetStatus = function (dataSetPath, callback)
     {
         jQuery("#pageLoadStatus").text("Interpreting information...");
         try
-        {
+        {    log.debug(data);
              embargo = data.state.metadata.embargoed;
              var jsondata = jQuery.toJSON(data);
              jQuery("#pageLoadStatus").text("");

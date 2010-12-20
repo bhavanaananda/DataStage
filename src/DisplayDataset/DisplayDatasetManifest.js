@@ -97,6 +97,17 @@ admiral.displayDatasetManifest = function (datasetPath, datasetName, callback)
 				jQuery("#derivedFrom > a").text(this.o.value.toString());
 				jQuery("#derivedFrom > a").attr("href", this.o.value.toString());
             } 
+            
+            else if (this.p.value.toString()=="http://purl.org/dc/terms/title")
+            {
+                jQuery("#title").text(this.o.value.toString());
+            }
+            
+            else if (this.p.value.toString()=="http://purl.org/dc/terms/description")
+            {
+                jQuery("#description").text(this.o.value.toString());
+            }
+            
             else if (this.p.value.toString()=="http://purl.org/dc/terms/modified")
             {
                 baseUri = this.s.value.toString();
