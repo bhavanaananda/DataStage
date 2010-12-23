@@ -46,18 +46,35 @@ admiral.displayFormFieldsFromMetadata = function (directorySelected)
        admiral.directoryListing(callback);           
    });
     
+//   m.eval(function(value,callback)
+//   {                    
+//       // Populate directory listing box with results received
+//       jQuery("#dirlist").empty();
+//       
+//       for (i=0; i<value.length; i++)
+//       {  
+//           newjelem='<span class="dirlistitem">'+value[i]+'</span>';
+//           jQuery("#dirlist").append(newjelem);
+//       }
+//        callback(value);
+//   });    
+   
    m.eval(function(value,callback)
-   {                    
-       // Populate directory listing box with results received
-       jQuery("#dirlist").empty();
-       
-       for (i=0; i<value.length; i++)
-       {  
-           newjelem='<span class="dirlistitem">'+value[i]+'</span>';
-           jQuery("#dirlist").append(newjelem);
-       }
+   {    var baseUri  = "";
+        var seglists = admiral.segmentPaths(value.sort());
+        var segtree  = admiral.segmentTreeBuilder(seglists);
+        var seghtml  = admiral.nestedListBuilder(baseUri, segtree);
+        jQuery("#dirtreelist").text("");
+        jQuery("#dirtreelist").append(seghtml);
+        seghtml.treeview();
+        jQuery(".links").click( function()
+        {  
+           // Display all the form fields associated with the directory selected from the list           
+           displayValues(jQuery(this).attr("href"));
+           return false;                              
+        });
         callback(value);
-   });    
+   });   
    
    m.eval(function(value, callback)
    {
@@ -67,8 +84,7 @@ admiral.displayFormFieldsFromMetadata = function (directorySelected)
            // Display all the form fields associated with the directory selected from the list 
            displayValues(jQuery(this).text());                    
        });
-   }); 
-                       
+   });                       
    m.exec(null,admiral.noop);
 }      
 

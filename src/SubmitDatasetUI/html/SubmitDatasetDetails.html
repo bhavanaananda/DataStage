@@ -18,6 +18,11 @@
 
     <!-- Import jQuery additional libraries -->
     <script type="text/javascript" src="../../jQuery/jquery.json-2.2.js"></script> 
+    
+    <!-- Import treeview plugin -->
+    <link rel="stylesheet" href="../../jQuery/jquery-treeview/jquery.treeview.css" type="text/css" />
+    <script type="text/javascript" src="../../jQuery/jquery-treeview/jquery.treeview.js"></script>
+  
  
     <!-- Import MochiKit modules: require MochiKit library functions to be fully qualified -->
     <script type="text/javascript">MochiKit = {__export__: false};</script>
@@ -32,8 +37,10 @@
     <script type="text/javascript" src="./../js/SubmitDatasetDetails.js"></script>
     <script type="text/javascript" src="./../js/DirectoryListing.js"></script>
     <script type="text/javascript" src="./../js/GetDatasetMetadata.js"></script>
+    <script type="text/javascript" src="./../js/DatasetTree.js"></script>
     <script type="text/javascript" src="../../SelectDataset/ListDatasets.js"></script>
     <script type="text/javascript" src="../../SelectDataset/GetDatasets.js"></script>
+ 
     
     <script>
     // Use jQuery via jQuery(...)
@@ -81,8 +88,11 @@
                 </span>
             </span>
             <span class="labelvalue withpadding">
-               <span id="dirlist" class="scrollbox">
+             <!--  <span id="dirlist" class="scrollbox">
                    <span class="dirlistitem">directoryname</span>
+               </span>
+              -->
+                <span id="dirtreelist">                  
                </span>
             </span> 
         </div>
