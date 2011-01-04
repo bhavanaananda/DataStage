@@ -1,0 +1,78 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+
+<head>
+    <title>TestAll - run all stand-alone tests</title>
+
+    <!-- Import MochiKit modules: require MochiKit library functions to be fully qualified -->
+    <script type="text/javascript">MochiKit = {__export__: false};</script>
+    <script type="text/javascript" src="../../../MochiKit/Base.js"></script>
+    <script type="text/javascript" src="../../../MochiKit/Iter.js"></script>
+    <script type="text/javascript" src="../../../MochiKit/Logging.js"></script>
+    
+    <!-- Import css styling  -->
+    <link rel="stylesheet" href="../../../qunit/testsuite.css" type="text/css" media="screen" />
+    
+    <!-- Import jQuery and unit testing framework -->
+    <link type="text/css" href="../../../jQuery/css/smoothness/jquery-ui-1.8.custom.css" rel="stylesheet" />  
+    <script type="text/javascript" src="../../../jQuery/js/jquery-1.4.2.min.js"></script>
+    <script type="text/javascript" src="../../../jQuery/js/jquery-ui-1.8.custom.min.js"></script>
+    <script type="text/javascript" src="../../../qunit/testrunner.js"></script>
+    <script type="text/javascript" src="../../../qunit/qunit.testhelpers.js"></script>
+
+    <!-- URI handling script from RDFquery -->
+    <script type="text/javascript" src="../../../jQuery/jquery.uri.js"></script>
+
+    <!-- JSON conversion script -->
+    <script type="text/javascript" src="../../../jQuery/jquery.json-2.2.js"></script>
+
+    <!-- Import MiscLib modules -->
+    <script type="text/javascript" src="../../../MiscLib/jquery.outerhtml.js"></script>    
+
+    <!-- Import Admiral modules -->
+    <script type="text/javascript" src="../../../Admiral/admiral-base.js"></script>
+    <script type="text/javascript" src="../../../Admiral/Error.js"></script>
+    <script type="text/javascript" src="../../../Admiral/AsyncComputation.js"></script>
+
+
+    <!-- Import the modules under test -->
+    <script type="text/javascript" src="../../../../src/DisplayDataset/DatasetTree.js"></script>
+    <script type="text/javascript" src="../../../../src/SelectDataset/ListDatasets.js"></script>
+    <script type="text/javascript" src="../../../../src/SelectDataset/GetDatasetsList.js"></script>
+    <script type="text/javascript" src="../../../../src/SelectDataset/GetDatasetDetails.js"></script>
+    <script type="text/javascript" src="../../../../src/SubmitDatasetUI/TestSubmitDataset.js"></script>
+  
+    <!-- Import test modules -->
+    <script type="text/javascript" src="../../../../src/DisplayDataset/test/TestDatasetTree.js"></script>
+    <script type="text/javascript" src="../../../../src/SelectDataset/test/TestSelectDataset.js"></script>
+    <script type="text/javascript" src="../../../../src/SubmitDatasetUI/test/TestSubmitDataset.js"></script>
+    
+    <!-- Import test modules -->
+    <script type="text/javascript" src="../../test/TestSelectDataset.js"></script>
+
+    <!-- Execute the stand-alone tests -->
+	  <script>
+	  jQuery(document).ready( function () {
+        TestDatasetTree();
+        TestSelectDataset();
+        TestSubmitDataset();
+	  });
+	  </script>  
+
+</head>
+
+<body>
+
+
+   <h1>ADMIRAL tests</h1>
+        <h2 id="banner"></h2>
+        <h2 id="userAgent"></h2>
+        <ol id="tests"></ol>
+   <div id="main" style="height:22em">
+      
+    </div> 
+
+</body>
+
+</html>
