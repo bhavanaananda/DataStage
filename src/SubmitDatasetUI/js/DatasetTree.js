@@ -159,7 +159,7 @@ admiral.nestedListBuilder = function (baseUri, tree)
         		         href = "<a class='links' href=\""+fileName+"\">"+leafNode+"</a>";
        		        
         		}
-                jelem.append("<li><span class='file'>"+href+"</span></li>");
+                jelem.append("<li><span class='folder'>"+href+"</span></li>");
 	    	}
             else
 	    	{
