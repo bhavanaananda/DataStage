@@ -2,7 +2,7 @@
  * @fileoverview
  *  Test suite for dataset submission
  *  
- * @author Graham Klyne
+ * @author Bhavana Ananda
  * @version $Id: $
  * 
  * Coypyright (C) 2010, University of Oxford
@@ -46,213 +46,44 @@ TestSubmitDataset = function()
         //ok(cond,"msg")
     });
 
-    test("testSubmitSingleFile",function()
+    test("testSubmitToolDirectoryTreeListing",function()
     {
+        // Ensure tree depth and content 
+        
+        // Compare the tree content with the Json obtained from the ADMIRAL Server 
         
     });
     
-    test("testZipDirectoryContents",function()
+    
+    test("testMetadataFieldsOnDatasetDetailsPage",function()
     {
+        // Before Selection: Ensure that the metadata fields are blank
+        
+        // After Selection: Ensure that the fields refect the data from the ADMIRAl manifest
         
     });
     
-    test("testSubmitDirectory",function()
+    test("testMetadataFieldsOnDatasetConfirmationPage",function()
     {
+        // Ensure that the fields refect the data from the ADMIRAL manifest
         
     });
     
-    test("testSubmitEmptyDirectory",function()
+    test("testDatasetCreationFromTool",function()
     {
+        // Ensure that the dataset  is created in the databank - Compare number of datasets in the Databnk before and after submission, should be one more
+ 
+        // Ensure version  = 1       
         
     });
     
-
-    test("testEmptyListDatasets", function ()
+    test("testDatasetUpdateFromTool",function()
     {
-        logtest("testEmptyListDatasets");
-        expect(2);
-        function getlist(host, silo, callback)
-        {
-            callback([]);
-        }
-        var m = new admiral.AsyncComputation();
-        m.eval(function(val,callback)
-        {
-	        admiral.listDatasets(host, silo, getlist, callback);        	
-        });
-        m.eval(function(val, callback)
-        {
-            // test val jQuery object contains expected HTML; e.g.
-            //
-            //	     <table id="tableDatasets">
-            //	       <tr><td><a href="somehost/somesilo/dataset/somedatasets1">somedataset1</a></td></tr>
-            //	       <tr><td><a href="somehost/somesilo/dataset/somedatasets2">somedataset2</a></td></tr>
-            //	     </table>   
-            //
-            var table    = val.find("table")
-            equals(table.length, 1, "HTML page contains single table");
-            var tablerows = val.find("table tr")
-            equals(tablerows.length, 0, "Table contains no elements");
-            callback(null);
-        });
-        m.exec(null, function (val)
-        {
-            log.debug("testEmptyListDatasets complete");
-            start();
-        });
-        stop(2000);
-    });
-    
-    test("testMultipleListDatasets", function ()
-    {
-        logtest("testMultipleListDatasets");
-	    function getlist(host, silo, callback)
-	    {
-	        var datasetArray =  ['a','b','c'];
-	        callback(datasetArray);          
-	    }
-        var m = new admiral.AsyncComputation();
-        m.eval(function(val, callback)
-	    {
-	        getlist(host,silo,callback);       
-	    });
-        m.eval(function(val,callback)
-	    {
-            this.datasetlist = val;
-            var jqelem = admiral.listDatasets(host, silo, getlist, callback);           
-	    });
-        m.eval(function(val, callback)
-        {
-        	log.debug(val.html());
-        	// test val jQuery object contains expected HTML; e.g.
-            //
-            //       <table id="tableDatasets">
-            //         <tr><td><a href="somehost/somesilo/dataset/somedatasets1">somedataset1</a></td></tr>
-            //         <tr><td><a href="somehost/somesilo/dataset/somedatasets2">somedataset2</a></td></tr>
-            //       </table>   
-            //
-            var table    = val.find("table")
-            equals(table.length, 1, "HTML page contains single table");
-            var tablerows = val.find("table tr")
-            equals(tablerows.length, 3, "Table contains three elements: "+tablerows);
-            for (var i in this.datasetlist)
-            {
-                // test for row data    
-                var expected = this.datasetlist[i];
-                var rowdata =  tablerows.eq(i).find("a").text();
-                equals(tablerows.eq(i).find("a").text(), expected, "Table contains element: " + rowdata);
-                
-                // test for row data hyperlink
-                var expected = "../../DisplayDataset/html/DisplayDataset#"+ rowdata;
-                var rowdatalink = tablerows.eq(i).find("a").attr('href');
-                equals(rowdatalink, expected, "Table contains one element with hyperlink: " +  rowdatalink);
-            }   
-            callback(null); 
-        });
-        m.exec(null, function (val)
-        {
-            log.debug("testMultipleListDatasets complete");
-            start();
-        });
-        stop(2000);
-    });
-        
-        
-    test("testSingletonDataset", function ()
-    {
-        logtest("testSingletonDataset");
-	    function getlist(host, silo, callback)
-	    {
-	        var datasetArray =  ['a'];
-	        callback(datasetArray);	       
-	    }
-
-        var m = new admiral.AsyncComputation();
-	    m.eval(function(val, callback)
-	    {
-	    	getlist(host,silo,callback);	    	
-	    });
-	    m.eval(function(val,callback)
-	    {
-	    	this.datasetlist = val;
-	        var jqelem = admiral.listDatasets(host, silo, getlist, callback);           
-	    });
-	    m.eval(function(val, callback)
-	    {
-	        //log.debug(val.html());
-	        // test val jQuery object contains expected HTML; e.g.
-	        //
-	        //       <table id="tableDatasets">
-	        //         <tr><td><a href="somehost/somesilo/dataset/somedatasets1">somedataset1</a></td></tr>
-	        //         <tr><td><a href="somehost/somesilo/dataset/somedatasets2">somedataset2</a></td></tr>
-	        //       </table>   
-	        //
-	        var table    = val.find("table")
-	        equals(table.length, 1, "HTML page contains single table");
-	        var tablerows = val.find("table tr");
-	        // test for row data
-	        var expected = this.datasetlist[0];
-	        var rowdata =  tablerows.eq(0).find("a").text();
-	        equals(tablerows.eq(0).find("a").text(), expected, "Table contains one element: " + rowdata);
-	        // test for row data hyperlink
-	        var expected = "../../DisplayDataset/html/DisplayDataset#"+ rowdata;
-	        var rowdatalink = tablerows.eq(0).find("a").attr('href');
-	        equals(rowdatalink, expected, "Table contains one element with hyperlink: " +  rowdatalink);   
-	        callback(null); 
-	    });
-        m.exec(null, function (val)
-        {
-            log.debug("testSingletonDataset complete");
-            start();
-        });
-        stop(2000);
-    });
-    
-    test("testDatabankDatasetListing", function ()
-    {
-        logtest("testDatabankDatasetListing");
-        if(window.location.protocol!="http:")
-        {
-            log.debug("Not loaded from http: Skipping test");
-            return;
-        }
-        var m = new admiral.AsyncComputation();
-        m.eval(function(val, callback)
-        {   
-            admiral.getDatasetList(host,silo,callback);            
-        });
-        m.eval(function(val,callback)
-        {
-            this.datasetlist = val;
-            var jqelem = admiral.listDatasets(host, silo, admiral.getDatasetList, callback);           
-        });
-        m.eval(function(val, callback)
-        {   log.debug("admiral.listDatasets callback");
-            var table     = val.find("table");
-            equals(table.length, 1, "HTML page contains single table");
-            
-            var tablerows = val.find("table tr");
-            equals(tablerows.length,this.datasetlist.length,"One row for each dataset");
-            for (var i = 0 ; i<this.datasetlist.length ; i++)
-            {
-                // test for row text
-                var expected = this.datasetlist[i];
-                var rowdata =  tablerows.eq(i).find("a").text();
-                equals(rowdata, expected, "Row "+i+" text: " + rowdata);
-                // test for row hyperlink
-                var expected = "../../DisplayDataset/html/DisplayDataset#"+ rowdata;
-                var rowdatalink = tablerows.eq(i).find("a").attr('href');
-                equals(rowdatalink, expected, "Row "+i+" hyperlink: " +  rowdatalink); 
-            }
-            callback(null);
-        });
-        m.exec(null, function (val)
-        {   
-            log.debug("testDatabankDatasetListing complete");
-            start();
-        });
-        stop(2000);
-    });
+       // Ensure that the dataset  is not created in the databank - Compare number of datasets in the Databnk before and after submission, should be same
+ 
+       // Ensure version  = Pevious version + 1
+           
+    });    
 }
 
 // End
