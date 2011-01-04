@@ -70,7 +70,7 @@ admiral.displayFormFieldsFromMetadata = function (directorySelected)
         jQuery(".links").click( function()
         {  
            // Display all the form fields associated with the directory selected from the list           
-           displayValues(jQuery(this).attr("href"));
+           displayValues(jQuery(this).attr("href"), jQuery(this).text());
            return false;                              
         });
         callback(value);
@@ -80,9 +80,9 @@ admiral.displayFormFieldsFromMetadata = function (directorySelected)
    {
        // Set click handlers on directory items
        jQuery("#dirlist > .dirlistitem").click( function()
-       {  
+       { 
            // Display all the form fields associated with the directory selected from the list 
-           displayValues(jQuery(this).text());                    
+           displayValues(jQuery(this).text(),"");                    
        });
    });                       
    m.exec(null,admiral.noop);
@@ -95,7 +95,7 @@ admiral.displayFormFieldsFromMetadata = function (directorySelected)
  * @param directorySelected   Directory name for which the ADMIRAL metadata needs to be extracted.
  * @param callback            Callback function.
  */
-function displayValues(directorySelected,callback)
+function displayValues(directorySelected,defaultDatID,callback)
 {       
       var n = new admiral.AsyncComputation(); 
       n.eval(function(directorySelected,callback)
@@ -107,10 +107,20 @@ function displayValues(directorySelected,callback)
      
       // Populate the other fields with the value received
       n.eval(function(formValues,callback)
-      {                                 
-           jQuery("#datId").val(formValues["identifier"]);
-           jQuery("#description").val(formValues["description"]);
-           jQuery("#title").val(formValues["title"]);      
+      {                          
+           if( formValues["identifier"] != undefined)              
+             {
+               jQuery("#datId").val(formValues["identifier"]);
+               jQuery("#description").val(formValues["description"]);
+               jQuery("#title").val(formValues["title"]); 
+             }
+           else
+             { // Suggest Dataset default ID
+               jQuery("#datId").val(defaultDatID);
+               jQuery("#description").val("Title for "+defaultDatID);
+               jQuery("#title").val("Description for "+defaultDatID);   
+             }            
+               
       });    
       
       n.exec( directorySelected,admiral.noop);          

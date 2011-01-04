@@ -59,7 +59,7 @@ TestSubmitDataset = function()
     {
         // Before Selection: Ensure that the metadata fields are blank
         
-        // After Selection: Ensure that the fields refect the data from the ADMIRAl manifest
+        // After Selection: Ensure that the fields refect the data from the ADMIRAL manifest
         
     });
     
