@@ -13,15 +13,17 @@ sys.path.append("../../SubmitDatasetHandler/cgi-bin")
 sys.path.append("../../SubmitDatasetHandler/tests")
 import  TestSubmitDataset, TestSubmitDatasetHandler, TestDirectoryListingHandler, TestMetadataMerging, TestGetDatasetMetadataHandler
 import  TestConfig
-logger               =  logging.getLogger("TestAll")
+logger  =  logging.getLogger("TestAll")
 
 
 # Code to run unit tests from all library test modules
 def getTestSuite(select="all"):
     suite = unittest.TestSuite()
-    #suite.addTest(TestSubmitDatasetHandler.getTestSuite(select=select))
-    #suite.addTest(TestSubmitDataset.getTestSuite(select=select))
+    suite.addTest(TestSubmitDatasetHandler.getTestSuite(select=select))
+    suite.addTest(TestSubmitDataset.getTestSuite(select=select))
+    suite.addTest(TestDirectoryListingHandler.getTestSuite(select=select))
     suite.addTest(TestMetadataMerging.getTestSuite(select=select))
+    suite.addTest(TestGetDatasetMetadataHandler.getTestSuite(select=select))
     return suite
 
 

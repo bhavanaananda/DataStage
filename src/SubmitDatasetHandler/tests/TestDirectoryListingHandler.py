@@ -14,14 +14,10 @@ try:
 except ImportError:
     import json as json
 
-import DirectoryListingHandler
-import SubmitDatasetUtils
-import HttpUtils
+import DirectoryListingHandler, SubmitDatasetUtils, HttpUtils, TestConfig
 from MiscLib import TestUtils
 
 logger           =  logging.getLogger("TestDirectoryListingHandler")
-DirName          =  "DatasetsTopDir"
-DatasetsEmptyDir =  "DatasetsEmptyDir"
     
 class TestDirectoryListingHandler(unittest.TestCase):
 
@@ -35,12 +31,10 @@ class TestDirectoryListingHandler(unittest.TestCase):
 
     # Test that the Dataset handler returned a HTML page back to the client that requested it:      
     def testDirectoryListingHandlerResponse(self):
-        srcDir    = abspath(".")
-        baseDir   = abspath("..")
         outputStr = StringIO.StringIO()
 
         # Invoke dataset submission program, passing faked form submission parameters
-        DirectoryListingHandler.processDirectoryListingRequest(srcDir, baseDir, outputStr)
+        DirectoryListingHandler.processDirectoryListingRequest(TestConfig.DirPath, TestConfig.DatasetsBaseDir, outputStr)
 
         #logger.debug("Output String from output stream: "+outputStr.getvalue())
         # print "Output String from output stream: "+outputStr.getvalue()
@@ -52,11 +46,10 @@ class TestDirectoryListingHandler(unittest.TestCase):
         directoryCollection = json.load(outputStr)
 
         logger.debug("Directory Collection = " + repr(directoryCollection))
-        self.assertEquals(len(directoryCollection), 3, "Expected 4 directories to be returned")
+        self.assertEquals(len(directoryCollection), 2, "Expected 2 directories to be returned")
         expectdirs = \
-            [ "tests/DatasetsTopDir"
-            , "tests/DatasetsTopDir/DatasetsSubDir"
-            , "tests/DatasetsTopDir/DatasetsEmptySubDir"
+            [ "DatasetsTopDir/DatasetsEmptySubDir",
+              "DatasetsTopDir/DatasetsSubDir"
             ]
         for d in expectdirs:
             self.failUnless(d in directoryCollection, 
@@ -94,6 +87,7 @@ def getTestSuite(select="unit"):
 
 if __name__ == "__main__":
     #logging.basicConfig(level=logging.DEBUG)
+    TestConfig.setDatasetsBaseDir(".")
     TestUtils.runTests("TestDirectoryListingHandler.log", getTestSuite, sys.argv)
     #runner = unittest.TextTestRunner()
     #runner.run(getTestSuite())
