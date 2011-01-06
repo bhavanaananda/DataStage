@@ -67,7 +67,11 @@
 </head> 
 
 <body>
-   <h1>Submit ADMIRAL dataset to Databank</h1>
+    <div>
+        <span id="logo"><a href="/"><img alt="site_logo" src="../../images/ADMIRALogo96x96.png" border="0"/></a></span>
+    </div>
+   <h1>Submit ADMIRAL dataset to Oxford University Databank</h1>
+
    <h2>Select dataset for submission</h2>
    <form id="submitForm" name="submitForm" action="../../SubmitDatasetHandler/cgi-bin/SubmitDatasetDetailsHandler.py" method="post">
    <div class="box outer">
@@ -77,7 +81,7 @@
             </span>
             <span class="labelvalue">
                 <span class="sublabel">
-                    (Choose one directory from among those shown)
+                    (Choose one directory from among those shown, by clicking on it.)
                 </span>
                 <BR/>
                 <span class="sublabel">
@@ -97,24 +101,18 @@
             </span> 
         </div>
         <div class="box">
-           <span class="label">Description for dataset :</span>
-           <span class="labelvalue">
-                <span class="sublabel">
-                    (Enter brief description)
-                </span>
-                <BR/>
-                <textarea rows="4"  cols="50" id="description" name="description"></textarea>
-           </span>
-        </div>
-        <div class="box">
            <span class="label">Databank dataset identifier:</span>
            <span class="labelvalue">
              <span class="sublabel">
-                    (Enter a unique identifier for Databank dataset)
+                    (Enter a unique identifier to be used for the Databank dataset)
              </span>
              <BR/>
              <span class="sublabel">
-                    (May contain alphanumeric chars and  . , _ , : , - , but no spaces)
+                    (This defaults to the directory name, but another identifier may be entered)
+             </span>
+             <BR/>
+             <span class="sublabel">
+                    (May contain alphanumeric characters and  .  _  : and  - but no spaces or commas)
              </span>
              <BR/>
             <input name="datId" id="datId" type="text"/>
@@ -129,6 +127,16 @@
              <BR/>
              <input name="title" id="title" type="text" size="63" />
            </span>
+        </div>
+        <div class="box">
+           <span class="label">Description for dataset :</span>
+           <span class="labelvalue">
+                <span class="sublabel">
+                    (Enter brief description)
+                </span>
+                <BR/>
+                <textarea rows="4"  cols="50" id="description" name="description"></textarea>
+        </span>
         </div>
         <div class="box">
             <span class="labelvalue">

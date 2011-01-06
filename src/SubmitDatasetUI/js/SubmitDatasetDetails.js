@@ -117,8 +117,8 @@ function displayValues(directorySelected,defaultDatID,callback)
            else
              { // Suggest Dataset default ID
                jQuery("#datId").val(defaultDatID);
-               jQuery("#description").val("Title for "+defaultDatID);
-               jQuery("#title").val("Description for "+defaultDatID);   
+               jQuery("#description").val("Description for dataset "+defaultDatID);
+               jQuery("#title").val("Title for dataset "+defaultDatID);   
              }            
                
       });    
