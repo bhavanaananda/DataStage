@@ -9,7 +9,12 @@ def setDatasetsBaseDir(base):
     global DatasetsBaseDir
     DatasetsBaseDir  =  base
     
-    global SiloName, Username, Password, FileName, FilePath,FileMimeType,ZipMimeType, DirName, DirPath , DatasetsEmptyDirName, DatasetsEmptyDirPath, UpdatedTitle, UpdatedDescription, TestPat
+    global SiloName, Username, Password, FileName
+    global FilePath, FileMimeType, ZipMimeType
+    global DirName, DirPath 
+    global DatasetsEmptyDirName, DatasetsEmptyDirPath
+    global UpdatedTitle, UpdatedDescription, TestPat
+    
     SiloName                 =  "admiral-test"
     Username                 =  "admiral"
     Password                 =  "admiral"
@@ -30,6 +35,7 @@ def setDatasetsBaseDir(base):
     ManifestFilePath =  DatasetsBaseDir + os.path.sep + DirName + "/manifest.rdf"
     
     global formdata, updatedformdata
+
     formdata                 =  \
                                 {  'datDir'      :  cgi.MiniFieldStorage('datDir'      ,  DatasetsBaseDir+"/DatasetsTopDir")
                                  , 'datId'       :  cgi.MiniFieldStorage('datId'       ,  "SubmissionHandlerTest")
@@ -58,8 +64,11 @@ def setDatasetsBaseDir(base):
     ElementValueList          =  [User, DatasetId, Title, Description]
     ElementValueUpdatedList   =  [User, DatasetId, UpdatedTitle, UpdatedDescription]
     
+    global dcterms, oxds
     dcterms                   =  URIRef("http://purl.org/dc/terms/")
     oxds                      =  URIRef("http://vocab.ox.ac.uk/dataset/schema#") 
+    
+    global NamespaceDictionary
     NamespaceDictionary       =  {
                                    "dcterms"   : dcterms ,
                                    "oxds"      : oxds                    

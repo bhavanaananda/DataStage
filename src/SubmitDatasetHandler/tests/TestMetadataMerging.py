@@ -11,44 +11,9 @@ sys.path.append("..")
 sys.path.append("../cgi-bin")
 
 from MiscLib import TestUtils
-import SubmitDatasetUtils
-import ManifestRDFUtils
+import SubmitDatasetUtils, ManifestRDFUtils, TestConfig
 
-Logger                    =  logging.getLogger("TestMetadataMerging")
-Dict1                     =  \
-                             { 
-                                'datDir'      :  cgi.MiniFieldStorage('datDir'      ,  "./DatasetsTopDir")
-                              , 'datId'       :  cgi.MiniFieldStorage('datId'       ,  "SubmissionHandlerTest")
-                              , 'title'       :  cgi.MiniFieldStorage('title'       ,  "Submission handler test title")
-                              , 'description' :  cgi.MiniFieldStorage('description' ,  "Submission handler test description")
-                              , 'user'        :  cgi.MiniFieldStorage('user'        ,  "admiral")
-                              , 'pass'        :  cgi.MiniFieldStorage('pass'        ,  "admiral")
-                              , 'submit'      :  cgi.MiniFieldStorage('submit'      ,  "Submit")
-                             }
-
-DatasetId                 =  SubmitDatasetUtils.getFormParam('datId', Dict1)
-DatasetDir                =  SubmitDatasetUtils.getFormParam('datDir', Dict1)
-Title                     =  SubmitDatasetUtils.getFormParam('title', Dict1)
-Description               =  SubmitDatasetUtils.getFormParam('description', Dict1)
-User                      =  SubmitDatasetUtils.getFormParam('user', Dict1)
-ElementValueList          =  [User, DatasetId, Title, Description]
-
-BaseDir                   =  "."
-SubmitToolDatDirFormField = "DatasetsTopDir"
-ManifestFilePath          =  SubmitToolDatDirFormField+ "/TestMetadataMergingManifest.rdf"
-
-dcterms                   =  URIRef("http://purl.org/dc/terms/")
-oxds                      =  URIRef("http://vocab.ox.ac.uk/dataset/schema#") 
-NamespaceDictionary       =  {
-                              "dcterms"   : dcterms ,
-                              "oxds"      : oxds                    
-                             }
-ElementCreatorUri         =  URIRef(dcterms + "creator")
-ElementIdentifierUri      =  URIRef(dcterms + "identifier")
-ElementTitleUri           =  URIRef(dcterms + "title")
-ElementDescriptionUri     =  URIRef(dcterms + "description")
-ElementUriList            =  [ElementCreatorUri, ElementIdentifierUri, ElementTitleUri, ElementDescriptionUri]
-             
+Logger                    =  logging.getLogger("TestMetadataMerging")             
 ExpectedDictionary        =  {
                                  "creator"     : "admiral"
                                , "identifier"  : "SubmissionHandlerTest"
@@ -67,44 +32,44 @@ class TestMetadataMerging(unittest.TestCase):
     # Tests  
     def testReadMetadata(self):    
        
-        rdfGraphBeforeSerialisation = ManifestRDFUtils.writeToManifestFile(ManifestFilePath,NamespaceDictionary, ElementUriList, ElementValueList)       
-        rdfGraphAfterSerialisation  = ManifestRDFUtils.readManifestFile(ManifestFilePath)
+        rdfGraphBeforeSerialisation = ManifestRDFUtils.writeToManifestFile(TestConfig.ManifestFilePath,TestConfig.NamespaceDictionary, TestConfig.ElementUriList, TestConfig.ElementValueList)       
+        rdfGraphAfterSerialisation  = ManifestRDFUtils.readManifestFile(TestConfig.ManifestFilePath)
      
         # Compare the serialised graph obtained with the graph before serialisation
         self.assertEqual(len(rdfGraphBeforeSerialisation),5,'Graph length %i' %len(rdfGraphAfterSerialisation))
         
         subject = rdfGraphAfterSerialisation.value(None,RDF.type,URIRef(ManifestRDFUtils.oxds+"Grouping"))
-        self.failUnless((subject,RDF.type,URIRef(oxds+"Grouping")) in rdfGraphAfterSerialisation, 'Testing submission type: '+subject+", "+ URIRef(oxds+"Grouping"))
-        self.failUnless((subject,ElementCreatorUri,User) in rdfGraphAfterSerialisation, 'dcterms:creator')
-        self.failUnless((subject,ElementIdentifierUri,DatasetId) in rdfGraphAfterSerialisation, 'ManifestRDFUtils.dcterms:identifier')
-        self.failUnless((subject,ElementTitleUri,Title) in rdfGraphAfterSerialisation, 'dcterms:title')
-        self.failUnless((subject,ElementDescriptionUri,Description) in rdfGraphAfterSerialisation, 'dcterms:Description')
+        self.failUnless((subject,RDF.type,URIRef(TestConfig.oxds+"Grouping")) in rdfGraphAfterSerialisation, 'Testing submission type: '+subject+", "+ URIRef(TestConfig.oxds+"Grouping"))
+        self.failUnless((subject,TestConfig.ElementCreatorUri,TestConfig.User) in rdfGraphAfterSerialisation, 'dcterms:creator')
+        self.failUnless((subject,TestConfig.ElementIdentifierUri,TestConfig.DatasetId) in rdfGraphAfterSerialisation, 'ManifestRDFUtils.dcterms:identifier')
+        self.failUnless((subject,TestConfig.ElementTitleUri,TestConfig.Title) in rdfGraphAfterSerialisation, 'dcterms:title')
+        self.failUnless((subject,TestConfig.ElementDescriptionUri,TestConfig.Description) in rdfGraphAfterSerialisation, 'dcterms:TestConfig.Description')
         return
     
     def testUpdateMetadata(self):
         updatedTitle       =  "Updated Submission handler test title"
         updatedDescription =  "Updated Submission handler test description" 
         
-        initialGraph = ManifestRDFUtils.writeToManifestFile(ManifestFilePath, NamespaceDictionary,ElementUriList, ElementValueList)
-        updatedGraph = ManifestRDFUtils.updateManifestFile(ManifestFilePath, [ElementTitleUri,ElementDescriptionUri], [updatedTitle, updatedDescription])       
-        readGraph    = ManifestRDFUtils.readManifestFile(ManifestFilePath)
+        initialGraph = ManifestRDFUtils.writeToManifestFile(TestConfig.ManifestFilePath, TestConfig.NamespaceDictionary,TestConfig.ElementUriList, TestConfig.ElementValueList)
+        updatedGraph = ManifestRDFUtils.updateManifestFile(TestConfig.ManifestFilePath, [TestConfig.ElementTitleUri,TestConfig.ElementDescriptionUri], [updatedTitle, updatedDescription])       
+        readGraph    = ManifestRDFUtils.readManifestFile(TestConfig.ManifestFilePath)
 
         # Assert that (initialGraph != updatedGraph)          
-        self.assertEqual(False, ManifestRDFUtils.compareRDFGraphs(initialGraph, updatedGraph,ElementUriList),"Error updating the manifest file!")
+        self.assertEqual(False, ManifestRDFUtils.compareRDFGraphs(initialGraph, updatedGraph,TestConfig.ElementUriList),"Error updating the manifest file!")
         
         # Assert that (updatedGraph == readGraph)
-        self.assertEqual(True, ManifestRDFUtils.compareRDFGraphs(updatedGraph, readGraph,ElementUriList),"Error updating the manifest file!")
+        self.assertEqual(True, ManifestRDFUtils.compareRDFGraphs(updatedGraph, readGraph,TestConfig.ElementUriList),"Error updating the manifest file!")
         return    
     
     def testGetElementValuesFromManifest(self):
-        rdfGraph = ManifestRDFUtils.writeToManifestFile(ManifestFilePath, NamespaceDictionary, ElementUriList, ElementValueList)        
-        fields = ManifestRDFUtils.getElementValuesFromManifest(rdfGraph, ElementUriList)
-        self.assertEquals(fields,ElementValueList,"Problem reading submit dataset utility Fields!")
+        rdfGraph = ManifestRDFUtils.writeToManifestFile(TestConfig.ManifestFilePath, TestConfig.NamespaceDictionary, TestConfig.ElementUriList, TestConfig.ElementValueList)        
+        fields = ManifestRDFUtils.getElementValuesFromManifest(rdfGraph, TestConfig.ElementUriList)
+        self.assertEquals(fields,TestConfig.ElementValueList,"Problem reading submit dataset utility Fields!")
         return
     
     def testGetDictionaryFromManifest(self):
-        rdfGraph = ManifestRDFUtils.writeToManifestFile(ManifestFilePath, NamespaceDictionary, ElementUriList, ElementValueList)
-        actualDictionary = ManifestRDFUtils.getDictionaryFromManifest(ManifestFilePath, ElementUriList)
+        rdfGraph = ManifestRDFUtils.writeToManifestFile(TestConfig.ManifestFilePath, TestConfig.NamespaceDictionary, TestConfig.ElementUriList, TestConfig.ElementValueList)
+        actualDictionary = ManifestRDFUtils.getDictionaryFromManifest(TestConfig.ManifestFilePath, TestConfig.ElementUriList)
         Logger.debug(repr(actualDictionary))
         #print "ExpectedDictionary: "+repr(ExpectedDictionary)
         #print "actualDictionary: "+repr(actualDictionary)
@@ -145,4 +110,5 @@ def getTestSuite(select="unit"):
 
 
 if __name__ == "__main__":
+    TestConfig.setDatasetsBaseDir(".")
     TestUtils.runTests("TestMetadataMerging.log", getTestSuite, sys.argv)
