@@ -25,16 +25,16 @@ Logger                   =  logging.getLogger("TestSubmitDatasetHandler")
 
 ExpectedDictionary       =  {
                                  "creator"     : "admiral"
-                               , "identifier"  : "SubmissionHandlerTest"
-                               , "title"       : "Submission handler test title"
-                               , "description" : "Submission handler test description"                     
+                               , "identifier"  : "SubmissionToolTest"
+                               , "title"       : "Submission tool test title"
+                               , "description" : "Submission tool test description"                     
                             } 
 
 ExpectedUpdatedDictionary =  {
                                  "creator"     : "admiral"
-                              ,  "identifier"  : "SubmissionHandlerTest"
-                              ,  "title"       : "Submission handler updated test title"
-                              ,  "description" : "Submission handler updated test description"                     
+                              ,  "identifier"  : "SubmissionToolTest"
+                              ,  "title"       : "Submission tool updated test title"
+                              ,  "description" : "Submission tool updated test description"                     
                              }     
 
 

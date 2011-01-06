@@ -15,45 +15,10 @@ try:
 except ImportError:
     import json as json
 
-import GetDatasetMetadataHandler
-import ManifestRDFUtils
-import SubmitDatasetUtils
-import HttpUtils
+import GetDatasetMetadataHandler, ManifestRDFUtils, SubmitDatasetUtils, HttpUtils, TestConfig
 from MiscLib import TestUtils
 
-Logger                    =  logging.getLogger("TestGetDatasetMetadataHandler")
-SubmitToolDatDirFormField =  "DatasetsTopDir"
-ManifestName              = "TestGetDatasetMetadataManifest.rdf"
-ManifestFilePath          =  SubmitToolDatDirFormField+ "/TestGetDatasetMetadataManifest.rdf"
-
-formdata                     =  \
-                              {  'datDir'      :  cgi.MiniFieldStorage('datDir'      ,  "./DatasetsTopDir")
-                               , 'datId'       :  cgi.MiniFieldStorage('datId'       ,  "SubmissionHandlerTest")
-                               , 'title'       :  cgi.MiniFieldStorage('title'       ,  "Submission handler test title")
-                               , 'description' :  cgi.MiniFieldStorage('description' ,  "Submission handler test description")
-                               , 'user'        :  cgi.MiniFieldStorage('user'        ,  "admiral")
-                               , 'pass'        :  cgi.MiniFieldStorage('pass'        ,  "admiral")
-                               , 'submit'      :  cgi.MiniFieldStorage('submit'      ,  "Submit")
-                               , 'directory'   :  cgi.MiniFieldStorage('directory'   ,  "DatasetsTopDir")
-                              }
-DatasetId                 =  SubmitDatasetUtils.getFormParam('datId', formdata)
-DatasetDir                =  SubmitDatasetUtils.getFormParam('datDir', formdata)
-Title                     =  SubmitDatasetUtils.getFormParam('title', formdata)
-Description               =  SubmitDatasetUtils.getFormParam('description', formdata)
-User                      =  SubmitDatasetUtils.getFormParam('user', formdata)
-ElementValueList          =  [User, DatasetId, Title, Description]
-
-dcterms                =  URIRef("http://purl.org/dc/terms/")
-oxds                   =  URIRef("http://vocab.ox.ac.uk/dataset/schema#") 
-NamespaceDictionary    =  {
-                             "dcterms"   : dcterms ,
-                             "oxds"      : oxds                    
-                          }
-ElementCreatorUri         =  URIRef(dcterms + "creator")
-ElementIdentifierUri      =  URIRef(dcterms + "identifier")
-ElementTitleUri           =  URIRef(dcterms + "title")
-ElementDescriptionUri     =  URIRef(dcterms + "description")
-ElementUriList            =  [ElementCreatorUri, ElementIdentifierUri, ElementTitleUri, ElementDescriptionUri]
+Logger =  logging.getLogger("TestGetDatasetMetadataHandler")
     
 class TestGetDatasetMetadataHandler(unittest.TestCase):
 
@@ -67,13 +32,13 @@ class TestGetDatasetMetadataHandler(unittest.TestCase):
 
     # Test that the GetMetResponse      
     def testGetDatasetMetadataResponse(self):
-        outputStr                 = StringIO.StringIO()
+        outputStr = StringIO.StringIO()
         
         # Create a manifest file from mocked up form data
-        ManifestRDFUtils.writeToManifestFile(ManifestFilePath, NamespaceDictionary,ElementUriList, ElementValueList)
+        ManifestRDFUtils.writeToManifestFile(TestConfig.ManifestFilePath, TestConfig.NamespaceDictionary,TestConfig.ElementUriList, TestConfig.ElementValueList)
 
         # Invoke get metatadata submission program, passing faked dataset directory
-        GetDatasetMetadataHandler.getDatasetMetadata(formdata, ManifestName, outputStr)
+        GetDatasetMetadataHandler.getDatasetMetadata(TestConfig.formdata, TestConfig.ManifestName, outputStr)
     
         outputStr.seek(0, os.SEEK_SET)
         firstLine = outputStr.readline()
@@ -87,9 +52,7 @@ class TestGetDatasetMetadataHandler(unittest.TestCase):
         Logger.debug("Metadata Length = "+ repr(len(metadata)))
         self.assertEquals(len(metadata), 4, "Expected 4 pairs of field-values to be returned")
 
-#        for key-value in metadata:
-#            self.failUnless(key-value in metadata, 
-#                "Expected directory %s in result (received %s)"%(d,repr(directoryCollection)))
+
         return
 
 def getTestSuite(select="unit"):
@@ -122,6 +85,5 @@ def getTestSuite(select="unit"):
 
 if __name__ == "__main__":
     #logging.basicConfig(level=logging.DEBUG)
+    TestConfig.setDatasetsBaseDir(".")
     TestUtils.runTests("TestGetDatasetMetadataHandler.log", getTestSuite, sys.argv)
-    #runner = unittest.TextTestRunner()
-    #runner.run(getTestSuite())

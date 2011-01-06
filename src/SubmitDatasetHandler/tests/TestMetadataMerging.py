@@ -16,9 +16,9 @@ import SubmitDatasetUtils, ManifestRDFUtils, TestConfig
 Logger                    =  logging.getLogger("TestMetadataMerging")             
 ExpectedDictionary        =  {
                                  "creator"     : "admiral"
-                               , "identifier"  : "SubmissionHandlerTest"
-                               , "title"       : "Submission handler test title"
-                               , "description" : "Submission handler test description"                     
+                               , "identifier"  : "SubmissionToolTest"
+                               , "title"       : "Submission tool test title"
+                               , "description" : "Submission tool test description"                     
                              }
 
 class TestMetadataMerging(unittest.TestCase):
@@ -47,8 +47,8 @@ class TestMetadataMerging(unittest.TestCase):
         return
     
     def testUpdateMetadata(self):
-        updatedTitle       =  "Updated Submission handler test title"
-        updatedDescription =  "Updated Submission handler test description" 
+        updatedTitle       =  "Submission tool updated test title"
+        updatedDescription =  "Submission tool updated test description" 
         
         initialGraph = ManifestRDFUtils.writeToManifestFile(TestConfig.ManifestFilePath, TestConfig.NamespaceDictionary,TestConfig.ElementUriList, TestConfig.ElementValueList)
         updatedGraph = ManifestRDFUtils.updateManifestFile(TestConfig.ManifestFilePath, [TestConfig.ElementTitleUri,TestConfig.ElementDescriptionUri], [updatedTitle, updatedDescription])       
