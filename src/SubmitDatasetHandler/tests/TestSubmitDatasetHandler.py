@@ -46,6 +46,7 @@ class TestSubmitDatasetHandler(unittest.TestCase):
     def tearDown(self):
         try:
             SubmitDatasetUtils.deleteDataset(TestConfig.SiloName,  SubmitDatasetUtils.getFormParam('datId', TestConfig.formdata))
+            SubmitDatasetUtils.deleteDataset(TestConfig.SiloName,  SubmitDatasetUtils.getFormParam('datId', TestConfig.formdata) +"-packed");
         except:
             pass
         return
@@ -151,7 +152,7 @@ class TestSubmitDatasetHandler(unittest.TestCase):
         
         # reset the Dataset Directory to point to an empty directory
         formdata = TestConfig.formdata.copy()
-        formdata['datDir'] = cgi.MiniFieldStorage('datDir', TestConfig.DatasetsBaseDir+os.path.sep+TestConfig.DatasetsEmptyDir)
+        formdata['datDir'] = cgi.MiniFieldStorage('datDir', TestConfig.DatasetsEmptyDirPath)
 
         # Invoke dataset submission program, passing faked form submission parameters
         SubmitDatasetConfirmationHandler.processDatasetSubmissionForm(formdata, outputStr)

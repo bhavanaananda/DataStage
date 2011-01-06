@@ -19,7 +19,7 @@ logger               =  logging.getLogger("TestAll")
 # Code to run unit tests from all library test modules
 def getTestSuite(select="all"):
     suite = unittest.TestSuite()
-    #suite.addTest(TestSubmitDatasetHandler.getTestSuite(select=select))
+    suite.addTest(TestSubmitDatasetHandler.getTestSuite(select=select))
     suite.addTest(TestSubmitDataset.getTestSuite(select=select))
     return suite
 

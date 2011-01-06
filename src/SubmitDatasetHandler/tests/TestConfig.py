@@ -9,7 +9,7 @@ def setDatasetsBaseDir(base):
     global DatasetsBaseDir
     DatasetsBaseDir  =  base
     
-    global SiloName, Username, Password, FileName, FilePath,FileMimeType,ZipMimeType, DirName, DirPath ,DatasetsEmptyDir,DatasetsEmptyDirPath, DatasetsEmptyDirName, UpdatedTitle, UpdatedDescription, TestPat
+    global SiloName, Username, Password, FileName, FilePath,FileMimeType,ZipMimeType, DirName, DirPath , DatasetsEmptyDirName, DatasetsEmptyDirPath, UpdatedTitle, UpdatedDescription, TestPat
     SiloName                 =  "admiral-test"
     Username                 =  "admiral"
     Password                 =  "admiral"
@@ -19,9 +19,8 @@ def setDatasetsBaseDir(base):
     ZipMimeType              =  "application/zip"
     DirName                  =  "DatasetsTopDir"
     DirPath                  =  DatasetsBaseDir + os.path.sep + DirName
-    DatasetsEmptyDir         =  DatasetsBaseDir + os.path.sep + "DatasetsTopDir/DatasetsEmptySubDir"
-    DatasetsEmptyDirPath     =  DatasetsBaseDir + os.path.sep + DatasetsEmptyDir
     DatasetsEmptyDirName     =  "DatasetsEmptySubDir"
+    DatasetsEmptyDirPath     =  DatasetsBaseDir + os.path.sep + DirName + os.path.sep + DatasetsEmptyDirName
     UpdatedTitle             =  "Updated Title"
     UpdatedDescription       =  "Updated Description"
     TestPat              =  re.compile("^.*$(?<!\.zip)")
