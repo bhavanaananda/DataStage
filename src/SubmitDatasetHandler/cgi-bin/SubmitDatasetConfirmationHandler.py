@@ -50,7 +50,7 @@ ElementDescriptionUri    =  URIRef(dcterms + "description")
 ElementUriList           =  [ElementCreatorUri, ElementIdentifierUri, ElementTitleUri, ElementDescriptionUri]
 DefaultManifestName      =  "manifest.rdf"
 BaseDir                  =  "/home/"
-SuccessStatus            =  "Dataset Submission to Oxford Databank successful"
+SuccessStatus            =  "ADMIRAL dataset submission to Oxford University Databank was successful"
 
 def processDatasetSubmissionForm(formdata, outputstr):
     """
@@ -66,7 +66,14 @@ def processDatasetSubmissionForm(formdata, outputstr):
     description          =  SubmitDatasetUtils.getFormParam("description" ,  formdata)  
     dirName              =  SubmitDatasetUtils.getFormParam("datDir"      ,  formdata)
     ElementValueList     =  [userName, datasetName, title, description]
- 
+
+    ###print("\n---- processDatasetSubmissionForm:formdata ---- \n"+repr(formdata))
+  
+    # Zip the selected Directory
+    zipFileName = os.path.basename(dirName) +".zip"
+    zipFilePath = "/tmp/" + zipFileName
+    Logger.debug("zipFilePath = "+zipFilePath)
+
     if outputstr:
         sys.stdout = outputstr
     try:    
@@ -81,10 +88,7 @@ def processDatasetSubmissionForm(formdata, outputstr):
         Logger.debug("Element List = " + repr(ElementUriList))
         Logger.debug("Element Value List = " + repr(ElementValueList))
         SubmitDatasetDetailsHandler.updateMetadataInDirectoryBeforeSubmission(manifestFilePath, ElementUriList, ElementValueList)       
-        # Zip the selected Directory
-        zipFileName = os.path.basename(dirName) +".zip"
-        zipFilePath = "/tmp/" + zipFileName
-        #Logger.debug("zipFilePath = "+zipFilePath)
+
         #Logger.debug("datasetName %s, dirName %s, zipFileName %s"%(datasetName,dirName,zipFileName))
         SubmitDatasetUtils.zipLocalDirectory(dirName, FilePat, zipFilePath)
         # Submit zip file to dataset
@@ -116,8 +120,11 @@ def processDatasetSubmissionForm(formdata, outputstr):
     finally:
         print "</body>"
         print "</html>"
+        Logger.debug("zipFilePath = "+zipFilePath)
         SubmitDatasetUtils.deleteLocalFile(zipFilePath)# Delete the local zip file after submission
         sys.stdout = save_stdout
+        ###print "---- manifestFilePath "+manifestFilePath
+        ###print "---- ElementValueList "+repr(ElementValueList)
     return
 
 def validateFields(datasetDirectoryName, datasetName):

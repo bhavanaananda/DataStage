@@ -66,9 +66,9 @@ def datasetSummaryForm(formdata, outputstr):
                 
                 <body>
                     <h2>%(status)s</h2>
-                    <h3><a href="%(viewDatasetURL)s">View submitted Databank dataset - %(datasetUnzippedName)s</a></h3>
-                    <h3><a href="%(resetURL)s" id="revised">Submit revised version</a></h3>
-                    <h3><a href="%(dataToolURL)s">Submit another Databank dataset</a></h3>
+                    <h3><a href="%(viewDatasetURL)s">View details of submitted ADMIRAL dataset - %(datasetUnzippedName)s</a></h3>
+                    <h3><a href="%(resetURL)s" id="revised">Submit revised version of this dataset</a></h3>
+                    <h3><a href="%(dataToolURL)s">Submit another ADMIRAL dataset to databank</a></h3>
                     <h3><a href="%(mainURL)s">Return to ADMIRAL front page</a></h3>
                 </body>
             </html>

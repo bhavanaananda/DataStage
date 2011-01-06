@@ -59,8 +59,8 @@ def submitMetadata(formdata, outputstr):
     title                =  SubmitDatasetUtils.getFormParam("title"       ,  formdata)  
     description          =  SubmitDatasetUtils.getFormParam("description" ,  formdata)  
     dirName              =  SubmitDatasetUtils.getFormParam("datDir"      ,  formdata)
-    ElementUriList   =  [ElementIdentifierUri, ElementTitleUri, ElementDescriptionUri]
-    ElementValueList =  [datasetName, title, description]
+    ElementUriList       =  [ElementIdentifierUri, ElementTitleUri, ElementDescriptionUri]
+    ElementValueList     =  [datasetName, title, description]
 
     if outputstr:
         sys.stdout = outputstr
@@ -107,7 +107,7 @@ def updateMetadataInDirectoryBeforeSubmission(manifestFilePath, elementUriList, 
     """
     Update the metadata RDF with the form data obtained from the dataset submission tool.
     """
-    Logger.debug("Manifest Path = " + manifestFilePath)
+    Logger.debug("Manifest Path = " + repr(manifestFilePath))
     inputDict    = ManifestRDFUtils.createDictionary(elementUriList, elementValueList)   
     if ManifestRDFUtils.ifFileExists(manifestFilePath):
         Logger.debug("Manifest File Exists... skipping creation!")

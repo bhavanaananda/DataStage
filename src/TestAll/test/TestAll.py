@@ -4,29 +4,24 @@
 # See http://pyunit.sourceforge.net/pyunit.html
 #
 
-import sys, unittest, logging
+import sys, unittest, logging , commands
 
 # Add main library directory to python path
-sys.path.append("../..")
+sys.path.append("../../SubmitDatasetHandler")
+from MiscLib import TestUtils
+sys.path.append("../../SubmitDatasetHandler/cgi-bin")
+sys.path.append("../../SubmitDatasetHandler/tests")
+import  TestSubmitDatasetHandler
+import  TestConfig
+logger               =  logging.getLogger("TestAll")
 
-import TestSubmitDataset
-import TestSubmitDatasetHandler
-import TestDirectoryListingHandler
-import TestMetadataMerging
-import TestGetDatasetMetadataHandler
 
 # Code to run unit tests from all library test modules
 def getTestSuite(select="all"):
     suite = unittest.TestSuite()
-
-    suite.addTest(TestSubmitDataset.getTestSuite(select=select))
     suite.addTest(TestSubmitDatasetHandler.getTestSuite(select=select))
-    suite.addTest(TestDirectoryListingHandler.getTestSuite(select=select))
-    suite.addTest(TestMetadataMerging.getTestSuite(select=select))
-    suite.addTest(TestGetDatasetMetadataHandler.getTestSuite(select=select))
     return suite
 
-from MiscLib import TestUtils
 
 if __name__ == "__main__":
     print "============================================================"
@@ -34,7 +29,8 @@ if __name__ == "__main__":
     print "Edit TestConfig.py to specify hostname and other parameters"
     print "Create test accounts on target system to match TestConfig.py"
     print "============================================================"
-    TestSubmitDatasetHandler.setDatasetsBaseDir(".")
+    #print repr( commands.getstatusoutput('ls ../../'))
+    TestConfig.setDatasetsBaseDir("../../SubmitDatasetHandler/tests")
     TestUtils.runTests("TestAll", getTestSuite, sys.argv)
 
 # End.
