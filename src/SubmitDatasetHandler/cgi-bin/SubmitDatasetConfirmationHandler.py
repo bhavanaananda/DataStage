@@ -92,7 +92,7 @@ def processDatasetSubmissionForm(formdata, outputstr):
         #Logger.debug("datasetName %s, dirName %s, zipFileName %s"%(datasetName,dirName,zipFileName))
         SubmitDatasetUtils.zipLocalDirectory(dirName, FilePat, zipFilePath)
         # Submit zip file to dataset
-        SubmitDatasetUtils.submitFileToDataset(siloName, datasetName, zipFilePath, ZipMimeType, zipFileName)
+        SubmitDatasetUtils.submitFileToDataset(siloName, datasetName,zipFileName, zipFilePath, ZipMimeType, zipFileName)
         # Unzip the contents into a new dataset
         datasetUnzippedName = SubmitDatasetUtils.unzipRemoteFileToNewDataset(siloName, datasetName, zipFileName)       
         # Redirect to the Dataset Summary page

@@ -248,5 +248,3 @@ def getTestSuite(select="unit"):
 if __name__ == "__main__":
     TestConfig.setDatasetsBaseDir(".")
     TestUtils.runTests("TestSubmitDatasetHandler.log", getTestSuite, sys.argv)
-    #runner = unittest.TextTestRunner()
-    #runner.run(getTestSuite())

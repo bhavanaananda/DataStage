@@ -135,7 +135,7 @@ def deleteDataset(siloName, datasetName):
         expect_status=200, expect_reason="OK")
     return
 
-def submitFileToDataset(siloName, datasetName, fileName, mimeType, targetName):
+def submitFileToDataset(siloName, datasetName, fileName, filePath, mimeType, targetName):
     """
     Submit a single file to a dataset, creating a new resource in the dataset.
 
@@ -148,7 +148,7 @@ def submitFileToDataset(siloName, datasetName, fileName, mimeType, targetName):
     logger.debug("submitFileToDataset: siloName %s, datasetName %s, fileName %s, targetName %s"%(siloName, datasetName+"-packed", fileName, targetName))
     assert os.path.basename(targetName) == targetName, "No directories allowed in targetName: "+targetName
     fields = []
-    fileData = getLocalFileContents(fileName)
+    fileData = getLocalFileContents(filePath)
     files = \
         [ ("file", targetName, fileData, mimeType) 
         ]

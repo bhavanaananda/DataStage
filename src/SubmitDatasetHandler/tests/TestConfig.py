@@ -2,44 +2,30 @@
 #
 # See http://pyunit.sourceforge.net/pyunit.html
 #
-import cgi, SubmitDatasetUtils, os
+import cgi, SubmitDatasetUtils, os, re
 from rdflib import URIRef
-
-#DatasetsBaseDir         = None
-#ManifestFilePath        = None  
-#SiloName                = None
-#DirName                 = None
-#DatasetsEmptyDir        = None 
-#DatasetsEmptyDirName    = None 
-#UpdatedTitle            = None 
-#UpdatedDescription      = None
-#formdata                = None
-#updatedformdata         = None
-#DatasetId               = None 
-#DatasetDir              = None 
-#Title                   = None
-#Description             = None
-#User                    = None
-#ElementValueList        = None
-#ElementValueUpdatedList = None
-#ElementCreatorUri       = None
-#ElementIdentifierUri    = None
-#ElementTitleUri         = None
-#ElementDescriptionUri   = None
-#ElementUriList          = None
   
 def setDatasetsBaseDir(base):
-
-    global SiloName, DirName, DatasetsEmptyDir, DatasetsEmptyDirName, UpdatedTitle, UpdatedDescription
+    global DatasetsBaseDir
+    DatasetsBaseDir  =  base
+    
+    global SiloName, Username, Password, FileName, FilePath,FileMimeType,ZipMimeType, DirName, DirPath ,DatasetsEmptyDir,DatasetsEmptyDirPath, DatasetsEmptyDirName, UpdatedTitle, UpdatedDescription, TestPat
     SiloName                 =  "admiral-test"
+    Username                 =  "admiral"
+    Password                 =  "admiral"
+    FileName                 =  "file1.txt"
+    FilePath                 =  DatasetsBaseDir + os.path.sep + FileName
+    FileMimeType             =  "text/plain"
+    ZipMimeType              =  "application/zip"
     DirName                  =  "DatasetsTopDir"
-    DatasetsEmptyDir         =  "DatasetsTopDir/DatasetsEmptySubDir"
+    DirPath                  =  DatasetsBaseDir + os.path.sep + DirName
+    DatasetsEmptyDir         =  DatasetsBaseDir + os.path.sep + "DatasetsTopDir/DatasetsEmptySubDir"
+    DatasetsEmptyDirPath     =  DatasetsBaseDir + os.path.sep + DatasetsEmptyDir
     DatasetsEmptyDirName     =  "DatasetsEmptySubDir"
     UpdatedTitle             =  "Updated Title"
     UpdatedDescription       =  "Updated Description"
+    TestPat              =  re.compile("^.*$(?<!\.zip)")
     
-    global DatasetsBaseDir
-    DatasetsBaseDir  =  base
 
     global ManifestFilePath
     ManifestFilePath =  DatasetsBaseDir + os.path.sep + DirName + "/manifest.rdf"
