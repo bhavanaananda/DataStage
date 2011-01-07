@@ -47,26 +47,28 @@
     </div>
    <h1>Submit ADMIRAL dataset to Databank</h1>
    <h2>Review dataset details prior to submission</h2>
-   <h4>(Click the back button if you wish to revise them)</h4>
+   <div class="sublabel">(Click the back button if you wish to revise them)</div>
    <form id="confirmForm" action="../../SubmitDatasetHandler/cgi-bin/SubmitDatasetConfirmationHandler.py" method="post">
-   <div class="box outer">
+   <div class="outer">
         <div class="box">
-            <span class="label">Selected ADMIRAL directory :</span>
+            <span class="label confirm ">
+                Selected ADMIRAL directory :
+            </span>
             <span class="labelvalue" id="datasetDir" name="datasetDir"></span>
             <input  name="datDir" id="datDir" type="hidden"/>
         </div>
         <div class="box">
-           <span class="label">Databank dataset identifier :</span>
+           <span class="label confirm">Databank dataset identifier :</span>
            <span class="labelvalue" id="datasetId"  name="datasetId"></span>
            <input  name="datId" id="datId" type="hidden"/>
         </div>
         <div class="box">
-           <span class="label">Title for dataset:</span>
+           <span class="label confirm">Title for dataset:</span>
            <span class="labelvalue" id="datasetTitle" name="datasetTitle"></span>
            <input  name="title" id="title" type="hidden"/>
         </div>  
         <div class="box">
-           <span class="label">Description of dataset :</span>
+           <span class="label confirm">Description of dataset :</span>
            <span class="labelvalue" id="datasetDescription" name="datasetDescription"></span>
            <input  name="description" id="description" type="hidden"/>
         </div>     
@@ -74,15 +76,15 @@
     
     <h2>Enter University single signon username and password</h2>
     
-    <div class="box outer">
+    <div class="outer">
         <div class="box">
-            <span class="label">User :</span>
+            <span class="label confirm">User :</span>
            <span class="labelvalue">
                 <input name="user" id="user" type="text"/>
             </span>       
         </div>
         <div class="box">
-            <span class="label">Password :</span>
+            <span class="label confirm">Password :</span>
             <span class="labelvalue">
                     <input name="pass" id="pass" type="password"/>
             </span>

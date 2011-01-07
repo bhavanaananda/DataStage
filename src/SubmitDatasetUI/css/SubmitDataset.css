@@ -19,52 +19,73 @@
  */
 
 
-.outer         {  
-                    margin:  2px 2px 2px 2px; 
-                    padding: 2px 2px 2px 2px;  
-                    border:  2px 2px 2px 2px; 
+.outer         {    position:relative;
                     height:  40%;
                     width:   75%;
                }
        
      
-.box           {  
-                    padding: 20px 20px 20px 20px;              
+.box           {    position:relative;
+                    padding: 1%;   
                     clear: both;
                }
 
 
-.label         {
-                    font-size: medium;
-                    font-weight:bolder;  
-                    width: 25%;
+.label         {    position:relative;
+                    width: 30%;                    
                }
                
-.sublabel      {    clear:both;
-                    font-size: small;
+.confirm       {    position:relative;
+                    font-size: medium;
+                    font-weight:bolder;  
+                    text-align:right;
+                    float:left;
+                    clear:both;
+                    width:30%;
+               }
+.mainlabel     {    position:relative;
+                    float:left;
+                    clear:both;
+                    font-size: medium;
+                    font-weight:bolder;  
+                  
+               }
+               
+.sublabel      {    position:relative;
+                    float:left;
+                    clear:both;
+                    width:30%;
+                    font-size: smaller;
+                    font-weight:normal;
+                    color: #484848 ;
+                   
                }
              
        
-.labelvalue    {  
-                    width: 75%;
-                    float: right;     
+.labelvalue    {    position:relative;
+                    width: 65%;
+                    float: right;  
+                    font-size: smaller;
+                    font-weight:normal;  
                }
        
-.inputfield    {    
-                    clear:both;
+.sublabelvalue {    position:relative;
+                    clear: both;
+                    float:left;
                }
-                    
-.withpadding   {  
-                    padding: 1px 1px 1px 1px;  
+               
+input          {    position:relative;
+                    float:left;
                }
 
 
-input#datDir   {
+input#datDir   {    position:relative;
                     width: 50%;
+                    
                }
          
          
-.scrollbox     {
+.scrollbox     {    position:relative;
                     display  : block;
                     height   : 6em ;
                     width    : 100%;
@@ -72,8 +93,8 @@ input#datDir   {
                }
                
            
-.dirlistitem   {
-                    display: block;
+.dirtreelist   {    position:relative;
+                    float: left; 
                }    
                
 
