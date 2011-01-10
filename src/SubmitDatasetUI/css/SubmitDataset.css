@@ -79,9 +79,7 @@ input          {    position:relative;
                }
 
 
-input#datDir   {    position:relative;
-                    width: 50%;
-                    
+input#datDir   {    position:relative;                   
                }
          
          
