@@ -62,6 +62,37 @@ def datasetSummaryForm(formdata, outputstr):
             <html>
                 <head>
                     <script type="text/javascript" src="../../jQuery/js/jquery-1.4.2.js"></script>
+                    <script type="text/javascript" src="../../SelectDataset/GetDatasetDetails.js"></script>
+                    <!-- Import MochiKit modules: require MochiKit library functions to be fully qualified -->
+                    <script type="text/javascript">MochiKit = {__export__: false};</script>
+                    <script type="text/javascript" src="../../MochiKit/Base.js"></script>
+                    <script type="text/javascript" src="../../MochiKit/Iter.js"></script>
+                    <script type="text/javascript" src="../../MochiKit/Logging.js"></script>
+                    <!-- Import Admiral functions -->
+                    <script type="text/javascript" src="../../Admiral/admiral-base.js"></script>
+                    <script type="text/javascript" src="../../Admiral/Error.js"></script>
+                    <script type="text/javascript" src="../../Admiral/AsyncComputation.js"></script>
+                    <script>
+                        jQuery(document).ready( function ()
+                        {   var m = new admiral.AsyncComputation();
+                            m.eval(function(val,callback)
+                            {
+                              var datasetPath = "/admiral-test/datasets/"+"%(datasetUnzippedName)s";
+                              //log.debug("Dataset path: "+datasetPath);
+                              admiral.getDatasetDetails(datasetPath, callback);           
+                            });
+                            m.eval(function(details,callback)
+                            {   
+                                log.debug("Dataset version: "+details.state.currentversion)   
+                                log.debug("Date: "+details.submittedon)                                                   
+                                jQuery("#currentVersion").text( details.state.currentversion);
+                                subdate = details.state.date.match(/\d\d\d\d-\d\d-\d\d/)[0];
+                                //details.submittedon= subdate;
+                                jQuery("#lastModified").text(subdate);
+                            });    
+                            m.exec(null,admiral.noop);
+                        });
+                    </script>
                 </head>
                 
                 <body>
@@ -69,6 +100,11 @@ def datasetSummaryForm(formdata, outputstr):
                         <span><a href="/"><img alt="site_logo" src="../../images/ADMIRALogo96x96.png" border="0"/></a></span>
                     </div>
                     <h2>%(status)s</h2>
+                    <table name="submissionStatus" id = "submissionStatus" >
+                      <tr><td>Dataset Identifier</td><td> %(datasetUnzippedName)s</td></tr>
+                      <tr><td>Version number</td><td><span id="currentVersion">nn</span></td></tr>
+                      <tr><td>Date</td><td><span id="lastModified">yyyy-mm-dd</span></td></tr>
+                    </table>
                     <h3><a href="%(viewDatasetURL)s">View details of submitted ADMIRAL dataset - %(datasetUnzippedName)s</a></h3>
                     <h3><a href="%(resetURL)s" id="revised">Submit revised version of this dataset</a></h3>
                     <h3><a href="%(dataToolURL)s">Submit another ADMIRAL dataset to databank</a></h3>
