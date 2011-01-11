@@ -141,7 +141,7 @@ admiral.nestedListBuilder = function (baseUri, tree)
     }
     function appendTree(tree, jelem, rebuiltBaseUri)
     {
-       
+
   	    for (var i = 0 ; i < tree.length ; i++)
   	    {
             var leafNode = tree[i].segment;
@@ -164,7 +164,11 @@ admiral.nestedListBuilder = function (baseUri, tree)
             else
 	    	{
         	   // New branch here == new directory level
-        	      rebuiltBaseUri = rebuiltBaseUri.slice(1, rebuiltBaseUri.length);
+
+        	      if(rebuiltBaseUri.charAt(0) == "/")
+        	          rebuiltBaseUri = rebuiltBaseUri.slice(1, rebuiltBaseUri.length);
+       	          else
+        	          rebuiltBaseUri = rebuiltBaseUri.slice(0, rebuiltBaseUri.length);
                   if(rebuiltBaseUri!="")
         		   		 href = "<a class='links' href=\""+rebuiltBaseUri+"/"+leafNode+"\">"+leafNode+"</a>";
         		  else
@@ -179,6 +183,7 @@ admiral.nestedListBuilder = function (baseUri, tree)
     var jelem = jQuery("<ul class='filetree' />");
     // Append tree to list
     //alert("baseUri ="+baseUri+"\n ");
+
     appendTree(tree, jelem, baseUri);
     return jelem;
 };
