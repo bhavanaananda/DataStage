@@ -29,7 +29,7 @@ source /root/admiralconfig.d/admiralconfig.sh
 function generatesystemuser()
 {
     # $1 = users script name 
-    # $2 = new user password
+    # $2 = new user password suffix
     source $1
     password=$username-$2
     echo $username $userfullname $userrole $userroom $userphone $password
@@ -48,7 +48,7 @@ END
       fi
       smbldap-userinfo -f "$userfullname" -r "$userroom" -w "$userphone" $username
     
-      mv /home/$1 /home/$1-saved
+      mv /home/$username /home/$username-saved
       ln -s /mnt/lv-admiral-data/home/$username /home/$username
     
       # Set default file system access modes (overridden by access control lists)
@@ -87,9 +87,10 @@ END
       setfacl --recursive -m u:www-data:rwx /home/data/collab/$username
     
       # Copy access modes to default access modes
-      getfacl --access /home/data/private/$username | setfacl -d -M- /home/data/private/$username
-      getfacl --access /home/data/shared/$username  | setfacl -d -M- /home/data/shared/$username
-      getfacl --access /home/data/collab/$username  | setfacl -d -M- /home/data/collab/$username
+      # (@@Do these propagate down to subdirectories without the --recursive option?)
+      getfacl --access /home/data/private/$username | setfacl --recursive -d -M- /home/data/private/$username
+      getfacl --access /home/data/shared/$username  | setfacl --recursive -d -M- /home/data/shared/$username
+      getfacl --access /home/data/collab/$username  | setfacl --recursive -d -M- /home/data/collab/$username
     
       # Set up Apache access control configuration
       /root/createapacheuserconfig.sh $username
