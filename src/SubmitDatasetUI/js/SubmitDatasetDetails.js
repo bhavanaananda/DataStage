@@ -65,8 +65,9 @@ admiral.displayFormFieldsFromMetadata = function (directorySelected)
         var segtree  = admiral.segmentTreeBuilder(seglists);
         var seghtml  = admiral.nestedListBuilder(baseUri, segtree);
         jQuery("#dirtreelist").text("");
-        jQuery("#dirtreelist").append(seghtml);
-        seghtml.treeview();
+        jQuery("#dirtreelist").append(seghtml);     
+        seghtml.children("li").addClass("open");
+        seghtml.treeview({ collapsed: true });
         jQuery(".links").click( function()
         {  
            // Display all the form fields associated with the directory selected from the list           

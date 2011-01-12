@@ -126,7 +126,7 @@ admiral.displayDatasetManifest = function (datasetPath, datasetName, callback)
         var seghtml  = admiral.nestedListBuilder(baseUri, segtree);
         jQuery(".manifest").text("");
         jQuery(".manifest").append(seghtml);
-        seghtml.treeview();
+        seghtml.treeview({ collapsed: true });
     });
     // Kick off access to manifest data
     m.exec(datasetPath, callback);
