@@ -3,7 +3,7 @@
 # ADMIRAL system parameters
 # (see also apache-default and apache-default-ssl)
 
-source admiralRGLeader.sh
+source /root/admiralconfig.d/admiralRGLeader.sh
 
 RGLeaderGID=600
 RGMemberGID=601

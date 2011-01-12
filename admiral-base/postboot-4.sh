@@ -39,6 +39,6 @@ echo =================================
 echo "Next step: configure system users"
 echo =================================
 
-mkdir /root/admiralresearchgroupmembers
+mkdir -p /root/admiralconfig.d/admiralresearchgroupmembers
 
 # End.

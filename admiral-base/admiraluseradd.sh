@@ -1,6 +1,6 @@
 #!/bin/bash
 
-source admiralconfig.sh
+source /root/admiralconfig.d/admiralconfig.sh
 
 if [[ "$1" == "" || "$2" == "" || "$3" == "" ]]; then
   echo "Usage: $0 username fullname role [room number] [work phone] [password]"
@@ -31,8 +31,8 @@ END
   mv /home/$1 /home/$1-saved
   ln -s /mnt/lv-admiral-data/home/$1 /home/$1
 
-  # Create a record of the new user details in /root/admiralresearchgroupmembers
-  cat > /root/admiralresearchgroupmembers/$1.sh <<EOF
+  # Create a record of the new user details in /root/admiralconfig.d/admiralresearchgroupmembers
+  cat > /root/admiralconfig.d/admiralresearchgroupmembers/$1.sh <<EOF
 username="$1"
 userfullname="$2"
 userrole="$3"
@@ -61,8 +61,7 @@ EOF
 
   # User access
   setfacl -m u:$1:rwx /home/data/private/$1
-  setfacl -m u:$1:rwx /home/data/shared/$1
-  
+  setfacl -m u:$1:rwx /home/data/shared/$1  
   setfacl -m u:$1:rwx /home/data/collab/$1
 
   # Research group leader access

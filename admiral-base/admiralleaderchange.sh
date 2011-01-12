@@ -3,7 +3,7 @@
 # Using both -G and -g options to smbldap-usermod may seem like a belt and braces approach, but
 # I am unconvinced that either on their own does enough.
 
-source admiralRGLeader.sh
+source /root/admiralconfig.d/admiralRGLeader.sh
 
 if [[ 0 ]]; then
   echo "Current leader: $RGLeaderName"
@@ -22,6 +22,13 @@ elif [[ "$1" != "$RGLeaderName" ]]; then
   echo "This person ($1) is not the current Research Group Leader."
   echo "If you want to delete a Group Member please use the"
   echo "'admiraluserdel.sh' script instead."
+  exit 1
+elif [[ ! -e /root/admiralconfig.d/admiralresearchgroupmembers/$1 ]]; then
+  echo "This person ($1) is not a defined Research Group member."
+  echo "(The user configuration record is not consistent - please seek technical help)"
+  exit 1
+elif [[ ! -e /root/admiralconfig.d/admiralresearchgroupmembers/$2 ]]; then
+  echo "This person ($2) is not a defined Research Group member."
   exit 1
 else
   if [[ "$3" == "-d" ]]; then 
@@ -49,7 +56,7 @@ else
   chown -R $2:RGLeader /home/data/collab/$2
   chown -R $2:RGLeader /mnt/lv-admiral-data/home/$2
   
-  cat >/root/admiralRGLeader.sh <<EOF
+  cat >/root/admiralconfig.d/admiralRGLeader.sh <<EOF
 #!/bin/bash
 
 RGLeaderName=$2

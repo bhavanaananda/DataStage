@@ -1,6 +1,6 @@
 #!/bin/bash
 
-source admiralconfig.sh
+source /root/admiralconfig.d/admiralconfig.sh
 
 if [[ "$1" == "" ]]; then
   echo "Usage: $0 username [purge]"
@@ -41,7 +41,7 @@ else
 
   smbldap-userdel -r $1
   rm /etc/apache2/conf.d/user.$1
-  rm /root/admiralresearchgroupmembers/$1.sh
+  rm /root/admiralconfig.d/admiralresearchgroupmembers/$1.sh
 
 fi
 

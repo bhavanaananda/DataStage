@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# source admiralconfig.sh
+# source /root/admiralconfig.d/admiralconfig.sh
 
 echo ==========================================
 echo "Extract admiral tools from code repository"

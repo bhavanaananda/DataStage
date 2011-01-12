@@ -11,12 +11,12 @@ if [[ "$1" == "" ]]; then
     exit
 fi
  
-if [[ ! -e /root/admiralresearchgroupmembers/$1.sh ]]; then
+if [[ ! -e /root/admiralconfig.d/admiralresearchgroupmembers/$1.sh ]]; then
     echo "No such user: $1"
     exit
 fi
  
-source admiralconfig.sh
+source /root/admiralconfig.d/admiralconfig.sh
 
 function generateuserconfigfile()
 {
@@ -73,14 +73,14 @@ EOF
   chmod 644 /etc/apache2/conf.d/user.$username
 }
 
-# Process all user files in /root/admiralresearchgroupmembers
+# Process all user files in /root/admiralconfig.d/a/root/dmiralresearchgroupmembers
 
 if [[ "$1" == "all" ]]; then
-    for u in `ls /root/admiralresearchgroupmembers/*.sh`; do
+    for u in `ls /root/admiralconfig.d/admiralresearchgroupmembers/*.sh`; do
         generateuserconfigfile $u
     done
 else
-    generateuserconfigfile /root/admiralresearchgroupmembers/$1.sh    
+    generateuserconfigfile /root/admiralconfig.d/admiralresearchgroupmembers/$1.sh    
 fi
 
 # End.
