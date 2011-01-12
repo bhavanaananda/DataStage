@@ -43,7 +43,7 @@ postboot-3.sh /root/postboot-3.sh
 postboot-4.sh /root/postboot-4.sh
 lvmconfig.sh /root/lvmconfig.sh
 etcldap.conf /root/etcldap.conf
-admiralconfig.sh /root/admiralconfig.d/admiralconfig.sh
+admiralconfig.sh /root/admiralconfig.sh
 admiralRGLeader.sh /root/admiralRGLeader.sh
 admiraldatasetup.sh /root/admiraldatasetup.sh
 admiraltoolsetup.sh /root/admiraltoolsetup.sh
