@@ -23,11 +23,11 @@ elif [[ "$1" != "$RGLeaderName" ]]; then
   echo "If you want to delete a Group Member please use the"
   echo "'admiraluserdel.sh' script instead."
   exit 1
-elif [[ ! -e /root/admiralconfig.d/admiralresearchgroupmembers/$1 ]]; then
+elif [[ ! -e /root/admiralconfig.d/admiralresearchgroupmembers/$1.sh ]]; then
   echo "This person ($1) is not a defined Research Group member."
   echo "(The user configuration record is not consistent - please seek technical help)"
   exit 1
-elif [[ ! -e /root/admiralconfig.d/admiralresearchgroupmembers/$2 ]]; then
+elif [[ ! -e /root/admiralconfig.d/admiralresearchgroupmembers/$2.sh ]]; then
   echo "This person ($2) is not a defined Research Group member."
   exit 1
 else
