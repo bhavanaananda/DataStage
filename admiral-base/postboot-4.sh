@@ -15,13 +15,23 @@ if [[ "$1" == "test" ]]; then
   ln -s /mnt/lv-admiral-data/data /home/data
 fi
 
-mkdir -p /root/admiralconfig.d
-if [[ ! -e /root/admiralconfig.d/admiralconfig.sh ]]; then
-    cp /root/admiralconfig.sh /root/admiralconfig.d/admiralconfig.sh
-fi
-if [[ ! -e /root/admiralconfig.d/admiralRGLeader.sh ]]; then
-    cp /root/admiralRGLeader.sh /root/admiralconfig.d/admiralRGLeader.sh
-fi
+echo ===========================================
+echo "Create and populate configuration directory"
+echo ===========================================
+
+mkdir -p /mnt/lv-admiral-data/config
+ln -s /mnt/lv-admiral-data/config /root/admiralconfig.d
+
+for f in admiralconfig.sh admiralRGLeader.sh; do
+    ff=/mnt/lv-admiral-data/config/$f
+    if [[ -e "$ff" ]]; then
+        echo "Copying new version of $f as $ff-new  
+        cp -f /root/$f $ff-new
+    else
+        cp -f /root/$f $ff
+    fi
+done
+
 
 echo ========================
 echo "Installing ADMIRAL tools"
