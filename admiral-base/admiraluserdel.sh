@@ -28,6 +28,7 @@ else
     chown -R admiral-orphan:RGOrphan /home/data/shared/$1
     chown -R admiral-orphan:RGOrphan /home/data/collab/$1
     chown -R admiral-orphan:RGOrphan /mnt/lv-admiral-data/home/$1
+    # (-L tests for symlink ...)
     if [[ -L "/home/$1" ]]; then
       rm "/home/$1"
     elif [[ -e "/home/$1" ]]; then
