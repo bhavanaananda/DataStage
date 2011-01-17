@@ -23,7 +23,7 @@ def do_cifsMount(areaName, userName, userPass):
                      , 'mountpt': TestConfig.cifsmountpoint
                      , 'pass': userPass
                      } )
-    #print mountcommandUserB
+    print mountcommand
     status=os.system(mountcommand)
     return status
 
