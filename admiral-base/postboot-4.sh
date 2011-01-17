@@ -25,7 +25,7 @@ ln -s /mnt/lv-admiral-data/config /root/admiralconfig.d
 for f in admiralconfig.sh admiralRGLeader.sh; do
     ff=/mnt/lv-admiral-data/config/$f
     if [[ -e "$ff" ]]; then
-        echo "Copying new version of $f as $ff-new  
+        echo "Copying new version of $f as $ff-new"
         cp -f /root/$f $ff-new
     else
         cp -f /root/$f $ff
