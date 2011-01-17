@@ -87,7 +87,7 @@ for f in $FILELIST; do
                         -e "s/%{WORKGROUP}/$WORKGROUP/g" \
                         -e "s/%{IPADDR}/$IP/g" \
                         -e "s/%{LeaderName}/$LEADERNAME/g" \
-                        -e "s/%{MD5PASS}/$MD5PASSWD/g" \
+                        -e "s!%{MD5PASS}!$MD5PASSWD!g" \
                         -e "s/%{DATABANKHOST}/$DATABANKHOST/g" \
                         -e "s/%{DATABANKSILO}/$DATABANKSILO/g" \
                         <$f >$TGTDIR/$f3$f2
@@ -98,7 +98,7 @@ for f in $FILELIST; do
                         -e 's/%{WORKGROUP}/$WORKGROUP/g' \
                         -e 's/%{IPADDR}/$IP/g' \
                         -e 's/%{LeaderName}/$LEADERNAME/g' \
-                        -e 's/%{MD5PASS}/$MD5PASSWD/g' \
+                        -e 's!%{MD5PASS}!$MD5PASSWD!g' \
                         -e 's/%{DATABANKHOST}/$DATABANKHOST/g' \
                         -e 's/%{DATABANKSILO}/$DATABANKSILO/g' \
                         <$f >$TGTDIR/$f3$f2"
