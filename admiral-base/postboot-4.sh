@@ -19,6 +19,9 @@ mkdir -p /root/admiralconfig.d
 if [[ ! -e /root/admiralconfig.d/admiralconfig.sh ]]; then
     cp /root/admiralconfig.sh /root/admiralconfig.d/admiralconfig.sh
 fi
+if [[ ! -e /root/admiralconfig.d/admiralRGLeader.sh ]]; then
+    cp /root/admiralRGLeader.sh /root/admiralconfig.d/admiralRGLeader.sh
+fi
 
 echo ========================
 echo "Installing ADMIRAL tools"
