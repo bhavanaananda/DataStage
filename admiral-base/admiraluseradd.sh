@@ -12,6 +12,24 @@ if [[ -e "/home/$1" || -e "/mnt/lv-admiral-data/home/$1" ]]; then
   exit 1
 fi
 
+if [[ -e "/root/admiralconfig.d/admiralresearchgroupmembers/$1.sh" ]]; then
+  echo "User $1 configuration record already exists"
+  exit 1
+fi
+
+# --------
+# Create a record of the new user details in 
+# /root/admiralconfig.d/admiralresearchgroupmembers
+
+cat > /root/admiralconfig.d/admiralresearchgroupmembers/$1.sh <<EOF
+username="$1"
+userfullname="$2"
+userrole="$3"
+EOF
+
+# --------
+# Setup for research group members
+
 if [[ "$3" != "RGCollaborator" ]]; then
 
   # Create new user account
@@ -30,14 +48,6 @@ END
   cp -ax /home/$1 /mnt/lv-admiral-data/home/
   mv /home/$1 /home/$1-saved
   ln -s /mnt/lv-admiral-data/home/$1 /home/$1
-
-  # Create a record of the new user details in /root/admiralconfig.d/admiralresearchgroupmembers
-  cat > /root/admiralconfig.d/admiralresearchgroupmembers/$1.sh <<EOF
-username="$1"
-userfullname="$2"
-userrole="$3"
-
-EOF
 
   # Create directory areas for the new user
 
@@ -93,6 +103,9 @@ EOF
   /root/createapacheuserconfig.sh $1
 
 fi
+
+# --------
+# Setup for collaborator account
 
 if [[ "$3" == "RGCollaborator" ]]; then
 
