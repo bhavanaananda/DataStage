@@ -20,7 +20,9 @@ echo "Create and populate configuration directory"
 echo ===========================================
 
 mkdir -p /mnt/lv-admiral-data/config
-ln -s /mnt/lv-admiral-data/config /root/admiralconfig.d
+if [[ ! -e /root/admiralconfig.d ]]; then
+    ln -s /mnt/lv-admiral-data/config /root/admiralconfig.d
+fi
 
 for f in admiralconfig.sh admiralRGLeader.sh; do
     ff=/mnt/lv-admiral-data/config/$f
