@@ -10,10 +10,12 @@ if [[ "$1" == "" ]]; then
     echo ""
     exit
 fi
- 
-if [[ ! -e /root/admiralconfig.d/admiralresearchgroupmembers/$1.sh ]]; then
-    echo "No such user: $1"
-    exit
+
+if [[ "$1" != "all" ]]; then
+    if [[ ! -e /root/admiralconfig.d/admiralresearchgroupmembers/$1.sh ]]; then
+        echo "No such user: $1"
+        exit
+    fi
 fi
  
 source /root/admiralconfig.d/admiralconfig.sh
@@ -82,6 +84,12 @@ if [[ "$1" == "all" ]]; then
 else
     generateuserconfigfile /root/admiralconfig.d/admiralresearchgroupmembers/$1.sh    
 fi
+
+echo ==================================================================
+echo "Remember to restart Apache server to use the revised configuration"
+echo ==================================================================
+echo "# /etc/init.d/apache restart"
+echo
 
 # End.
   
