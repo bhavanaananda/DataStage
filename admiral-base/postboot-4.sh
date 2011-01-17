@@ -15,6 +15,11 @@ if [[ "$1" == "test" ]]; then
   ln -s /mnt/lv-admiral-data/data /home/data
 fi
 
+mkdir -p /root/admiralconfig.d
+if [[ ! -e /root/admiralconfig.d/admiralconfig.sh ]]; then
+    cp /root/admiralconfig.sh /root/admiralconfig.d/admiralconfig.sh
+fi
+
 echo ========================
 echo "Installing ADMIRAL tools"
 echo ========================
