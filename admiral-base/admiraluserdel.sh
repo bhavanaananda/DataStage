@@ -24,6 +24,9 @@ else
     
     rm /etc/apache2/conf.d/user.$1
     rm /root/admiralconfig.d/admiralresearchgroupmembers/$1.sh
+    rm /etc/apache2/conf.d/orphan.$1
+    rm /root/admiralconfig.d/admiralresearchgrouporphans/$1.sh
+    
     
   else
 

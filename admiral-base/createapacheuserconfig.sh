@@ -92,7 +92,7 @@ else
         usertype=orphan
         userdir=admiralresearchgrouporphans
     fi
-    generateuserconfigfile /root/admiralconfig.d/$userdir/$1.sh    
+    generateuserconfigfile /root/admiralconfig.d/$userdir/$1.sh $usertype  
 fi
 
 echo ==================================================================
