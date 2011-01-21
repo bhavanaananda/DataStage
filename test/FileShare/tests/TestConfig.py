@@ -19,6 +19,8 @@ class TestConfig:
     userApass        = "user1"
     userBname        = "TestUser2"
     userBpass        = "user2"
+    userDname        = "TestUserD"
+    userDpass        = "userd"
     userRGleadername = "TestLeader"
     userRGleaderpass = "leader"
     collabname       = "TestCollab"
