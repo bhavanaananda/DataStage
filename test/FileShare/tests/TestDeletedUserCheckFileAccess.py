@@ -298,16 +298,16 @@ class TestDeletedUserCheckFileAccess(unittest.TestCase):
             self.assertEqual(e.code, 401, "Operation should be 401 (auth failed), was: "+str(e))
             disallowed = True
         assert disallowed, "User A can read a file in User D's filespace by HTTP!"
-        returntestCollabReadUserDCIFSPrivateArea
+        return
 
 
     # Test RGLeader's access permission in User D's Private area, after user D is deleted   
     # RGLeader should be allowed access into User D's private area even after User D has been deleted
     def testRGLeaderReadUserDHTTPPrivateArea(self): 
         fileName = 'testDeletedUserFile.tmp'
-        fileContent= 'Deleted User Private file\n'
+        fileContent= 'Deleted User Private File\n'
         
-        readFileContent = self.httpReadFileAs('private',TestConfig.userDname, TestConfig.userRGleadername, TestConfig.userRGleadername, fileName)      
+        readFileContent = self.httpReadFileAs('private',TestConfig.userDname, TestConfig.userRGleadername, TestConfig.userRGleaderpass, fileName)      
         self.assertEqual(readFileContent,fileContent)   
         return
             
@@ -360,9 +360,9 @@ class TestDeletedUserCheckFileAccess(unittest.TestCase):
     # RGLeader should not be allowed access into User D's shared area
     def testRGLeaderReadUserDHTTPSharedArea(self): 
         fileName = 'testDeletedUserFile.tmp'
-        fileContent= 'Deleted User Shared file\n'
+        fileContent= 'Deleted User Shared File\n'
         
-        readFileContent = self.httpReadFileAs('shared',TestConfig.userDname, TestConfig.userRGleadername, TestConfig.userRGleadername, fileName)
+        readFileContent = self.httpReadFileAs('shared',TestConfig.userDname, TestConfig.userRGleadername, TestConfig.userRGleaderpass, fileName)
         self.assertEqual(readFileContent,fileContent)  
         return
             
@@ -414,9 +414,9 @@ class TestDeletedUserCheckFileAccess(unittest.TestCase):
     # RGLeader should be allowed access into User D's Collab area even after User D has been deleted
     def testRGLeaderReadUserDHTTPCollabArea(self): 
         fileName = 'testDeletedUserFile.tmp'
-        fileContent= 'Deleted User Collab file\n'
+        fileContent= 'Deleted User Collab File\n'
         
-        readFileContent = self.httpReadFileAs('collab',TestConfig.userDname, TestConfig.userRGleadername, TestConfig.userRGleadername, fileName)      
+        readFileContent = self.httpReadFileAs('collab',TestConfig.userDname, TestConfig.userRGleadername, TestConfig.userRGleaderpass, fileName)      
         self.assertEqual(readFileContent,fileContent)   
         return
             
