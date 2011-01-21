@@ -21,7 +21,10 @@ else
     rm -rf "/home/$1"
     rm -rf "/home/$1-saved"
     rm -rf "/home/$1-deleted"
-
+    
+    rm /etc/apache2/conf.d/user.$1
+    rm /root/admiralconfig.d/admiralresearchgroupmembers/$1.sh
+    
   else
 
     chown -R admiral-orphan:RGOrphan /home/data/private/$1
@@ -37,13 +40,13 @@ else
     if [[ -e "/home/$1-saved" ]]; then
       mv /home/$1-saved /home/$1
     fi
-
+  
+    mv /etc/apache2/conf.d/user.$1 /etc/apache2/conf.d/orphan.$1
+    mv /root/admiralconfig.d/admiralresearchgroupmembers/$1.sh /root/admiralconfig.d/admiralresearchgrouporphans/
   fi
-
+   
   smbldap-userdel -r $1
-  rm /etc/apache2/conf.d/user.$1
-  rm /root/admiralconfig.d/admiralresearchgroupmembers/$1.sh
-
+ 
 fi
 
 # End.

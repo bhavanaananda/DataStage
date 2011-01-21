@@ -2,8 +2,8 @@
 
 if [[ "$1" == "" ]]; then
     echo "Usage:"
-    echo "  $0 username"
-    echo "      Generate Apache access configuration for named user" 
+    echo "  $0 username [orphan]" 
+    echo "      Generate Apache access configuration for named user (or deleted user)" 
     echo ""
     echo "  $0 all"
     echo "      Generate Apache access configuration for all configured ADMIRAL users" 
@@ -23,13 +23,14 @@ source /root/admiralconfig.d/admiralconfig.sh
 function generateuserconfigfile()
 {
     # $1 = users script name
+    # $2 = "user" / "orphan"
  
     source $1
     echo $username $userfullname $userrole
     
     # Set up Apache access control configuration
 
-  cat << EOF > /etc/apache2/conf.d/user.$username
+  cat << EOF > /etc/apache2/conf.d/$2.$username
 <Location /data/private/$username>
     Order Deny,Allow
     Allow from all
@@ -71,18 +72,27 @@ function generateuserconfigfile()
 </Location>
 
 EOF
-  chown root:root /etc/apache2/conf.d/user.$username
-  chmod 644 /etc/apache2/conf.d/user.$username
+  chown root:root /etc/apache2/conf.d/$2.$username
+  chmod 644 /etc/apache2/conf.d/$2.$username
 }
 
-# Process all user files in /root/admiralconfig.d/a/root/dmiralresearchgroupmembers
+# Process all user files in /root/admiralconfig.d/a/root/admiralresearchgroupmembers
 
 if [[ "$1" == "all" ]]; then
     for u in `ls /root/admiralconfig.d/admiralresearchgroupmembers/*.sh`; do
-        generateuserconfigfile $u
+        generateuserconfigfile $u user
+    done
+    for u in `ls /root/admiralconfig.d/admiralresearchgrouporphans/*.sh`; do
+        generateuserconfigfile $u orphan
     done
 else
-    generateuserconfigfile /root/admiralconfig.d/admiralresearchgroupmembers/$1.sh    
+    usertype=user
+    userdir=admiralresearchgroupmembers
+    if [[ "$2" == "orphan" ]]; then
+        usertype=orphan
+        userdir=admiralresearchgrouporphans
+    fi
+    generateuserconfigfile /root/admiralconfig.d/$userdir/$1.sh    
 fi
 
 echo ==================================================================

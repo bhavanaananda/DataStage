@@ -31,23 +31,6 @@ elif [[ ! -e /root/admiralconfig.d/admiralresearchgroupmembers/$2.sh ]]; then
   echo "This person ($2) is not a defined Research Group member."
   exit 1
 else
-  if [[ "$3" == "-d" ]]; then 
-    # Old RGLeader leaving/no longer research-active/died
-    chown -R $2:RGLeader /home/data/private/$1
-    chown -R $2:RGLeader /home/data/shared/$1
-    chown -R $2:RGLeader /home/data/collab/$1
-    chown -R $2:RGLeader /mnt/lv-admiral-data/home/$1
-    smbldap-userdel -r $1
-    rm -rf /home/$1-saved
-    rm /etc/apache2/conf.d/user.$1
-  else
-    # Old RGLeader doesn't want administrative hassle, but remains valid member of research group
-    smbldap-usermod -G RGMember -g 601 $1
-    chown -R $1:RGMember /home/data/private/$1
-    chown -R $1:RGMember /home/data/shared/$1
-    chown -R $1:RGMember /home/data/collab/$1
-    chown -R $1:RGMember /mnt/lv-admiral-data/home/$1
-  fi
 
   # Appoint new RGLeader
   smbldap-usermod -G RGLeader -g 600 $2
@@ -63,8 +46,20 @@ RGLeaderName=$2
 
 EOF
 
-# Regenerate the apache user access control files
-  
+  # Adjust status of old RG leader
+  if [[ "$3" == "-d" ]]; then 
+    # Old RGLeader leaving/no longer research-active/died
+    /root/admiraluserdel.sh $1
+  else
+    # Old RGLeader doesn't want administrative hassle, but remains valid member of research group
+    smbldap-usermod -G RGMember -g 601 $1
+    chown -R $1:RGMember /home/data/private/$1
+    chown -R $1:RGMember /home/data/shared/$1
+    chown -R $1:RGMember /home/data/collab/$1
+    chown -R $1:RGMember /mnt/lv-admiral-data/home/$1
+  fi
+
+  # Regenerate the apache user access control files
   /root/createapacheuserconfig.sh all
 
 fi

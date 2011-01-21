@@ -17,6 +17,11 @@ if [[ -e "/root/admiralconfig.d/admiralresearchgroupmembers/$1.sh" ]]; then
   exit 1
 fi
 
+if [[ -e "/root/admiralconfig.d/admiralresearchgrouporphans/$1.sh" ]]; then
+  echo "Deleted user $1 configuration record already exists"
+  exit 1
+fi
+
 # --------
 # Create a record of the new user details in 
 # /root/admiralconfig.d/admiralresearchgroupmembers

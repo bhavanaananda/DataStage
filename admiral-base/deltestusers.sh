@@ -1,5 +1,6 @@
-./admiraluserdel.sh TestUser1
-./admiraluserdel.sh TestUser2
-./admiraluserdel.sh TestLeader
-./admiraluserdel.sh TestCollab
+./admiraluserdel.sh TestUser1 purge
+./admiraluserdel.sh TestUser2 purge
+./admiraluserdel.sh TestLeader purge
+./admiraluserdel.sh TestCollab purge
+./admiraluserdel.sh TestUserD purge
 

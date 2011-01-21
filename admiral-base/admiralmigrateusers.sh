@@ -26,6 +26,59 @@ fi
  
 source /root/admiralconfig.d/admiralconfig.sh
 
+function setdataownerandaccess()
+{
+    # $1 is name of user data directories
+    # $2 is the data owner name
+    # $3 is the data owner role name (group)
+
+    datadir=$1
+    username=$2
+    userrole=$3
+
+    # Set default file system access modes (overridden by access control lists)
+  
+    chown --recursive $username:$userrole /home/data/private/$datadir
+    chown --recursive $username:$userrole /home/data/shared/$datadir
+    chown --recursive $username:$userrole /home/data/collab/$datadir
+  
+    # Set access control lists on new user directories
+  
+    # remove previous ACLs
+    setfacl --recursive --remove-all /home/data/private/$datadir
+    setfacl --recursive --remove-all /home/data/shared/$datadir
+    setfacl --recursive --remove-all /home/data/collab/$datadir
+  
+    # User access
+    setfacl --recursive -m u:$username:rwx /home/data/private/$datadir
+    setfacl --recursive -m u:$username:rwx /home/data/shared/$datadir
+    setfacl --recursive -m u:$username:rwx /home/data/collab/$datadir
+  
+    # Research group leader access
+    setfacl --recursive -m g:RGLeader:rx /home/data/private/$datadir
+    setfacl --recursive -m g:RGLeader:rx /home/data/shared/$datadir
+    setfacl --recursive -m g:RGLeader:rx /home/data/collab/$datadir
+  
+    # Research group member access
+    setfacl --recursive -m g:RGMember:rx /home/data/shared/$datadir
+    setfacl --recursive -m g:RGMember:rx /home/data/collab/$datadir
+  
+    # Research group collaborator access
+    setfacl --recursive -m g:RGCollaborator:rx /home/data/collab/$datadir
+  
+    # Web server access
+    setfacl --recursive -m u:www-data:rwx /home/data/private/$datadir
+    setfacl --recursive -m u:www-data:rwx /home/data/shared/$datadir
+    setfacl --recursive -m u:www-data:rwx /home/data/collab/$datadir
+  
+    # Copy access modes to default access modes
+    # (@@Do these propagate down to subdirectories without the --recursive option?)
+    getfacl --access /home/data/private/$datadir | setfacl --recursive -d -M- /home/data/private/$datadir
+    getfacl --access /home/data/shared/$datadir  | setfacl --recursive -d -M- /home/data/shared/$datadir
+    getfacl --access /home/data/collab/$datadir  | setfacl --recursive -d -M- /home/data/collab/$datadir
+    
+}
+
 function generatesystemuser()
 {
     # $1 = users script name 
@@ -51,46 +104,8 @@ END
       mv /home/$username /home/$username-saved
       ln -s /mnt/lv-admiral-data/home/$username /home/$username
     
-      # Set default file system access modes (overridden by access control lists)
-    
-      chown --recursive $username:$userrole /home/data/private/$username
-      chown --recursive $username:$userrole /home/data/shared/$username
-      chown --recursive $username:$userrole /home/data/collab/$username
-    
-      # Set access control lists on new user directories
-    
-      # remove previous ACLs
-      setfacl --recursive --remove-all /home/data/private/$username
-      setfacl --recursive --remove-all /home/data/shared/$username
-      setfacl --recursive --remove-all /home/data/collab/$username
-    
-      # User access
-      setfacl --recursive -m u:$username:rwx /home/data/private/$username
-      setfacl --recursive -m u:$username:rwx /home/data/shared/$username
-      setfacl --recursive -m u:$username:rwx /home/data/collab/$username
-    
-      # Research group leader access
-      setfacl --recursive -m g:RGLeader:rx /home/data/private/$username
-      setfacl --recursive -m g:RGLeader:rx /home/data/shared/$username
-      setfacl --recursive -m g:RGLeader:rx /home/data/collab/$username
-    
-      # Research group member access
-      setfacl --recursive -m g:RGMember:rx /home/data/shared/$username
-      setfacl --recursive -m g:RGMember:rx /home/data/collab/$username
-    
-      # Research group collaborator access
-      setfacl --recursive -m g:RGCollaborator:rx /home/data/collab/$username
-    
-      # Web server access
-      setfacl --recursive -m u:www-data:rwx /home/data/private/$username
-      setfacl --recursive -m u:www-data:rwx /home/data/shared/$username
-      setfacl --recursive -m u:www-data:rwx /home/data/collab/$username
-    
-      # Copy access modes to default access modes
-      # (@@Do these propagate down to subdirectories without the --recursive option?)
-      getfacl --access /home/data/private/$username | setfacl --recursive -d -M- /home/data/private/$username
-      getfacl --access /home/data/shared/$username  | setfacl --recursive -d -M- /home/data/shared/$username
-      getfacl --access /home/data/collab/$username  | setfacl --recursive -d -M- /home/data/collab/$username
+      # Set user data area owner and ACLs
+      setdataownerandaccess $username $username $userrole
     
       # Set up Apache access control configuration
       /root/createapacheuserconfig.sh $username
@@ -118,6 +133,9 @@ END
 if [[ "$1" == "all" ]]; then
     for u in `ls /root/admiralconfig.d/admiralresearchgroupmembers/*.sh`; do
         generatesystemuser $u $2
+    done
+    for u in `ls /root/admiralconfig.d/admiralresearchgrouporphans/*.sh`; do
+        setdataownerandaccess $u admiral-orphan RGOrphan
     done
 elif [[ -e "/root/admiralconfig.d/admiralresearchgroupmembers/$1.sh" ]]; then
     generatesystemuser /root/admiralconfig.d/admiralresearchgroupmembers/$1.sh    
