@@ -23,7 +23,7 @@ fi
 source /root/admiralconfig.d/admiralconfig.sh
 source /root/admiralusermanagement.sh
 
-generateuserrecord $1 $2 $3 $4 $5
+generateuserrecord "$1" "$2" "$3" "$4" "$5"
 generatesystemuser /root/admiralconfig.d/admiralresearchgroupmembers/$1.sh $6
 generatesystemuserhomedir $1
 

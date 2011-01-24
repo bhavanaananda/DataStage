@@ -91,9 +91,9 @@ END
     if [[ "$userrole" != "RGCollaborator" ]]; then
         # Create ADMIRAL working directory areas for the new user
         # if they don't already exist
-        mkdir -p /home/data/private/$1
-        mkdir -p /home/data/shared/$1
-        mkdir -p /home/data/collab/$1
+        mkdir -p /home/data/private/$username
+        mkdir -p /home/data/shared/$username
+        mkdir -p /home/data/collab/$username
       
         # Set user data area owner and ACLs
         setdataownerandaccess $username $username $userrole
