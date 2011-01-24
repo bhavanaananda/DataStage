@@ -35,7 +35,7 @@ source $HOSTNAME/hostconfig.sh
 SRCDIR="."
 TGTDIR="/var/kvm/$HOSTNAME"
 BLACKLISTPATTERN="^(.*~|.*\\.(tmp|bak)|a1\.sh|copywithhostandpassword\.sh)$"
-FILELIST="`ls -1 --directory --ignore-backups --file-type * ldapconfig/* www/* www/*/* $HOSTNAME/* $HOSTNAME/*/* $HOSTNAME/*/*/*`"
+FILELIST="`ls -1 --directory --ignore-backups --file-type * ldapconfig/* www/* www/*/* $HOSTNAME/* $HOSTNAME/*/*`"
 REPORT="echo"
 REPORT=":"
 MD5PASSWD=`slappasswd -h {MD5} -s $PASSWORD`
