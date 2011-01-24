@@ -74,7 +74,7 @@ function generatesystemuser()
     # $2 = new user password
     source $1
     password=$2
-    echo $username $userfullname $userrole $userroom $userphone $password
+    echo $username \"$userfullname\" $userrole \"$userroom\" \"$userphone\" $password
 
     # Create new user account
     if [[ "$password" == "" ]]; then
@@ -109,13 +109,15 @@ function generatesystemuserhomedir()
 
     # if no home directory on target data volume, copy home directory there
     if [[ ! -e /mnt/lv-admiral-data/home/$1 ]]; then
+        echo "Copy directory tree /home/$1 to /mnt/lv-admiral-data/home/"
         cp -ax /home/$1 /mnt/lv-admiral-data/home/
     fi
 
     # if home directory exists and is not a symlink, rename as saved copy and create link
-    if [[ -e /home/${1} ]]; then
-        if [[ ! -h /home/${1} ]]; then    # if not symlink
-            mv /home/$1 /home/${1}-saved
+    if [[ -e /home/$1 ]]; then
+        if [[ ! -h /home/$1 ]]; then    # if not symlink
+            echo "Save and symlink directory /home/$1 to /mnt/lv-admiral-data/home/$1"
+            mv /home/$1 /home/$1-saved
             ln -s /mnt/lv-admiral-data/home/$1
         fi
     fi

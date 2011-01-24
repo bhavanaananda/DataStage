@@ -13,7 +13,7 @@ if [[ "$1" == "" ]]; then
     exit
 fi
 
-if [[ "$1" == "all"]]; then
+if [[ "$1" == "all" ]]; then
     if [[ "$2" == "" ]]; then
         echo "Provide password suffix when regenerating all user accounts"
     fi
@@ -35,15 +35,26 @@ if [[ "$1" == "all" ]]; then
         #@@TODO: save password hash with user record; use this to reinstate?
         #        (problem: may make user susceptible to dictionary attack, etc.)
         source $u
+        echo "Migrate user $username..."
         password=$username-$2
         generatesystemuser $u $password
-        generatesystemuserhomedir $u
+        generatesystemuserhomedir $username
+        echo "Migrate user $username done."
     done
+
     for u in `ls /root/admiralconfig.d/admiralresearchgrouporphans/*.sh`; do
-        setdataownerandaccess $u admiral-orphan RGOrphan
+        source $u
+        echo "Orphan user $username..."
+        setdataownerandaccess $username admiral-orphan RGOrphan
+        echo "Orphan user $username done."
     done
+
 elif [[ -e "/root/admiralconfig.d/admiralresearchgroupmembers/$1.sh" ]]; then
+    echo "Migrate designated user $1"
     generatesystemuser /root/admiralconfig.d/admiralresearchgroupmembers/$1.sh    
+    generatesystemuserhomedir $1
+    echo "Migrate user $1 done."
+
 else
     echo "No such user ($1)"
 fi
