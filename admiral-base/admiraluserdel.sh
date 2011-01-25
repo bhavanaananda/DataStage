@@ -22,11 +22,10 @@ else
     rm -rf "/home/$1-saved"
     rm -rf "/home/$1-deleted"
     
-    rm /etc/apache2/conf.d/user.$1
-    rm /root/admiralconfig.d/admiralresearchgroupmembers/$1.sh
-    rm /etc/apache2/conf.d/orphan.$1
-    rm /root/admiralconfig.d/admiralresearchgrouporphans/$1.sh
-    
+    rm -f /etc/apache2/conf.d/user.$1
+    rm -f /root/admiralconfig.d/admiralresearchgroupmembers/$1.sh
+    rm -f /etc/apache2/conf.d/orphan.$1
+    rm -f /root/admiralconfig.d/admiralresearchgrouporphans/$1.sh
     
   else
 

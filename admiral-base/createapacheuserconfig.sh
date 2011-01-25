@@ -98,7 +98,7 @@ fi
 echo ==================================================================
 echo "Remember to restart Apache server to use the revised configuration"
 echo ==================================================================
-echo "# /etc/init.d/apache restart"
+echo "# /etc/init.d/apache2 restart"
 echo
 
 # End.

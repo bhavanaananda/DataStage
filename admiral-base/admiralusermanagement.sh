@@ -31,6 +31,10 @@ function setdataownerandaccess()
     chown --recursive $username:$userrole /home/data/shared/$datadir
     chown --recursive $username:$userrole /home/data/collab/$datadir
   
+    chmod --recursive u=rwx,g=,o= /home/data/private/$datadir
+    chmod --recursive u=rwx,g=,o= /home/data/shared/$datadir
+    chmod --recursive u=rwx,g=,o= /home/data/collab/$datadir
+  
     # Set access control lists on new user directories
   
     # remove previous ACLs
@@ -65,7 +69,6 @@ function setdataownerandaccess()
     getfacl --access /home/data/private/$datadir | setfacl --recursive -d -M- /home/data/private/$datadir
     getfacl --access /home/data/shared/$datadir  | setfacl --recursive -d -M- /home/data/shared/$datadir
     getfacl --access /home/data/collab/$datadir  | setfacl --recursive -d -M- /home/data/collab/$datadir
-    
 }
 
 function generatesystemuser()
@@ -118,7 +121,7 @@ function generatesystemuserhomedir()
         if [[ ! -h /home/$1 ]]; then    # if not symlink
             echo "Save and symlink directory /home/$1 to /mnt/lv-admiral-data/home/$1"
             mv /home/$1 /home/$1-saved
-            ln -s /mnt/lv-admiral-data/home/$1
+            ln -s /mnt/lv-admiral-data/home/$1 /home/$1
         fi
     fi
 }
