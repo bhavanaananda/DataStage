@@ -63,6 +63,7 @@ mkdir -p /root/admiralconfig.d/admiralresearchgroupmembers
 mkdir -p /root/admiralconfig.d/admiralresearchgrouporphans
 
 source /root/admiralconfig.d/admiralRGLeader.sh
-echo "Remember to create a user account for $RGLeaderName with role RGLeader"
+echo "Create a user account for $RGLeaderName with role RGLeader"
+/root/admiraluseradd.sh $RGLeaderName "$RGLeaderName" RGLeader 
 
 # End.

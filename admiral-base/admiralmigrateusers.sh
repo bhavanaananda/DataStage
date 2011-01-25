@@ -10,12 +10,17 @@ if [[ "$1" == "" ]]; then
     echo "      Each user gets a password of the form 'username-password',"
     echo "      which they should change on first login." 
     echo ""
+    echo "  $0 fileaccess"
+    echo "      Scan all files for configured ADMIRAL users and set file " 
+    echo "      ownership and permissions."
+    echo ""
     exit
 fi
 
 if [[ "$1" == "all" ]]; then
     if [[ "$2" == "" ]]; then
         echo "Provide password suffix when regenerating all user accounts"
+        exit
     fi
 else
     if [[ ! -e /root/admiralconfig.d/admiralresearchgroupmembers/$1.sh ]]; then
@@ -48,6 +53,20 @@ if [[ "$1" == "all" ]]; then
         setdataownerandaccess $username admiral-orphan RGOrphan
         echo "Orphan user $username done."
     done
+    
+elif [[ "$1" == "fileaccess" ]]; then
+    for u in `ls /root/admiralconfig.d/admiralresearchgroupmembers/*.sh`; do       
+        source $u
+        echo "Set file access for user $username..."
+        setdataownerandaccess $username $username $userrole
+    done
+
+    for u in `ls /root/admiralconfig.d/admiralresearchgrouporphans/*.sh`; do
+        source $u
+        echo "Set file access for orphan $username..."
+        setdataownerandaccess $username admiral-orphan RGOrphan
+    done
+
 
 elif [[ -e "/root/admiralconfig.d/admiralresearchgroupmembers/$1.sh" ]]; then
     echo "Migrate designated user $1"
