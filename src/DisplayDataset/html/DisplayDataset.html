@@ -92,10 +92,12 @@
             jQuery("#datasetUnpackedName").text(datasetName);          
 
             var m = new admiral.AsyncComputation();
-            m.eval(function (val, callback)
-            {
-               admiral.displayDatasetStatus(dataSet, callback);
-            });
+            
+            // m.eval(function (val, callback)
+            // {
+            //    admiral.displayDatasetStatus(dataSet, callback);
+            // });
+            
             m.eval(function (val, callback)
             {
                admiral.displayDatasetManifest(dataSet, datasetName, callback);
