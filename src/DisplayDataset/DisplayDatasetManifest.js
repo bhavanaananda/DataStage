@@ -40,7 +40,7 @@ admiral.displayDatasetManifest = function (datasetPath, datasetName, callback)
         jQuery(".manifest").text("Fetching manifest...");
         jQuery.ajax({
             type:         "GET",
-            url:          val,
+            url:           val,
             username:     "admiral",
             password:     "admiral",
             dataType:     "xml",
@@ -89,14 +89,39 @@ admiral.displayDatasetManifest = function (datasetPath, datasetName, callback)
         var subdate           = "";
         var fileAbsolutePaths = new Array();
         var fileRelativePaths = new Array();
-
-        rq.each(function ()
+        
+        jQuery("#pageLoadStatus").text("");
+        
+        rq.each(function () 
         {
+            if (this.p.value.toString()=="http://purl.org/dc/terms/identifier")
+            { 
+                jQuery("#datasetName").text(this.o.value.toString());
+            } 
+            
+            if (this.p.value.toString()=="http://purl.org/dc/terms/creator")
+            { 
+                jQuery("#createdBy").text(this.o.value.toString());
+            } 
+            
             if (this.p.value.toString()=="http://purl.org/dc/terms/isVersionOf")
             {
-				jQuery("#derivedFrom > a").text(this.o.value.toString());
-				jQuery("#derivedFrom > a").attr("href", this.o.value.toString());
+        				jQuery("#derivedFrom > a").text(this.o.value.toString());
+        				jQuery("#derivedFrom > a").attr("href", this.o.value.toString());
             } 
+           
+            if (this.p.value.toString()=="http://vocab.ox.ac.uk/dataset/schema#currentVersion")
+            {
+                jQuery("#currentVersion").text(this.o.value.toString());
+              
+            }
+            
+               if (this.p.value.toString()=="http://vocab.ox.ac.uk/dataset/schema#embargoedUntil")
+            {
+                subdate = this.o.value.match(/\d\d\d\d-\d\d-\d\d/)[0];
+                jQuery("#embargoExpiryDate").text(subdate);
+              
+            }
             
             else if (this.p.value.toString()=="http://purl.org/dc/terms/title")
             {
