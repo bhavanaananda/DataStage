@@ -53,11 +53,11 @@
     <script type="text/javascript" src="../../Admiral/AsyncComputation.js"></script>
 
     <!-- Import dataset information display code -->
-    <script type="text/javascript" src="../DatasetTree.js"></script>
+    <script type="text/javascript" src="../DatasetTree.js"></sdatasetdetailscript>
     <link rel="stylesheet" href="../css/DisplayDataset.css" type="text/css" />
     <script type="text/javascript" src="../DisplayDatasetStatus.js"></script>
     <script type="text/javascript" src="../DisplayDatasetManifest.js"></script>
-
+    <script type="text/javascript" src="../DatasetManifestDictionary.js"></script>
     <script>
     // Use jQuery via jQuery(...)
       jQuery.noConflict();
@@ -83,7 +83,7 @@
         else
         {
             datasetName = datasetName.slice(1);     // Remove '#'
-            var dataSet = "/admiral-test/datasets/"+datasetName;
+            var dataSetPath = "/admiral-test/datasets/"+datasetName;
             var unpackedLink = "/admiral-test/datasets/"+datasetName;
             var packedLink = "/admiral-test/datasets/"+datasetName+"-packed";
             jQuery("#unpackedLink").attr('href', unpackedLink);  
@@ -93,14 +93,35 @@
 
             var m = new admiral.AsyncComputation();
             
-            // m.eval(function (val, callback)
-            // {
-            //    admiral.displayDatasetStatus(dataSet, callback);
-            // });
-            
             m.eval(function (val, callback)
             {
-               admiral.displayDatasetManifest(dataSet, datasetName, callback);
+               admiral.datasetManifestDictionary(dataSetPath,datasetName, callback);
+            });
+            
+            m.eval(function (datasetdetails, callback)
+            {   
+                jQuery("#pageLoadStatus").text("");
+                jQuery("#datasetName").text(datasetdetails.datasetName);
+                jQuery("#createdBy").text(datasetdetails.createdBy);
+                jQuery("#derivedFrom > a").text(datasetdetails.derivedFrom);
+                jQuery("#derivedFrom > a").attr("href", datasetdetails.derivedFrom);
+                jQuery("#currentVersion").text(datasetdetails.currentVersion);
+                jQuery("#embargoExpiryDate").text(datasetdetails.embargoExpiryDate);
+                jQuery("#title").text(datasetdetails.title);
+                jQuery("#lastModified").text(datasetdetails.lastModified);
+                jQuery("#description").text(datasetdetails.description);
+                jQuery(".manifest").text("");
+                
+                callback(datasetdetails);        
+            });
+            m.eval(function(datasetdetails, callback)
+            {
+                var seglists = admiral.segmentPaths(datasetdetails.fileRelativePaths.sort());
+                var segtree  = admiral.segmentTreeBuilder(seglists);
+                var seghtml  = admiral.nestedListBuilder(datasetdetails.baseUri, segtree);
+                jQuery(".manifest").append(seghtml);
+                seghtml.treeview({ collapsed: true }); 
+            
             });
             m.exec(null, admiral.noop);
         }
