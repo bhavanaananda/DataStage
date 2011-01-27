@@ -135,7 +135,7 @@ admiral.datasetManifestDictionary = function (datasetPath, datasetName, callback
             else if (this.p.value.toString()=="http://purl.org/dc/terms/modified")
             {
               subdate = this.o.value.match(/\d\d\d\d-\d\d-\d\d/)[0];
-              datasetdetails.lastModified = this.o.value.toString();  
+              datasetdetails.lastModified = subdate;  
             }
             
             else if (this.p.value.toString()=="http://www.openarchives.org/ore/terms/aggregates")

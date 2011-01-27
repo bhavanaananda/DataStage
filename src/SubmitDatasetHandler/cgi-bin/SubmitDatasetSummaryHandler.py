@@ -62,7 +62,20 @@ def datasetSummaryForm(formdata, outputstr):
             <html>
                 <head>
                     <script type="text/javascript" src="../../jQuery/js/jquery-1.4.2.js"></script>
-                    <script type="text/javascript" src="../../SelectDataset/GetDatasetDetails.js"></script>
+                    <script type="text/javascript" src="../../DisplayDataset/DatasetManifestDictionary.js"></script>
+                    <!-- import rdfquery libraries -->
+                    <script type="text/javascript" src="../../rdfquery/jquery.uri.js"></script>
+                    <script type="text/javascript" src="../../rdfquery/jquery.xmlns.js"></script>
+                    <script type="text/javascript" src="../../rdfquery/jquery.curie.js"></script>
+                    <script type="text/javascript" src="../../rdfquery/jquery.datatype.js"></script>
+                    <script type="text/javascript" src="../../rdfquery/jquery.rdf.js"></script>
+                    <script type="text/javascript" src="../../rdfquery/jquery.rdfa.js"></script>
+                    <script type="text/javascript" src="../../rdfquery/jquery.datatype.js"></script>
+                    <script type="<div>
+                    <span><a href="/"><img alt="site_logo" src="../../images/ADMIRALogo96x96.png" border="0"/></a></span>
+                    </div>text/javascript" src="../../rdfquery/jquery.rdf.json.js"></script>
+                    <script type="text/javascript" src="../../rdfquery/jquery.rdf.xml.js"></script>
+                    <script type="text/javascript" src="../../rdfquery/jquery.rdf.turtle.js"></script>               
                     <!-- Import MochiKit modules: require MochiKit library functions to be fully qualified -->
                     <script type="text/javascript">MochiKit = {__export__: false};</script>
                     <script type="text/javascript" src="../../MochiKit/Base.js"></script>
@@ -72,23 +85,19 @@ def datasetSummaryForm(formdata, outputstr):
                     <script type="text/javascript" src="../../Admiral/admiral-base.js"></script>
                     <script type="text/javascript" src="../../Admiral/Error.js"></script>
                     <script type="text/javascript" src="../../Admiral/AsyncComputation.js"></script>
+                    
                     <script>
                         jQuery(document).ready( function ()
                         {   var m = new admiral.AsyncComputation();
                             m.eval(function(val,callback)
-                            {
-                              var datasetPath = "/admiral-test/datasets/"+"%(datasetUnzippedName)s";
-                              //log.debug("Dataset path: "+datasetPath);
-                              admiral.getDatasetDetails(datasetPath, callback);           
+                            { var datasetName = "%(datasetUnzippedName)s";
+                              var datasetPath = "/admiral-test/datasets/"+datasetName;
+                              admiral.datasetManifestDictionary(datasetPath,datasetName, callback);         
                             });
-                            m.eval(function(details,callback)
-                            {   
-                                log.debug("Dataset version: "+details.state.currentversion)   
-                                log.debug("Date: "+details.submittedon)                                                   
-                                jQuery("#currentVersion").text( details.state.currentversion);
-                                subdate = details.state.date.match(/\d\d\d\d-\d\d-\d\d/)[0];
-                                //details.submittedon= subdate;
-                                jQuery("#lastModified").text(subdate);
+                            m.eval(function(datasetdetails,callback)
+                            {                                                     
+                                jQuery("#currentVersion").text(datasetdetails.currentVersion);
+                                jQuery("#lastModified").text(datasetdetails.lastModified);
                             });    
                             m.exec(null,admiral.noop);
                         });
