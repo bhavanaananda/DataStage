@@ -32,14 +32,14 @@ if (typeof admiral == "undefined")
  */
 admiral.datasetManifestDictionary = function (datasetPath, datasetName, callback)
 {
-    log.debug("admiral.displayDatasetManifest "+datasetPath+", "+datasetName);
+    //log.debug("admiral.datasetManifestDictionary datasetPath="+datasetPath+",   datasetName="+datasetName);
     var m = new admiral.AsyncComputation();
     var datasetdetails = {};
 
     // Read manifest RDF/XML
     m.eval(function (val, callback)
     {
-        jQuery(".manifest").text("Fetching manifest...");
+       
         jQuery.ajax({
             type:         "GET",
             url:           val,
@@ -51,7 +51,7 @@ admiral.datasetManifestDictionary = function (datasetPath, datasetName, callback
                     xhr.setRequestHeader("Accept", "application/rdf+xml");
                 },
             success:      function (data, status, xhr)
-                {
+                {   //log.debug("still loading...");
                     callback(data);
                 },
             error:        function (xhr, status) 
@@ -66,7 +66,7 @@ admiral.datasetManifestDictionary = function (datasetPath, datasetName, callback
     // Create RDFquery databank
     m.eval(function (data, callback)
     {
-        jQuery(".manifest").text("Decoding manifest...");
+      
         try
         {
             var databank = jQuery.rdf.databank();
@@ -151,6 +151,7 @@ admiral.datasetManifestDictionary = function (datasetPath, datasetName, callback
         }); 
 
         callback(datasetdetails);
+        
     });
     // Kick off access to manifest data
     m.exec(datasetPath, callback);

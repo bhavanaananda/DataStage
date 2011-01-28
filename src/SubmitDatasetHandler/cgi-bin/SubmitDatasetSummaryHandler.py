@@ -92,16 +92,21 @@ def datasetSummaryForm(formdata, outputstr):
                             m.eval(function(val,callback)
                             { var datasetName = "%(datasetUnzippedName)s";
                               var datasetPath = "/admiral-test/datasets/"+datasetName;
-                              admiral.datasetManifestDictionary(datasetPath,datasetName, callback);         
+                                 
+                              admiral.datasetManifestDictionary(datasetPath,datasetName, callback);   
+                 
                             });
-                            m.eval(function(datasetdetails,callback)
-                            {                                                     
-                                jQuery("#currentVersion").text(datasetdetails.currentVersion);
-                                jQuery("#lastModified").text(datasetdetails.lastModified);
+                            m.eval(function(datasetdetails,callback)                          
+                            {                                                 
+                               jQuery("#currentVersion").text(datasetdetails.currentVersion);
+                               jQuery("#lastModified").text(datasetdetails.lastModified);                            
                             });    
                             m.exec(null,admiral.noop);
-                        });
+                          
+                        });                      
                     </script>
+                    
+                    
                 </head>
                 
                 <body>

@@ -54,8 +54,6 @@
     <!-- Import dataset information display code -->
     <script type="text/javascript" src="../DatasetTree.js"></sdatasetdetailscript>
     <link rel="stylesheet" href="../css/DisplayDataset.css" type="text/css" />
-    <script type="text/javascript" src="../DisplayDatasetStatus.js"></script>
-    <script type="text/javascript" src="../DisplayDatasetManifest.js"></script>
     <script type="text/javascript" src="../DatasetManifestDictionary.js"></script>
     <script>
     // Use jQuery via jQuery(...)
@@ -93,7 +91,7 @@
             var m = new admiral.AsyncComputation();
             
             m.eval(function (val, callback)
-            {
+            {  jQuery(".manifest").text("Fetching manifest...");
                admiral.datasetManifestDictionary(dataSetPath,datasetName, callback);
             });
             
