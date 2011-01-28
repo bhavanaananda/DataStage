@@ -25,10 +25,10 @@
 /**
  * Function to register tests
  */
-TestDatasetTree = function()
+TestDisplayDatasetTree = function()
 {
 
-    module("TestDatasetTree");
+    module("TestDisplayDatasetTree");
 
     notest ("testNestedListBuilder", function()
     {

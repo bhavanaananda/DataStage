@@ -35,16 +35,20 @@
     <script type="text/javascript" src="../../../Admiral/Error.js"></script>
     <script type="text/javascript" src="../../../Admiral/AsyncComputation.js"></script>
 
+    <!-- Import generic code from the dataset utils package -->
+    <script type="text/javascript" src="../../../DatasetUtils/js/DatasetTree.js"></script>
+    <script type="text/javascript" src="../../../DatasetUtils/js/DatasetManifestDictionary.js"></script>
 
     <!-- Import the modules under test -->
-    <script type="text/javascript" src="../../../../src/DisplayDataset/DatasetTree.js"></script>
     <script type="text/javascript" src="../../../../src/SelectDataset/ListDatasets.js"></script>
     <script type="text/javascript" src="../../../../src/SelectDataset/GetDatasetsList.js"></script>
     <script type="text/javascript" src="../../../../src/SelectDataset/GetDatasetDetails.js"></script>
     <script type="text/javascript" src="../../../../src/SubmitDatasetUI/TestSubmitDataset.js"></script>
+    <script type="text/javascript" src="../../../../src/DisplayDataset/DatasetTree.js"></script>
   
     <!-- Import test modules -->
-    <script type="text/javascript" src="../../../../src/DisplayDataset/test/TestDatasetTree.js"></script>
+    <script type="text/javascript" src="../../../../src/DatasetUtils/test/TestDatasetTree.js"></script>
+    <script type="text/javascript" src="../../../../src/DisplayDataset/test/TestDisplayDatasetTree.js"></script>
     <script type="text/javascript" src="../../../../src/SelectDataset/test/TestSelectDataset.js"></script>
     <script type="text/javascript" src="../../../../src/SubmitDatasetUI/test/TestSubmitDataset.js"></script>
     
@@ -54,6 +58,7 @@
     <!-- Execute the stand-alone tests -->
 	  <script>
 	  jQuery(document).ready( function () {
+	      TestDisplayDatasetTree();
         TestDatasetTree();
         TestSelectDataset();
         TestSubmitDataset();

@@ -21,7 +21,7 @@
 if (typeof admiral == "undefined")
 {
 	admiral = {};
-}
+}  
 
 /**
  * Read information about a RDFDatabank dataset status, and display in a supplied jQuery object.

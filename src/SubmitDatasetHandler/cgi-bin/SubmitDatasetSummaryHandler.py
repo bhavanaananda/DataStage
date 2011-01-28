@@ -62,7 +62,8 @@ def datasetSummaryForm(formdata, outputstr):
             <html>
                 <head>
                     <script type="text/javascript" src="../../jQuery/js/jquery-1.4.2.js"></script>
-                    <script type="text/javascript" src="../../DisplayDataset/DatasetManifestDictionary.js"></script>
+                    <!-- Import generic code from the dataset utils package -->
+                    <script type="text/javascript" src="../../DatasetUtils/js/DatasetManifestDictionary.js"></script>
                     <!-- import rdfquery libraries -->
                     <script type="text/javascript" src="../../rdfquery/jquery.uri.js"></script>
                     <script type="text/javascript" src="../../rdfquery/jquery.xmlns.js"></script>
