@@ -44,6 +44,7 @@ else
     fi
   
     mv /etc/apache2/conf.d/user.$1 /etc/apache2/conf.d/orphan.$1
+    mkdir -p /root/admiralconfig.d/admiralresearchgrouporphans
     mv /root/admiralconfig.d/admiralresearchgroupmembers/$1.sh /root/admiralconfig.d/admiralresearchgrouporphans/
   fi
    
