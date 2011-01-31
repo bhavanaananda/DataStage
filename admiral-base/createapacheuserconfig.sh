@@ -95,11 +95,18 @@ else
     generateuserconfigfile /root/admiralconfig.d/$userdir/$1.sh $usertype  
 fi
 
-echo ==================================================================
-echo "Remember to restart Apache server to use the revised configuration"
-echo ==================================================================
-echo "# /etc/init.d/apache2 restart"
+#echo ==================================================================
+#echo "Remember to restart Apache server to use the revised configuration"
+#echo ==================================================================
+#echo "# /etc/init.d/apache2 restart"
+#echo
+
+echo ======================================================
+echo "Restart Apache server to use the revised configuration"
+echo ======================================================
 echo
+
+/etc/init.d/apache2 restart"
 
 # End.
   
