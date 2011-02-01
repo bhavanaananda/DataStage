@@ -58,7 +58,7 @@ DatasetBrowser.display = function (jelem)
              jelem.append("<tr><td>RDF file format</td><td>" + data.state.rdffileformat + "</td></tr>");
              jelem.append("<tr><td>RDF file name</td><td>" + data.state.rdffilename + "</td></tr>");
              jelem.append("</table>");
-             callback("http://163.1.127.173/admiral-test/datasets/apps");*/
+             callback("/admiral-test/datasets/apps");*/
         } 
         catch(e)
         {
@@ -67,6 +67,6 @@ DatasetBrowser.display = function (jelem)
         }
     });
 
-    m.exec("http://163.1.127.173/admiral-test/datasets", shuffl.noop);
+    m.exec("/admiral-test/datasets", shuffl.noop);
 };
 

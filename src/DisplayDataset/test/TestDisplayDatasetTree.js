@@ -33,7 +33,7 @@ TestDisplayDatasetTree = function()
     notest ("testNestedListBuilder", function()
     {
         logtest("testNestedListBuilder - without links");        
-        var baseuri = "http://163.1.127.173/admiral-test/datasets/apps/";
+        var baseuri = "/admiral-test/datasets/apps/";
 
         var tree1 =
             [ { segment: 'a', subtree: null}
@@ -243,7 +243,7 @@ TestDisplayDatasetTree = function()
     test ("testNestedListBuilder", function()
     {
         logtest("testNestedListBuilder - with links");
-        var baseuri = "http://163.1.127.173/admiral-test/datasets/somedataset/";
+        var baseuri = "/admiral-test/datasets/somedataset/";
 
         var tree1 =
             [ { segment: 'a', subtree: null}
