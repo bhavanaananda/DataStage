@@ -71,6 +71,6 @@ RDFManifest.display = function (jelem)
         var o = rq.eq(0).node('?o');        
     });
 
-    m.exec("http://163.1.127.173/admiral-test/datasets/apps", shuffl.noop);
+    m.exec("/admiral-test/datasets/apps", shuffl.noop);
 };
 
