@@ -15,7 +15,8 @@ LEADERNAME="DavidShotton"
 
 # Databank host and silo names
 
-DATABANKHOST="163.1.127.173"
+#DATABANKHOST="163.1.127.173"
+DATABANKHOST="databank.ora.ox.ac.uk"
 DATABANKSILO="admiral-test"
 
 # End.

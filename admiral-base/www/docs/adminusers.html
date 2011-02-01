@@ -28,6 +28,24 @@ the research group), <code>RGLeader</code> (the group leader, who is able to vie
 appropriate permissions set.</p>
 <p><strong>You must then also type <code>/etc/init.d/apache2 restart</code> for these configurations to take effect.</strong></p>
 
+<h2>To change a user password</h2>
+
+Log in via <a href="../docs/accessdirect.html">SSH</a>, and use the <code>smbldap-passwd</code>code> command.
+
+To change your own password:
+<blockquote>
+<code>smbldap-passwd</code>
+</blockquote>
+the system will prompt for the old password, then the new password to be entered twice.
+
+If you are logged in to an account with system administration capabilities, 
+you can also change the password for any user without having to enter the 
+previous password:
+<blockquote>
+<code>sudo su -</code>
+<code>smbldap-passwd <cite>username</cite></code>
+</blockquote>
+
 <h2>To remove a user:</h2>
 
 <p>Similarly to the process for adding a user you must first issue the command <code>sudo su -</code> .  Then run the command
