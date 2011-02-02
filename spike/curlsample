@@ -1,0 +1,1 @@
+curl http://databank.ora.ox.ac.uk/admiral-test/datasets -u admiral:admiral -H "Accept: application/rdf+xml"
