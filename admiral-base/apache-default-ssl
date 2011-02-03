@@ -104,6 +104,38 @@
         </Limit>
     </Location>
 
+    # Config for accessing ADMIRAL experimental tools
+
+    Alias /test/ /mnt/lv-admiral-data/tool/admiral/
+
+    <Directory "/mnt/lv-admiral-data/tool/admiral">
+        AllowOverride None
+        Options Indexes +ExecCGI -MultiViews +SymLinksIfOwnerMatch
+    </Directory>
+
+    <Location /test>
+        AuthName "Restricted"
+        AuthType Basic
+        AuthBasicProvider ldap
+        AuthzLDAPAuthoritative on
+        AuthLDAPURL "ldap://%{HOSTNAME}:389/dc=%{HOSTNAME},dc=zoo,dc=ox,dc=ac,dc=uk"
+        AuthLDAPBindDN "cn=admin,%{HOSTNAME},dc=zoo,dc=ox,dc=ac,dc=uk"
+        AuthLDAPBindPassword "pix89=fleet"
+    </Location>
+
+    <Location /test>
+        Order Deny,Allow
+        Allow from all
+        <LimitExcept GET OPTIONS POST>
+        </LimitExcept>
+        <Limit OPTIONS GET POST>
+            Require ldap-attribute gidNumber=600
+            Require ldap-attribute gidNumber=601
+            Require ldap-attribute gidNumber=602
+        </Limit>
+    </Location>
+
+
     #   --------------------------------------------------------------------------------------
     
     #   SSL Engine Switch:

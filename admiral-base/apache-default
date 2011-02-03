@@ -52,6 +52,7 @@
     
     Redirect permanent /data https://%{HOSTNAME}.zoo.ox.ac.uk/data
     Redirect permanent /tool https://%{HOSTNAME}.zoo.ox.ac.uk/tool
+    Redirect permanent /test https://%{HOSTNAME}.zoo.ox.ac.uk/test
 
     #<Location /data>
     #    Dav On
