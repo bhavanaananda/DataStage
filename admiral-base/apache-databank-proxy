@@ -24,9 +24,9 @@ ProxyPassReverse /silos http://%{DATABANKHOST}/silos
 ProxyPass        /silos/ http://%{DATABANKHOST}/silos/
 ProxyPassReverse /silos/ http://%{DATABANKHOST}/silos/
 
-ProxyPass        /admiral-test http://%{DATABANKHOST}/admiral-test
-ProxyPassReverse /admiral-test http://%{DATABANKHOST}/admiral-test
-ProxyPass        /admiral-test/ http://%{DATABANKHOST}/admiral-test/
-ProxyPassReverse /admiral-test/ http://%{DATABANKHOST}/admiral-test/
+ProxyPass        /%{DATABANKSILO} http://%{DATABANKHOST}/%{DATABANKSILO}
+ProxyPassReverse /%{DATABANKSILO} http://%{DATABANKHOST}/%{DATABANKSILO}
+ProxyPass        /%{DATABANKSILO}/ http://%{DATABANKHOST}/%{DATABANKSILO}/
+ProxyPassReverse /%{DATABANKSILO}/ http://%{DATABANKHOST}/%{DATABANKSILO}/
 
 #ProxyPreserveHost On

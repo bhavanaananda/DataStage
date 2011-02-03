@@ -13,7 +13,7 @@ class RDFDatabankConfig:
     endpointpath="/admiral-test/packages/"
 
     # Access via IP address
-    #endpointhost="163.1.127.173"
+
     endpointhost="databank.ora.ox.ac.uk"
     endpointsilo="admiral-test"
     endpointpath="/"+endpointsilo+"/"

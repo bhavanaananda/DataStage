@@ -17,8 +17,45 @@ if [[ "$1" != "all" ]]; then
         exit
     fi
 fi
- 
-source /root/admiralconfig.d/admiralconfig.sh
+
+function generateapacheproxyconfig()
+{
+    # $1 = Databank host name
+    # $2 = Databank silo name
+    # $3 = URI path to proxy
+    
+    cat << EOF > /etc/apache2/conf.d/databank-proxy.conf
+# /etc/apache2/conf.d/databank-proxy.conf
+#
+# Reverse-proxy paths /silos and /$3 to the designated
+# Databank server running in Library Services
+#
+# See: http://httpd.apache.org/docs/2.0/mod/mod_proxy.html
+#
+# See also: http://httpd.apache.org/docs/2.0/vhosts/name-based.html
+#
+# Spurious warnings may be generated: see https://issues.apache.org/bugzilla/show_bug.cgi?id=44350
+#
+
+ProxyRequests Off
+
+<Proxy *>
+  Order deny,allow
+  Allow from all
+</Proxy>
+
+ProxyPass        /silos http://$1/silos
+ProxyPassReverse /silos http://$1/silos
+ProxyPass        /silos/ http://$1/silos/
+ProxyPassReverse /silos/ http://$1/silos/
+
+ProxyPass        /$3 http://$1/$2
+ProxyPassReverse /$3 http://$1/$2
+ProxyPass        /$3/ http://$1/$2/
+ProxyPassReverse /$3/ http://$1/$2/
+
+EOF   
+}
 
 function generateuserconfigfile()
 {
@@ -76,6 +113,10 @@ EOF
   chmod 644 /etc/apache2/conf.d/$2.$username
 }
 
+# Get local configuration details
+
+source /root/admiralconfig.d/admiralconfig.sh
+
 # Process all user files in /root/admiralconfig.d/a/root/admiralresearchgroupmembers
 
 if [[ "$1" == "all" ]]; then
@@ -94,6 +135,11 @@ else
     fi
     generateuserconfigfile /root/admiralconfig.d/$userdir/$1.sh $usertype  
 fi
+
+# Generate Apache proxy configuration for forwarding requests to 
+# the configured Databank server
+
+generateapacheproxyconfig  $DATABANKHOST $DATABANKSILO $DATABANKSILO
 
 #echo ==================================================================
 #echo "Remember to restart Apache server to use the revised configuration"

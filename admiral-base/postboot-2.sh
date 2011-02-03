@@ -8,7 +8,8 @@ echo =============================
 
 apt-get update
 apt-get install -qy --force-yes libpam-krb5 nagios3 nagios-nrpe-plugin nagios-nrpe-server tsm-client
-apt-get install -qy --force-yes lvm2 mercurial
+apt-get install -qy --force-yes lvm2 mercurial python-setuptools
+easy_install rdflib
 
 echo =============================
 echo "Configure new packages"

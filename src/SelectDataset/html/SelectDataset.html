@@ -54,23 +54,23 @@
 
     <!-- Execute the desired dataset listing logic -->
     <script>
-	jQuery(document).ready( function ()
-	{   var m = new admiral.AsyncComputation();
-	    m.eval(function(val,callback)
-	    {
-	        admiral.listDatasets("","admiral-test", admiral.getDatasetList, callback);            
-	    });
-	    m.eval(function(val,callback)
-	    {
-	        // val supplies a <div> element containing a <table> to be displayed
-	        jQuery("#tableDatasets").html("");
-	        
-	        //var dataSet = "/admiral-test/datasets/"+datasetName;
-	        log.debug(val);
-	        jQuery("#tableDatasets").append(val.find("table"));
-	    });    
-	    m.exec(null,admiral.noop);
-	});
+          	jQuery(document).ready( function ()
+          	{   var m = new admiral.AsyncComputation();
+          	    m.eval(function(val,callback)
+          	    {
+          	        admiral.listDatasets("","admiral-test", admiral.getDatasetList, callback);            
+          	    });
+          	    m.eval(function(val,callback)
+          	    {
+          	        // val supplies a <div> element containing a <table> to be displayed
+          	        jQuery("#tableDatasets").html("");
+          	        
+          	        //var dataSet = "/admiral-test/datasets/"+datasetName;
+          	        log.debug(val);
+          	        jQuery("#tableDatasets").append(val.find("table"));
+          	    });    
+          	    m.exec(null,admiral.noop);
+          	});
     </script>
 
 </head>
