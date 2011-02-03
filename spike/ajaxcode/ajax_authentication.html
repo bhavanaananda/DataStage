@@ -1,0 +1,87 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+
+<head>
+    <title>AJAX authentication test</title>
+
+    <style>
+    td {
+        background-color: #FFE;
+    }
+    </style>
+
+    <!-- Import jQuery framework -->
+    <script type="text/javascript" src="../../jQuery/js/jquery-1.4.2.js"></script> 
+
+    <!-- Import jQuery additional libraries -->
+    <script type="text/javascript" src="../../jQuery/jquery.json-2.2.js"></script> 
+
+    <!-- import rdfquery libraries -->
+    <script type="text/javascript" src="../../rdfquery/jquery.uri.js"></script>
+    <script type="text/javascript" src="../../rdfquery/jquery.xmlns.js"></script>
+    <script type="text/javascript" src="../../rdfquery/jquery.curie.js"></script>
+    <script type="text/javascript" src="../../rdfquery/jquery.datatype.js"></script>
+    <script type="text/javascript" src="../../rdfquery/jquery.rdf.js"></script>
+    <script type="text/javascript" src="../../rdfquery/jquery.rdfa.js"></script>
+    <script type="text/javascript" src="../../rdfquery/jquery.datatype.js"></script>
+    <script type="text/javascript" src="../../rdfquery/jquery.rdf.json.js"></script>
+    <script type="text/javascript" src="../../rdfquery/jquery.rdf.xml.js"></script>
+    <script type="text/javascript" src="../../rdfquery/jquery.rdf.turtle.js"></script>
+ 
+    <!-- Import MochiKit modules: require MochiKit library functions to be fully qualified -->
+    <script type="text/javascript">MochiKit = {__export__: false};</script>
+    <script type="text/javascript" src="../../MochiKit/Base.js"></script>
+    <script type="text/javascript" src="../../MochiKit/Iter.js"></script>
+    <script type="text/javascript" src="../../MochiKit/Logging.js"></script>
+    
+    <script>
+    // Use jQuery via jQuery(...)
+    jQuery.noConflict();
+    </script>
+
+    <script>
+       jQuery.ajax({
+           type:         "GET",
+           url:          "/admiral-test/datasets",
+           username:     "admiral",
+           password:     "admiral",
+           dataType:     "json",
+           beforeSend:   function (xhr)
+               {
+                   xhr.setRequestHeader("Accept", "text/plain");
+               },
+           success:      function (data, status, xhr)
+               {  
+                  jQuery("#json").text(jQuery.toJSON(data));
+                  for (var name in data)
+                  {          
+                      jQuery("#datasets").append("<p>"+name+"</p>")
+                  }
+               },
+           error:        function (xhr, status) 
+               { 
+                   jQuery("#status").text("HTTP GET "+ "/admiral-test/datasets"+" failed: "+status+"; HTTP status: "+xhr.status+" "+xhr.statusText);
+                   jQuery("#status").addClass('error');
+               },
+           cache:        false
+       });
+    </script>
+
+</head>
+
+<body>
+   <h1>AJAX authentication test</h1>
+   <div>
+     <h2>JSON...</h2>
+     <pre id="json"/>
+   </div>
+   <div id="datasets">
+     <h2>Datasets found...</h2>
+   </div>
+   <div id="status" >
+     <p>Getting dataset list...</p>
+   </div>
+</body>
+
+</html>
