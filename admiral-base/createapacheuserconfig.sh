@@ -53,8 +53,8 @@ ProxyPass        /$3 http://$1/$2
 ProxyPassReverse /$3 http://$1/$2
 ProxyPass        /$3/ http://$1/$2/
 ProxyPassReverse /$3/ http://$1/$2/
+EOF
 
-EOF   
 }
 
 function generateuserconfigfile()
@@ -107,8 +107,8 @@ function generateuserconfigfile()
       Require ldap-attribute gidNumber=$RGCollabGID
     </Limit>
 </Location>
-
 EOF
+
   chown root:root /etc/apache2/conf.d/$2.$username
   chmod 644 /etc/apache2/conf.d/$2.$username
 }
@@ -152,7 +152,7 @@ echo "Restart Apache server to use the revised configuration"
 echo ======================================================
 echo
 
-/etc/init.d/apache2 restart"
+/etc/init.d/apache2 restart
 
 # End.
   

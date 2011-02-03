@@ -34,7 +34,6 @@ for f in admiralconfig.sh admiralRGLeader.sh; do
     fi
 done
 
-
 echo ========================
 echo "Installing ADMIRAL tools"
 echo ========================
@@ -64,6 +63,6 @@ mkdir -p /root/admiralconfig.d/admiralresearchgrouporphans
 
 source /root/admiralconfig.d/admiralRGLeader.sh
 echo "Create a user account for $RGLeaderName with role RGLeader"
-/root/admiraluseradd.sh $RGLeaderName "$RGLeaderName" RGLeader 
+/root/admiraluseradd.sh TempLeader "Temporary group leader" RGLeader
 
 # End.
