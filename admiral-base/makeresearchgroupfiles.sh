@@ -51,6 +51,7 @@ fi
     mkdir -p $TGTDIR/ldapconfig
     mkdir -p $TGTDIR/www
     mkdir -p $TGTDIR/www/docs
+    mkdir -p $TGTDIR/www/images
     mkdir -p $TGTDIR/www/css
     mkdir -p $TGTDIR/www/css/images
     mkdir -p $TGTDIR/www/js
