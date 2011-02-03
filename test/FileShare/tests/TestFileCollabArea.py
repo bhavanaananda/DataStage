@@ -59,6 +59,7 @@ class TestFileCollabArea(unittest.TestCase):
                          , 'mountpt': TestConfig.cifsmountpoint
                          , 'pass': TestConfig.userBpass
                          } )
+        print "----\n"+mountcommand
         status=os.system(mountcommand)
         self.assertEqual(status, 0, 'CIFS Mount failure')
         f = open(TestConfig.cifsmountpoint+'/testCreateFileCIFS.tmp','r')
@@ -72,7 +73,9 @@ class TestFileCollabArea(unittest.TestCase):
         f=None
         try: 
             f = open(TestConfig.cifsmountpoint+'/testCreateFileCIFS.tmp','w+')
-        except:
+        except IOError as e:
+            self.assertEqual(e.errno, 13, "Operation should fail with error 13, was: "+str(e))
+            self.assertEqual(e.strerror, "Permission denied", "Operation should fail with 'Permission denied', was: "+str(e))
             pass
         assert (f==None), "User B can open User A's files in collab area for writing!"
         os.system('umount.cifs '+TestConfig.cifsmountpoint)
