@@ -52,18 +52,20 @@
             username:     "admiral",
             password:     "admiral",
             dataType:     "xml",
+            jQuery("#datasetName").text("Fetching manifest for "+datasetName);                   
             beforeSend:   function (xhr)
                 {
                     xhr.setRequestHeader("Accept", "application/rdf+xml");
                 },
             success:      function (data, status, xhr)
                 {   
+                    jQuery("#datasetName").text("Got manifest for "+datasetName);                   
                     jQuery("#manifest").append(data);
-                    jQuery("#datasetName").text(datasetName);                   
                     //callback(data);
                 },
             error:        function (xhr, status) 
                 { 
+                    jQuery("#datasetName").text("Failed to get manifest for "+datasetName);                   
                     jQuery("#pageLoadStatus").text("HTTP GET "+dataSetPath+" failed: "+status+"; HTTP status: "+xhr.status+" "+xhr.statusText);
                     jQuery("#pageLoadStatus").addClass('error');
                 },
@@ -79,6 +81,9 @@
    <h2> Manifest information for the dataset <span id="datasetName"> </span> </h2>
  
    <div id="manifest">
+   </div>  
+ 
+   <div id="pageLoadStatus">
    </div>  
 </body>
 
