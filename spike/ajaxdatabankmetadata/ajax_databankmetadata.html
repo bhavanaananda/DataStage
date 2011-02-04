@@ -1,0 +1,85 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+
+<head>
+    <title>AJAX authentication test</title>
+
+    <style>
+    td {
+        background-color: #FFE;
+    }
+    </style>
+
+    <!-- Import jQuery framework -->
+    <script type="text/javascript" src="../../src/jQuery/js/jquery-1.4.2.js"></script> 
+
+    <!-- Import jQuery additional libraries -->
+    <script type="text/javascript" src="../../src/jQuery/jquery.json-2.2.js"></script> 
+
+    <!-- import rdfquery libraries -->
+    <script type="text/javascript" src="../../src/rdfquery/jquery.uri.js"></script>
+    <script type="text/javascript" src="../../src/rdfquery/jquery.xmlns.js"></script>
+    <script type="text/javascript" src="../../src/rdfquery/jquery.curie.js"></script>
+    <script type="text/javascript" src="../../src/rdfquery/jquery.datatype.js"></script>
+    <script type="text/javascript" src="../../src/rdfquery/jquery.rdf.js"></script>
+    <script type="text/javascript" src="../../src/rdfquery/jquery.rdfa.js"></script>
+    <script type="text/javascript" src="../../src/rdfquery/jquery.datatype.js"></script>
+    <script type="text/javascript" src="../../src/rdfquery/jquery.rdf.json.js"></script>
+    <script type="text/javascript" src="../../src/rdfquery/jquery.rdf.xml.js"></script>
+    <script type="text/javascript" src="../../src/rdfquery/jquery.rdf.turtle.js"></script>
+ 
+    <!-- Import MochiKit modules: require MochiKit library functions to be fully qualified -->
+    <script type="text/javascript">MochiKit = {__export__: false};</script>
+    <script type="text/javascript" src="../../src/MochiKit/Base.js"></script>
+    <script type="text/javascript" src="../../src/MochiKit/Iter.js"></script>
+    <script type="text/javascript" src="../../src/MochiKit/Logging.js"></script>
+    
+    <script type="text/javascript" src="js/DatasetManifestDictionary.js"></script>
+    
+    <script>
+    // Use jQuery via jQuery(...)
+    jQuery.noConflict();
+    </script>
+
+    <script>
+    var datasetName = "DatasetsSubDir";
+    var dataSetPath = "/admiral-test/datasets/"+datasetName;
+    //datasetPath ="/admiral-test/datasets";
+    jQuery.ajax({
+            type:         "GET",
+            url:           dataSetPath,
+            username:     "admiral",
+            password:     "admiral",
+            dataType:     "xml",
+            beforeSend:   function (xhr)
+                {
+                    xhr.setRequestHeader("Accept", "application/rdf+xml");
+                },
+            success:      function (data, status, xhr)
+                {   
+                    jQuery("#manifest").append(data);
+                    jQuery("#datasetName").text(datasetName);                   
+                    //callback(data);
+                },
+            error:        function (xhr, status) 
+                { 
+                    jQuery("#pageLoadStatus").text("HTTP GET "+dataSetPath+" failed: "+status+"; HTTP status: "+xhr.status+" "+xhr.statusText);
+                    jQuery("#pageLoadStatus").addClass('error');
+                },
+            cache:        false
+        });
+   
+    </script>
+
+</head>
+
+<body>
+   <h1>AJAX authentication test</h1>
+   <h2> Manifest information for the dataset <span id="datasetName"> </span> </h2>
+ 
+   <div id="manifest">
+   </div>  
+</body>
+
+</html>

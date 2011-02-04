@@ -1,0 +1,62 @@
+/*       var m = new admiral.AsyncComputation();
+       
+       m.eval(function (val, callback)
+       {
+           jQuery.ajax({
+               type:         "GET",
+               url:          "/admiral-test/datasets",
+               username:     "admiral",
+               password:     "admiral",
+               dataType:     "json",
+               beforeSend:   function (xhr)
+                   {
+                       xhr.setRequestHeader("Accept", "text/plain");
+                   },
+               success:      function (data, status, xhr)
+                   {  
+                      jQuery("#json").text(jQuery.toJSON(data));
+                      for (var name in data)
+                      {          
+                          jQuery("#datasets").append("<p>"+name+"</p>")
+                     
+                      }
+                      callback(data);
+                   },
+               error:        function (xhr, status) 
+                   { 
+                       jQuery("#status").text("HTTP GET "+ "/admiral-test/datasets"+" failed: "+status+"; HTTP status: "+xhr.status+" "+xhr.statusText);
+                       jQuery("#status").addClass('error');
+                   },
+               cache:        false
+           });
+        }
+        
+        m.eval(function (val, callback)
+        {   
+
+                var datasetName = "DatasetsSubDir";
+                var dataSetPath = "/admiral-test/datasets/"+datasetName;          
+                jQuery(".manifest").text("Fetching manifest...");
+                admiral.datasetManifestDictionary(dataSetPath,datasetName, callback);
+
+       });
+        
+        m.eval(function (datasetdetails, callback)
+        {   
+            jQuery("#pageLoadStatus").text("");
+            jQuery("#datasetName").text(datasetdetails.datasetName);
+            jQuery("#createdBy").text(datasetdetails.createdBy);
+            jQuery("#derivedFrom > a").text(datasetdetails.derivedFrom);
+            jQuery("#derivedFrom > a").attr("href", datasetdetails.derivedFrom);
+            jQuery("#currentVersion").text(datasetdetails.currentVersion);
+            jQuery("#embargoExpiryDate").text(datasetdetails.embargoExpiryDate);
+            jQuery("#title").text(datasetdetails.title);
+            jQuery("#lastModified").text(datasetdetails.lastModified);
+            jQuery("#description").text(datasetdetails.description);
+            jQuery(".manifest").text("");
+            
+            callback(datasetdetails);        
+        });
+        
+        m.exec(null, admiral.noop);
+*/       
