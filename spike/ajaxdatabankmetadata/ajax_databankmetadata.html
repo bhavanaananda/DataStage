@@ -46,13 +46,13 @@
     var datasetName = "DatasetsSubDir";
     var dataSetPath = "/admiral-test/datasets/"+datasetName;
     //datasetPath ="/admiral-test/datasets";
+    jQuery("#datasetName").text("Fetching manifest for "+datasetName);                   
     jQuery.ajax({
             type:         "GET",
             url:           dataSetPath,
             username:     "admiral",
             password:     "admiral",
             dataType:     "xml",
-            jQuery("#datasetName").text("Fetching manifest for "+datasetName);                   
             beforeSend:   function (xhr)
                 {
                     xhr.setRequestHeader("Accept", "application/rdf+xml");
@@ -61,7 +61,6 @@
                 {   
                     jQuery("#datasetName").text("Got manifest for "+datasetName);                   
                     jQuery("#manifest").append(data);
-                    //callback(data);
                 },
             error:        function (xhr, status) 
                 { 
