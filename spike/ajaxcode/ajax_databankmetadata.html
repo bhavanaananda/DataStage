@@ -51,15 +51,16 @@
             url:           dataSetPath,
             username:     "admiral",
             password:     "admiral",
-            dataType:     "xml",
+            dataType:     "text",
             beforeSend:   function (xhr)
                 {
                     xhr.setRequestHeader("Accept", "application/rdf+xml");
                 },
             success:      function (data, status, xhr)
                 {   
-                    jQuery("#datasetName").text("Got manifest for "+datasetName);                   
+                    jQuery("#datasetName").text("Got manifest for "+datasetName);                  
                     jQuery("#manifest").append(data);
+                    jQuery("#pageLoadStatus").text(typeof(data));
                 },
             error:        function (xhr, status) 
                 { 
