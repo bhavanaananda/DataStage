@@ -57,6 +57,17 @@ else
     IP=$IPADDR
 fi
 
+echo "Substitutions:"
+echo "  s/%{HOSTNAME}/$HOSTNAME/g"
+echo "  s/%{PASSWORD}/$PASSWORD/g"
+echo "  s/%{WORKGROUP}/$WORKGROUP/g"
+echo "  s/%{IPADDR}/$IP/g"
+echo "  s/%{LeaderName}/$LEADERNAME/g"
+echo "  s!%{MD5PASS}!$MD5PASSWD!g"
+echo "  s/%{DATABANKHOST}/$DATABANKHOST/g"
+echo "  s/%{DATABANKSILO}/$DATABANKSILO/g"
+echo ""
+
 #if [[ "$COPYTEST" == "copy" ]]; then
     mkdir -p $TGTDIR
     mkdir -p $TGTDIR/ldapconfig
