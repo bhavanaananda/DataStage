@@ -45,7 +45,7 @@ migrate createapacheuserconfig.sh  /root
 migrate deltestusers.sh            /root
 migrate lvmconfig.sh               /root
 migrate postboot-1.sh              /root
-migrate postboot-2.sh              /root
+migrate postboot-2.sh              /root
 migrate postboot-3.sh              /root
 migrate postboot-4.sh              /root
 
