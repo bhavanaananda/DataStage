@@ -111,17 +111,17 @@ function generatesystemuserhomedir()
     # $1 - username
 
     # if no home directory on target data volume, copy home directory there
-    if [[ ! -e /mnt/lv-admiral-data/home/$1 ]]; then
-        echo "Copy directory tree /home/$1 to /mnt/lv-admiral-data/home/"
-        cp -ax /home/$1 /mnt/lv-admiral-data/home/
+    if [[ ! -e /mnt/data/home/$1 ]]; then
+        echo "Copy directory tree /home/$1 to /mnt/data/home/"
+        cp -ax /home/$1 /mnt/data/home/
     fi
 
     # if home directory exists and is not a symlink, rename as saved copy and create link
     if [[ -e /home/$1 ]]; then
         if [[ ! -h /home/$1 ]]; then    # if not symlink
-            echo "Save and symlink directory /home/$1 to /mnt/lv-admiral-data/home/$1"
+            echo "Save and symlink directory /home/$1 to /mnt/data/home/$1"
             mv /home/$1 /home/$1-saved
-            ln -s /mnt/lv-admiral-data/home/$1 /home/$1
+            ln -s /mnt/data/home/$1 /home/$1
         fi
     fi
 }

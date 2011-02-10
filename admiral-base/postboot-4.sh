@@ -2,30 +2,30 @@
 #
 # Run from new VM console or SSH session
 
-if [[ "$1" != "test" && ! -e /mnt/lv-admiral-data/data/ADMIRAL.README ]]; then
+if [[ "$1" != "test" && ! -e /mnt/data/data/ADMIRAL.README ]]; then
   echo "Allocate and mount data volume first (or use '$0 test')"
   echo "See http://imageweb.zoo.ox.ac.uk/wiki/index.php/ADMIRAL_LVM_allocation"
   exit
 fi
 
 if [[ "$1" == "test" ]]; then
-  mkdir /mnt/lv-admiral-data
-  mkdir /mnt/lv-admiral-data/home
-  mkdir /mnt/lv-admiral-data/data
-  ln -s /mnt/lv-admiral-data/data /home/data
+  mkdir /mnt/data
+  mkdir /mnt/data/home
+  mkdir /mnt/data/data
+  ln -s /mnt/data/data /home/data
 fi
 
 echo ===========================================
 echo "Create and populate configuration directory"
 echo ===========================================
 
-mkdir -p /mnt/lv-admiral-data/config
+mkdir -p /mnt/data/config
 if [[ ! -e /root/admiralconfig.d ]]; then
-    ln -s /mnt/lv-admiral-data/config /root/admiralconfig.d
+    ln -s /mnt/data/config /root/admiralconfig.d
 fi
 
 for f in admiralconfig.sh admiralRGLeader.sh; do
-    ff=/mnt/lv-admiral-data/config/$f
+    ff=/mnt/data/config/$f
     if [[ -e "$ff" ]]; then
         echo "Copying new version of $f as $ff-new"
         cp -f /root/$f $ff-new

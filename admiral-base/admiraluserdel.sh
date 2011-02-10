@@ -17,7 +17,7 @@ else
     rm -rf "/home/data/private/$1"
     rm -rf "/home/data/shared/$1"
     rm -rf "/home/data/collab/$1"
-    rm -rf "/mnt/lv-admiral-data/home/$1"
+    rm -rf "/mnt/data/home/$1"
     rm -rf "/home/$1"
     rm -rf "/home/$1-saved"
     rm -rf "/home/$1-deleted"
@@ -32,7 +32,7 @@ else
     chown -R admiral-orphan:RGOrphan /home/data/private/$1
     chown -R admiral-orphan:RGOrphan /home/data/shared/$1
     chown -R admiral-orphan:RGOrphan /home/data/collab/$1
-    chown -R admiral-orphan:RGOrphan /mnt/lv-admiral-data/home/$1
+    chown -R admiral-orphan:RGOrphan /mnt/data/home/$1
     # (-L tests for symlink ...)
     if [[ -L "/home/$1" ]]; then
       rm "/home/$1"

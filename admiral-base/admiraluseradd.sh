@@ -5,7 +5,7 @@ if [[ "$1" == "" || "$2" == "" || "$3" == "" ]]; then
   exit 1
 fi
 
-if [[ -e "/home/$1" || -e "/mnt/lv-admiral-data/home/$1" ]]; then
+if [[ -e "/home/$1" || -e "/mnt/data/home/$1" ]]; then
   echo "User $1 already exists (or home directory exists)"
   exit 1
 fi

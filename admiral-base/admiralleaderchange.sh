@@ -37,7 +37,7 @@ else
   chown -R $2:RGLeader /home/data/private/$2
   chown -R $2:RGLeader /home/data/shared/$2
   chown -R $2:RGLeader /home/data/collab/$2
-  chown -R $2:RGLeader /mnt/lv-admiral-data/home/$2
+  chown -R $2:RGLeader /mnt/data/home/$2
   
   cat >/root/admiralconfig.d/admiralRGLeader.sh <<EOF
 #!/bin/bash
@@ -56,7 +56,7 @@ EOF
     chown -R $1:RGMember /home/data/private/$1
     chown -R $1:RGMember /home/data/shared/$1
     chown -R $1:RGMember /home/data/collab/$1
-    chown -R $1:RGMember /mnt/lv-admiral-data/home/$1
+    chown -R $1:RGMember /mnt/data/home/$1
   fi
 
   # Regenerate the apache user access control files
