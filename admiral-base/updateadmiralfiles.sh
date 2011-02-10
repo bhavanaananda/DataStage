@@ -5,7 +5,7 @@
 # Update ADMIRAL configuration files on system.
 #
 
-USAGE="Usage: $0 sourcedirectory"
+USAGE="Usage: $0 RUN"
 if [[ "$1" == "" ]]; then
     echo "$USAGE"
     echo ""
@@ -19,7 +19,9 @@ function migrate()
 {
     # $1 = filename in admiral-base directory
     # $2 = target directory in system
-    echo "cp -f $SRCDIR/$1 $2"
+    cp="cp -f $SRCDIR/$1 $2"
+    echo "$cp"
+    #$cp
 }
 
 # 1. get system parameters
