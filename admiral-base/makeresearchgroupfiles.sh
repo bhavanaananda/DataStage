@@ -5,7 +5,7 @@
 # Copy files from source directory to target directory, ignoring those listed as
 # blacklisted, and replace the originals with a symlink to the copy.
 #
-# This is used to creayte a test  working copy of an ADMIRAL system, with
+# This is used to create a test  working copy of an ADMIRAL system, with
 # supplied host name, password and group leader names interpolated into key 
 # configuration files (???)
 #
@@ -13,7 +13,7 @@
 # MIT Licensed - see LICENCE.txt or http://www.opensource.org/licenses/mit-license.php
 #
 
-USAGE="$0 (test|copy) hostname password"
+USAGE="$0 (test|copy) hostname password [targetdir]"
 
 if [[ "$1" != "test" && "$1" != "copy" ]]; then
     echo "Usage: $USAGE"
@@ -33,7 +33,18 @@ source $HOSTNAME/hostconfig.sh
 
 # Common configuration code
 SRCDIR="."
-TGTDIR="/var/kvm/$HOSTNAME"
+TGTROOTS="/var/kvm /mnt/data/tool"
+for TR in $TGTROOTS; do
+    if [[ -e $TR ]]; then
+        TGTDIR="$TR/$HOSTNAME"
+    fi
+done
+if [[ "$4" != "" ]]; then
+    TGTDIR="$4"
+fi
+echo "TGTDIR: $TGTDIR"
+mkdir -p $TGTDIR
+
 BLACKLISTPATTERN="^(.*~|.*\\.(tmp|bak)|a1\.sh|copywithhostandpassword\.sh)$"
 FILELIST="`ls -1 --directory --ignore-backups --file-type * ldapconfig/* www/* www/*/* $HOSTNAME/* $HOSTNAME/*/*`"
 REPORT="echo"

@@ -1,7 +1,7 @@
 #!/bin/bash
 
-# Using both -G and -g options to smbldap-usermod may seem like a belt and braces approach, but
-# I am unconvinced that either on their own does enough.
+# Using both -G and -g options to smbldap-usermod may seem like a belt and 
+# braces approach, but I am unconvinced that either on their own does enough.
 
 source /root/admiralconfig.d/admiralRGLeader.sh
 
