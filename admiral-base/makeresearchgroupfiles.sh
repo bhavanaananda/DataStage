@@ -104,16 +104,7 @@ for f in $FILELIST; do
                         -e "s/%{DATABANKSILO}/$DATABANKSILO/g" \
                         <$f >$TGTDIR/$f3$f2
             else
-                    echo "sed \
-                        -e 's/%{HOSTNAME}/$HOSTNAME/g' \
-                        -e 's/%{PASSWORD}/$PASSWORD/g' \
-                        -e 's/%{WORKGROUP}/$WORKGROUP/g' \
-                        -e 's/%{IPADDR}/$IP/g' \
-                        -e 's/%{LeaderName}/$LEADERNAME/g' \
-                        -e 's!%{MD5PASS}!$MD5PASSWD!g' \
-                        -e 's/%{DATABANKHOST}/$DATABANKHOST/g' \
-                        -e 's/%{DATABANKSILO}/$DATABANKSILO/g' \
-                        <$f >$TGTDIR/$f3$f2"
+                    echo "sed ... <$f >$TGTDIR/$f3$f2"
             fi
         else
             echo "Directory $TGTDIR/$f3 not found"
