@@ -45,7 +45,7 @@ admiral.datasetManifestDictionary = function (datasetPath, datasetName, callback
             url:           val,
             username:     "admiral",
             password:     "admiral",
-            dataType:     "xml",
+            dataType:     "text",
             beforeSend:   function (xhr)
                 {
                     xhr.setRequestHeader("Accept", "application/rdf+xml");
