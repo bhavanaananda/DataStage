@@ -46,8 +46,6 @@
     <Directory /home/data/>
         Options Indexes MultiViews FollowSymLinks
         AllowOverride None
-        Order deny,allow
-        Deny from all
     </Directory>
     
     <Location /data>
@@ -61,12 +59,12 @@
         AuthLDAPBindPassword "%{PASSWORD}"
     </Location>
     
-    # For testing purposes
-    <Location /data/default>
+    # Default access to  all areas
+    <Directory /home/data>
         Require ldap-attribute gidnumber=600
         Require ldap-attribute gidnumber=601
         Require ldap-attribute gidnumber=602
-    </Location>
+    </Directory>
 
     # Config for accessing ADMIRAL support tools
 

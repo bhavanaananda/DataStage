@@ -72,14 +72,15 @@ function generateuserconfigfile()
     Order Deny,Allow
     Allow from all
     <LimitExcept REPORT GET OPTIONS PROPFIND>
-      Require user $username
+      Require ldap-user $username
     </LimitExcept>
     <Limit PROPFIND OPTIONS GET REPORT>
       # NOTE:
       # Tried to use a combination of "Require user" and "Require ldap-attribute"
       # here, but this caused access failures for all users.
       # TestLeader is included here for testing only.
-    Require user $username $RGLeaderName
+    Require ldap-user $username 
+    Require ldap-attribute gidNumber=$RGLeaderGID
     </Limit>
 </Location>
 
@@ -87,7 +88,7 @@ function generateuserconfigfile()
     Order Deny,Allow
     Allow from all
     <LimitExcept REPORT GET OPTIONS PROPFIND>
-      Require user $username
+      Require ldap-user $username
     </LimitExcept>
     <Limit PROPFIND OPTIONS GET REPORT>
       Require ldap-attribute gidNumber=$RGLeaderGID
@@ -99,7 +100,7 @@ function generateuserconfigfile()
     Order Deny,Allow
     Allow from all
     <LimitExcept REPORT GET OPTIONS PROPFIND>
-      Require user $username
+      Require ldap-user $username
     </LimitExcept>
     <Limit PROPFIND OPTIONS GET REPORT>
       Require ldap-attribute gidNumber=$RGLeaderGID
