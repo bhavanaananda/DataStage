@@ -18,7 +18,7 @@ fi
 function migrate()
 {
     # $1 = filename in admiral-base directory
-    # $2 = target directory in system
+    # $2 = target directory or file in system
     cp="cp -f $SRCDIR/$1 $2"
     echo "$cp"
     #$cp
@@ -64,8 +64,8 @@ migrate ssh_config                 /etc/ssh
 migrate sshd_config                /etc/ssh
 
 migrate apache2.conf               /etc/apache2
-migrate apache-default             /etc/apache2/sites-available
-migrate apache-default-ssl         /etc/apache2/sites-available
+migrate apache-default             /etc/apache2/sites-available/default
+migrate apache-default-ssl         /etc/apache2/sites-available/default-ssl
 ### migrate webauth.conf               /etc/apache2/webauth
 ### migrate webauth.keytab             /etc/apache2/webauth
 ### migrate webdav.keytab              /etc/apache2

@@ -18,12 +18,14 @@ chown test_admiral: ADMIRAL.README
 
 mkdir -p /home/data/private
 chown www-data: /home/data/private
-#chmod g+ws /home/data/private
+chmod g=S /home/data/private
 
 mkdir -p /home/data/shared
 chown www-data: /home/data/shared
-#chmod g+ws /home/data/shared
+chmod g=S /home/data/shared
 
 mkdir -p /home/data/collab
 chown www-data: /home/data/collab
-#chmod g+ws /home/data/collab
+chmod g=S /home/data/collab
+
+# End.

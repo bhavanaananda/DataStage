@@ -22,6 +22,8 @@ if [[ "$1" == "all" ]]; then
         echo "Provide password suffix when regenerating all user accounts"
         exit
     fi
+elif [[ "$1" == "fileaccess" ]]; then
+    echo "Updating data volume file ownership and access"
 else
     if [[ ! -e /root/admiralconfig.d/admiralresearchgroupmembers/$1.sh ]]; then
         echo "No such user recorded: $1"
@@ -57,8 +59,10 @@ if [[ "$1" == "all" ]]; then
 elif [[ "$1" == "fileaccess" ]]; then
     for u in `ls /root/admiralconfig.d/admiralresearchgroupmembers/*.sh`; do       
         source $u
-        echo "Set file access for user $username..."
-        setdataownerandaccess $username $username $userrole
+        if [[ "$userrole" == "RGMember" || "$userrole" == "RGLeader" ]]; then
+            echo "Set file access for user $username as $userrole ..."
+            setdataownerandaccess $username $username $userrole
+        fi
     done
 
     for u in `ls /root/admiralconfig.d/admiralresearchgrouporphans/*.sh`; do
@@ -66,7 +70,6 @@ elif [[ "$1" == "fileaccess" ]]; then
         echo "Set file access for orphan $username..."
         setdataownerandaccess $username admiral-orphan RGOrphan
     done
-
 
 elif [[ -e "/root/admiralconfig.d/admiralresearchgroupmembers/$1.sh" ]]; then
     echo "Migrate designated user $1"
