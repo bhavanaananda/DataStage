@@ -21,7 +21,7 @@ function migrate()
     # $2 = target directory or file in system
     cp="cp -f $SRCDIR/$1 $2"
     echo "$cp"
-    #$cp
+    $cp
 }
 
 # 1. get system parameters
