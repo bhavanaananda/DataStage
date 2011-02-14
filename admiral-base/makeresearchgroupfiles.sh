@@ -50,7 +50,6 @@ fi
 
 echo "TGTDIR: $TGTDIR"
 mkdir -p $TGTDIR
-exit 1
 
 BLACKLISTPATTERN="^(.*~|.*\\.(tmp|bak)|a1\.sh|copywithhostandpassword\.sh)$"
 FILELIST="`ls -1 --directory --ignore-backups --file-type * ldapconfig/* www/* www/*/* $HOSTNAME/* $HOSTNAME/*/*`"
