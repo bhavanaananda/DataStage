@@ -42,8 +42,15 @@ done
 if [[ "$4" != "" ]]; then
     TGTDIR="$4"
 fi
+if [[ "$TGTDIR" == "" ]]; then
+    echo "No target directory could be determined (/mnt/data/tool or /var/kvm not found, none specified)"
+    echo "(Has the /mnt/data symlink been created?)"
+    exit 1
+fi
+
 echo "TGTDIR: $TGTDIR"
 mkdir -p $TGTDIR
+exit 1
 
 BLACKLISTPATTERN="^(.*~|.*\\.(tmp|bak)|a1\.sh|copywithhostandpassword\.sh)$"
 FILELIST="`ls -1 --directory --ignore-backups --file-type * ldapconfig/* www/* www/*/* $HOSTNAME/* $HOSTNAME/*/*`"
