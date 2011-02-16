@@ -49,6 +49,11 @@ ProxyPassReverse /silos http://$1/silos
 ProxyPass        /silos/ http://$1/silos/
 ProxyPassReverse /silos/ http://$1/silos/
 
+ProxyPass        /static http://$1/static
+ProxyPassReverse /static http://$1/static
+ProxyPass        /static/ http://$1/static/
+ProxyPassReverse /static/ http://$1/static/
+
 ProxyPass        /$3 http://$1/$2
 ProxyPassReverse /$3 http://$1/$2
 ProxyPass        /$3/ http://$1/$2/

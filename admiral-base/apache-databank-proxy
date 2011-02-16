@@ -19,13 +19,18 @@ ProxyRequests Off
 
 <Proxy *>
   Order deny,allow
-  Allow from all
+  Allow from all 
 </Proxy>
 
 ProxyPass        /silos http://%{DATABANKHOST}/silos
 ProxyPassReverse /silos http://%{DATABANKHOST}/silos
 ProxyPass        /silos/ http://%{DATABANKHOST}/silos/
 ProxyPassReverse /silos/ http://%{DATABANKHOST}/silos/
+
+ProxyPass        /static http://%{DATABANKHOST}/static
+ProxyPassReverse /static http://%{DATABANKHOST}/static
+ProxyPass        /static/ http://%{DATABANKHOST}/static/
+ProxyPassReverse /static/ http://%{DATABANKHOST}/static/
 
 ProxyPass        /%{DATABANKSILO} http://%{DATABANKHOST}/%{DATABANKSILO}
 ProxyPassReverse /%{DATABANKSILO} http://%{DATABANKHOST}/%{DATABANKSILO}
