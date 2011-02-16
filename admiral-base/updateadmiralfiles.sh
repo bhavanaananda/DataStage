@@ -66,7 +66,8 @@ migrate sshd_config                /etc/ssh
 migrate apache2.conf               /etc/apache2
 migrate apache-default             /etc/apache2/sites-available/default
 migrate apache-default-ssl         /etc/apache2/sites-available/default-ssl
-migrate apache-databank-proxy      /etc/apache2/sites-available/apache-databank-proxy
+migrate apache-databank-proxy      /etc/apache2/sites-available/databank-proxy
+migrate apache-databank-proxy      /etc/apache2/sites-enabled/databank-proxy
 ### migrate webauth.conf               /etc/apache2/webauth
 ### migrate webauth.keytab             /etc/apache2/webauth
 ### migrate webdav.keytab              /etc/apache2
