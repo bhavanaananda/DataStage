@@ -3,6 +3,10 @@
 
 echo "*****FIRST BOOT*****"
 
+mv /etc/sudoers /etc/sudoers-orig
+cp /root/sudoers /etc/sudoers
+chmod 440 /etc/sudoers
+
 smbpasswd -s -a admiral <<END
 %{PASSWORD}
 %{PASSWORD}
