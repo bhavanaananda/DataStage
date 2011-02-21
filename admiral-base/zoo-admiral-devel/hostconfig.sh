@@ -5,6 +5,10 @@
 # (See also: admiralconfig.sh)
 #
 
+RESEARCHGROUPNAME="Evolutionary Development"
+
+ADMIRALHOSTNAME="zoo-admiral-devel"
+
 # Samba/Windows workgroup name for research group files
 WORKGROUP="EvolutionaryDevelopment"
 

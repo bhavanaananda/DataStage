@@ -5,8 +5,12 @@
 # (See also: admiralconfig.sh)
 #
 
+RESEARCHGROUPNAME="Behavioural Ecology"
+
+ADMIRALHOSTNAME="zoo-admiral-behav"
+
 # Samba/Windows workgroup name for research group files
-WORKGROUP="SHOTTON"
+WORKGROUP="BehaviouralEcology"
 
 # Username initially designated as research group leader
 # (System scripts will attempt to ensure that there is always a user 

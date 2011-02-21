@@ -5,6 +5,10 @@
 # (See also: admiralconfig.sh)
 #
 
+RESEARCHGROUPNAME="Silk"
+
+ADMIRALHOSTNAME="zoo-admiral-silk"
+
 # Samba/Windows workgroup name for research group files
 WORKGROUP="Silk"
 

@@ -5,6 +5,11 @@
 # (See also: admiralconfig.sh)
 #
 
+
+RESEARCHGROUPNAME="Image Bioinformatics"
+
+ADMIRALHOSTNAME="zoo-admiral-ibrg"
+
 # Samba/Windows workgroup name for research group files
 WORKGROUP="SHOTTON"
 

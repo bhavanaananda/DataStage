@@ -5,6 +5,11 @@
 # (See also: admiralconfig.sh)
 #
 
+RESEARCHGROUPNAME="ADMIRAL Test System"
+
+ADMIRALHOSTNAME="zakynthos"
+
+
 # Samba/Windows workgroup name for research group files
 WORKGROUP="TestGroup"
 

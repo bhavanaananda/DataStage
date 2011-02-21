@@ -64,6 +64,7 @@ else
 fi
 
 echo "Substitutions:"
+echo "  s/%{RESEARCHGROUPNAME}/$RESEARCHGROUPNAME/g"
 echo "  s/%{HOSTNAME}/$HOSTNAME/g"
 echo "  s/%{PASSWORD}/$PASSWORD/g"
 echo "  s/%{WORKGROUP}/$WORKGROUP/g"
@@ -111,7 +112,8 @@ for f in $FILELIST; do
         $REPORT "not blacklisted $f (dir:$f1, name:$f2, target:$f3)"
         if [ -d $TGTDIR/$f3 ]; then
             if [[ "$COPYTEST" == "copy" ]]; then
-                    sed -e "s/%{HOSTNAME}/$HOSTNAME/g" \
+                    sed -e "s/%{RESEARCHGROUPNAME}/$RESEARCHGROUPNAME/g" \
+                        -e "s/%{HOSTNAME}/$HOSTNAME/g" \
                         -e "s/%{PASSWORD}/$PASSWORD/g" \
                         -e "s/%{WORKGROUP}/$WORKGROUP/g" \
                         -e "s/%{IPADDR}/$IP/g" \
