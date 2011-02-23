@@ -61,8 +61,4 @@ echo =================================
 mkdir -p /root/admiralconfig.d/admiralresearchgroupmembers
 mkdir -p /root/admiralconfig.d/admiralresearchgrouporphans
 
-source /root/admiralconfig.d/admiralRGLeader.sh
-echo "Create a user account for $RGLeaderName with role RGLeader"
-/root/admiraluseradd.sh TempLeader "Temporary group leader" RGLeader
-
 # End.

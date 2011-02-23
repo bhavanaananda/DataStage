@@ -5,11 +5,6 @@ source /root/admiralconfig.d/admiralconfig.sh
 if [[ "$1" == "" ]]; then
   echo "Usage: $0 username [purge]"
   exit 1
-elif [[ "$1" == "$RGLeaderName" ]]; then
-  echo "Do not use this script to delete the Research Group Leader!"
-  echo "Work out who is to be the new Research Group Leader user."
-  echo "Then run the 'admiralleaderchange.sh' script."
-  exit 1
 else 
 
   if [[ "$2" == "purge" ]]; then

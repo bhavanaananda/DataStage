@@ -6,7 +6,7 @@
 # blacklisted, and replace the originals with a symlink to the copy.
 #
 # This is used to create a test  working copy of an ADMIRAL system, with
-# supplied host name, password and group leader names interpolated into key 
+# supplied host name, password and interpolated into key 
 # configuration files (???)
 #
 # Copyright (c) 2010 University of Oxford
@@ -69,7 +69,6 @@ echo "  s/%{HOSTNAME}/$HOSTNAME/g"
 echo "  s/%{PASSWORD}/$PASSWORD/g"
 echo "  s/%{WORKGROUP}/$WORKGROUP/g"
 echo "  s/%{IPADDR}/$IP/g"
-echo "  s/%{LeaderName}/$LEADERNAME/g"
 echo "  s!%{MD5PASS}!$MD5PASSWD!g"
 echo "  s/%{DATABANKHOST}/$DATABANKHOST/g"
 echo "  s/%{DATABANKSILO}/$DATABANKSILO/g"
@@ -117,7 +116,6 @@ for f in $FILELIST; do
                         -e "s/%{PASSWORD}/$PASSWORD/g" \
                         -e "s/%{WORKGROUP}/$WORKGROUP/g" \
                         -e "s/%{IPADDR}/$IP/g" \
-                        -e "s/%{LeaderName}/$LEADERNAME/g" \
                         -e "s!%{MD5PASS}!$MD5PASSWD!g" \
                         -e "s/%{DATABANKHOST}/$DATABANKHOST/g" \
                         -e "s/%{DATABANKSILO}/$DATABANKSILO/g" \
