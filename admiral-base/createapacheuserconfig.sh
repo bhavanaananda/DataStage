@@ -147,18 +147,11 @@ fi
 
 generateapacheproxyconfig  $DATABANKHOST $DATABANKSILO $DATABANKSILO
 
-#echo ==================================================================
-#echo "Remember to restart Apache server to use the revised configuration"
-#echo ==================================================================
-#echo "# /etc/init.d/apache2 restart"
-#echo
-
-echo ======================================================
-echo "Restart Apache server to use the revised configuration"
-echo ======================================================
+echo ==================================================================
+echo "Remember to restart Apache server to use the revised configuration"
+echo ==================================================================
+echo "# /etc/init.d/apache2 restart"
 echo
-
-/etc/init.d/apache2 restart
 
 # End.
   

@@ -19,7 +19,7 @@ as the user <code>admiral</code>.</p>
 <p>Run the command <code>sudo su -</code> to have administrative access, using the password for the <code>admiral</code>
 user.  Then run the command 
 <blockquote>
-<code>/root/admiraluseradd.sh <cite>username</cite> <cite>userpass</cite> <cite>grouprole</cite> [<cite>room number</cite> <cite>telephone number</cite>]</code>
+<code>/root/admiraluseradd.sh <cite>username</cite> "<cite>full name</cite>" <cite>grouprole</cite> [<cite>room number</cite> <cite>telephone number</cite> <cite>userpass</cite>]</code>
 </blockquote>
 The last two options (room number and telephone number) are optional.  <cite>grouprole</cite> must be one of <code>RGMember</code> (an ordinary member of
 the research group), <code>RGLeader</code> (the group leader, who is able to view the private files of all members of the group), or <code>RGCollaborator</code>
@@ -30,7 +30,7 @@ appropriate permissions set.</p>
 
 <h2>To change a user password</h2>
 
-Log in via <a href="../docs/accessdirect.html">SSH</a>, and use the <code>smbldap-passwd</code>code> command.
+Log in via <a href="../docs/accessdirect.html">SSH</a>, and use the <code>smbldap-passwd</code> command.
 
 To change your own password:
 <blockquote>

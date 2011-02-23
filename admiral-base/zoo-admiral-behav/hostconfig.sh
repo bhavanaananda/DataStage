@@ -15,7 +15,7 @@ WORKGROUP="BehaviouralEcology"
 # Username initially designated as research group leader
 # (System scripts will attempt to ensure that there is always a user 
 # who is the designated research group leader)
-LEADERNAME="AlexKacelnik"
+LEADERNAME="Alex"
 
 # Databank host and silo names
 
