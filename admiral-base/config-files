@@ -45,13 +45,11 @@ postboot-4.sh /root/postboot-4.sh
 lvmconfig.sh /root/lvmconfig.sh
 etcldap.conf /root/etcldap.conf
 admiralconfig.sh /root/admiralconfig.sh
-admiralRGLeader.sh /root/admiralRGLeader.sh
 admiraldatasetup.sh /root/admiraldatasetup.sh
 admiraltoolsetup.sh /root/admiraltoolsetup.sh
 admiralusermanagement.sh /root/admiralusermanagement.sh
 admiraluseradd.sh /root/admiraluseradd.sh
 admiraluserdel.sh /root/admiraluserdel.sh
-admiralleaderchange.sh /root/admiralleaderchange.sh
 admiralmigrateusers.sh /root/admiralmigrateusers.sh
 addtestusers.sh /root/addtestusers.sh
 deltestusers.sh /root/deltestusers.sh
