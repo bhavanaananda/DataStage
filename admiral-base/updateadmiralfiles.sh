@@ -74,8 +74,41 @@ rm /root/admiralleaderchange.sh
 ### migrate webdav.keytab              /etc/apache2
 
 # Leaving ldapconfig files for now
-# Leaving web site files for now
+
+# Copy web site files
 
 migrate www/index.html /var/www/index.html
+
+migrate www/docs/accesswebdav.html /var/www/docs/accesswebdav.html
+migrate www/docs/adminusers.html /var/www/docs/adminusers.html
+migrate www/docs/fileorganization.html /var/www/docs/fileorganization.html
+migrate www/docs/accesshttp.html /var/www/docs/accesshttp.html
+migrate www/docs/accessmacos.html /var/www/docs/accessmacos.html
+migrate www/docs/accesswindows.html /var/www/docs/accesswindows.html
+migrate www/docs/accesslinux.html /var/www/docs/accesslinux.html
+migrate www/docs/accessdirect.html /var/www/docs/accessdirect.html
+
+migrate www/images/ADMIRALogo96x96.png /var/www/images/ADMIRALogo96x96.png
+
+migrate www/css/jquery.treeview.css /var/www/css/jquery.treeview.css
+
+migrate www/css/images/treeview-famfamfam.gif /var/www/css/images/treeview-famfamfam.gif
+migrate www/css/images/treeview-red.gif /var/www/css/images/treeview-red.gif
+migrate www/css/images/treeview-gray-line.gif /var/www/css/images/treeview-gray-line.gif
+migrate www/css/images/treeview-default-line.gif /var/www/css/images/treeview-default-line.gif
+migrate www/css/images/treeview-famfamfam-line.gif /var/www/css/images/treeview-famfamfam-line.gif
+migrate www/css/images/treeview-default.gif /var/www/css/images/treeview-default.gif
+migrate www/css/images/plus.gif /var/www/css/images/plus.gif
+migrate www/css/images/treeview-black.gif /var/www/css/images/treeview-black.gif
+migrate www/css/images/folder-closed.gif /var/www/css/images/folder-closed.gif
+migrate www/css/images/file.gif /var/www/css/images/file.gif
+migrate www/css/images/treeview-gray.gif /var/www/css/images/treeview-gray.gif
+migrate www/css/images/treeview-red-line.gif /var/www/css/images/treeview-red-line.gif
+migrate www/css/images/treeview-black-line.gif /var/www/css/images/treeview-black-line.gif
+migrate www/css/images/minus.gif /var/www/css/images/minus.gif
+migrate www/css/images/folder.gif /var/www/css/images/folder.gif
+
+migrate www/js/jquery-1.4.2.min.js /var/www/js/jquery-1.4.2.min.js
+migrate www/js/jquery.treeview.min.js /var/www/js/jquery.treeview.min.js
 
 # End.
