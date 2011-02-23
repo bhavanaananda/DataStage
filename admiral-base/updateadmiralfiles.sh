@@ -77,6 +77,11 @@ rm /root/admiralleaderchange.sh
 
 # Copy web site files
 
+mkdir -p /var/www/docs
+mkdir -p /var/www/images
+mkdir -p /var/www/css/images
+mkdir -p /var/www/js
+
 migrate www/index.html /var/www/index.html
 
 migrate www/docs/accesswebdav.html /var/www/docs/accesswebdav.html
