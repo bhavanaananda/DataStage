@@ -1,0 +1,1 @@
+find . | xargs -n 1 -I{}  echo "migrate www/{} /var/www/{}"
