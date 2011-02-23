@@ -76,4 +76,6 @@ rm /root/admiralleaderchange.sh
 # Leaving ldapconfig files for now
 # Leaving web site files for now
 
+migrate www/index.html /var/www/index.html
+
 # End.
