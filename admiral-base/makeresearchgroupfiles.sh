@@ -120,7 +120,7 @@ for f in $FILELIST; do
                         -e "s/%{DATABANKHOST}/$DATABANKHOST/g" \
                         -e "s/%{DATABANKSILO}/$DATABANKSILO/g" \
                         <$f >$TGTDIR/$f3$f2
-            else
+            elsegroup leader names 
                     echo "sed ... <$f >$TGTDIR/$f3$f2"
             fi
         else
