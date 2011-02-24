@@ -101,6 +101,18 @@ function generateuserconfigfile()
     </Limit>
 </Location>
 
+<Location /data/common>
+    Order Deny,Allow
+    Allow from all
+    <LimitExcept REPORT GET OPTIONS PROPFIND>
+      Require ldap-user $username
+    </LimitExcept>
+    <Limit PROPFIND OPTIONS GET REPORT>
+      Require ldap-attribute gidNumber=$RGLeaderGID
+      Require ldap-attribute gidNumber=$RGMemberGID
+    </Limit>
+</Location>
+
 <Location /data/collab/$username>
     Order Deny,Allow
     Allow from all

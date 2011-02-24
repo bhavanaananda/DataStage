@@ -24,6 +24,10 @@ mkdir -p /home/data/shared
 chown www-data: /home/data/shared
 chmod g=S /home/data/shared
 
+mkdir -p /home/data/common
+chown www-data: /home/data/common
+chmod g=S /home/data/common
+
 mkdir -p /home/data/collab
 chown www-data: /home/data/collab
 chmod g=S /home/data/collab
