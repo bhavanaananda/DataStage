@@ -52,7 +52,7 @@ echo "TGTDIR: $TGTDIR"
 mkdir -p $TGTDIR
 
 BLACKLISTPATTERN="^(.*~|.*\\.(tmp|bak)|a1\.sh|copywithhostandpassword\.sh)$"
-FILELIST="`ls -1 --directory --ignore-backups --file-type * ldapconfig/* www/* www/*/* $HOSTNAME/* $HOSTNAME/*/*`"
+FILELIST="`ls -1 --directory --ignore-backups --file-type * ldapconfig/* www/* www/*/* www/*/*/* $HOSTNAME/* $HOSTNAME/*/*`"
 REPORT="echo"
 REPORT=":"
 MD5PASSWD=`slappasswd -h {MD5} -s $PASSWORD`
