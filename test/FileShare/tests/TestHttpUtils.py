@@ -7,8 +7,11 @@ import os
 import sys
 import httplib
 import urllib2
+import logging
 
 from TestConfig import TestConfig
+
+logger = logging.getLogger('TestSHttpUtils')
 
 # Execute a specified HTTP method using a supplied urllib2 opener object,
 # following a single HTTP 301 redirection response
@@ -51,7 +54,8 @@ def do_httpCreateFile(areaName, userName, userPass, fileName, createFileContent)
         createFileContent, 'text/plain')
     return createMessage
 
-def do_httpReadFile(areaName, userName, userPass,fileName):
+def do_httpReadFile(areaName, userName, userPass, fileName):
+    logger.debug("do_httpReadFile %s %s %s %s"%(areaName, userName, userPass, fileName))
     authhandler = do_httpAuthenticationHandler(userName, userPass)
     opener = urllib2.build_opener(authhandler)
     urllib2.install_opener(opener)       
