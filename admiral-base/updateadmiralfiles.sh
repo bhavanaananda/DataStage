@@ -34,6 +34,7 @@ SRCDIR="/mnt/data/tool/$ADMIRALHOSTNAME"
 migrate addorphanedtestuser.sh     /root
 migrate addtestusers.sh            /root
 migrate admiraldatasetup.sh        /root
+migrate admiraldataaccess.sh       /root
 migrate admiralmigrateusers.sh     /root
 migrate admiraltoolsetup.sh        /root
 migrate admiraluseradd.sh          /root
