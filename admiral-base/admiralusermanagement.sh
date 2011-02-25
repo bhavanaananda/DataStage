@@ -49,6 +49,7 @@ function setdataownerandaccess()
     # User access
     setfacl --recursive -m u:$username:rwx /home/data/private/$datadir
     setfacl --recursive -m u:$username:rwx /home/data/shared/$datadir
+    setfacl --recursive -m u:$username:rwx /home/data/common
     setfacl --recursive -m u:$username:rwx /home/data/collab/$datadir
   
     # Research group leader access
