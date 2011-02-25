@@ -39,15 +39,15 @@ and also to read all files in the <code>shared</code> and <code>collab</code> ar
 
 <p>MacOS has a built-in <code>ssh</code> command for creating SSH sessions, which can be used thus from the <code>Terminal</Code> application:
 <pre>
-  ssh <cite>username</cite>@%{HOSTNAME}.zoo.ox.ac.uk
+  ssh <cite>username</cite>@%{HOSTFULLNAME}
 </pre>
 (Finder can be used to find the <code>Terminal</code> application in directory <code>Applications/Utilities</code>.)
 </p>
 
 <p>It also provides a command-line SCP file copying command, which is used similarly:
 <pre>
-  scp <cite>username</cite>@%{HOSTNAME}.zoo.ox.ac.uk:/home/<cite>username/filename</cite> <cite>localfilename</cite>
-  scp <cite>localfilename</cite> <cite>username</cite>@%{HOSTNAME}.zoo.ox.ac.uk:/home/<cite>username/filename</cite>
+  scp <cite>username</cite>@%{HOSTFULLNAME}:/home/<cite>username/filename</cite> <cite>localfilename</cite>
+  scp <cite>localfilename</cite> <cite>username</cite>@%{HOSTFULLNAME}:/home/<cite>username/filename</cite>
 </pre>
 </p>
 	
@@ -61,9 +61,9 @@ and also to read all files in the <code>shared</code> and <code>collab</code> ar
 
 <p>Here are some examples of their use:
 <pre>
-  ssh <cite>username</cite>@%{HOSTNAME}.zoo.ox.ac.uk
-  scp <cite>username</cite>@%{HOSTNAME}.zoo.ox.ac.uk:/home/<cite>username/filename</cite> <cite>localfilename</cite>
-  scp <cite>localfilename</cite> <cite>username</cite>@%{HOSTNAME}.zoo.ox.ac.uk:/home/<cite>username/filename</cite>
+  ssh <cite>username</cite>@%{HOSTFULLNAME}
+  scp <cite>username</cite>@%{HOSTFULLNAME}:/home/<cite>username/filename</cite> <cite>localfilename</cite>
+  scp <cite>localfilename</cite> <cite>username</cite>@%{HOSTFULLNAME}:/home/<cite>username/filename</cite>
 </pre>
 
 </body>

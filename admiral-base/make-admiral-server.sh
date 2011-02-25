@@ -1,6 +1,7 @@
 # rm /etc/libvirt/qemu/admiral.xml
 # sudo /etc/init.d/libvirt-bin restart
 HOSTNAME=%{HOSTNAME}
+DOMAINNAME=%{ADMIRALDOMAINNAME}
 IPADDR=%{IPADDR}
 PASSWD=%{PASSWORD}
 if true; then
@@ -17,7 +18,7 @@ vmbuilder vmserver ubuntu \
   --part admiral.partitions \
   --user admiral \
   --pass $PASSWD \
-  --domain zoo.ox.ac.uk \
+  --domain $DOMAINNAME \
   --hostname $HOSTNAME \
   --addpkg acpid \
   --addpkg unattended-upgrades \

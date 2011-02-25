@@ -7,6 +7,7 @@
 
 RESEARCHGROUPNAME="Image Bioinformatics"
 
+ADMIRALDOMAINDC="zoo ox ac uk"
 ADMIRALHOSTNAME="zoo-admiral-ibrg"
 
 # Samba/Windows workgroup name for research group files

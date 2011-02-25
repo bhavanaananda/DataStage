@@ -7,6 +7,7 @@
 
 RESEARCHGROUPNAME="ADMIRAL Test System"
 
+ADMIRALDOMAINDC="zoo ox ac uk"
 ADMIRALHOSTNAME="zakynthos"
 
 # Samba/Windows workgroup name for research group files

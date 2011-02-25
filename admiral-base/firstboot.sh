@@ -34,7 +34,7 @@ chmod g+ws /home/data
 cp /root/ADMIRAL.README /home/data
 
 chmod +x /root/make-apache2-cert.sh
-/root/make-apache2-cert.sh %{HOSTNAME}.zoo.ox.ac.uk
+/root/make-apache2-cert.sh %{HOSTFULLNAME}
 cp /root/apache-default-ssl /etc/apache2/sites-available/default-ssl
 
 a2enmod dav

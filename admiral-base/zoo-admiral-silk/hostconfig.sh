@@ -7,6 +7,7 @@
 
 RESEARCHGROUPNAME="Silk"
 
+ADMIRALDOMAINDC="zoo ox ac uk"
 ADMIRALHOSTNAME="zoo-admiral-silk"
 
 # Samba/Windows workgroup name for research group files

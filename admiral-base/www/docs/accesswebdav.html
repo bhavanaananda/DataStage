@@ -13,9 +13,10 @@
 
 <p>Selected ADMIRAL data files may be accessed using the web file access protocol, using one of the following forms of URI:
 <pre>
-	<code>http://%{HOSTNAME}.zoo.ox.ac.uk/data/private/<cite>username</cite></code>
-	<code>http://%{HOSTNAME}.zoo.ox.ac.uk/data/shared/<cite>username</cite></code>
-	<code>http://%{HOSTNAME}.zoo.ox.ac.uk/data/collab/<cite>username</cite></code>
+	<code>http://%{HOSTFULLNAME}/data/private/<cite>username</cite></code>
+	<code>http://%{HOSTFULLNAME}/data/shared/<cite>username</cite></code>
+	<code>http://%{HOSTFULLNAME}/data/collab/<cite>username</cite></code>
+  <code>http://%{HOSTFULLNAME}/data/common</code>
 </pre>
 A username and password will be required.  Access controls are enforced as described for local network file access page.
 </p>
@@ -36,7 +37,7 @@ It is provided for two main reasons:
 <h2>Web file access using MacOS</h2>
 
 <p>To connect a web file system share from MacOS, use the Finder "Go &gt; Connect to server..." menu command (or COMMAND-K shortcut), and enter
-<code>http://%{HOSTNAME}.zoo.ox.ac.uk/data/private/<cite>username</cite></code>, or one of the other forms shown above, as the server address.
+<code>http://%{HOSTFULLNAME}/data/private/<cite>username</cite></code>, or one of the other forms shown above, as the server address.
 The system will then prompt for a username and password.	
 </p>
 
@@ -49,7 +50,7 @@ but using the web address:
 
 <p>
 Use the "Places &gt; Connect to server ..." menu command.  In the popup window, from the "Service type"
-drop-down menu, select "WebDAV (HTTP)".  Under "Server" enter <code>%{HOSTNAME}.zoo.ox.ac.uk</code> and under
+drop-down menu, select "WebDAV (HTTP)".  Under "Server" enter <code>%{HOSTFULLNAME}</code> and under
 "Folder" enter <code>data/<cite>username</cite></code>, <code>data/shared/<cite>username</cite></code> or <code>data/collab/<cite>username</cite></code>.
 Under "Username" enter <code><cite>username</cite></code> and then click on "Connect".
 Enter the specified user's password into the next popup window to appear.
@@ -62,7 +63,7 @@ An alternative mechanism for reading and writing files under Linux is to use the
 <!--
 Mount the file system using the <code>davfs</code> file system; e.g.
 <pre>
-	mount -t davfs -o (((options))) http://<cite>username</cite>@%{HOSTNAME}.zoo.ox.ac.uk/data <cite>mountpoint</cite>
+	mount -t davfs -o (((options))) http://<cite>username</cite>@%{HOSTFULLNAME}/data <cite>mountpoint</cite>
 </pre>
 -->
 

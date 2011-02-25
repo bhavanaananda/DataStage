@@ -7,8 +7,8 @@ answers() {
 	echo Oxford
 	echo University of Oxford
 	echo Zoology Department
-	echo %{HOSTNAME}.zoo.ox.ac.uk
-	echo root@%{HOSTNAME}.zoo.ox.ac.uk
+	echo %{HOSTFULLNAME}
+	echo root@%{HOSTFULLNAME}
 }
 
 if [ $# -eq 0 ] ; then

@@ -1,93 +1,93 @@
-dn: dc=%{HOSTNAME},dc=zoo,dc=ox,dc=ac,dc=uk
+dn: %{ADMIRALFULLDN}
 dc: %{HOSTNAME}
 objectClass: top
 objectClass: domain
 objectClass: domainRelatedObject
 objectClass: dcObject
 description: My LDAP Root
-associatedDomain: %{HOSTNAME}.zoo.ox.ac.uk
+associatedDomain: %{HOSTFULLNAME}
 
-dn: ou=Hosts,dc=%{HOSTNAME},dc=zoo,dc=ox,dc=ac,dc=uk
+dn: ou=Hosts,%{ADMIRALFULLDN}
 ou: Hosts
 objectClass: top
 objectClass: organizationalUnit
 objectClass: domainRelatedObject
-associatedDomain: %{HOSTNAME}.zoo.ox.ac.uk
+associatedDomain: %{HOSTFULLNAME}
 
-dn: ou=Rpc,dc=%{HOSTNAME},dc=zoo,dc=ox,dc=ac,dc=uk
+dn: ou=Rpc,%{ADMIRALFULLDN}
 ou: Rpc
 objectClass: top
 objectClass: organizationalUnit
 objectClass: domainRelatedObject
-associatedDomain: %{HOSTNAME}.zoo.ox.ac.uk
+associatedDomain: %{HOSTFULLNAME}
 
-dn: ou=Services,dc=%{HOSTNAME},dc=zoo,dc=ox,dc=ac,dc=uk
+dn: ou=Services,%{ADMIRALFULLDN}
 ou: Services
 objectClass: top
 objectClass: organizationalUnit
 objectClass: domainRelatedObject
-associatedDomain: %{HOSTNAME}.zoo.ox.ac.uk
+associatedDomain: %{HOSTFULLNAME}
 
-dn: nisMapName=netgroup.byuser,dc=%{HOSTNAME},dc=zoo,dc=ox,dc=ac,dc=uk
+dn: nisMapName=netgroup.byuser,%{ADMIRALFULLDN}
 nismapname: netgroup.byuser
 objectClass: top
 objectClass: nisMap
 objectClass: domainRelatedObject
-associatedDomain: %{HOSTNAME}.zoo.ox.ac.uk
+associatedDomain: %{HOSTFULLNAME}
 
-dn: ou=Mounts,dc=%{HOSTNAME},dc=zoo,dc=ox,dc=ac,dc=uk
+dn: ou=Mounts,%{ADMIRALFULLDN}
 ou: Mounts
 objectClass: top
 objectClass: organizationalUnit
 objectClass: domainRelatedObject
-associatedDomain: %{HOSTNAME}.zoo.ox.ac.uk
+associatedDomain: %{HOSTFULLNAME}
 
-dn: ou=Networks,dc=%{HOSTNAME},dc=zoo,dc=ox,dc=ac,dc=uk
+dn: ou=Networks,%{ADMIRALFULLDN}
 ou: Networks
 objectClass: top
 objectClass: organizationalUnit
 objectClass: domainRelatedObject
-associatedDomain: %{HOSTNAME}.zoo.ox.ac.uk
+associatedDomain: %{HOSTFULLNAME}
 
-dn: ou=People,dc=%{HOSTNAME},dc=zoo,dc=ox,dc=ac,dc=uk
+dn: ou=People,%{ADMIRALFULLDN}
 ou: People
 objectClass: top
 objectClass: organizationalUnit
 objectClass: domainRelatedObject
-associatedDomain: %{HOSTNAME}.zoo.ox.ac.uk
+associatedDomain: %{HOSTFULLNAME}
 
-dn: ou=Group,dc=%{HOSTNAME},dc=zoo,dc=ox,dc=ac,dc=uk
+dn: ou=Group,%{ADMIRALFULLDN}
 ou: Group
 objectClass: top
 objectClass: organizationalUnit
 objectClass: domainRelatedObject
-associatedDomain: %{HOSTNAME}.zoo.ox.ac.uk
+associatedDomain: %{HOSTFULLNAME}
 
-dn: ou=Netgroup,dc=%{HOSTNAME},dc=zoo,dc=ox,dc=ac,dc=uk
+dn: ou=Netgroup,%{ADMIRALFULLDN}
 ou: Netgroup
 objectClass: top
 objectClass: organizationalUnit
 objectClass: domainRelatedObject
-associatedDomain: %{HOSTNAME}.zoo.ox.ac.uk
+associatedDomain: %{HOSTFULLNAME}
 
-dn: ou=Protocols,dc=%{HOSTNAME},dc=zoo,dc=ox,dc=ac,dc=uk
+dn: ou=Protocols,%{ADMIRALFULLDN}
 ou: Protocols
 objectClass: top
 objectClass: organizationalUnit
 objectClass: domainRelatedObject
-associatedDomain: %{HOSTNAME}.zoo.ox.ac.uk
+associatedDomain: %{HOSTFULLNAME}
 
-dn: ou=Aliases,dc=%{HOSTNAME},dc=zoo,dc=ox,dc=ac,dc=uk
+dn: ou=Aliases,%{ADMIRALFULLDN}
 ou: Aliases
 objectClass: top
 objectClass: organizationalUnit
 objectClass: domainRelatedObject
-associatedDomain: %{HOSTNAME}.zoo.ox.ac.uk
+associatedDomain: %{HOSTFULLNAME}
 
-dn: nisMapName=netgroup.byhost,dc=%{HOSTNAME},dc=zoo,dc=ox,dc=ac,dc=uk
+dn: nisMapName=netgroup.byhost,%{ADMIRALFULLDN}
 nismapname: netgroup.byhost
 objectClass: top
 objectClass: nisMap
 objectClass: domainRelatedObject
-associatedDomain: %{HOSTNAME}.zoo.ox.ac.uk
+associatedDomain: %{HOSTFULLNAME}
 
