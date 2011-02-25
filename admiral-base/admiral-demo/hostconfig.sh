@@ -8,7 +8,7 @@
 RESEARCHGROUPNAME="ADMIRAL Demonstrator"
 
 ADMIRALHOSTNAME="admiral-demo"
-ADMIRALDOMAINDC="zoo ox ac uk"
+ADMIRALDOMAINDC=""
 IPADDR="192.168.82.129"
 
 # Samba/Windows workgroup name for research group files
