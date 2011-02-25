@@ -46,6 +46,7 @@ lvmconfig.sh /root/lvmconfig.sh
 etcldap.conf /root/etcldap.conf
 admiralconfig.sh /root/admiralconfig.sh
 admiraldatasetup.sh /root/admiraldatasetup.sh
+admiraldataaccess.sh /root/admiraldataaccess.sh
 admiraltoolsetup.sh /root/admiraltoolsetup.sh
 admiralusermanagement.sh /root/admiralusermanagement.sh
 admiraluseradd.sh /root/admiraluseradd.sh

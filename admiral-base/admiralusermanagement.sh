@@ -34,7 +34,6 @@ function setdataownerandaccess()
     chmod --recursive u=rwx,g=,o= /home/data/private/$datadir
     chmod --recursive u=rwx,g=,o= /home/data/shared/$datadir
     chmod --recursive u=rwx,g=,o= /home/data/collab/$datadir
-    chmod --recursive u=rwx,g=,o= /home/data/common/
 
     #ls -ald /home/data/private/$datadir
     #ls -ald /home/data/shared/$datadir
@@ -50,18 +49,15 @@ function setdataownerandaccess()
     # User access
     setfacl --recursive -m u:$username:rwx /home/data/private/$datadir
     setfacl --recursive -m u:$username:rwx /home/data/shared/$datadir
-    setfacl --recursive -m u:$username:rwx /home/data/common
     setfacl --recursive -m u:$username:rwx /home/data/collab/$datadir
   
     # Research group leader access
     setfacl --recursive -m g:RGLeader:rx /home/data/private/$datadir
     setfacl --recursive -m g:RGLeader:rx /home/data/shared/$datadir
-    setfacl --recursive -m g:RGLeader:rwx /home/data/common
     setfacl --recursive -m g:RGLeader:rx /home/data/collab/$datadir
   
     # Research group member access
     setfacl --recursive -m g:RGMember:rx /home/data/shared/$datadir
-    setfacl --recursive -m g:RGMember:rwx /home/data/common
     setfacl --recursive -m g:RGMember:rx /home/data/collab/$datadir
   
     # Research group collaborator access
@@ -70,14 +66,12 @@ function setdataownerandaccess()
     # Web server access
     setfacl --recursive -m u:www-data:rwx /home/data/private/$datadir
     setfacl --recursive -m u:www-data:rwx /home/data/shared/$datadir
-    setfacl --recursive -m u:www-data:rwx /home/data/common
     setfacl --recursive -m u:www-data:rwx /home/data/collab/$datadir
   
     # Copy access modes to default access modes
     # (@@Do these propagate down to subdirectories without the --recursive option?)
     getfacl --access /home/data/private/$datadir | setfacl --recursive -d -M- /home/data/private/$datadir
     getfacl --access /home/data/shared/$datadir  | setfacl --recursive -d -M- /home/data/shared/$datadir
-    getfacl --access /home/data/common  | setfacl --recursive -d -M- /home/data/common
     getfacl --access /home/data/collab/$datadir  | setfacl --recursive -d -M- /home/data/collab/$datadir
 }
 
