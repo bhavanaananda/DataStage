@@ -34,6 +34,7 @@ function setdataownerandaccess()
     chmod --recursive u=rwx,g=,o= /home/data/private/$datadir
     chmod --recursive u=rwx,g=,o= /home/data/shared/$datadir
     chmod --recursive u=rwx,g=,o= /home/data/collab/$datadir
+    chmod --recursive u=rwx,g=,o= /home/data/common/
 
     #ls -ald /home/data/private/$datadir
     #ls -ald /home/data/shared/$datadir
