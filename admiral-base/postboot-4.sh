@@ -24,7 +24,7 @@ if [[ ! -e /root/admiralconfig.d ]]; then
     ln -s /mnt/data/config /root/admiralconfig.d
 fi
 
-for f in admiralconfig.sh admiralRGLeader.sh; do
+for f in admiralconfig.sh; do  # (Used to be >1 file here; maybe again)
     ff=/mnt/data/config/$f
     if [[ -e "$ff" ]]; then
         echo "Copying new version of $f as $ff-new"
