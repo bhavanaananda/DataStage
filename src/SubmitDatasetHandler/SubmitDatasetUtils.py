@@ -153,10 +153,12 @@ def submitFileToDataset(siloName, datasetName, fileName, filePath, mimeType, tar
         [ ("file", targetName, fileData, mimeType) 
         ]
     (reqtype, reqdata) = HttpUtils.encode_multipart_formdata(fields, files)
+    logger.debug("Call doHTTP_POST: reqtype %s")
     HttpUtils.doHTTP_POST(
         reqdata, reqtype, 
-        resource = "/" + siloName + "/datasets/"+ datasetName+"-packed", 
-        expect_status=[201,204], expect_reason=["Created","No Content"])
+        resource = "/" + siloName + "/datasets/"+ datasetName+"-packed",
+        expect_status=[201,204], expect_reason=["Created","No Content"],
+        accept_type="text/plain")       # Without this, Databank returns 302 (why?)
     return
 
 def unzipRemoteFileToNewDataset(siloName, datasetName, zipFileName):

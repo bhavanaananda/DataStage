@@ -149,7 +149,7 @@ def doRequest(command, resource, reqdata=None, reqheaders={}, expect_status=200,
         hc.close()
         return (response, responsedata)
 
-def doHTTP_POST(data, data_type="application/octet-strem",
+def doHTTP_POST(data, data_type="application/octet-stream",
             endpointhost=None, endpointpath=None, resource=None,
             expect_status=200, expect_reason="OK",
             accept_type="*/*"):
