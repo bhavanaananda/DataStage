@@ -26,7 +26,6 @@ else
 
     chown -R admiral-orphan:RGOrphan /home/data/private/$1
     chown -R admiral-orphan:RGOrphan /home/data/shared/$1
-    chown -R admiral-orphan:RGOrphan /home/data/common/$1
     chown -R admiral-orphan:RGOrphan /home/data/collab/$1
     chown -R admiral-orphan:RGOrphan /mnt/data/home/$1
     # (-L tests for symlink ...)

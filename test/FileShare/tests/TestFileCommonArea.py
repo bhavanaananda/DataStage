@@ -1,4 +1,4 @@
-# $Id: TTestFileCommonArea.py 1047 2009-01-15 14:48:58Z graham $
+# $Id: TestFileCommonArea.py 1047 2009-01-15 14:48:58Z graham $
 #
 # Unit testing for access to private file area
 #
@@ -17,7 +17,7 @@ from TestConfig import TestConfig
 import TestCifsUtils
 import TestHttpUtils
 
-class TTestFileCommonArea(unittest.TestCase):
+class TestFileCommonArea(unittest.TestCase):
         
     def setUp(self):
         return
@@ -30,7 +30,7 @@ class TTestFileCommonArea(unittest.TestCase):
         TestHttpUtils.do_HTTP_redirect(opener, method, uri, data, content_type)
         return
     
-    def cifsMountAs(self, userArea, userName, userPass):
+    def cifsMountAs(self, userName, userPass):
         status= TestCifsUtils.do_cifsMount('common/', userName, userPass)
         if status != 8192:      
             self.assertEqual(status, 0, 'CIFS Mount failure')
@@ -64,32 +64,32 @@ class TTestFileCommonArea(unittest.TestCase):
         authhandler = TestHttpUtils.do_httpAuthenticationHandler(userName, userPass)
         return authhandler
     
-    def httpCreateFileAs(self, areaName, userName, userPass, fileName, fileContent):
-        createMessage = TestHttpUtils.do_httpCreateFile('common/'+areaName, userName, userPass, fileName, fileContent)
+    def httpCreateFileAs(self, userName, userPass, fileName, fileContent):
+        createMessage = TestHttpUtils.do_httpCreateFile('common/', userPass, fileName, fileContent)
         return createMessage
     
     def httpCreateFile(self, userName, userPass, fileName, fileContent):
         createMessage = self.httpCreateFileAs(userName, userPass, fileName, fileContent)
         return createMessage
     
-    def httpReadFileAs(self, areaName, userName, userPass,fileName):
-        readFileContent = TestHttpUtils.do_httpReadFile( 'common/'+areaName, userName, userPass,fileName)
+    def httpReadFileAs(self, userName, userPass,fileName):
+        readFileContent = TestHttpUtils.do_httpReadFile( 'common/', userName, userPass,fileName)
         return readFileContent
 
     def httpReadFile(self, userName, userPass,fileName):
         readFileContent = self.httpReadFileAs(userName, userPass,fileName)
         return readFileContent
       
-    def httpUpdateFileAs(self, areaName, userName, userPass,fileName, updateFileContent):
-        updateMessage = TestHttpUtils.do_httpUpdateFile('common/'+areaName, userName, userPass,fileName, updateFileContent)
+    def httpUpdateFileAs(self,  userName, userPass,fileName, updateFileContent):
+        updateMessage = TestHttpUtils.do_httpUpdateFile('common/', userName, userPass,fileName, updateFileContent)
         return updateMessage
     
     def httpUpdateFile(self, userName, userPass,fileName, updateFileContent):
         updateMessage = self.httpUpdateFileAs(userName, userPass,fileName, updateFileContent)
         return updateMessage
     
-    def httpDeleteFileAs(self, areaName, userName, userPass,fileName):
-        deleteMessage = TestHttpUtils.do_httpDeleteFile( 'common/'+areaName, userName, userPass,fileName)
+    def httpDeleteFileAs(self, userName, userPass,fileName):
+        deleteMessage = TestHttpUtils.do_httpDeleteFile( 'common/', userName, userPass,fileName)
         return deleteMessage
     
     def httpDeleteFile(self, userName, userPass,fileName):
@@ -655,11 +655,11 @@ def getTestSuite(select="unit"):
             [ "testPending"
             ]
         }
-    return TestUtils.getTestSuite(TTestFileCommonArea, testdict, select=select)
+    return TestUtils.getTestSuite(TestFileCommonArea, testdict, select=select)
 
 # Run unit tests directly from command line
 if __name__ == "__main__":
-    TestUtils.runTests("TTestFileCommonArea.log", getTestSuite, sys.argv)
+    TestUtils.runTests("TestFileCommonArea.log", getTestSuite, sys.argv)
 
 # End.
 
