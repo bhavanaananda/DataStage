@@ -53,17 +53,6 @@
     Redirect permanent /data https://%{HOSTNAME}.zoo.ox.ac.uk/data
     Redirect permanent /tool https://%{HOSTNAME}.zoo.ox.ac.uk/tool
     Redirect permanent /test https://%{HOSTNAME}.zoo.ox.ac.uk/test
-
-    #<Location /data>
-    #    Dav On
-    #    AuthName "Restricted"
-    #    AuthType Basic
-    #    AuthBasicProvider ldap
-    #    AuthzLDAPAuthoritative on
-    #    AuthLDAPURL "ldap://%{HOSTNAME}.zoo.ox.ac.uk:389/dc=%{HOSTNAME},dc=zoo,dc=ox,dc=ac,dc=uk"
-    #    AuthLDAPBindDN "cn=admin,dc=%{HOSTNAME},dc=zoo,dc=ox,dc=ac,dc=uk"
-    #    AuthLDAPBindPassword "%{PASSWORD}"
-    #</Location>
     
     # For testing purposes
     <Location /data/default>

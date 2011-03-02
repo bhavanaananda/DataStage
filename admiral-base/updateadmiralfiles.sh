@@ -1,6 +1,6 @@
 #!/bin/bash
 #
-# /root/updateadmiralfiles.sh
+# updateadmiralfiles.sh
 #
 # Update ADMIRAL configuration files on system.
 #
@@ -116,5 +116,10 @@ migrate www/css/images/folder.gif /var/www/css/images/folder.gif
 
 migrate www/js/jquery-1.4.2.min.js /var/www/js/jquery-1.4.2.min.js
 migrate www/js/jquery.treeview.min.js /var/www/js/jquery.treeview.min.js
+
+# Finally, restrict access to files that might contain security information
+chmod -R go-rwx $SRCDIR
+chmod o-rwx /root/firstboot.sh
+chmod o-rwx /etc/apache2/sites-available/default-ssl
 
 # End.
