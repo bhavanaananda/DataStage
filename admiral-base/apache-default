@@ -50,9 +50,9 @@
     #    Deny from all
     #</Directory>
     
-    Redirect permanent /data https://%{HOSTNAME}.zoo.ox.ac.uk/data
-    Redirect permanent /tool https://%{HOSTNAME}.zoo.ox.ac.uk/tool
-    Redirect permanent /test https://%{HOSTNAME}.zoo.ox.ac.uk/test
+    Redirect permanent /data https://%{HOSTFULLNAME}/data
+    Redirect permanent /tool https://%{HOSTFULLNAME}/tool
+    Redirect permanent /test https://%{HOSTFULLNAME}/test
     
     # For testing purposes
     <Location /data/default>
