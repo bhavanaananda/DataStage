@@ -114,6 +114,7 @@ migrate www/css/images/treeview-black-line.gif /var/www/css/images/treeview-blac
 migrate www/css/images/minus.gif /var/www/css/images/minus.gif
 migrate www/css/images/folder.gif /var/www/css/images/folder.gif
 
+migrate www/js/admiral-config.js /var/www/js/admiral-config.js
 migrate www/js/jquery-1.4.2.min.js /var/www/js/jquery-1.4.2.min.js
 migrate www/js/jquery.treeview.min.js /var/www/js/jquery.treeview.min.js
 
