@@ -119,7 +119,7 @@ migrate www/js/jquery.treeview.min.js /var/www/js/jquery.treeview.min.js
 
 # Finally, restrict access to files that might contain security information
 chmod -R go-rwx $SRCDIR
-chmod o-rwx /root/firstboot.sh
-chmod o-rwx /etc/apache2/sites-available/default-ssl
+chmod og-rwx /root/firstboot.sh
+chmod og-rwx /etc/apache2/sites-available/default-ssl
 
 # End.
