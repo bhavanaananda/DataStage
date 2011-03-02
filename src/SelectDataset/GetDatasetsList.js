@@ -66,7 +66,7 @@ admiral.getDatasetList = function (host,siloName,callback)
                 },
             error:        function (xhr, status) 
                 { 
-                    jQuery("#pageLoadStatus").text("HTTP GET "+ "/admiral-test/datasets"+" failed: "+status+"; HTTP status: "+xhr.status+" "+xhr.statusText);
+                    jQuery("#pageLoadStatus").text("HTTP GET "+dataseurl+" failed: "+status+"; HTTP status: "+xhr.status+" "+xhr.statusText);
                     jQuery("#pageLoadStatus").addClass('error');
                 },
             cache:        false
@@ -84,7 +84,7 @@ admiral.getDatasetList = function (host,siloName,callback)
             {
                 function doGetDatasetDetails(v, callback)
                 {
-                    var datasetPath = "/admiral-test/datasets/"+datasetname;
+                    var datasetPath = "/"+admiral.databanksilo+"/datasets/"+datasetname;
                     //log.debug("Dataset path: "+datasetPath);
                     admiral.datasetManifestDictionary(datasetPath,datasetname, callback);
                 }

@@ -32,8 +32,8 @@ import ManifestRDFUtils
 import HttpUtils
 from MiscLib import TestUtils
 
-siloName             = "admiral-test"
-save_stdout          = sys.stdout
+siloName                 = "admiral-test" # @@FIXME
+save_stdout              = sys.stdout
 dcterms                  =  URIRef("http://purl.org/dc/terms/")
 oxds                     =  URIRef("http://vocab.ox.ac.uk/dataset/schema#") 
 NamespaceDictionary      =  {

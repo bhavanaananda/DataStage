@@ -46,6 +46,9 @@
     <script type="text/javascript" src="../../SelectDataset/ListDatasets.js"></script>
     <script type="text/javascript" src="../../SelectDataset/GetDatasetsList.js"></script>
 
+    <!--  Import admiral configuration details -->
+    <!--  NOTE: these are loaded from an absolute location in the web server -->
+    <script type="text/javascript" src="/js/admiral-config.js"></script>
     
     <script>
     // Use jQuery via jQuery(...)
@@ -58,14 +61,14 @@
           	{   var m = new admiral.AsyncComputation();
           	    m.eval(function(val,callback)
           	    {
-          	        admiral.listDatasets("","admiral-test", admiral.getDatasetList, callback);            
+          	        admiral.listDatasets("", admiral.databanksilo, admiral.getDatasetList, callback);            
           	    });
           	    m.eval(function(val,callback)
           	    {
           	        // val supplies a <div> element containing a <table> to be displayed
           	        jQuery("#tableDatasets").html("");
           	        
-          	        //var dataSet = "/admiral-test/datasets/"+datasetName;
+          	        //var dataSet = "/"+admiral.databanksilo+"/datasets/"+datasetName;
           	        log.debug(val);
           	        jQuery("#tableDatasets").append(val.find("table"));
           	    });    
