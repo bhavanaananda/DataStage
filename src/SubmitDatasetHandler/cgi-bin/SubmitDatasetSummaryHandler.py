@@ -35,7 +35,6 @@ def datasetSummaryForm(formdata, outputstr):
     
     formdata    is a dictionary containing parameters from the dataset submission form / handler
     """
-    siloName             =  "admiral-test" # @@FIXME admiral.databanksilo
     save_stdout          =  sys.stdout
     dirName              =  SubmitDatasetUtils.getFormParam("dir"     , formdata)
     datasetName          =  SubmitDatasetUtils.getFormParam("id"      , formdata)
