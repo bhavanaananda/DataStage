@@ -32,7 +32,7 @@ import HttpUtils
 from MiscLib import TestUtils
 
 SuccessStatus            =  "You have successfully logged out of the ADMIRAL system. To login again please click here - <a href='../../../..'>Login<a>"
-
+save_stdout              = sys.stdout
 def processLogout(formdata, outputstr):
     """
     Process logout from the DMIRAl system
@@ -66,8 +66,6 @@ def processLogout(formdata, outputstr):
     finally:
         print "</body>"
         print "</html>"
-        Logger.debug("zipFilePath = "+zipFilePath)
-        SubmitDatasetUtils.deleteLocalFile(zipFilePath)# Delete the local zip file after submission
         sys.stdout = save_stdout
         ###print "---- manifestFilePath "+manifestFilePath
         ###print "---- ElementValueList "+repr(ElementValueList)
@@ -81,7 +79,7 @@ def convertToUriString(statusString):
 
 def redirectToLogoutResponsePage(statusText):
     print "Status: 401 Unauthorized"
-    print "Status: 303 Dataset submission successful"
+    #print "Status: 303 Dataset submission successful"
     print "Location: LogoutResponseHandler.py?status=%s" % (statusText)
     print
 
