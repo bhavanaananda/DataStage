@@ -80,6 +80,7 @@ def convertToUriString(statusString):
 def redirectToLogoutResponsePage(statusText):
     print "Status: 401 Unauthorized"
     #print "Status: 303 Dataset submission successful"
+    print "WWW-Authenticate: 1"
     print "Location: LogoutResponseHandler.py?status=%s" % (statusText)
     print
 
