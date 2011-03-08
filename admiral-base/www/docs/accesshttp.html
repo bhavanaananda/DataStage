@@ -1,7 +1,9 @@
 <!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML 2.0//EN">
 <html>
 
-<p><a href="../index.html">Home</a></p>
+<div>
+  <span><a href="/"><img alt="site_logo" src="/images/ADMIRALogo96x96.png" border="0"/>&nbsp;%{HOSTFULLNAME} home</a></span>
+</div>
 
 <head>
 <title>ADMIRAL data file web browser access</title>
@@ -13,14 +15,18 @@
 
 <p>Selected ADMIRAL data files may be accessed using a web browser, using one of the following forms of URI:
 <pre>
-	<code>http://%{HOSTNAME}.zoo.ox.ac.uk/data/private/<cite>username</cite>/...</code>
-	<code>http://%{HOSTNAME}.zoo.ox.ac.uk/data/shared/<cite>username</cite>/...</code>
-	<code>http://%{HOSTNAME}.zoo.ox.ac.uk/data/collab/<cite>username</cite>/...</code>
+	<code>http://%{HOSTFULLNAME}/data/private/<cite>username</cite>/...</code>
+	<code>http://%{HOSTFULLNAME}/data/shared/<cite>username</cite>/...</code>
+	<code>http://%{HOSTFULLNAME}/data/collab/<cite>username</cite>/...</code>
+  <code>http://%{HOSTFULLNAME}/data/common/...</code>
 </pre>
 A username and password will be required to access the information. For files in a user's private area, that particular user's credentials must be used.
 </p>
 <p>
-For files in the <code>shared</code> area, then any research group member's credentials can be used and for <code>collab</code> files any group member's or recognized collaborator's credentials may be used.
+For files in the <code>shared</code> and <code>common</code> areas, any 
+research group member's credentials can be used.
+For <code>collab</code> files any group member's or recognized collaborator's 
+credentials may be used.
 </p>
 
 </body>

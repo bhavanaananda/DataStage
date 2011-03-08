@@ -49,42 +49,43 @@ admiral.listDatasets = function (host, silo, getlist, callback)
     m.eval(function(datasets,callback)
     {
         //log.debug("admiral.listDatasets getlist result: "+datasets);
-	    // Build display with links to datasets
-	    var tablediv= jQuery("<div><table/></div>");
-	    var tableelem = tablediv.find("table");
-	    if(datasets.length > 0)
-	    {
-    	    tableelem.append("  <thead>\
-                                     <tr>\
-                                       <th> Dataset </th>\
-                                       <th> Version number </th>\
-                                       <th> Submitted on   </th>\
-                                       <th> Submitted by   </th>\
-                                    </tr>\
-                               </thead>\
-                               ");
-	    }
-	    for (var i in datasets)
-	    {
-	        var datasetname = datasets[i].datasetname;
-	        var newhtml = admiral.interpolate(
-	             "<tr>"+
-	             "<td><a href=\"%(datasetlink)s\">%(datasetname)s</a></td>"+
-	             "<td>%(datasetvers)s</td>"+
-	             "<td>%(datasetsubmittedon)s</td>"+
-	             "<td>%(datasetsubmittedby)s</td>"+
-	             "</tr>",
-	             { datasetlink: "../../DisplayDataset/html/DisplayDataset.html#"+datasetname
-	             , datasetname: datasetname
-	             , datasetvers: datasets[i].version
-	             , datasetsubmittedon: datasets[i].submittedon
-	             , datasetsubmittedby: datasets[i].submittedby 
-	             });
-	        var newelem = jQuery(newhtml);
-	        tableelem.append(newelem);
-	    }
-	    //log.debug("admiral.listDatasets final callback");
-	    callback(tablediv);
+  	    // Build display with links to datasets
+  	    var tablediv= jQuery("<div><table/></div>");
+  	    var tableelem = tablediv.find("table");
+  	    if(datasets.length > 0)
+  	    {
+      	    tableelem.append(
+      	        "<thead>"+
+                "  <tr>"+
+                "    <th> Dataset </th>"+
+                "    <th> Version number </th>"+
+                "    <th> Submitted on   </th>"+
+                "    <th> Submitted by   </th>"+
+                "  </tr>"+
+                "</thead>"
+                );
+  	    }
+  	    for (var i in datasets)
+  	    {
+  	        var datasetname = datasets[i].datasetname;
+  	        var newhtml = admiral.interpolate(
+  	             "<tr>"+
+  	             "<td><a href=\"%(datasetlink)s\">%(datasetname)s</a></td>"+
+  	             "<td>%(datasetvers)s</td>"+
+  	             "<td>%(datasetsubmittedon)s</td>"+
+  	             "<td>%(datasetsubmittedby)s</td>"+
+  	             "</tr>",
+  	             { datasetlink: "../../DisplayDataset/html/DisplayDataset.html#"+datasetname
+  	             , datasetname: datasetname
+  	             , datasetvers: datasets[i].version
+  	             , datasetsubmittedon: datasets[i].submittedon
+  	             , datasetsubmittedby: datasets[i].submittedby 
+  	             });
+  	        var newelem = jQuery(newhtml);
+  	        tableelem.append(newelem);
+  	    }
+  	    //log.debug("admiral.listDatasets final callback");
+  	    callback(tablediv);
     });
     m.exec(null,callback);
 };

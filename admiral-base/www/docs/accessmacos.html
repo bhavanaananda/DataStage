@@ -1,7 +1,9 @@
 <!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML 2.0//EN">
 <html>
 
-<p><a href="../index.html">Home</a></p>
+<div>
+  <span><a href="/"><img alt="site_logo" src="/images/ADMIRALogo96x96.png" border="0"/>&nbsp;%{HOSTFULLNAME} home</a></span>
+</div>
 
 <head>
 <title>ADMIRAL data file access from MacOS</title>
@@ -13,13 +15,15 @@
 
 <p>ADMIRAL data files may be accessed from MacOS as a Windows network share:
 <blockquote>
-<code>\\%{HOSTNAME}.zoo.ox.ac.uk\data</code>
+<code>smb://%{HOSTFULLNAME}/data</code>
 </blockquote>
 A username and password will be required to complete a connection.
 </p>
 
 <p>To connect a Windows share from MacOS, use the Finder "Go > Connect to server..." menu command (or COMMAND-K shortcut), and enter
-<code>smb://<cite>username</cite>@%{HOSTNAME}.zoo.ox.ac.uk/data</code> as the server address.
+<blockquote>
+  <code>smb://<cite>username</cite>@%{HOSTFULLNAME}/data</code> as the server address.
+</blockquote>
 The system will then prompt for the specified user's password.	
 </p>
 

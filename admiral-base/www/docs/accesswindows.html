@@ -1,7 +1,9 @@
 <!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML 2.0//EN">
 <html>
 
-<p><a href="../index.html">Home</a></p>
+<div>
+  <span><a href="/"><img alt="site_logo" src="/images/ADMIRALogo96x96.png" border="0"/>&nbsp;%{HOSTFULLNAME} home</a></span>
+</div>
 
 <head>
 <title>ADMIRAL data file access from Windows</title>
@@ -13,7 +15,7 @@
 
 <p>ADMIRAL files are accessed from Windows as a network share:
 <blockquote>
-<code>\\%{HOSTNAME}.zoo.ox.ac.uk\data</code>
+<code>\\%{HOSTFULLNAME}\data</code>
 </blockquote>
 A username and password will be required to complete a connection.
 The username entered should be in workgroup <code>%{WORKGROUP}</code>; e.g. <code>%{WORKGROUP}\<cite>username</cite></code>.

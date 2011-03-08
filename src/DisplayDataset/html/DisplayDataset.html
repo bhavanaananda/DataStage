@@ -59,6 +59,10 @@
     <script type="text/javascript" src="../DatasetTree.js"></script>
     <link rel="stylesheet" href="../css/DisplayDataset.css" type="text/css" />
 
+    <!--  Import admiral configuration details -->
+    <!--  NOTE: these are loaded from an absolute location in the web server -->
+    <script type="text/javascript" src="/js/admiral-config.js"></script>
+
     <script>
     // Use jQuery via jQuery(...)
       jQuery.noConflict();
@@ -84,9 +88,9 @@
         else
         {
             datasetName = datasetName.slice(1);     // Remove '#'
-            var dataSetPath = "/admiral-test/datasets/"+datasetName;
-            var unpackedLink = "/admiral-test/datasets/"+datasetName;
-            var packedLink = "/admiral-test/datasets/"+datasetName+"-packed";
+            var dataSetPath = "/"+admiral.databanksilo+"/datasets/"+datasetName;
+            var unpackedLink = "/"+admiral.databanksilo+"/datasets/"+datasetName;
+            var packedLink = "/"+admiral.databanksilo+"/datasets/"+datasetName+"-packed";
             jQuery("#unpackedLink").attr('href', unpackedLink);  
             jQuery("#packedLink").attr('href', packedLink);  
             jQuery("#datasetPackedName").text(datasetName+"-packed");  

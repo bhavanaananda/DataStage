@@ -31,6 +31,21 @@ HOSTNAME=$2
 PASSWORD=$3
 source $HOSTNAME/hostconfig.sh
 
+# Construct domain name, distinguished name and full hostname for host
+ADMIRALDOMAINDN=""
+DCSEP=""
+ADMIRALDOMAINNAME=""
+DNSEP=""
+for DC in $ADMIRALDOMAINDC; do
+    ADMIRALDOMAINDN="${ADMIRALDOMAINDN}${DCSEP}dc=${DC}"
+    DCSEP=","
+    ADMIRALDOMAINNAME="${ADMIRALDOMAINNAME}${DNSEP}${DC}"
+    DNSEP="."
+done
+
+HOSTFULLNAME="${HOSTNAME}${DNSEP}${ADMIRALDOMAINNAME}"
+ADMIRALFULLDN="dc=${HOSTNAME}${DCSEP}${ADMIRALDOMAINDN}"
+
 # Common configuration code
 SRCDIR="."
 TGTROOTS="/var/kvm /mnt/data/tool"
@@ -51,8 +66,10 @@ fi
 echo "TGTDIR: $TGTDIR"
 mkdir -p $TGTDIR
 
-BLACKLISTPATTERN="^(.*~|.*\\.(tmp|bak)|a1\.sh|copywithhostandpassword\.sh)$"
-FILELIST="`ls -1 --directory --ignore-backups --file-type * ldapconfig/* www/* www/*/* www/*/*/* $HOSTNAME/* $HOSTNAME/*/*`"
+BLACKLISTPATTERN="^(.*~|.*\\.(tmp|bak)|a1\.sh|makeresearchgroupfiles.*)$"
+# Ensure host-specific files come later in list:
+FILELIST="`ls -1 --directory --ignore-backups --file-type * ldapconfig/* www/* www/*/* www/*/*/*`"
+FILELIST="$FILELIST `ls -1 --directory --ignore-backups --file-type $HOSTNAME/* $HOSTNAME/*/*`"
 REPORT="echo"
 REPORT=":"
 MD5PASSWD=`slappasswd -h {MD5} -s $PASSWORD`
@@ -63,16 +80,25 @@ else
     IP=$IPADDR
 fi
 
+echo "# SED commands for makeresearchgroupfiles"     >  makeresearchgroupfiles.sed
+echo "  s/%{RESEARCHGROUPNAME}/$RESEARCHGROUPNAME/g" >> makeresearchgroupfiles.sed
+echo "  s/%{HOSTNAME}/$HOSTNAME/g"                   >> makeresearchgroupfiles.sed
+echo "  s/%{ADMIRALDOMAINDC}/$ADMIRALDOMAINDC/g"     >> makeresearchgroupfiles.sed
+echo "  s/%{ADMIRALDOMAINDN}/$ADMIRALDOMAINDN/g"     >> makeresearchgroupfiles.sed
+echo "  s/%{ADMIRALFULLDN}/$ADMIRALFULLDN/g"         >> makeresearchgroupfiles.sed
+echo "  s/%{ADMIRALDOMAINNAME}/$ADMIRALDOMAINNAME/g" >> makeresearchgroupfiles.sed
+echo "  s/%{HOSTFULLNAME}/$HOSTFULLNAME/g"           >> makeresearchgroupfiles.sed
+echo "  s/%{HOSTNAME}/$HOSTNAME/g"                   >> makeresearchgroupfiles.sed
+echo "  s/%{PASSWORD}/$PASSWORD/g"                   >> makeresearchgroupfiles.sed
+echo "  s/%{WORKGROUP}/$WORKGROUP/g"                 >> makeresearchgroupfiles.sed
+echo "  s/%{IPADDR}/$IP/g"                           >> makeresearchgroupfiles.sed
+echo "  s!%{MD5PASS}!$MD5PASSWD!g"                   >> makeresearchgroupfiles.sed
+echo "  s/%{DATABANKHOST}/$DATABANKHOST/g"           >> makeresearchgroupfiles.sed
+echo "  s/%{DATABANKSILO}/$DATABANKSILO/g"           >> makeresearchgroupfiles.sed
+echo ""                                              >> makeresearchgroupfiles.sed
+
 echo "Substitutions:"
-echo "  s/%{RESEARCHGROUPNAME}/$RESEARCHGROUPNAME/g"
-echo "  s/%{HOSTNAME}/$HOSTNAME/g"
-echo "  s/%{PASSWORD}/$PASSWORD/g"
-echo "  s/%{WORKGROUP}/$WORKGROUP/g"
-echo "  s/%{IPADDR}/$IP/g"
-echo "  s!%{MD5PASS}!$MD5PASSWD!g"
-echo "  s/%{DATABANKHOST}/$DATABANKHOST/g"
-echo "  s/%{DATABANKSILO}/$DATABANKSILO/g"
-echo ""
+cat makeresearchgroupfiles.sed
 
 #if [[ "$COPYTEST" == "copy" ]]; then
     mkdir -p $TGTDIR
@@ -111,17 +137,9 @@ for f in $FILELIST; do
         $REPORT "not blacklisted $f (dir:$f1, name:$f2, target:$f3)"
         if [ -d $TGTDIR/$f3 ]; then
             if [[ "$COPYTEST" == "copy" ]]; then
-                    sed -e "s/%{RESEARCHGROUPNAME}/$RESEARCHGROUPNAME/g" \
-                        -e "s/%{HOSTNAME}/$HOSTNAME/g" \
-                        -e "s/%{PASSWORD}/$PASSWORD/g" \
-                        -e "s/%{WORKGROUP}/$WORKGROUP/g" \
-                        -e "s/%{IPADDR}/$IP/g" \
-                        -e "s!%{MD5PASS}!$MD5PASSWD!g" \
-                        -e "s/%{DATABANKHOST}/$DATABANKHOST/g" \
-                        -e "s/%{DATABANKSILO}/$DATABANKSILO/g" \
-                        <$f >$TGTDIR/$f3$f2
+                    sed -f makeresearchgroupfiles.sed <$f >$TGTDIR/$f3$f2
             else
-                    echo "sed ... <$f >$TGTDIR/$f3$f2"
+                    echo "sed -f makeresearchgroupfiles.sed <$f >$TGTDIR/$f3$f2"
             fi
         else
             echo "Directory $TGTDIR/$f3 not found"

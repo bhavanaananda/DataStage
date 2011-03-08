@@ -7,6 +7,7 @@
 
 RESEARCHGROUPNAME="Evolutionary Development"
 
+ADMIRALDOMAINDC="zoo ox ac uk"
 ADMIRALHOSTNAME="zoo-admiral-devel"
 
 # Samba/Windows workgroup name for research group files

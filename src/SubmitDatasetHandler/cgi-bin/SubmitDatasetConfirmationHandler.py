@@ -32,8 +32,8 @@ import ManifestRDFUtils
 import HttpUtils
 from MiscLib import TestUtils
 
-siloName             = "admiral-test"
-save_stdout          = sys.stdout
+siloName                 = "admiral-test" # @@FIXME
+save_stdout              = sys.stdout
 dcterms                  =  URIRef("http://purl.org/dc/terms/")
 oxds                     =  URIRef("http://vocab.ox.ac.uk/dataset/schema#") 
 NamespaceDictionary      =  {
@@ -92,7 +92,7 @@ def processDatasetSubmissionForm(formdata, outputstr):
         #Logger.debug("datasetName %s, dirName %s, zipFileName %s"%(datasetName,dirName,zipFileName))
         SubmitDatasetUtils.zipLocalDirectory(dirName, FilePat, zipFilePath)
         # Submit zip file to dataset
-        SubmitDatasetUtils.submitFileToDataset(siloName, datasetName,zipFileName, zipFilePath, ZipMimeType, zipFileName)
+        SubmitDatasetUtils.submitFileToDataset(siloName, datasetName, zipFileName, zipFilePath, ZipMimeType, zipFileName)
         # Unzip the contents into a new dataset
         datasetUnzippedName = SubmitDatasetUtils.unzipRemoteFileToNewDataset(siloName, datasetName, zipFileName)       
         # Redirect to the Dataset Summary page

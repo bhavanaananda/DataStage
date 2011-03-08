@@ -7,6 +7,7 @@
 
 RESEARCHGROUPNAME="Behavioural Ecology"
 
+ADMIRALDOMAINDC="zoo ox ac uk"
 ADMIRALHOSTNAME="zoo-admiral-behav"
 
 # Samba/Windows workgroup name for research group files

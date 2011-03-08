@@ -1,6 +1,6 @@
 #!/bin/bash
 #
-# /root/updateadmiralfiles.sh
+# updateadmiralfiles.sh
 #
 # Update ADMIRAL configuration files on system.
 #
@@ -34,6 +34,7 @@ SRCDIR="/mnt/data/tool/$ADMIRALHOSTNAME"
 migrate addorphanedtestuser.sh     /root
 migrate addtestusers.sh            /root
 migrate admiraldatasetup.sh        /root
+migrate admiraldataaccess.sh       /root
 migrate admiralmigrateusers.sh     /root
 migrate admiraltoolsetup.sh        /root
 migrate admiraluseradd.sh          /root
@@ -67,7 +68,7 @@ migrate apache-default             /etc/apache2/sites-available/default
 migrate apache-default-ssl         /etc/apache2/sites-available/default-ssl
 migrate apache-databank-proxy      /etc/apache2/sites-available/databank-proxy
 
-rm /root/admiralleaderchange.sh
+###rm /root/admiralleaderchange.sh
 
 ### migrate webauth.conf               /etc/apache2/webauth
 ### migrate webauth.keytab             /etc/apache2/webauth
@@ -113,7 +114,13 @@ migrate www/css/images/treeview-black-line.gif /var/www/css/images/treeview-blac
 migrate www/css/images/minus.gif /var/www/css/images/minus.gif
 migrate www/css/images/folder.gif /var/www/css/images/folder.gif
 
+migrate www/js/admiral-config.js /var/www/js/admiral-config.js
 migrate www/js/jquery-1.4.2.min.js /var/www/js/jquery-1.4.2.min.js
 migrate www/js/jquery.treeview.min.js /var/www/js/jquery.treeview.min.js
+
+# Finally, restrict access to files that might contain security information
+chmod -R go-rwx $SRCDIR
+chmod og-rwx /root/firstboot.sh
+chmod og-rwx /etc/apache2/sites-available/default-ssl
 
 # End.

@@ -6,9 +6,11 @@
 </head>
 
 <body>
+
 <div>
-     <span><a href="/"><img alt="site_logo" src="images/ADMIRALogo96x96.png" border="0"/></a></span>
+  <span><a href="/"><img alt="site_logo" src="images/ADMIRALogo96x96.png" border="0"/>&nbsp;%{HOSTFULLNAME} home</a></span>
 </div>
+
 <h1>Host %{HOSTNAME}</h1>
 
 <p>
@@ -20,10 +22,13 @@ Image Bioinformatics Research Group, Oxford University
 <h2>Data in the ADMIRAL file store</h2>
 
 <ul>
-<li><a href="/data">All data</a></li>
-<li><a href="/data/private">Private user data</a> - visible to the user who creates it, and to any research group leaders.</li>
-<li><a href="/data/shared">Group shared data areas</a> - visible to all research group members.</li>
-<li><a href="/data/collab">Collaborator shared data areas</a> - visible to all research group members and collaborators.</li>
+<li><a href="/data">All data</a>
+  <ul>
+  <li><a href="/data/private">Private user data</a> - visible to the user who creates it, and to any research group leaders.</li>
+  <li><a href="/data/shared">Group shared data areas</a> - visible to all research group members.</li>
+  <li><a href="/data/collab">Collaborator shared data areas</a> - visible to all research group members and collaborators.</li>
+  </ul>
+</li>
 </ul>
 
 <h2>Datasets in the Oxford Research Archive Databank</h2>

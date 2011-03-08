@@ -35,7 +35,6 @@ def datasetSummaryForm(formdata, outputstr):
     
     formdata    is a dictionary containing parameters from the dataset submission form / handler
     """
-    siloName             =  "admiral-test"
     save_stdout          =  sys.stdout
     dirName              =  SubmitDatasetUtils.getFormParam("dir"     , formdata)
     datasetName          =  SubmitDatasetUtils.getFormParam("id"      , formdata)
@@ -86,13 +85,16 @@ def datasetSummaryForm(formdata, outputstr):
                     <script type="text/javascript" src="../../Admiral/admiral-base.js"></script>
                     <script type="text/javascript" src="../../Admiral/Error.js"></script>
                     <script type="text/javascript" src="../../Admiral/AsyncComputation.js"></script>
-                    
+                    <!--  Import admiral configuration details -->
+                    <!--  NOTE: these are loaded from an absolute location in the web server -->
+                    <script type="text/javascript" src="/js/admiral-config.js"></script>
+
                     <script>
                         jQuery(document).ready( function ()
                         {   var m = new admiral.AsyncComputation();
                             m.eval(function(val,callback)
                             { var datasetName = "%(datasetUnzippedName)s";
-                              var datasetPath = "/admiral-test/datasets/"+datasetName;
+                              var datasetPath = "/"+admiral.databanksilo+"/datasets/"+datasetName;
                                  
                               admiral.datasetManifestDictionary(datasetPath,datasetName, callback);   
                  
