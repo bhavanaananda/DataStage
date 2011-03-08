@@ -39,7 +39,6 @@ _endpointuser = "admiral"
 _endpointpass = "admiral"
 
 logger = logging.getLogger('TestSubmitDataset')
-        
 
 def getTestSuite(testclass,testdict,select="unit"):
     """
