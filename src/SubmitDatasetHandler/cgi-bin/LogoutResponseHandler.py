@@ -27,8 +27,7 @@ sys.path.append("../..")
 
 import SubmitDatasetUtils
 
-Logger                   =  logging.getLogger("SubmitDatasetSummaryHandler")
-
+Logger                   =  logging.getLogger("LogoutResponseHandler")
 def logoutResponseForm(formdata, outputstr):
     """
     Print (to stdout) a new HTML page reflecting the outcome of the logout request.
