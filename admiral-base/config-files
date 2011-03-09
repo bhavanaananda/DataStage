@@ -4,9 +4,6 @@ krb5.conf /etc/krb5.conf
 ssh_config /root/ssh_config
 sshd_config /root/sshd_config
 common-password /root/common-password
-webauth.keytab /root/webauth.keytab
-webdav.keytab /root/webdav.keytab
-krb5.keytab /root/krb5.keytab
 ntp.conf /etc/ntp.conf
 apache-default-ssl /root/apache-default-ssl
 apache-default /root/apache-default
