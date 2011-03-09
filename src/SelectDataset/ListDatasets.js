@@ -52,9 +52,7 @@ admiral.listDatasets = function (host, silo, getlist, callback)
   	    // Build display with links to datasets
   	    var tablediv= jQuery("<div><table/></div>");
   	    var tableelem = tablediv.find("table");
-  	    if(datasets.length > 0)
-  	    {
-      	    tableelem.append(
+        tableelem.append(
       	        "<thead>"+
                 "  <tr>"+
                 "    <th> Dataset </th>"+
@@ -64,7 +62,9 @@ admiral.listDatasets = function (host, silo, getlist, callback)
                 "  </tr>"+
                 "</thead>"
                 );
-  	    }
+
+       if(datasets!=null)
+       {
   	    for (var i in datasets)
   	    {
   	        var datasetname = datasets[i].datasetname;
@@ -84,6 +84,7 @@ admiral.listDatasets = function (host, silo, getlist, callback)
   	        var newelem = jQuery(newhtml);
   	        tableelem.append(newelem);
   	    }
+       }
   	    //log.debug("admiral.listDatasets final callback");
   	    callback(tablediv);
     });
