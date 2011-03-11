@@ -315,8 +315,8 @@
      showgrid="false"
      inkscape:window-width="1532"
      inkscape:window-height="1072"
-     inkscape:window-x="12"
-     inkscape:window-y="40"
+     inkscape:window-x="76"
+     inkscape:window-y="6"
      inkscape:window-maximized="0" />
   <metadata
      id="metadata7">
@@ -326,7 +326,7 @@
         <dc:format>image/svg+xml</dc:format>
         <dc:type
            rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title></dc:title>
+        <dc:title />
       </cc:Work>
     </rdf:RDF>
   </metadata>
@@ -631,19 +631,19 @@
            x="398.95505"
            y="145.98312"
            style="font-size:36px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-align:start;line-height:125%;writing-mode:lr-tb;text-anchor:start;font-family:Andika Basic;-inkscape-font-specification:Andika Basic" /></flowRegion><flowPara
-         id="flowPara3827">&quot;Sheer curation&quot; - dataset and metadata acquisition fits into existing research practice;  use familiar tools</flowPara></flowRoot>    <flowRoot
+         id="flowPara3827">&quot;Sheer curation&quot; - organize and deposit data through common file and web interfaces</flowPara></flowRoot>    <flowRoot
        xml:space="preserve"
        id="flowRoot3829"
        style="font-size:36px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-align:start;line-height:125%;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;font-family:Andika Basic;-inkscape-font-specification:Andika Basic"
-       transform="translate(77.912109,454.18196)"><flowRegion
+       transform="translate(77.912109,386.18196)"><flowRegion
          id="flowRegion3831"><rect
            id="rect3833"
-           width="532.37317"
-           height="232.02251"
+           width="555.25067"
+           height="150.57883"
            x="398.95505"
            y="262.26471"
            style="font-size:36px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-align:start;line-height:125%;writing-mode:lr-tb;text-anchor:start;font-family:Andika Basic;-inkscape-font-specification:Andika Basic" /></flowRegion><flowPara
-         id="flowPara3835">&quot;Curation by addition&quot; - take whatever we can get, and allow datasets to be incrementally improved until ready for publication</flowPara></flowRoot>    <flowRoot
+         id="flowPara3835">&quot;Curation by addition&quot; - minimal requirements for deposit; refinements can come later</flowPara></flowRoot>    <flowRoot
        xml:space="preserve"
        id="flowRoot3837"
        style="fill:black;stroke:none;stroke-opacity:1;stroke-width:1px;stroke-linejoin:miter;stroke-linecap:butt;fill-opacity:1;font-family:Andika Basic;font-style:normal;font-weight:normal;font-size:40px;line-height:125%;letter-spacing:0px;word-spacing:0px;-inkscape-font-specification:Andika Basic;font-stretch:normal;font-variant:normal;text-anchor:start;text-align:start;writing-mode:lr"><flowRegion
@@ -683,5 +683,24 @@
        id="path4701"
        d="m 308.8355,703.3848 c 0,0 65.69063,26.26605 66.05683,67.34211 0.26407,29.6209 -36.60391,56.16238 -36.60391,56.16238"
        style="fill:none;stroke:#994343;stroke-width:1.92750299;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:7.71001214, 7.71001214;stroke-dashoffset:0;marker-start:none;marker-end:url(#Arrow1Mend)" />
+    <text
+       xml:space="preserve"
+       style="font-size:32px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-align:start;line-height:125%;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#666666;fill-opacity:1;stroke:none;font-family:Andika Basic;-inkscape-font-specification:Andika Basic"
+       x="471.27524"
+       y="886.73877"
+       id="text3078"
+       sodipodi:linespacing="125%"><tspan
+         sodipodi:role="line"
+         id="tspan3080"
+         x="471.27524"
+         y="886.73877">Not shown today:</tspan><tspan
+         sodipodi:role="line"
+         x="471.27524"
+         y="926.73877"
+         id="tspan3082">- DOI allocation</tspan><tspan
+         sodipodi:role="line"
+         x="471.27524"
+         y="966.73877"
+         id="tspan3084">- Public interface to Databank</tspan></text>
   </g>
 </svg>
