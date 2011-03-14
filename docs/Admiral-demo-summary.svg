@@ -702,5 +702,11 @@
          x="471.27524"
          y="966.73877"
          id="tspan3084">- Public interface to Databank</tspan></text>
+    <path
+       sodipodi:nodetypes="csc"
+       inkscape:connector-curvature="0"
+       id="path3082"
+       d="m 99.670313,840.94097 c 0,0 -76.723628,-0.64289 -76.122899,-135.05933 C 24.23601,551.8045 123.29305,554.54912 123.29305,554.54912"
+       style="fill:none;stroke:#994343;stroke-width:1.92750299;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:7.71001214, 7.71001214;stroke-dashoffset:0;marker-start:none;marker-end:url(#Arrow1Mend)" />
   </g>
 </svg>
