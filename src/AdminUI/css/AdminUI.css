@@ -1,0 +1,102 @@
+/**
+ * @fileoverview
+ * Used by the Submit Dataset Tool
+ *  
+ * @author Bhavana Ananda
+ * @version $Id: $
+ * 
+ * Coypyright (C) 2010, University of Oxford
+ *
+ * Licensed under the MIT License.  You may obtain a copy of the License at:
+ *
+ *     http://www.opensource.org/licenses/mit-license.php
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+
+.outer         {    position:relative;
+                    height:  40%;
+                    width:   75%;
+               }
+       
+     
+.box           {    position:relative;
+                    padding: 1%;   
+                    clear: both;
+               }
+
+
+.label         {    position:relative;
+                    width: 30%;                    
+               }
+               
+.confirm       {    position:relative;
+                    font-size: medium;
+                    font-weight:bolder;  
+                    text-align:right;
+                    float:left;
+                    clear:both;
+                    width:30%;
+               }
+.mainlabel     {    position:relative;
+                    float:left;
+                    clear:both;
+                    font-size: medium;
+                    font-weight:bolder;  
+                  
+               }
+               
+.sublabel      {    position:relative;
+                    float:left;
+                    clear:both;
+                    width:30%;
+                    font-size: smaller;
+                    font-weight:normal;
+                    color: #484848 ;
+                   
+               }
+             
+       
+.labelvalue    {    position:relative;
+                    width: 69%;
+                    float: right;  
+                    font-size: smaller;
+                    font-weight:normal;  
+               }
+       
+.sublabelvalue {    position:relative;
+                    clear: both;
+                    float:left;
+               }
+               
+input          {    position:relative;
+                    float:left;
+               }
+
+         
+.scrollbox     {    position:relative;
+                    display  : block;
+                    height   : 6em ;
+                    width    : 100%;
+                    overflow : auto;
+               }
+               
+#userList      {    position:relative;
+                    width: 150px      
+               }                          
+
+#logout       {
+		float:right;
+              }
+
+                       
+                       
+                    
+   
+       
+       

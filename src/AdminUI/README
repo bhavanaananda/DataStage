@@ -1,0 +1,6 @@
+Web page(s) and user interface code for user administration.
+
+./ Javascript sourvce code
+html/ HTML page(s)
+css/ CSS files
+test/ Test suite for UI javascript (if needed)
