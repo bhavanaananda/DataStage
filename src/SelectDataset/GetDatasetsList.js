@@ -46,8 +46,8 @@ admiral.getDatasetList = function (host,siloName,callback)
         jQuery.ajax({
             type:         "GET",
             url:          dataseturl,
-            username:     "admiral",
-            password:     "admiral",
+            //username:     "admiral",
+            //password:     "admiral",
             dataType:     "json",
             beforeSend:   function (xhr)
                 {
@@ -66,7 +66,7 @@ admiral.getDatasetList = function (host,siloName,callback)
                 },
             error:        function (xhr, status) 
                 { 
-                    jQuery("#pageLoadStatus").text("HTTP GET "+dataseurl+" failed: "+status+"; HTTP status: "+xhr.status+" "+xhr.statusText);
+                    jQuery("#pageLoadStatus").text("HTTP GET "+dataseturl+" failed: "+status+"; HTTP status: "+xhr.status+" "+xhr.statusText);
                     jQuery("#pageLoadStatus").addClass('error');
                 },
             cache:        false

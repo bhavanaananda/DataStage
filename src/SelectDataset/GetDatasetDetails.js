@@ -41,8 +41,8 @@ admiral.getDatasetDetails = function (dataSetPath, callback)
         jQuery.ajax({
             type:         "GET",
             url:          val,
-            username:     "admiral",
-            password:     "admiral",
+            //username:     "admiral",
+            //password:     "admiral",
             dataType:     "json",
             beforeSend:   function (xhr)
                 {
