@@ -31,11 +31,11 @@ if (typeof admiral == "undefined")
  * @param callback  function called with a list of dictonary objects, each
  *                  containing: {datasetname: (name), ...}
  */
-admiral.getDatasetList = function (host,siloName,callback)
+admiral.getDatasetList = function (host,silo,callback)
 {
     // Mock result until Databank API is confirmed
     // callback(["apps", "test"]);
-    var dataseturl = host+"/"+siloName+"/"+"datasets";
+    var dataseturl = host+"/"+silo+"/"+"datasets";
     //log.debug("Get datasets for "+ dataseturl);
     jQuery("#pageLoadStatus").text("Fetching dataset information...");
     //log.debug("Fetching dataset information...");
@@ -43,6 +43,7 @@ admiral.getDatasetList = function (host,siloName,callback)
     m.eval(function(val,callback)
     {
         // Retrieve list of dataset names
+        log.debug("getDatasetList "+dataseturl);
         jQuery.ajax({
             type:         "GET",
             url:          dataseturl,
@@ -56,12 +57,12 @@ admiral.getDatasetList = function (host,siloName,callback)
                 },
             success:      function (data, status, xhr)
                 {  
+                   log.debug("Dataset list: "+data);  
                    var datasets = [];
                    for (var name in data)
                    {          
                       datasets.push({ datasetname: name });                
                    }
-                   //log.debug("Dataset list: "+data);  
                    callback(datasets);
                 },
             error:        function (xhr, status) 
@@ -85,8 +86,8 @@ admiral.getDatasetList = function (host,siloName,callback)
                 function doGetDatasetDetails(v, callback)
                 {
                     var datasetPath = "/"+admiral.databanksilo+"/datasets/"+datasetname;
-                    //log.debug("Dataset path: "+datasetPath);
-                    admiral.datasetManifestDictionary(datasetPath,datasetname, callback);
+                    log.debug("Dataset path: "+datasetPath);
+                    admiral.datasetManifestDictionary(datasetPath, datasetname, callback);
                 }
                 
                 return doGetDatasetDetails;

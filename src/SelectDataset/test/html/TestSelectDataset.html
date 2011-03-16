@@ -16,12 +16,21 @@
 -->
     <script type="text/javascript" src="../../../jQuery/js/jquery-1.4.2.min.js"></script>
     <script type="text/javascript" src="../../../jQuery/js/jquery-ui-1.8.custom.min.js"></script>
-	<link rel="stylesheet" href="../../../qunit/testsuite.css" type="text/css" media="screen" />
-	<script type="text/javascript" src="../../../qunit/testrunner.js"></script>
+    <link rel="stylesheet" href="../../../qunit/testsuite.css" type="text/css" media="screen" />
+    <script type="text/javascript" src="../../../qunit/testrunner.js"></script>
     <script type="text/javascript" src="../../../qunit/qunit.testhelpers.js"></script>
 
-    <!-- URI handling script from RDFquery -->
-    <script type="text/javascript" src="../../../jQuery/jquery.uri.js"></script>
+    <!-- import rdfquery libraries -->
+    <script type="text/javascript" src="../../../rdfquery/jquery.uri.js"></script>
+    <script type="text/javascript" src="../../../rdfquery/jquery.xmlns.js"></script>
+    <script type="text/javascript" src="../../../rdfquery/jquery.curie.js"></script>
+    <script type="text/javascript" src="../../../rdfquery/jquery.datatype.js"></script>
+    <script type="text/javascript" src="../../../rdfquery/jquery.rdf.js"></script>
+    <script type="text/javascript" src="../../../rdfquery/jquery.rdfa.js"></script>
+    <script type="text/javascript" src="../../../rdfquery/jquery.datatype.js"></script>
+    <script type="text/javascript" src="../../../rdfquery/jquery.rdf.json.js"></script>
+    <script type="text/javascript" src="../../../rdfquery/jquery.rdf.xml.js"></script>
+    <script type="text/javascript" src="../../../rdfquery/jquery.rdf.turtle.js"></script>
 
     <!-- JSON conversion script -->
     <script type="text/javascript" src="../../../jQuery/jquery.json-2.2.js"></script>
@@ -38,6 +47,10 @@
     <script type="text/javascript" src="../../../Admiral/Error.js"></script>
     <script type="text/javascript" src="../../../Admiral/AsyncComputation.js"></script>
 
+    <!-- Import generic code from the dataset utils package -->
+    <script type="text/javascript" src="../../../DatasetUtils/js/DatasetTree.js"></script>
+    <script type="text/javascript" src="../../../DatasetUtils/js/DatasetManifestDictionary.js"></script>
+
     <!-- Import the modules under test -->
     <script type="text/javascript" src="../../ListDatasets.js"></script>
     <script type="text/javascript" src="../../GetDatasetsList.js"></script>
@@ -45,6 +58,10 @@
   
     <!-- Import test modules -->
     <script type="text/javascript" src="../../test/TestSelectDataset.js"></script>
+
+    <!--  Import admiral configuration details -->
+    <!--  NOTE: these are loaded from an absolute location in the web server -->
+    <script type="text/javascript" src="/js/admiral-config.js"></script>
 
     <!-- Execute the tests -->
 	  <script>
