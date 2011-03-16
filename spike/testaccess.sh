@@ -8,3 +8,4 @@ if [[ -w $1 ]]; then
 else 
      exit 1; 
 fi
+

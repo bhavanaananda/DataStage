@@ -22,14 +22,12 @@
 .outer         {    position:relative;
                     height:  40%;
                     width:   75%;
-               }
-       
+               }   
      
 .box           {    position:relative;
                     padding: 1%;   
                     clear: both;
                }
-
 
 .label         {    position:relative;
                     width: 30%;                    
@@ -43,6 +41,7 @@
                     clear:both;
                     width:30%;
                }
+               
 .mainlabel     {    position:relative;
                     float:left;
                     clear:both;
@@ -59,8 +58,7 @@
                     font-weight:normal;
                     color: #484848 ;
                    
-               }
-             
+               }   
        
 .labelvalue    {    position:relative;
                     width: 69%;
@@ -77,7 +75,6 @@
 input          {    position:relative;
                     float:left;
                }
-
          
 .scrollbox     {    position:relative;
                     display  : block;
@@ -87,16 +84,10 @@ input          {    position:relative;
                }
                
 #userList      {    position:relative;
-                    width: 150px      
+                    width: 180px      
                }                          
 
-#logout       {
-		float:right;
-              }
-
-                       
-                       
-                    
-   
-       
-       
+#logout        {
+		                float:right;
+               }
+  
