@@ -35,14 +35,14 @@ logger = logging.getLogger('HTTPUtils')
 __author__ = "Bhavana Ananda"
 __version__ = "0.1"
 
-class HTTPUtilsError(Exception):
+class HTTPSessionError(Exception):
     def __init__(self, code, reason):
         self.code   = code
         self.reason = reason
         return
 
     def __str__(self):
-        return "HTTPUtilsError(%i,%s)"%(self.code,self.reason)
+        return "HTTPSessionError(%i,%s)"%(self.code,self.reason)
 
 # Originally copied from http://code.activestate.com/recipes/146306/:
 def encode_multipart_formdata(fields, files):
@@ -70,6 +70,19 @@ def encode_multipart_formdata(fields, files):
     body = CRLF.join(L)
     content_type = 'multipart/form-data; boundary=%s' % BOUNDARY
     return content_type, body
+
+# Factory function
+
+# Class definition
+
+# Class __init__ method
+
+# Other class methods per test suite
+
+
+
+
+### .....................    
     
 def setRequestEndPoint(endpointhost=None, endpointpath=None):
     global _endpointhost, _endpointpath
@@ -148,7 +161,7 @@ def doRequest(command, resource, reqdata=None, reqheaders={}, expect_status=200,
         logger.debug(" Expected Status: %s %s" % (repr(expect_status), repr(expect_reason)))
         if ( not expectedReturnStatus(expect_status, response.status) or
              not expectedReturnReason(expect_reason, response.reason) ):
-            raise HTTPUtilsError(response.status, response.reason)
+            raise HTTPSessionError(response.status, response.reason)
         responsedata = response.read()
         hc.close()
         return (response, responsedata)
@@ -196,5 +209,11 @@ def doHTTP_DELETE(
         (response, _) = doRequest("DELETE", resource,
             expect_status=expect_status, expect_reason=expect_reason)
         return response.status    
+
+
+def makeHttpSession(endpointhost, basepath, username, password)
+
+    return
+
 
 # End.
