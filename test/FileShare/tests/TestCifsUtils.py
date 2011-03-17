@@ -25,6 +25,9 @@ def do_cifsMount(areaName, userName, userPass):
                      } )
     print mountcommand
     status=os.system(mountcommand)
+    # OS.system Returns a 16-bit number, whose low byte is the signal number that killed the process, and 
+    # whose high byte is the exit status (if the signal number is zero); the high bit of the low byte is set if a core file was produced
+ 
     return status
 
 def do_cifsUnmount():

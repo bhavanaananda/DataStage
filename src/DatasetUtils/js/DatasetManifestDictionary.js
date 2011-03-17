@@ -43,8 +43,8 @@ admiral.datasetManifestDictionary = function (datasetPath, datasetName, callback
         jQuery.ajax({
             type:         "GET",
             url:           val,
-            username:     "admiral",
-            password:     "admiral",
+            //username:     "admiral",
+            //password:     "admiral",
             dataType:     "text",
             beforeSend:   function (xhr)
                 {

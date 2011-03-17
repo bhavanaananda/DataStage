@@ -86,3 +86,32 @@ if __name__ == "__main__":
     directoryCollection = CollectDirectories(".")
     #PrintCollection()
 
+
+# Collect user accessible and writable directories/sub-directories found under the source directory
+#
+# srcdir    directory to search, maybe including sub-directories
+# recursive is True if directories are to be scanned recursively,
+#           otherwise only the named directory is scanned.
+#
+# Returns a list of directories
+#
+def CollectWritableDirectories(srcDir, baseDir, recursive=True):
+    """
+    Return a list of user accessible and writable directories found under the source directory.
+    """
+    #logger.debug("CollectDirectories: %s, %s, %s"%(srcDir,baseDir,str(os.path.sep)))
+    collection = []
+    if (baseDir != "") and (not baseDir.endswith(os.path.sep)):
+        baseDir = baseDir+os.path.sep
+    def CollectDirs(path):
+        uname =  os.environ['REMOTE_USER']
+        logger.debug("Remote user = " + repr(uname))
+        accesspath = "/usr/local/sbin/testuseraccess.sh" + " " + uname + " " + path
+        logger.debug("accesspath = " + repr(accesspath))
+        accessStatus = os.system(accesspath)
+        logger.debug("accessStatus = " + repr(accessStatus))
+        if accessStatus == 0:
+            logger.debug("Adding Path to tree = " + repr(path))
+            collection.append(path.replace(baseDir,"",1))
+    ScanDirectoriesEx(srcDir, CollectDirs, recursive)
+    return collection

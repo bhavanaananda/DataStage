@@ -53,7 +53,8 @@ TestSelectDataset = function()
         expect(2);
         function getlist(host, silo, callback)
         {
-            callback([]);
+           var datasetArray = [];
+            callback(datasetArray);
         }
         var m = new admiral.AsyncComputation();
         m.eval(function(val,callback)
@@ -62,10 +63,11 @@ TestSelectDataset = function()
         });
         m.eval(function(val, callback)
         {
-            var table    = val.find("table")
+            var table    = val.find("table");
             equals(table.length, 1, "HTML page contains single table");
-            var tablerows = val.find("table tr")
-            equals(tablerows.length, 0, "Table contains no elements");
+            var tablerows = val.find("table tr");
+            log.debug(tablerows);
+            equals(tablerows.length, 1, "Table contains no elements, contans just a row of headers");
             callback(null);
         });
         m.exec(null, function (val)
@@ -212,7 +214,7 @@ TestSelectDataset = function()
             log.debug("testDatabankDatasetListing complete");
             start();
         });
-        stop(2000);
+        stop(20000);
     });
     
 
