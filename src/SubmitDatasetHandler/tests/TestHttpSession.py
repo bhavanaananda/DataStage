@@ -48,7 +48,7 @@ class TestHttpSession(unittest.TestCase):
         return
 
     def testSimpleHttpGet(self):
-        session = HttpUtils.makeHttpSession(self.endpointhost, self.basepath, self.username, self.password)
+        session = HttpSession.Session.makeHttpSession(self.endpointhost, self.basepath, self.username, self.password)
         (responsetype, responsedata) = session.doHTTP_GET("datasets", expect_status=200, expect_reason="OK", accept_type="*/*")
         self.assertEquals(responsetype, "text/html", "List datasets response type")
         self.assertTrue(re.search("<title>.*List of Datasets.*</title>", responsedata) != None, "List datasets response data")
