@@ -61,14 +61,15 @@
           	{   var m = new admiral.AsyncComputation();
           	    m.eval(function(val,callback)
           	    {
+                    // Display research group name from local config file
+                    jQuery("#groupname").text(admiral.researchgroup);
+                    // Request listing of datasets from Databank via ADMIRAL server
           	        admiral.listDatasets("", admiral.databanksilo, admiral.getDatasetList, callback);            
           	    });
           	    m.eval(function(val,callback)
           	    {
           	        // val supplies a <div> element containing a <table> to be displayed
-          	        jQuery("#tableDatasets").html("");
-          	        
-          	        //var dataSet = "/"+admiral.databanksilo+"/datasets/"+datasetName;
+          	        jQuery("#tableDatasets").html("");          	        
           	        log.debug(val);
           	        jQuery("#tableDatasets").append(val.find("table"));
           	    });    
@@ -86,6 +87,7 @@
    <h3>ADMIRAL Research group: <span id="groupname">%{RESEARCHGROUPNAME}</span></h3>
    <div>   
 	    <table id="tableDatasets" style="padding:2px">
+         <!-- 
 		     <thead>
 		         <tr>
 		           <th> Dataset </th>
@@ -94,19 +96,19 @@
 		           <th> Submitted by   </th>
 		        </tr>
 		    </thead>
+          -->
 		    <tbody>
-		        <tr>
-		           <td><a href="somehost/somesilo/dataset/somedatasets1">somedataset1</a></td>
-		           <td>nn</td>
-		           <td>yyyy-mm-dd</td>
-		           <td>submitter name </td>
-		        </tr>
-		        <tr>
-		           <td><a href="somehost/somesilo/dataset/somedatasets2">somedataset2</a></td>
-		           <td>nn</td>
-		           <td>yyyy-mm-dd</td>
-		           <td>submitter name </td>
-		        </tr>
+            <tr>
+                <td colspan="4">(Waiting for listing from Databank...)</td>
+            </tr>
+            <!-- 
+            <tr>
+               <td><a href="somehost/somesilo/dataset/somedatasets1">somedataset1</a></td>
+               <td></td>
+               <td></td>
+               <td></td>
+            </tr>
+              -->
 		     </tbody>
 	      </table> 
    </div>   
