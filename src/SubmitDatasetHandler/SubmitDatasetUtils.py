@@ -20,7 +20,12 @@ Support functions for creating, unpacking and managing datsets in RDF Databank.
 __author__ = "Bhavana Ananda"
 __version__ = "0.1"
 
-import sys, traceback, logging, zipfile, os.path, json
+import sys, traceback, logging, zipfile, os.path
+
+try:
+    import json
+except:
+    import simplejson as json
 
 import HttpUtils
 from MiscLib.ScanFiles import *
