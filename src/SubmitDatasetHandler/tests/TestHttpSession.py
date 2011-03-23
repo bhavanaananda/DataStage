@@ -14,7 +14,7 @@ sys.path.append("..")
 from MiscLib import TestUtils
 import HttpSession, HttpUtils, TestConfig
 
-logger               =  logging.getLogger("TestHttpUtils")
+logger               =  logging.getLogger("TestHttpSession")
 
 class TestHttpSession(unittest.TestCase):
   
@@ -48,41 +48,43 @@ class TestHttpSession(unittest.TestCase):
         return
 
     def testSimpleHttpGet(self):
-        session = HttpSession.Session.makeHttpSession(self.endpointhost, self.basepath, self.username, self.password)
-        (responsetype, responsedata) = session.doHTTP_GET("datasets", expect_status=200, expect_reason="OK", accept_type="*/*")
+        session = HttpSession.makeHttpSession(self.endpointhost, self.basepath, self.username, self.password)
+        (responsetype, responsedata) = session.doHTTP_GET(endpointpath=self.basepath, resource="datasets", expect_status=200, expect_reason="OK", accept_type="*/*")
         self.assertEquals(responsetype, "text/html", "List datasets response type")
-        self.assertTrue(re.search("<title>.*List of Datasets.*</title>", responsedata) != None, "List datasets response data")
+        self.assertTrue(re.search("<title>.*List of Datasets.*</title>", responsedata) != None, "List datasets response data")     
         return
 
 
     def testSimpleHttpPost(self):
-        session = HttpUtils.makeHttpSession(self.endpointhost, self.basepath, self.username, self.password)
+        session = HttpSession.makeHttpSession(self.endpointhost, self.basepath, self.username, self.password)
         fields = \
             [ ("id", "test-dataset")
             ]
         files =[]
-        (reqtype, reqdata) = HttpUtils.encode_multipart_formdata(fields, files)
-        (responsetype, responsedata) = session.doHTTP_POST("datasets", reqdata, data_type=reqtype, expect_status=201, expect_reason="Created", accept_type="*/*")
-        self.assertEquals(responsetype, "text/html", "Create dataset response type: "+responsetype)
-        self.assertEquals(responsedata, "...", "Create dataset response data: "+responsedata)
+        (reqtype, reqdata) = session.encode_multipart_formdata(fields, files)
+        (responsetype, responsedata) = session.doHTTP_POST(endpointpath=self.basepath, resource="datasets", data=reqdata, data_type=reqtype, expect_status=201, expect_reason="Created", accept_type="*/*")
+        self.assertEquals(responsetype, "text/plain", "Create dataset response type: "+responsetype)
+        self.assertEquals(responsedata, "201 Created", "Create dataset response data: "+responsedata)
+
         #self.assertTrue(re.search("<title>.*List of Datasets.*</title>", responsedata) != None, "Create dataset response data")
         
         # Do GET to datasets/test-dataset
-        (responsetype, responsedata) = session.doHTTP_GET("datasets/test-dataset", expect_status=200, expect_reason="OK", accept_type="*/*")
+        (responsetype, responsedata) = session.doHTTP_GET(endpointpath=self.basepath, resource="datasets/test-dataset", expect_status=200, expect_reason="OK", accept_type="*/*")
         self.assertEquals(responsetype, "text/html", "Get dataset response type")
-        self.assertTrue(re.search("<title>.*Get Datasets.*</title>", responsedata) != None, "Get dataset response data")       
+        logger.debug("responsetype"+responsetype);
+        self.assertTrue(re.search(".*Root directory of.*", responsedata) != None, "Get dataset response data")       
         return
 
     def testSimpleHttpDelete(self):
-        session = HttpUtils.makeHttpSession(self.endpointhost, self.basepath, self.username, self.password)
-        (responsetype, responsedata) = session.doHTTP_DELETE("datasets/test-dataset", expect_status=200, expect_reason="OK", accept_type="*/*")
-        self.assertEquals(responsetype, "text/html", "Delete dataset response type")
-        self.assertTrue(re.search("<title>.*Del Dataset.*</title>", responsedata) != None, "Delete dataset response data")
+        session = HttpSession.makeHttpSession(self.endpointhost, self.basepath, self.username, self.password)
+        (responsetype, responsedata) = session.doHTTP_DELETE(endpointpath=self.basepath, resource="datasets/test-dataset", expect_status=200, expect_reason="OK")
+        #self.assertEquals(responsetype, "text/html", "Delete dataset response type")
+        #self.assertTrue(re.search("<title>.*Del Dataset.*</title>", responsedata) != None, "Delete dataset response data")
         
         # Do GET to datasets/test-dataset
-        (responsetype, responsedata) = session.doHTTP_GET("datasets/test-dataset", expect_status=404, expect_reason="Not Found", accept_type="*/*")
-        self.assertEquals(responsetype, "text/html", "Get dataset response type")
-        self.assertTrue(re.search("<title>.*Get Datasets.*</title>", responsedata) != None, "Get dataset response data") 
+        (responsetype, responsedata) = session.doHTTP_GET(endpointpath=self.basepath, resource="datasets/test-dataset", expect_status=404, expect_reason="Not Found", accept_type="*/*")
+        #self.assertEquals(responsetype, "text/html", "Get dataset response type")
+        #self.assertTrue(re.search(".*Root directory of.*", responsedata) != None, "Get dataset response data")       
         return
 
     # Test the Dataset Creation: <TestSubmission>       
@@ -98,12 +100,15 @@ def getTestSuite(select="unit"):
             "component" return suite of unit and component tests
             "all"       return suite of unit, component and integration tests
             "pending"   return suite of pending tests
-            name        a single named test to be run
+            name        a single named test to be testSimpleHttpGet_origrun
     """
     testdict = {
         "unit":
             [ #"testUnits"
-              "testSimpleHttpGet"
+              #"testSimpleHttpGet_orig",
+              "testSimpleHttpGet",
+              "testSimpleHttpPost",
+              "testSimpleHttpDelete"
             ],
         "component":
             [ #"testComponents"
