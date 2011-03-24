@@ -40,8 +40,8 @@ admiral.directoryListing = function (callback)
                         },
                     success:      function (data, status, xhr)
                         {   
-                            //log.debug("Display Directories: " + jQuery.toJSON(data))
-                            callback(data);
+                            //log.debug("Display Directories: " + jQuery.toJSON(data));
+                            callback(data || []);
                         },
                     error:        function (xhr, status) 
                         { 
