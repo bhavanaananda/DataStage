@@ -28,21 +28,27 @@ if (typeof admiral == "undefined")
  */
 jQuery(document).ready( function ()
 {         
-   url = document.URL;
-   // Get Dir value from the url to display as default and get metadata information for the dataset dir
-   
-   var dir = url.split("=");
-   if(dir.length>1)
-   { 
-       displayValues(dir[1]);
-   }
+    url = document.URL;
+
+    // Get Dir value from the url to display as default and get metadata information for the dataset dir
+    var dir = url.split("=");
+    if(dir.length>1)
+    { 
+        displayValues(dir[1]);
+    }
                   
-   jQuery("#cancel").click( function()
-   {   
-       cancelURL = "SubmitDatasetDetails.html?dir="+ jQuery("#datDir").val();
-       jQuery("#confirmForm").attr('action',cancelURL); 
-       return true;
-   });
+    jQuery("#cancel").click( function()
+    {   
+        cancelURL = "SubmitDatasetDetails.html?dir="+ jQuery("#datDir").val();
+        jQuery("#confirmForm").attr('action', cancelURL); 
+        return true;
+    });
+                  
+    jQuery("#submit").click( function()
+    {
+        jQuery("#progressmessage").text("Submitting dataset to Databank repository...");
+        return true;
+    });
 });
 
 
@@ -55,33 +61,30 @@ jQuery(document).ready( function ()
  */
 function displayValues(directorySelected,callback)
 {       
-       var n = new admiral.AsyncComputation(); 
-       
-       n.eval(function(directorySelected,callback)
-       { 
-           jQuery("#datDir").val(directorySelected);
-           // Get the persisted informaton from the server for display for the directory selected from the list
-           admiral.getDatasetMetadata(directorySelected,callback); 
-       });
-     
-       // Populate the other form  fields with the value received
-       n.eval(function(formValues,callback)
-       {                                   
-           jQuery("#datId").val(formValues["identifier"]);
-           jQuery("#description").val(formValues["description"]);
-           jQuery("#title").val(formValues["title"]);
-           jQuery("#user").val(formValues["creator"]);
-           
-           var displayTextnames = ["datasetDir", "datasetId", "datasetTitle", "datasetDescription"];
-           var inputValues      = ["datDir", "datId", "title", "description"];
-           
-           for( i=0; i< inputValues.length; i++)
-           {  
-              value =  jQuery("#"+inputValues[i]).val();        
-              jQuery("#"+displayTextnames[i]).text(value);
-           }
-       });
-           
-       n.exec( directorySelected,admiral.noop);          
+    var n = new admiral.AsyncComputation(); 
+    n.eval(function(directorySelected,callback)
+    { 
+        jQuery("#datDir").val(directorySelected);
+        // Get the persisted informaton from the server to display for 
+        // the selected directory
+        admiral.getDatasetMetadata(directorySelected,callback); 
+    });
+    // Populate the other form fields with the value received
+    n.eval(function(formValues,callback)
+    {                                   
+        jQuery("#datId").val(formValues["identifier"]);
+        jQuery("#description").val(formValues["description"]);
+        jQuery("#title").val(formValues["title"]);
+        jQuery("#user").val(formValues["creator"]);
+        var displayTextnames = ["datasetDir", "datasetId", "datasetTitle", "datasetDescription"];
+        var inputValues      = ["datDir", "datId", "title", "description"];
+        for( i=0; i< inputValues.length; i++)
+        {  
+           value =  jQuery("#"+inputValues[i]).val();        
+           jQuery("#"+displayTextnames[i]).text(value);
+        }
+    });
+    n.exec(directorySelected, admiral.noop);          
 }  
 
+// End.
