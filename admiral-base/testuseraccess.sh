@@ -23,14 +23,7 @@ if [[ "$2" == "" ]]; then
     exit 2
 fi
 
-if [[ "$2" =~ "[a-z0-9_/-]" ]]; then
-    echo "testuseraccess.sh - invalid filename provided"
-    exit 2
-fi
 
-#TODO: arrange to read filename(s) from sdtin, to allow full range of names
-#sudo -u $1 /usr/local/sbin/testaccess.sh "$2"
+sudo -u $1 /usr/local/sbin/testwriteaccess.sh "$2"
 
-
-sudo -u $1 -s test -w "$2"
 

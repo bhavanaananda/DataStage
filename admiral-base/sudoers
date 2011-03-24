@@ -14,7 +14,7 @@ Defaults  !lecture,tty_tickets,!fqdn
 User_Alias TEST_ACCESS_USER = www-data
 
 # Cmnd alias specification
-Cmnd_Alias TEST_ACCESS_CMD = /usr/local/sbin/testuseraccess.sh
+Cmnd_Alias TEST_ACCESS_CMD = /usr/local/sbin/testwriteaccess.sh
 
 # User privilege specification
 root  ALL=(ALL) ALL
