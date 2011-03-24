@@ -30,7 +30,7 @@ import re
 #_endpointuser = ""
 #_endpointpass = ""
 
-logger = logging.getLogger('HTTPUtils')
+logger = logging.getLogger('HTTPSession')
 
 __author__ = "Bhavana Ananda"
 __version__ = "0.1"
@@ -46,7 +46,7 @@ class Session:
             return "HTTPSessionError(%i,%s)"%(self.code,self.reason)
     
     # Originally copied from http://code.activestate.com/recipes/146306/:
-    def encode_multipart_formdata(fields, files):
+    def encode_multipart_formdata(self, fields, files):
         """
         fields is a sequence of (name, value) elements for regular form fields.
         files is a sequence of (name, filename, value, filetype) elements for data to be uploaded as files
@@ -95,8 +95,8 @@ class Session:
                 #                _endpointuser = None
                 #                _endpointpass = None
             if endpointpath: self._endpointpath = endpointpath
-            #logging.getLogger.debug("setRequestEndPoint: endpointhost %s: " % _endpointhost)
-            #logging.getLogger.debug("setRequestEndPoint: endpointpath %s: " % _endpointpath)
+            logger.debug("setRequestEndPoint: endpointhost %s " % self._endpointhost)
+            logger.debug("setRequestEndPoint: endpointpath %s " % self._endpointpath)
         return
     
     def setRequestUserPass(self, endpointuser=None, endpointpass=None):
@@ -111,48 +111,44 @@ class Session:
             self._endpointpass = None
         return
     
-        
-    def makeHttpSession(self, endpointhost=None, basepath=None, username=None, password=None):
-            setRequestEndPoint(endpointhost, basepath)
-            setRequestUserPass(username, password)
-            return self
-
-    
-    def getRequestPath(rel):
+    def getRequestPath(self,rel):
             rel = rel or ""
-            path = urlparse.urljoin(_endpointpath,rel)
+            path = urlparse.urljoin(self._endpointpath,rel)
             logger.debug("getRequestPath: rel %s, path %s " % (rel, path))
             return path
     
-    def getRequestUri(rel):
-            return "http://"+_endpointhost+getRequestPath(rel)
+    def getRequestUri(self,rel):
+            return "http://"+self._endpointhost+self.getRequestPath(rel)
     
-    def expectedReturnStatus(expected, actual):
+    def expectedReturnStatus(self,expected, actual):
         return ( (expected == "*") or
                  (isinstance(expected,int)  and actual == expected) or
                  (isinstance(expected,list) and actual in expected) )
     
-    def expectedReturnReason(expected, actual):
+    def expectedReturnReason(self,expected, actual):
         return ( (expected == "*") or
                  (isinstance(expected,str)  and actual == expected) or
                  (isinstance(expected,list) and actual in expected) )
     
-    def doRequest(command, resource, reqdata=None, reqheaders={}, expect_status=200, expect_reason="OK"):
-            logger.debug(command+" "+getRequestUri(resource))
-            logger.debug("In request: "+command+" "+getRequestUri(resource))
-            if _endpointuser:
-                auth = base64.encodestring("%s:%s" % (_endpointuser, _endpointpass)).strip()
+    def doRequest(self,command, resource, reqdata=None, reqheaders={}, expect_status=200, expect_reason="OK"):
+            logger.debug(command+" "+self.getRequestUri(resource))
+            logger.debug("In request: "+command+" "+self.getRequestUri(resource))
+            if self._endpointuser:
+                auth = base64.encodestring("%s:%s" % (self._endpointuser, self._endpointpass)).strip()
                 reqheaders["Authorization"] = "Basic %s" % auth
-                logger.debug("doRequest: auth: %s:%s"%(_endpointuser, _endpointpass))
+                logger.debug("doRequest: auth: %s:%s"%(self._endpointuser,self._endpointpass))
          
-            hc   = httplib.HTTPConnection(_endpointhost)
-            path = getRequestPath(resource)
+            hc   = httplib.HTTPConnection(self._endpointhost)
+            logger.debug("End point host:"+ self._endpointhost)
+            path = self.getRequestPath(resource)
+            logger.debug("Path: "+ path)
             response     = None
             responsedata = None
             repeat       = 10
             while path and repeat > 0:
                 repeat -= 1
                 #print "Request "+command+", path "+path
+
                 hc.request(command, path, reqdata, reqheaders)
                 logger.debug(" Path= " + path )
                 response = hc.getresponse()
@@ -162,19 +158,19 @@ class Session:
                 if path[0:6] == "https:":
                     # close old connection, create new HTTPS connection
                     hc.close()
-                    hc = httplib.HTTPSConnection(_endpointhost)    # Assume same host for https:
+                    hc = httplib.HTTPSConnection(self._endpointhost)    # Assume same host for https:
                 else:
                     response.read()  # Seems to be needed to free up connection for new request
             logger.debug(" Response Status: %s %s" % (response.status, response.reason))
             logger.debug(" Expected Status: %s %s" % (repr(expect_status), repr(expect_reason)))
-            if ( not expectedReturnStatus(expect_status, response.status) or
-                 not expectedReturnReason(expect_reason, response.reason) ):
-                raise HTTPSessionError(response.status, response.reason)
+            if ( not self.expectedReturnStatus(expect_status, response.status) or
+                 not self.expectedReturnReason(expect_reason, response.reason) ):
+                raise self.HTTPSessionError(response.status, response.reason)
             responsedata = response.read()
             hc.close()
             return (response, responsedata)
     
-    def doHTTP_POST(data, data_type="application/octet-stream",
+    def doHTTP_POST(self,data, data_type="application/octet-stream",
                 endpointhost=None, endpointpath=None, resource=None,
                 expect_status=200, expect_reason="OK",
                 accept_type="*/*"):
@@ -182,42 +178,50 @@ class Session:
                 "Content-type": data_type,
                 "Accept":       accept_type
                 }
-            setRequestEndPoint(endpointhost, endpointpath)
-            (response, responsedata) = doRequest("POST", resource,
+            self.setRequestEndPoint(endpointhost, endpointpath)
+            (response, responsedata) = self.doRequest("POST", resource,
                 reqdata=data, reqheaders=reqheaders,
                 expect_status=expect_status, expect_reason=expect_reason)
-            return responsedata
+            responsetype = self.getResponseType(response)
+            return (responsetype, responsedata)
     
     matchParams = re.compile(";.*")
-    def getResponseType(response):
+    
+    def getResponseType(self,response):
             type = response.getheader("Content-type")
             if type:
-                type = matchParams.sub("",type)
+                type = self.matchParams.sub("",type)
             else:
                 type = "application/octet-stream"
             return type
         
-    def doHTTP_GET(endpointhost=None, endpointpath=None, resource=None,
+    def doHTTP_GET(self,endpointhost=None, endpointpath=None, resource=None,
                 expect_status=200, expect_reason="OK",
                 accept_type="*/*"):
             reqheaders   = {
                 "Accept": accept_type
                 }
-            setRequestEndPoint(endpointhost, endpointpath)
-            (response, responsedata) = doRequest("GET", resource, 
+            self.setRequestEndPoint(endpointhost, endpointpath)
+            (response, responsedata) = self.doRequest("GET", resource, 
                 reqheaders=reqheaders,
                 expect_status=expect_status, expect_reason=expect_reason)
-            responsetype = getResponseType(response)
+            responsetype = self.getResponseType(response)
             return (responsetype, responsedata)
         
-    def doHTTP_DELETE(
+    def doHTTP_DELETE(self,
                 endpointhost=None, endpointpath=None, resource=None,
                 expect_status=200, expect_reason="OK"):
-            setRequestEndPoint(endpointhost, endpointpath)
-            (response, _) = doRequest("DELETE", resource,
+            self.setRequestEndPoint(endpointhost, endpointpath)
+            (response, responsedata) = self.doRequest("DELETE", resource,
                 expect_status=expect_status, expect_reason=expect_reason)
-            return response.status    
-    
+            responsetype = self.getResponseType(response)
+            return (responsetype, responsedata)  
+       
+def makeHttpSession(endpointhost=None, basepath=None, username=None, password=None):
+        session = Session()
+        session.setRequestEndPoint(endpointhost, basepath)
+        session.setRequestUserPass(username, password)
+        return session
 
 
 # End.

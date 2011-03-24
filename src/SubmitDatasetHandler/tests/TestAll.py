@@ -14,6 +14,7 @@ import TestSubmitDatasetHandler
 import TestDirectoryListingHandler
 import TestMetadataMerging
 import TestGetDatasetMetadataHandler
+import TestHttpSession
 
 # Code to run unit tests from all library test modules
 def getTestSuite(select="all"):
@@ -24,6 +25,7 @@ def getTestSuite(select="all"):
     suite.addTest(TestDirectoryListingHandler.getTestSuite(select=select))
     suite.addTest(TestMetadataMerging.getTestSuite(select=select))
     suite.addTest(TestGetDatasetMetadataHandler.getTestSuite(select=select))
+    suite.addTest(TestHttpSession.getTestSuite(select=select))
     return suite
 
 from MiscLib import TestUtils
