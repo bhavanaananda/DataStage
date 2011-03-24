@@ -51,7 +51,8 @@ def processDirectoryListingRequest(srcdir, basedir, outputstr):
     outputstr.write("Content-type: application/JSON\n")
     outputstr.write("\n")      # end of MIME headers
 
-    dirs = CollectDirectories(srcdir, basedir)
+    #CollectDirectories
+    dirs = CollectWritableDirectories(srcdir, basedir)
 
     #result = json.dumps(dirs)
     #outputstr.write(result)
