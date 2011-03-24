@@ -1,4 +1,5 @@
 sudoers /root/sudoers
+testuseraccess.sh /root/testuseraccess.sh
 smb.conf /etc/samba/smb.conf
 krb5.conf /etc/krb5.conf
 ssh_config /root/ssh_config

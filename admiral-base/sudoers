@@ -11,8 +11,10 @@ Defaults  !lecture,tty_tickets,!fqdn
 # Host alias specification
 
 # User alias specification
+User_Alias TEST_ACCESS_USER = www-data
 
 # Cmnd alias specification
+Cmnd_Alias TEST_ACCESS_CMD = /usr/local/sbin/testuseraccess.sh
 
 # User privilege specification
 root  ALL=(ALL) ALL
@@ -20,3 +22,7 @@ root  ALL=(ALL) ALL
 # Members of the admin group may gain root privileges
 %admin ALL=(ALL) ALL
 %RGLeader ALL=(ALL) ALL
+
+# Selected users may run the /usr/local/sbin/testuseracess.sh script as any user without password
+TEST_ACCESS_USER ALL = (ALL) NOPASSWD: TEST_ACCESS_CMD
+
