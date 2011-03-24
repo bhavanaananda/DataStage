@@ -52,7 +52,7 @@
     
     <script>
     jQuery(document).ready( function ()
-    {
+    {    
        url = document.URL;
        
        // Get Dir value from the url to display as default and get metadata information for the dataset dir
@@ -63,8 +63,11 @@
          dir= url.slice(url.indexOf("=")+1);
         //var dir = url.split("=");
        }
-       admiral.displayFormFieldsFromMetadata(dir);    
+       admiral.displayFormFieldsFromMetadata(dir); 
+        
     });
+
+
     </script>
     
 </head> 
@@ -154,8 +157,7 @@
             <span class="labelvalue">
                 <button  name="cancel" id="cancel" type="button"> Cancel </button>
                 <input name="submit" id="submit" type="submit" value="Next"/>
-           </span>
-        </div>
+           </span>      
    </div>
 </form>  
 </body>
