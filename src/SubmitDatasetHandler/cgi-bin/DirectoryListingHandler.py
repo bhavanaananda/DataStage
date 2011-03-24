@@ -33,7 +33,7 @@ except ImportError:
 #import SubmitDatasetUtils
 #import HttpUtils
 #from MiscLib import TestUtils
-from MiscLib.ScanDirectories import CollectDirectories
+from MiscLib.ScanDirectories import CollectWritableDirectories
 
 logger =  logging.getLogger("DirectoryListingHandler")
 
