@@ -20,7 +20,7 @@
 
 if (typeof admiral == "undefined")
 {
-	admiral = {};
+    admiral = {};
 }
 
 /**
@@ -39,7 +39,6 @@ admiral.datasetManifestDictionary = function (datasetPath, datasetName, callback
     // Read manifest RDF/XML
     m.eval(function (val, callback)
     {
-       
         jQuery.ajax({
             type:         "GET",
             url:           val,
@@ -66,7 +65,6 @@ admiral.datasetManifestDictionary = function (datasetPath, datasetName, callback
     // Create RDFquery databank
     m.eval(function (data, callback)
     {
-      
         try
         {
             var databank = jQuery.rdf.databank();
@@ -80,79 +78,66 @@ admiral.datasetManifestDictionary = function (datasetPath, datasetName, callback
         }
     });
 
-    // Display results from databank
+    // Collect dictionary of results from databank
     m.eval(function (rq, callback)
     {
         rq = rq.where('?s ?p ?o');
-
         jQuery("#datasetLink").attr("href", rq[0].s.value);
-
+        //TODO: localize mention of baseuri to handler for ore:aggregates?
         var baseUri            = "";
         var subdate            = "";
         var fileAbsolutePaths  = new Array();
         var fileRelativePaths  = new Array();
-
-        
         rq.each(function () 
         {
             if (this.p.value.toString()=="http://purl.org/dc/terms/identifier")
             { 
-              baseUri = this.s.value.toString();
-              datasetdetails.datasetName = this.o.value.toString();              
+                baseUri = this.s.value.toString();
+                datasetdetails.datasetName = this.o.value.toString();              
             } 
-            
             if (this.p.value.toString()=="http://purl.org/dc/terms/creator")
             { 
-              datasetdetails.createdBy = this.o.value.toString();                  
+                datasetdetails.createdBy = this.o.value.toString();                  
             } 
-            
             if (this.p.value.toString()=="http://purl.org/dc/terms/isVersionOf")
             {
-              datasetdetails.derivedFrom = this.o.value.toString();     
+                datasetdetails.derivedFrom = this.o.value.toString();     
             } 
-           
             if (this.p.value.toString()=="http://vocab.ox.ac.uk/dataset/schema#currentVersion")
             {
-              datasetdetails.currentVersion = this.o.value.toString();                
+                datasetdetails.currentVersion = this.o.value.toString();                
             }
-            
-               if (this.p.value.toString()=="http://vocab.ox.ac.uk/dataset/schema#embargoedUntil")
+            if (this.p.value.toString()=="http://vocab.ox.ac.uk/dataset/schema#embargoedUntil")
             {
-              subdate = this.o.value.match(/\d\d\d\d-\d\d-\d\d/)[0];
-              datasetdetails.embargoExpiryDate= subdate;            
+                subdate = this.o.value.match(/\d\d\d\d-\d\d-\d\d/)[0];
+                datasetdetails.embargoExpiryDate= subdate;            
             }
-            
             else if (this.p.value.toString()=="http://purl.org/dc/terms/title")
             {
-              datasetdetails.title = this.o.value.toString();  
+                datasetdetails.title = this.o.value.toString();  
             }
-            
             else if (this.p.value.toString()=="http://purl.org/dc/terms/description")
             {
-              datasetdetails.description = this.o.value.toString();  
+                datasetdetails.description = this.o.value.toString();  
             }
-            
             else if (this.p.value.toString()=="http://purl.org/dc/terms/modified")
             {
-              subdate = this.o.value.match(/\d\d\d\d-\d\d-\d\d/)[0];
-              datasetdetails.lastModified = subdate;  
+                subdate = this.o.value.match(/\d\d\d\d-\d\d-\d\d/)[0];
+                datasetdetails.lastModified = subdate;  
             }
-            
             else if (this.p.value.toString()=="http://www.openarchives.org/ore/terms/aggregates")
             { 
               baseUri = this.s.value.toString();
               fileAbsolutePaths.push(this.o.value.toString());
               fileRelativePaths.push(jQuery.uri.relative(this.o.value, this.s.value).toString());
-              
-              datasetdetails.baseUri = baseUri;
+              datasetdetails.baseUri           = baseUri;
               datasetdetails.fileAbsolutePaths = fileAbsolutePaths;
               datasetdetails.fileRelativePaths = fileRelativePaths;
             }
         }); 
-
         callback(datasetdetails);
-        
     });
+
     // Kick off access to manifest data
     m.exec(datasetPath, callback);
 };

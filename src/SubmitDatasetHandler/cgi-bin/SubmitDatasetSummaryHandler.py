@@ -27,7 +27,7 @@ sys.path.append("../..")
 
 import SubmitDatasetUtils
 
-Logger                   =  logging.getLogger("SubmitDatasetSummaryHandler")
+Logger = logging.getLogger("SubmitDatasetSummaryHandler")
 
 def datasetSummaryForm(formdata, outputstr):
     """
@@ -88,16 +88,13 @@ def datasetSummaryForm(formdata, outputstr):
                     <!--  Import admiral configuration details -->
                     <!--  NOTE: these are loaded from an absolute location in the web server -->
                     <script type="text/javascript" src="/js/admiral-config.js"></script>
-
                     <script>
                         jQuery(document).ready( function ()
                         {   var m = new admiral.AsyncComputation();
                             m.eval(function(val,callback)
                             { var datasetName = "%(datasetUnzippedName)s";
                               var datasetPath = "/"+admiral.databanksilo+"/datasets/"+datasetName;
-                                 
                               admiral.datasetManifestDictionary(datasetPath,datasetName, callback);   
-                 
                             });
                             m.eval(function(datasetdetails,callback)                          
                             {                                                 
@@ -108,8 +105,6 @@ def datasetSummaryForm(formdata, outputstr):
                           
                         });                      
                     </script>
-                    
-                    
                 </head>
                 
                 <body>
