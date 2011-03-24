@@ -94,10 +94,17 @@ input#datDir   {    position:relative;
 .dirtreelist   {    position:relative;
                     float: left; 
                }    
-               
+
+.progressmessage
+              {     position : relative;
+                    display  : block;
+                    width    : 100%;
+                    font-size: larger;
+                    color    : blue;
+              }
 
 #logout       {
-		float:right;
+										float:right;
               }
 
                        
