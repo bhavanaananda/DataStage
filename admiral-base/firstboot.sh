@@ -6,6 +6,10 @@ echo "*****FIRST BOOT*****"
 mv /etc/sudoers /etc/sudoers-orig
 cp /root/sudoers /etc/sudoers
 chmod 440 /etc/sudoers
+cp /root/testwriteaccess.sh /usr/local/sbin
+chmod 755 /usr/local/sbin/testwriteaccess.sh
+cp /root/testuseraccess.sh /usr/local/sbin
+chmod 755 /usr/local/sbin/testuseraccess.sh
 
 smbpasswd -s -a admiral <<END
 %{PASSWORD}

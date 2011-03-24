@@ -49,6 +49,16 @@ migrate postboot-2.sh              /root
 migrate postboot-3.sh              /root
 migrate postboot-4.sh              /root
 
+chmod -f 640 /etc/sudoers
+migrate sudoers /etc/sudoers
+chmod 440 /etc/sudoers
+chmod -f 755 /usr/local/sbin/testwriteaccess.sh
+migrate testwriteaccess.sh /usr/local/sbin
+chmod 755 /usr/local/sbin/testwriteaccess.sh
+chmod -f 755 /usr/local/sbin/testuseraccess.sh
+migrate testuseraccess.sh /usr/local/sbin
+chmod 755 /usr/local/sbin/testuseraccess.sh
+
 migrate etcldap.conf               /etc
 migrate krb5.conf                  /etc
 migrate krb5.keytab                /etc
