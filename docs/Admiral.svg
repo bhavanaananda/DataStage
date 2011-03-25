@@ -51,18 +51,6 @@
        inkscape:vp_z="744.09448 : 526.18109 : 1"
        inkscape:persp3d-origin="372.04724 : 350.78739 : 1"
        id="perspective10" />
-    <filter
-       inkscape:collect="always"
-       id="filter3175"
-       x="-0.021278046"
-       width="1.0425561"
-       y="-0.11683938"
-       height="1.2336788">
-      <feGaussianBlur
-         inkscape:collect="always"
-         stdDeviation="1.9617973"
-         id="feGaussianBlur3177" />
-    </filter>
     <linearGradient
        inkscape:collect="always"
        xlink:href="#linearGradient3181"
@@ -124,7 +112,7 @@
        y2="-231.23503" />
     <filter
        inkscape:collect="always"
-       id="filter4706"
+       id="filter3846"
        x="-0.026451417"
        width="1.0529028"
        y="-0.11776985"
@@ -132,7 +120,7 @@
       <feGaussianBlur
          inkscape:collect="always"
          stdDeviation="1.9774203"
-         id="feGaussianBlur4708" />
+         id="feGaussianBlur3848" />
     </filter>
   </defs>
   <sodipodi:namedview
@@ -145,16 +133,16 @@
      objecttolerance="10"
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
-     inkscape:zoom="2.7681289"
-     inkscape:cx="294.37293"
-     inkscape:cy="703.43681"
+     inkscape:zoom="2.1802695"
+     inkscape:cx="375.18386"
+     inkscape:cy="694.47988"
      inkscape:document-units="px"
      inkscape:current-layer="layer1"
      showgrid="false"
-     inkscape:window-width="1506"
-     inkscape:window-height="859"
-     inkscape:window-x="0"
-     inkscape:window-y="0"
+     inkscape:window-width="1002"
+     inkscape:window-height="620"
+     inkscape:window-x="81"
+     inkscape:window-y="180"
      inkscape:window-maximized="0" />
   <metadata
      id="metadata7">
@@ -172,16 +160,6 @@
      inkscape:label="Layer 1"
      inkscape:groupmode="layer"
      id="layer1">
-    <rect
-       style="opacity:1;fill:#ffffff;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:0.09446549;stroke-linecap:round;stroke-linejoin:miter;marker:none;marker-start:none;marker-mid:none;marker-end:none;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;visibility:visible;display:inline;overflow:visible;enable-background:accumulate"
-       id="rect2469"
-       width="106.31856"
-       height="29.7995"
-       x="492.44937"
-       y="433.39124"
-       inkscape:export-filename="/home/ben/Oxford_Artwork/Vocab_print.png"
-       inkscape:export-xdpi="1014.7822"
-       inkscape:export-ydpi="1014.7822" />
     <rect
        style="opacity:1;fill:#ffffff;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:0.09446549000000000;stroke-linecap:round;stroke-linejoin:miter;marker:none;marker-start:none;marker-mid:none;marker-end:none;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;visibility:visible;display:inline;overflow:visible;filter:url(#filter3222);enable-background:accumulate"
        id="rect4872"
@@ -262,7 +240,7 @@
        inkscape:export-ydpi="90" />
     <text
        xml:space="preserve"
-       style="font-size:14.81288052000000022px;font-style:normal;font-weight:normal;line-height:125%;opacity:0.73390557000000001;fill:#000000;fill-opacity:1;stroke:none;font-family:Bitstream Vera Sans;filter:url(#filter4706)"
+       style="font-size:14.81288052000000022px;font-style:normal;font-weight:normal;line-height:125%;opacity:1;fill:#000000;fill-opacity:1;stroke:none;font-family:Bitstream Vera Sans;filter:url(#filter3846);stroke-width:6.10421382;stroke-miterlimit:4;stroke-dasharray:none"
        x="130.49654"
        y="343.82526"
        id="text2385"
@@ -275,7 +253,7 @@
          id="tspan2387"
          x="130.49654"
          y="343.82526"
-         style="font-size:50.78701782px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-align:start;line-height:125%;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;font-family:Andika Basic;-inkscape-font-specification:Andika Basic">Admiral</tspan></text>
+         style="font-size:50.78701782000000264px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-align:start;line-height:125%;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;font-family:Andika Basic;-inkscape-font-specification:Andika Basic;opacity:1;stroke-width:6.10421382;stroke-miterlimit:4;stroke-dasharray:none">Admiral</tspan></text>
     <text
        xml:space="preserve"
        style="font-size:12.13332462px;font-style:normal;font-weight:normal;line-height:125%;fill:#ffffff;fill-opacity:1;stroke:none;font-family:Bitstream Vera Sans"
@@ -315,16 +293,5 @@
        transform="scale(1,-1)"
        inkscape:export-xdpi="90"
        inkscape:export-ydpi="90" />
-    <text
-       xml:space="preserve"
-       style="font-size:9.11369324px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-align:start;line-height:125%;writing-mode:lr-tb;text-anchor:start;fill:#4f4f4f;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;font-family:Gentium;-inkscape-font-specification:Gentium"
-       x="551.00995"
-       y="459.80957"
-       id="text2465"
-       sodipodi:linespacing="125%"><tspan
-         sodipodi:role="line"
-         id="tspan2467"
-         x="551.00995"
-         y="459.80957">@ OULS</tspan></text>
   </g>
 </svg>
