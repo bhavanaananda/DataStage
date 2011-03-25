@@ -21,17 +21,24 @@
 /*  
   Visual style for error message display
 */
-.error { color:red ;
-       }
-
-
+.error { 
+    color:red ;
+}
 
 .subTitle {
-             font-size:large;
-             font-weight:bolder;
-          }
-          
+   font-size:large;
+   font-weight:bolder;
+}
+       
+td {
+    background-color: #FFE;
+}
+
+.label {
+    text-color: #666;
+}
+
+
 .submissionDetails { 
-                
-                   }
+}
        

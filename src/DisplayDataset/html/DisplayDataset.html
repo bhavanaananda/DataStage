@@ -4,13 +4,9 @@
 
 <head>
     <title>ADMIRAL: Display dataset information</title>
-
-    <!-- TODO: move to separate CSS file -->
-    <style>
-    td {
-        background-color: #FFE;
-    }
-    </style>
+       
+    <!-- Import stylesheet -->
+    <link rel="stylesheet" href="../css/DisplayDataset.css" type="text/css" />
 
     <!-- Import jQuery framework -->
     <script type="text/javascript" src="../../jQuery/js/jquery-1.4.2.js"></script> 
@@ -57,7 +53,6 @@
        
     <!-- Import dataset information display code -->
     <script type="text/javascript" src="../DatasetTree.js"></script>
-    <link rel="stylesheet" href="../css/DisplayDataset.css" type="text/css" />
 
     <!--  Import admiral configuration details -->
     <!--  NOTE: these are loaded from an absolute location in the web server -->
@@ -108,15 +103,24 @@
                 jQuery("#pageLoadStatus").text("");
                 jQuery("#datasetName").text(datasetdetails.datasetName);
                 jQuery("#createdBy").text(datasetdetails.createdBy);
-                jQuery("#derivedFrom > a").text(datasetdetails.derivedFrom);
-                jQuery("#derivedFrom > a").attr("href", datasetdetails.derivedFrom);
                 jQuery("#currentVersion").text(datasetdetails.currentVersion);
                 jQuery("#embargoExpiryDate").text(datasetdetails.embargoExpiryDate);
-                jQuery("#title").text(datasetdetails.title);
                 jQuery("#lastModified").text(datasetdetails.lastModified);
-                jQuery("#description").text(datasetdetails.description);
                 jQuery(".manifest").text("");
-                
+                // Absent for packed datasets
+                if (datasetdetails.derivedFrom)
+                {
+                    jQuery("#title").text(datasetdetails.title);
+                    jQuery("#description").text(datasetdetails.description);
+                    jQuery("#derivedFrom > a").text(datasetdetails.derivedFrom);
+                    jQuery("#derivedFrom > a").attr("href", datasetdetails.derivedFrom);
+                }
+                else
+                {
+                    jQuery("tr:has(#title)").hide();
+                    jQuery("tr:has(#description)").hide();
+                    jQuery("tr:has(#derivedFrom)").hide();
+                };
                 callback(datasetdetails);        
             });
             m.eval(function(datasetdetails, callback)
@@ -138,23 +142,23 @@
 
 <body>
     <div>
-        <span><a href="/"><img alt="site_logo" src="../../images/ADMIRALogo96x96.png" border="0"/></a></span>
+        <span><a href="/"><img alt="site_logo" src="../../images/Admiral-logo-284x100.png" border="0"/></a></span>
     </div>
    <h1>Dataset Identifier : <a id="datasetLink" href="dummy"><span id="datasetName">...</span></a></h1>
    <div class="dataset">
      <div id="pageLoadStatus"></div>
      <table name="submissionStatus" id = "submissionStatus" >
         <!--<tr><td>Submission identifier</td><td id="submissionIdentifier">...</td></tr> -->
-        <tr><td>Title</td><td id="title">...</td></tr>
-        <tr><td>Description</td><td id="description">...</td></tr>
-        <tr><td>Submitted by</td><td id="createdBy">...</td></tr>
-        <tr><td>Submitted on</td><td><span id="lastModified">yyyy-mm-dd</span> (version <span id="currentVersion">nn</span>)</td></tr>
-        <tr><td>Status</td>
+        <tr><td class="label">Title</td><td id="title">...</td></tr>
+        <tr><td class="label">Description</td><td id="description">...</td></tr>
+        <tr><td class="label">Submitted by</td><td id="createdBy">...</td></tr>
+        <tr><td class="label">Submitted on</td><td><span id="lastModified">yyyy-mm-dd</span> (version <span id="currentVersion">nn</span>)</td></tr>
+        <tr><td class="label">Status</td>
             <td><span id="embargoed">Embargoed until <span id="embargoExpiryDate">(embargoed)</span></span>
                 <span id="published">Published</span>
             </td>
         </tr>
-        <tr><td>Databank URL to download this dataset</td><td><span id="derivedFrom"><a href="link">...</a></span></td></tr>
+        <tr><td class="label">Databank URL to download this dataset</td><td><span id="derivedFrom"><a href="link">...</a></span></td></tr>
      </table>
    </div>
    <h2>Contents of dataset</h2>
