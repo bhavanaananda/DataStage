@@ -42,8 +42,10 @@ def setDatasetsBaseDir(base):
                                  , 'datId'       :  cgi.MiniFieldStorage('datId'       ,  "SubmissionToolTest")
                                  , 'title'       :  cgi.MiniFieldStorage('title'       ,  "Submission tool test title")
                                  , 'description' :  cgi.MiniFieldStorage('description' ,  "Submission tool test description")
-                                 , 'user'        :  cgi.MiniFieldStorage('user'        ,  "admiral")
-                                 , 'pass'        :  cgi.MiniFieldStorage('pass'        ,  "admiral")
+                                 , 'user'        :  cgi.MiniFieldStorage('user'        ,  Username)
+                                 , 'pass'        :  cgi.MiniFieldStorage('pass'        ,  Password)
+                                 , 'endpointhost':  cgi.MiniFieldStorage('endpointhost',  "localhost")
+                                 , 'basepath'    :  cgi.MiniFieldStorage('basepath'    ,  "/admiral-test/")                             
                                  , 'submit'      :  cgi.MiniFieldStorage('submit'      ,  "Submit")
                                  , 'directory'   :  cgi.MiniFieldStorage('directory'   ,   DirPath)
                                 }
@@ -52,8 +54,10 @@ def setDatasetsBaseDir(base):
                                  , 'datId'       :  cgi.MiniFieldStorage('datId'       ,  "SubmissionToolTest")
                                  , 'title'       :  cgi.MiniFieldStorage('title'       ,  "Submission tool updated test title")
                                  , 'description' :  cgi.MiniFieldStorage('description' ,  "Submission tool updated test description")
-                                 , 'user'        :  cgi.MiniFieldStorage('user'        ,  "admiral")
-                                 , 'pass'        :  cgi.MiniFieldStorage('pass'        ,  "admiral")
+                                 , 'user'        :  cgi.MiniFieldStorage('user'        ,  Username)
+                                 , 'pass'        :  cgi.MiniFieldStorage('pass'        ,  Password)
+                                 , 'endpointhost':  cgi.MiniFieldStorage('endpointhost',  "localhost")
+                                 , 'basepath'    :  cgi.MiniFieldStorage('basepath'    ,  "/admiral-test/")       
                                  , 'submit'      :  cgi.MiniFieldStorage('submit'      ,  "Submit")      
                                 }
     

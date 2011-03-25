@@ -12,17 +12,18 @@ from os.path import normpath
 sys.path.append("..")
 
 from MiscLib import TestUtils
-import HttpUtils, SubmitDatasetUtils, TestConfig
+import HttpSession, SubmitDatasetUtils, TestConfig
 
-
-TestDatasetName      =  "TestSubmitDataset"
-EmptyTestDatasetName =  "EmptyTestSubmitDataset"
-logger               =  logging.getLogger(TestDatasetName)
+TestDatasetName      = "TestSubmitDataset"
+EmptyTestDatasetName = "EmptyTestSubmitDataset"
+logger               = logging.getLogger(TestDatasetName)
 
 class TestDatasetSubmission(unittest.TestCase):
   
     def setUp(self):
-        HttpUtils.setRequestUserPass(TestConfig.Username, TestConfig.Password)
+        self.endpointhost = "localhost"
+        self.basepath = "/admiral-test/"
+        self.session  = HttpSession.makeHttpSession(self.endpointhost, self.basepath, TestConfig.Username, TestConfig.Password)
         return
         
     # Tests
@@ -30,7 +31,7 @@ class TestDatasetSubmission(unittest.TestCase):
         # Test the Dataset Creation: <TestSubmission>       
     def testDatasetCreation(self):        
         # Read original Dataset List from Silo
-        initialDatasetsFromSilo = SubmitDatasetUtils.getDatasetsListFromSilo(TestConfig.SiloName)
+        initialDatasetsFromSilo = SubmitDatasetUtils.getDatasetsListFromSilo(self.session,TestConfig.SiloName)
         
         # Formulate the initial datasets received form Databank Silo into a List: <initialDatasetsListFromSilo>
         initialDatasetsListFromSilo = []
@@ -38,10 +39,10 @@ class TestDatasetSubmission(unittest.TestCase):
             initialDatasetsListFromSilo.append(initialDataset)
             
         # Create a new Test Dataset
-        SubmitDatasetUtils.createDataset(TestConfig.SiloName,TestDatasetName)
+        SubmitDatasetUtils.createDataset(self.session,TestConfig.SiloName,TestDatasetName)
         
         # Read updated Dataset List from Silo
-        updatedDatasetsFromSilo = SubmitDatasetUtils.getDatasetsListFromSilo(TestConfig.SiloName)
+        updatedDatasetsFromSilo = SubmitDatasetUtils.getDatasetsListFromSilo(self.session, TestConfig.SiloName)
         
         # Formulate the updated datasets received from Databank Silo into a List: <updatedDatasetListFromSilo>
         updatedDatasetsListFromSilo = []
@@ -52,43 +53,43 @@ class TestDatasetSubmission(unittest.TestCase):
        
         # Test that the length <updatedDatasetListFromSilo> = length<initialDatasetsListFromSilo> + 1
         self.assertEquals(len(updatedDatasetsListFromSilo), len(initialDatasetsListFromSilo)+1, "Dataset was not Created Successfully")
-        SubmitDatasetUtils.deleteDataset(TestConfig.SiloName,TestDatasetName+"-packed") 
+        SubmitDatasetUtils.deleteDataset( self.session,TestConfig.SiloName,TestDatasetName+"-packed") 
         return
  
         # Test the Dataset Deletion :<TestSubmission>  
     def testDatasetDeletion(self):  
-        SubmitDatasetUtils.createDataset(TestConfig.SiloName,TestDatasetName)
+        SubmitDatasetUtils.createDataset( self.session,TestConfig.SiloName,TestDatasetName)
         # Check dataset exists
-        response = HttpUtils.doHTTP_GET(
+        response = self.session.doHTTP_GET(
             resource = "/" + TestConfig.SiloName + "/datasets/" + TestDatasetName+"-packed", 
             expect_status=200, expect_reason="OK", accept_type="application/json")
         # Test the dataset deletion      
-        SubmitDatasetUtils.deleteDataset(TestConfig.SiloName,TestDatasetName+"-packed") 
+        SubmitDatasetUtils.deleteDataset( self.session,TestConfig.SiloName,TestDatasetName+"-packed") 
         # Test dataset no longer exists
-        response = HttpUtils.doHTTP_GET(
+        response = self.session.doHTTP_GET(
             resource = "/" + TestConfig.SiloName + "/datasets/" + TestDatasetName+"-packed", 
             expect_status=404, expect_reason="Not Found")
         return
     
         # Test the File Submission into the Dataset: <TestSubmission>  
     def testSingleFileSubmission(self):     
-        SubmitDatasetUtils.createDataset(TestConfig.SiloName,TestDatasetName)  
+        SubmitDatasetUtils.createDataset(self.session,TestConfig.SiloName,TestDatasetName)  
         # Submit a file to the Dataset
         localMimeType = TestConfig.FileMimeType 
         localFileContent  = SubmitDatasetUtils.getLocalFileContents(TestConfig.FilePath)
-        SubmitDatasetUtils.submitFileToDataset(TestConfig.SiloName, TestDatasetName, TestConfig.FileName, TestConfig.FilePath,localMimeType, TestConfig.FileName)
+        SubmitDatasetUtils.submitFileToDataset(self.session,TestConfig.SiloName, TestDatasetName, TestConfig.FileName, TestConfig.FilePath,localMimeType, TestConfig.FileName)
         
         # Read from the  updated Dataset
-        (remoteMimeType,remoteFileContent) = SubmitDatasetUtils.getFileFromDataset(TestConfig.SiloName, TestDatasetName+"-packed", TestConfig.FileName)
+        (remoteMimeType,remoteFileContent) = SubmitDatasetUtils.getFileFromDataset(self.session,TestConfig.SiloName, TestDatasetName+"-packed", TestConfig.FileName)
         
         # Check that the <localFileContent> = <remoteFileContents>
         self.assertEqual(localMimeType, remoteMimeType, "Difference between local and remote MIME types")
         self.assertEqual(localFileContent, remoteFileContent, "Difference between local and remote file contents")
-        SubmitDatasetUtils.deleteDataset(TestConfig.SiloName,TestDatasetName+"-packed")  
+        SubmitDatasetUtils.deleteDataset(self.session,TestConfig.SiloName,TestDatasetName+"-packed")  
         return
     
     def testDirectorySubmission(self):    
-        SubmitDatasetUtils.createDataset(TestConfig.SiloName,TestDatasetName)  
+        SubmitDatasetUtils.createDataset(self.session,TestConfig.SiloName,TestDatasetName)  
         zipFileName = TestDatasetName+".zip"
         zipFilePath = TestConfig.DatasetsBaseDir + os.path.sep + zipFileName
         # Zip the required directory
@@ -96,10 +97,10 @@ class TestDatasetSubmission(unittest.TestCase):
         #zipFilePath = TestConfig.DatasetsBaseDir + os.path.sep + zipFileName
         #logger.debug("ZipFileName: " + zipFileName)
         localZipFileContent  = SubmitDatasetUtils.getLocalFileContents(zipFilePath)
-        SubmitDatasetUtils.submitFileToDataset(TestConfig.SiloName, TestDatasetName, zipFileName,zipFilePath, TestConfig.ZipMimeType, zipFileName)
+        SubmitDatasetUtils.submitFileToDataset(self.session,TestConfig.SiloName, TestDatasetName, zipFileName,zipFilePath, TestConfig.ZipMimeType, zipFileName)
 
         # Read from the  updated Dataset
-        (remoteMimeType,remoteZipFileContent) = SubmitDatasetUtils.getFileFromDataset(TestConfig.SiloName, TestDatasetName+"-packed", zipFileName)
+        (remoteMimeType,remoteZipFileContent) = SubmitDatasetUtils.getFileFromDataset(self.session,TestConfig.SiloName, TestDatasetName+"-packed", zipFileName)
         
         #logger.debug("LocalZipFileContents: " + localZipFileContent)
         #logger.debug(" RemoteZipFileContents: " + remoteZipFileContent)
@@ -109,13 +110,13 @@ class TestDatasetSubmission(unittest.TestCase):
         self.assertEqual(localZipFileContent, remoteZipFileContent, "Difference between local and remote zip files contents") 
         
         #unpack the contents
-        newDatasetname = SubmitDatasetUtils.unzipRemoteFileToNewDataset(TestConfig.SiloName, TestDatasetName, zipFileName)
-        SubmitDatasetUtils.deleteDataset(TestConfig.SiloName,TestDatasetName+"-packed")  
-        SubmitDatasetUtils.deleteDataset(TestConfig.SiloName,newDatasetname)
+        newDatasetname = SubmitDatasetUtils.unzipRemoteFileToNewDataset(self.session,TestConfig.SiloName, TestDatasetName, zipFileName)
+        SubmitDatasetUtils.deleteDataset(self.session,TestConfig.SiloName,TestDatasetName+"-packed") 
+        SubmitDatasetUtils.deleteDataset(self.session,TestConfig.SiloName,newDatasetname)
         return
     
     def testSubsequentDatasetSubmission(self):    
-        SubmitDatasetUtils.createDataset(TestConfig.SiloName,TestDatasetName)  
+        SubmitDatasetUtils.createDataset(self.session,TestConfig.SiloName,TestDatasetName)  
         zipFileName = TestDatasetName+".zip"
         zipFilePath = TestConfig.DatasetsBaseDir + os.path.sep + zipFileName
         # Zip the required directory
@@ -123,12 +124,12 @@ class TestDatasetSubmission(unittest.TestCase):
         zipFilePath = TestConfig.DatasetsBaseDir + os.path.sep + zipFileName
         #logger.debug("ZipFileName: " + zipFileName)
         localZipFileContent  = SubmitDatasetUtils.getLocalFileContents(zipFilePath)
-        SubmitDatasetUtils.submitFileToDataset(TestConfig.SiloName, TestDatasetName, zipFileName, zipFilePath, TestConfig.ZipMimeType, zipFileName)
+        SubmitDatasetUtils.submitFileToDataset(self.session,TestConfig.SiloName, TestDatasetName, zipFileName, zipFilePath, TestConfig.ZipMimeType, zipFileName)
 
         #Resubmit the File to Dataset skipping dataset creation as the dataset already exists
-        SubmitDatasetUtils.submitFileToDataset(TestConfig.SiloName, TestDatasetName, zipFileName, zipFilePath, TestConfig.ZipMimeType, zipFileName)
+        SubmitDatasetUtils.submitFileToDataset(self.session,TestConfig.SiloName, TestDatasetName, zipFileName, zipFilePath, TestConfig.ZipMimeType, zipFileName)
         # Read from the  updated Dataset
-        (remoteMimeType,remoteZipFileContent) = SubmitDatasetUtils.getFileFromDataset(TestConfig.SiloName, TestDatasetName+"-packed", zipFileName)
+        (remoteMimeType,remoteZipFileContent) = SubmitDatasetUtils.getFileFromDataset(self.session,TestConfig.SiloName, TestDatasetName+"-packed", zipFileName)
         
         #logger.debug("LocalZipFileContents: " + localZipFileContent)
         #logger.debug(" RemoteZipFileContents: " + remoteZipFileContent)
@@ -138,16 +139,16 @@ class TestDatasetSubmission(unittest.TestCase):
         self.assertEqual(localZipFileContent, remoteZipFileContent, "Difference between local and remote zip files contents") 
 
         #unpack the contents
-        newDatasetname = SubmitDatasetUtils.unzipRemoteFileToNewDataset(TestConfig.SiloName, TestDatasetName, zipFileName)
-        SubmitDatasetUtils.deleteDataset(TestConfig.SiloName,TestDatasetName+"-packed")  
-        SubmitDatasetUtils.deleteDataset(TestConfig.SiloName,newDatasetname)
+        newDatasetname = SubmitDatasetUtils.unzipRemoteFileToNewDataset(self.session,TestConfig.SiloName, TestDatasetName, zipFileName)
+        SubmitDatasetUtils.deleteDataset(self.session,TestConfig.SiloName,TestDatasetName+"-packed") 
+        SubmitDatasetUtils.deleteDataset(self.session,TestConfig.SiloName,newDatasetname)
         return
 
     # To dotestDirectorySubmission
     def testEmptyDirectorySubmission(self):
             
         # Create a new Test Dataset
-        SubmitDatasetUtils.createDataset(TestConfig.SiloName,EmptyTestDatasetName)
+        SubmitDatasetUtils.createDataset(self.session,TestConfig.SiloName,EmptyTestDatasetName)
 
         zipFileName = EmptyTestDatasetName+".zip"
         zipFilePath = TestConfig.DatasetsBaseDir + os.path.sep + zipFileName
@@ -156,10 +157,10 @@ class TestDatasetSubmission(unittest.TestCase):
         zipFilePath = TestConfig.DatasetsBaseDir + os.path.sep + zipFileName
         #logger.debug("ZipFileName: " + zipFileName)
         localZipFileContent  = SubmitDatasetUtils.getLocalFileContents(zipFilePath)
-        SubmitDatasetUtils.submitFileToDataset(TestConfig.SiloName,EmptyTestDatasetName, zipFileName, zipFilePath, TestConfig.ZipMimeType, zipFileName)
+        SubmitDatasetUtils.submitFileToDataset(self.session,TestConfig.SiloName,EmptyTestDatasetName, zipFileName, zipFilePath, TestConfig.ZipMimeType, zipFileName)
 
         # Read from the  updated Dataset
-        (remoteMimeType, remoteZipFileContent) = SubmitDatasetUtils.getFileFromDataset(TestConfig.SiloName, EmptyTestDatasetName+"-packed", zipFileName)
+        (remoteMimeType, remoteZipFileContent) = SubmitDatasetUtils.getFileFromDataset(self.session,TestConfig.SiloName, EmptyTestDatasetName+"-packed", zipFileName)
         
         #logger.debug("LocalZipFileContents: " + localZipFileContent)
         #logger.debug(" RemoteZipFileContents: " + remoteZipFileContent)
@@ -169,9 +170,9 @@ class TestDatasetSubmission(unittest.TestCase):
         self.assertEqual(localZipFileContent, remoteZipFileContent, "Difference between local and remote zip file contents") 
         
         #unpack the contents
-        newDatasetName = SubmitDatasetUtils.unzipRemoteFileToNewDataset(TestConfig.SiloName, EmptyTestDatasetName, zipFileName)
-        SubmitDatasetUtils.deleteDataset(TestConfig.SiloName,EmptyTestDatasetName+"-packed")
-        SubmitDatasetUtils.deleteDataset(TestConfig.SiloName,newDatasetName)
+        newDatasetName = SubmitDatasetUtils.unzipRemoteFileToNewDataset(self.session,TestConfig.SiloName, EmptyTestDatasetName, zipFileName)
+        SubmitDatasetUtils.deleteDataset(self.session,TestConfig.SiloName,EmptyTestDatasetName+"-packed")
+        SubmitDatasetUtils.deleteDataset(self.session,TestConfig.SiloName,newDatasetName)
         return
 
     def tearDown(self):

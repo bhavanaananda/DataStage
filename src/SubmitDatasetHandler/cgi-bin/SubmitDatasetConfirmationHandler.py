@@ -29,7 +29,7 @@ sys.path.append("../..")
 import SubmitDatasetDetailsHandler
 import SubmitDatasetUtils
 import ManifestRDFUtils
-import HttpUtils
+import HttpSession
 from MiscLib import TestUtils
 
 siloName                 = "admiral-test" # @@FIXME
@@ -61,6 +61,8 @@ def processDatasetSubmissionForm(formdata, outputstr):
     """
     userName             =  SubmitDatasetUtils.getFormParam("user"        ,  formdata)
     userPass             =  SubmitDatasetUtils.getFormParam("pass"        ,  formdata)
+    endpointhost         =  SubmitDatasetUtils.getFormParam("endpointhost",  formdata)
+    basepath             =  SubmitDatasetUtils.getFormParam("basepath"    ,  formdata) 
     datasetName          =  SubmitDatasetUtils.getFormParam("datId"       ,  formdata)  
     title                =  SubmitDatasetUtils.getFormParam("title"       ,  formdata)  
     description          =  SubmitDatasetUtils.getFormParam("description" ,  formdata)  
@@ -79,10 +81,14 @@ def processDatasetSubmissionForm(formdata, outputstr):
     try:    
         # Validate the dataset name and dataset directory fields
         validateFields(dirName, datasetName)
+        
         # Set user credentials       
-        HttpUtils.setRequestUserPass(userName,userPass)       
+        #session.setRequestUserPass(userName,userPass)  
+         
+        #Create Session
+        session  = HttpSession.makeHttpSession(endpointhost, basepath, userName, userPass)   
                    
-        SubmitDatasetUtils.createDataset(siloName, datasetName)                             
+        SubmitDatasetUtils.createDataset(session, siloName, datasetName)                             
         # Update the local manifest
         manifestFilePath     = dirName + str(os.path.sep) + DefaultManifestName
         Logger.debug("Element List = " + repr(ElementUriList))
@@ -92,9 +98,9 @@ def processDatasetSubmissionForm(formdata, outputstr):
         #Logger.debug("datasetName %s, dirName %s, zipFileName %s"%(datasetName,dirName,zipFileName))
         SubmitDatasetUtils.zipLocalDirectory(dirName, FilePat, zipFilePath)
         # Submit zip file to dataset
-        SubmitDatasetUtils.submitFileToDataset(siloName, datasetName, zipFileName, zipFilePath, ZipMimeType, zipFileName)
+        SubmitDatasetUtils.submitFileToDataset(session, siloName, datasetName, zipFileName, zipFilePath, ZipMimeType, zipFileName)
         # Unzip the contents into a new dataset
-        datasetUnzippedName = SubmitDatasetUtils.unzipRemoteFileToNewDataset(siloName, datasetName, zipFileName)       
+        datasetUnzippedName = SubmitDatasetUtils.unzipRemoteFileToNewDataset(session, siloName, datasetName, zipFileName)       
         # Redirect to the Dataset Summary page
         redirectToSubmissionSummaryPage(dirName, datasetName+"-packed", datasetUnzippedName, convertToUriString(SuccessStatus))
         return
@@ -103,7 +109,7 @@ def processDatasetSubmissionForm(formdata, outputstr):
         SubmitDatasetUtils.printHTMLHeaders()
         SubmitDatasetUtils.generateErrorResponsePageFromException(e) 
 
-    except HttpUtils.HTTPUtilsError, e:
+    except session.HTTPUtilsError, e:
         SubmitDatasetUtils.printHTMLHeaders()
         SubmitDatasetUtils.generateErrorResponsePage(
             SubmitDatasetUtils.HTTP_ERROR,
