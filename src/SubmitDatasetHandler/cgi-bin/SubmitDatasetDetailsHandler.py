@@ -29,7 +29,7 @@ import SubmitDatasetUtils
 import ManifestRDFUtils
 import HttpUtils
 from MiscLib import TestUtils
-
+from MiscLib.ScanDirectories import IsDirectoryWritable
 
 save_stdout              =  sys.stdout
 dcterms                  =  URIRef("http://purl.org/dc/terms/")
@@ -70,9 +70,10 @@ def submitMetadata(formdata, outputstr):
         manifestFilePath     = dirName + str(os.path.sep) + DefaultManifestName
         Logger.debug("Element List = " + repr(ElementUriList))
         Logger.debug("Element Value List = " + repr(ElementValueList))
+        basedir = "/home"
         
         # Check for the dataset directory write access. Update the manifest only if the user has write access to the dataset directory.
-        accessStatus = IsDirectoryAccessible(srcdir, basedir)
+        accessStatus = IsDirectoryWritable(dirName)
         
         # Redirect to the error page if the user has no write permissions on the selected dataset directory     
         if accessStatus!=0 :   
@@ -107,9 +108,13 @@ def submitMetadata(formdata, outputstr):
         sys.stdout = save_stdout
     return
 
+def convertToUriString(statusString):
+    statusString = ErrorStatus.replace(" ", "%20")
+    return statusString
+
 def redirectToErrorPage(dirName,statusText):
     print "Status: 303 Dataset Directory Selection Error"
-    print "LocadatasetDetailsErrorFormtion: DatasetDetailsErrorHandler.py?dir=%s&status=%s" % (dirName, statusText)
+    print "Location: DatasetDetailsErrorHandler.py?dir=%s&status=%s" % (dirName, statusText)
     print
 
 def redirectToSubmissionConfirmationPage(dirName):

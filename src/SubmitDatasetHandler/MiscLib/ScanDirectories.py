@@ -102,27 +102,24 @@ def CollectWritableDirectories(srcDir, baseDir, recursive=True):
     collection = []
     if (baseDir != "") and (not baseDir.endswith(os.path.sep)):
         baseDir = baseDir+os.path.sep
-    def CollectDirs(path):
-        uname =  os.environ['REMOTE_USER']
-        logger.debug("Remote user = " + repr(uname))
-        accesspath = "/usr/local/sbin/testuseraccess.sh" + " " + uname + " " + path
-        logger.debug("accesspath = " + repr(accesspath))
-        accessStatus = os.system(accesspath)
-        logger.debug("accessStatus = " + repr(accessStatus))
-        if accessStatus == 0:
+    def CollectDirs(path):       
+        if IsDirectoryWritable(path):
             logger.debug("Adding Path to tree = " + repr(path))
             collection.append(path.replace(baseDir,"",1))
     ScanDirectoriesEx(srcDir, CollectDirs, recursive)
     return collection
 
 
-def IsDirectoryAccessible(srcDir, baseDir):
+def IsDirectoryWritable(dirPath):
     uname =  os.environ['REMOTE_USER']
     logger.debug("Remote user = " + repr(uname))
-    accesspath = "/usr/local/sbin/testuseraccess.sh" + " " + uname + " " + srcDir
+    accesspath = "/usr/local/sbin/testuseraccess.sh" + " " + uname + " " + dirPath
     logger.debug("accesspath = " + repr(accesspath))
     accessStatus = os.system(accesspath)
     logger.debug("accessStatus = " + repr(accessStatus))
-    return accessStatus
+    if accessStatus == 0:
+        return True
+    else :
+        return False
  
  

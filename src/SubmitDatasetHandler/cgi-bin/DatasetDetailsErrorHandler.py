@@ -86,12 +86,6 @@ def datasetDetailsErrorForm(formdata, outputstr):
                     <!--  Import admiral configuration details -->
                     <!--  NOTE: these are loaded from an absolute location in the web server -->
                     <script type="text/javascript" src="/js/admiral-config.js"></script>
-                    <script>
-                        jQuery(document).ready( function ()
-                        {  
-                          // var datasetName = "%(datasetName)s";                       
-                        });                      
-                    </script>
                 </head>
                 
                 <body>
@@ -100,7 +94,7 @@ def datasetDetailsErrorForm(formdata, outputstr):
                     </div>
                     <h2>%(status)s%(dirName)s</h2>
                     
-                    <h3><a href="%(dataToolURL)s">>Return to Dataset details page</a></h3>
+                    <h3><a href="%(dataToolURL)s">Return to Dataset details page</a></h3>
                     <h3><a href="%(mainURL)s">Return to ADMIRAL front page</a></h3>
                 </body>
             </html>
@@ -108,6 +102,7 @@ def datasetDetailsErrorForm(formdata, outputstr):
         print (pageTemplate%
             {
               'datasetName'         : datasetName
+            , 'dirName'             : dirName
             , 'dataToolURL'         : dataToolURL
             , 'mainURL'             : mainURL
             , 'status'              : status          
