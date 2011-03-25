@@ -109,15 +109,8 @@ def submitMetadata(formdata, outputstr):
 
 def redirectToErrorPage(dirName,statusText):
     print "Status: 303 Dataset Directory Selection Error"
-    print "Location: DatasetDetailsErrorHandler.py?dir=%s&status=%s" % (dirName, statusText)
+    print "LocadatasetDetailsErrorFormtion: DatasetDetailsErrorHandler.py?dir=%s&status=%s" % (dirName, statusText)
     print
-
-if __name__ == "__main__":
-    logging.basicConfig(level=logging.DEBUG)
-    form = cgi.FieldStorage()   # Parse the query
-    os.chdir("/home/")           # Base directory for admiral server data
-    processDatasetSubmissionForm(form, sys.stdout)
-
 
 def redirectToSubmissionConfirmationPage(dirName):
     print "Status: 303 Meatadata saving successful"
