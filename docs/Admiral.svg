@@ -60,7 +60,7 @@
        x2="252.85713"
        y2="301.30396"
        gradientUnits="userSpaceOnUse"
-       gradientTransform="matrix(0.4799233,0,0,0.576428,197.31341,162.14241)" />
+       gradientTransform="matrix(0.4799233,0,0,0.576428,195.31341,162.14241)" />
     <filter
        inkscape:collect="always"
        id="filter3222">
@@ -74,7 +74,7 @@
        xlink:href="#linearGradient3193"
        id="linearGradient3232"
        gradientUnits="userSpaceOnUse"
-       gradientTransform="matrix(0.5057694,0,0,0.6138757,285.38943,-207.18213)"
+       gradientTransform="matrix(0.5057694,0,0,0.6138757,283.38943,-207.18213)"
        x1="65.792801"
        y1="-294.66806"
        x2="65.792801"
@@ -133,17 +133,19 @@
      objecttolerance="10"
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
-     inkscape:zoom="2.1802695"
-     inkscape:cx="375.18386"
+     inkscape:zoom="3.8363934"
+     inkscape:cx="357.84655"
      inkscape:cy="694.47988"
      inkscape:document-units="px"
      inkscape:current-layer="layer1"
      showgrid="false"
      inkscape:window-width="1002"
      inkscape:window-height="620"
-     inkscape:window-x="81"
-     inkscape:window-y="180"
-     inkscape:window-maximized="0" />
+     inkscape:window-x="339"
+     inkscape:window-y="191"
+     inkscape:window-maximized="0"
+     showguides="true"
+     inkscape:guide-bbox="true" />
   <metadata
      id="metadata7">
     <rdf:RDF>
@@ -161,7 +163,7 @@
      inkscape:groupmode="layer"
      id="layer1">
     <rect
-       style="opacity:1;fill:#ffffff;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:0.09446549000000000;stroke-linecap:round;stroke-linejoin:miter;marker:none;marker-start:none;marker-mid:none;marker-end:none;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;visibility:visible;display:inline;overflow:visible;filter:url(#filter3222);enable-background:accumulate"
+       style="fill:#ffffff;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:0.09446549;marker:none;visibility:visible;display:inline;overflow:visible;filter:url(#filter3222);enable-background:accumulate"
        id="rect4872"
        width="230.81985"
        height="83.337585"
@@ -169,12 +171,12 @@
        y="312.42545"
        rx="0"
        ry="0"
-       transform="matrix(0.9649891,0,0,0.9090909,16.427689,35.978457)"
-       inkscape:export-filename="/home/ben/Oxford_Artwork/Databank_Medium.png"
-       inkscape:export-xdpi="242.33972"
-       inkscape:export-ydpi="242.33972" />
+       transform="matrix(0.9649891,0,0,0.9090909,14.427689,35.978457)"
+       inkscape:export-filename="/Users/graham/workspace/googlecode-admiral-jiscmrd/docs/Admiral-logo-284x100.png"
+       inkscape:export-xdpi="112.76783"
+       inkscape:export-ydpi="112.76783" />
     <rect
-       style="opacity:0.98999999;fill:#000000;fill-opacity:0.43478262;fill-rule:nonzero;stroke:none;stroke-width:0.2;stroke-linecap:round;stroke-linejoin:miter;marker:none;marker-start:none;marker-mid:none;marker-end:none;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;visibility:visible;display:inline;overflow:visible;filter:url(#filter3222);enable-background:accumulate"
+       style="opacity:0.98999999;fill:#000000;fill-opacity:0.43478262;fill-rule:nonzero;stroke:none;stroke-width:0.2;marker:none;visibility:visible;display:inline;overflow:visible;filter:url(#filter3222);enable-background:accumulate"
        id="rect3230"
        width="264.28571"
        height="105.31213"
@@ -182,12 +184,12 @@
        y="284.50504"
        rx="37.7551"
        ry="38.919697"
-       transform="matrix(0.5096357,0,0,0.6023639,189.80039,154.01793)"
-       inkscape:export-filename="/Users/graham/Desktop/rect3204.png"
-       inkscape:export-xdpi="90"
-       inkscape:export-ydpi="90" />
+       transform="matrix(0.5096357,0,0,0.6023639,187.80039,154.01793)"
+       inkscape:export-filename="/Users/graham/workspace/googlecode-admiral-jiscmrd/docs/Admiral-logo-284x100.png"
+       inkscape:export-xdpi="112.76783"
+       inkscape:export-ydpi="112.76783" />
     <rect
-       style="opacity:1;fill:#ffffff;fill-opacity:0.43478262;fill-rule:nonzero;stroke:none;stroke-width:0.2;stroke-linecap:round;stroke-linejoin:miter;marker:none;marker-start:none;marker-mid:none;marker-end:none;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;visibility:visible;display:inline;overflow:visible;filter:url(#filter3222);enable-background:accumulate"
+       style="fill:#ffffff;fill-opacity:0.43478262;fill-rule:nonzero;stroke:none;stroke-width:0.2;marker:none;visibility:visible;display:inline;overflow:visible;filter:url(#filter3222);enable-background:accumulate"
        id="rect3228"
        width="264.28571"
        height="105.31213"
@@ -195,12 +197,12 @@
        y="284.50504"
        rx="37.7551"
        ry="38.919697"
-       transform="matrix(0.5096357,0,0,0.6023639,189.80039,154.01793)"
-       inkscape:export-filename="/Users/graham/Desktop/rect3204.png"
-       inkscape:export-xdpi="90"
-       inkscape:export-ydpi="90" />
+       transform="matrix(0.5096357,0,0,0.6023639,187.80039,154.01793)"
+       inkscape:export-filename="/Users/graham/workspace/googlecode-admiral-jiscmrd/docs/Admiral-logo-284x100.png"
+       inkscape:export-xdpi="112.76783"
+       inkscape:export-ydpi="112.76783" />
     <rect
-       style="opacity:1;fill:#ffffff;fill-opacity:0.43478262;fill-rule:nonzero;stroke:none;stroke-width:0.2;stroke-linecap:round;stroke-linejoin:miter;marker:none;marker-start:none;marker-mid:none;marker-end:none;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;visibility:visible;display:inline;overflow:visible;filter:url(#filter3222);enable-background:accumulate"
+       style="fill:#ffffff;fill-opacity:0.43478262;fill-rule:nonzero;stroke:none;stroke-width:0.2;marker:none;visibility:visible;display:inline;overflow:visible;filter:url(#filter3222);enable-background:accumulate"
        id="rect3226"
        width="264.28571"
        height="105.31213"
@@ -208,10 +210,10 @@
        y="284.50504"
        rx="37.7551"
        ry="38.919697"
-       transform="matrix(0.5096357,0,0,0.6023639,189.80039,154.01793)"
-       inkscape:export-filename="/Users/graham/Desktop/rect3204.png"
-       inkscape:export-xdpi="90"
-       inkscape:export-ydpi="90" />
+       transform="matrix(0.5096357,0,0,0.6023639,187.80039,154.01793)"
+       inkscape:export-filename="/Users/graham/workspace/googlecode-admiral-jiscmrd/docs/Admiral-logo-284x100.png"
+       inkscape:export-xdpi="112.76783"
+       inkscape:export-ydpi="112.76783" />
     <rect
        style="opacity:0.89719621;fill:#15c015;fill-opacity:0.43478262;fill-rule:nonzero;stroke:none;stroke-width:0.2;marker:none;visibility:visible;display:inline;overflow:visible;filter:url(#filter3222);enable-background:accumulate"
        id="rect2383"
@@ -221,10 +223,10 @@
        y="284.50504"
        rx="37.7551"
        ry="38.919697"
-       transform="matrix(0.4344538,0,0,0.5135027,208.99131,183.9785)"
-       inkscape:export-filename="/Users/graham/Desktop/rect3204.png"
-       inkscape:export-xdpi="90"
-       inkscape:export-ydpi="90" />
+       transform="matrix(0.4344538,0,0,0.5135027,206.99131,183.9785)"
+       inkscape:export-filename="/Users/graham/workspace/googlecode-admiral-jiscmrd/docs/Admiral-logo-284x100.png"
+       inkscape:export-xdpi="112.76783"
+       inkscape:export-ydpi="112.76783" />
     <rect
        style="opacity:0.89719621;fill:url(#pattern4689);fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:0.2;marker:none;visibility:visible;display:inline;overflow:visible;filter:url(#filter3222);enable-background:accumulate"
        id="rect4694"
@@ -234,38 +236,38 @@
        y="284.50504"
        rx="37.7551"
        ry="38.919697"
-       transform="matrix(0.4344538,0,0,0.5135027,210.99131,181.9785)"
-       inkscape:export-filename="/Users/graham/Desktop/rect3204.png"
-       inkscape:export-xdpi="90"
-       inkscape:export-ydpi="90" />
+       transform="matrix(0.4344538,0,0,0.5135027,208.99131,181.9785)"
+       inkscape:export-filename="/Users/graham/workspace/googlecode-admiral-jiscmrd/docs/Admiral-logo-284x100.png"
+       inkscape:export-xdpi="112.76783"
+       inkscape:export-ydpi="112.76783" />
     <text
        xml:space="preserve"
-       style="font-size:14.81288052000000022px;font-style:normal;font-weight:normal;line-height:125%;opacity:1;fill:#000000;fill-opacity:1;stroke:none;font-family:Bitstream Vera Sans;filter:url(#filter3846);stroke-width:6.10421382;stroke-miterlimit:4;stroke-dasharray:none"
+       style="font-size:14.81288052px;font-style:normal;font-weight:normal;line-height:125%;fill:#000000;fill-opacity:1;stroke:none;filter:url(#filter3846);font-family:Bitstream Vera Sans"
        x="130.49654"
        y="343.82526"
        id="text2385"
        sodipodi:linespacing="125%"
-       transform="matrix(0.8191063,0,0,0.8191063,168.60196,88.853434)"
-       inkscape:export-filename="/Users/graham/Desktop/rect3204.png"
-       inkscape:export-xdpi="90"
-       inkscape:export-ydpi="90"><tspan
+       transform="matrix(0.8191063,0,0,0.8191063,166.60196,88.853434)"
+       inkscape:export-filename="/Users/graham/workspace/googlecode-admiral-jiscmrd/docs/Admiral-logo-284x100.png"
+       inkscape:export-xdpi="112.76783"
+       inkscape:export-ydpi="112.76783"><tspan
          sodipodi:role="line"
          id="tspan2387"
          x="130.49654"
          y="343.82526"
-         style="font-size:50.78701782000000264px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-align:start;line-height:125%;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;font-family:Andika Basic;-inkscape-font-specification:Andika Basic;opacity:1;stroke-width:6.10421382;stroke-miterlimit:4;stroke-dasharray:none">Admiral</tspan></text>
+         style="font-size:50.78701782px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-align:start;line-height:125%;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;font-family:Andika Basic;-inkscape-font-specification:Andika Basic">Admiral</tspan></text>
     <text
        xml:space="preserve"
        style="font-size:12.13332462px;font-style:normal;font-weight:normal;line-height:125%;fill:#ffffff;fill-opacity:1;stroke:none;font-family:Bitstream Vera Sans"
-       x="275.49249"
+       x="273.49249"
        y="370.48288"
        id="text3163"
        sodipodi:linespacing="125%"
-       inkscape:export-filename="/Users/graham/Desktop/rect3204.png"
-       inkscape:export-xdpi="90"
-       inkscape:export-ydpi="90"><tspan
+       inkscape:export-filename="/Users/graham/workspace/googlecode-admiral-jiscmrd/docs/Admiral-logo-284x100.png"
+       inkscape:export-xdpi="112.76783"
+       inkscape:export-ydpi="112.76783"><tspan
          sodipodi:role="line"
-         x="275.49249"
+         x="273.49249"
          y="370.48288"
          style="font-size:41.59996796px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-align:start;line-height:125%;writing-mode:lr-tb;text-anchor:start;fill:#ffffff;font-family:Andika Basic;-inkscape-font-specification:Andika Basic"
          id="tspan4690">Admiral</tspan></text>
@@ -274,24 +276,25 @@
        id="rect3179"
        width="133.69289"
        height="60.704861"
-       x="251.81897"
+       x="249.81897"
        y="326.13907"
        rx="19.098986"
        ry="22.434402"
-       inkscape:export-filename="/Users/graham/Desktop/rect3204.png"
-       inkscape:export-xdpi="90"
-       inkscape:export-ydpi="90" />
+       inkscape:export-filename="/Users/graham/workspace/googlecode-admiral-jiscmrd/docs/Admiral-logo-284x100.png"
+       inkscape:export-xdpi="112.76783"
+       inkscape:export-ydpi="112.76783" />
     <rect
        style="opacity:0.3476395;fill:url(#linearGradient3232);fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:0.2;marker:none;visibility:visible;display:inline;overflow:visible;enable-background:accumulate"
        id="rect3204"
        width="133.69289"
        height="60.704861"
-       x="251.81897"
+       x="249.81897"
        y="-388.07169"
        rx="19.098986"
        ry="22.434402"
        transform="scale(1,-1)"
-       inkscape:export-xdpi="90"
-       inkscape:export-ydpi="90" />
+       inkscape:export-xdpi="112.76783"
+       inkscape:export-ydpi="112.76783"
+       inkscape:export-filename="/Users/graham/workspace/googlecode-admiral-jiscmrd/docs/Admiral-logo-284x100.png" />
   </g>
 </svg>

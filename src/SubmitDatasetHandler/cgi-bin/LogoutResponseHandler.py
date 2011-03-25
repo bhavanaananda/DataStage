@@ -56,7 +56,7 @@ def logoutResponseForm(formdata, outputstr):
                 
                 <body>
                     <div>
-                        <span><a href="/"><img alt="site_logo" src="../../images/ADMIRALogo96x96.png" border="0"/></a></span>
+                        <span><a href="/"><img alt="site_logo" src="/images/Admiral-logo-284x100.png" border="0"/></a></span>
                     </div>
                     <h2>%(status)s</h2>
                 </body>

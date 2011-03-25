@@ -26,9 +26,6 @@
     <script type="text/javascript" src="../../rdfquery/jquery.rdf.js"></script>
     <script type="text/javascript" src="../../rdfquery/jquery.rdfa.js"></script>
     <script type="text/javascript" src="../../rdfquery/jquery.datatype.js"></script>
-    <script type="<div>
-     <span><a href="/"><img alt="site_logo" src="../../images/ADMIRALogo96x96.png" border="0"/></a></span>
-</div>text/javascript" src="../../rdfquery/jquery.rdf.json.js"></script>
     <script type="text/javascript" src="../../rdfquery/jquery.rdf.xml.js"></script>
     <script type="text/javascript" src="../../rdfquery/jquery.rdf.turtle.js"></script>
 <!--
@@ -107,7 +104,7 @@
                 jQuery("#embargoExpiryDate").text(datasetdetails.embargoExpiryDate);
                 jQuery("#lastModified").text(datasetdetails.lastModified);
                 jQuery(".manifest").text("");
-                // Absent for packed datasets
+                // Display or hide values absent for packed datasets
                 if (datasetdetails.derivedFrom)
                 {
                     jQuery("#title").text(datasetdetails.title);
@@ -130,11 +127,9 @@
                 var seghtml  = admiral.nestedListBuilder(datasetdetails.baseUri, segtree);
                 jQuery(".manifest").append(seghtml);
                 seghtml.treeview({ collapsed: true }); 
-            
             });
             m.exec(null, admiral.noop);
         }
-        
     });
   </script>  
 

@@ -104,7 +104,7 @@ migrate www/docs/accesswindows.html /var/www/docs/accesswindows.html
 migrate www/docs/accesslinux.html /var/www/docs/accesslinux.html
 migrate www/docs/accessdirect.html /var/www/docs/accessdirect.html
 
-migrate www/images/ADMIRALogo96x96.png /var/www/images/ADMIRALogo96x96.png
+migrate www/images/Admiral-logo-284x100.png /var/www/images/Admiral-logo-284x100.png
 
 migrate www/css/jquery.treeview.css /var/www/css/jquery.treeview.css
 

@@ -69,9 +69,6 @@ def datasetDetailsErrorForm(formdata, outputstr):
                     <script type="text/javascript" src="../../rdfquery/jquery.rdf.js"></script>
                     <script type="text/javascript" src="../../rdfquery/jquery.rdfa.js"></script>
                     <script type="text/javascript" src="../../rdfquery/jquery.datatype.js"></script>
-                    <script type="<div>
-                    <span><a href="/"><img alt="site_logo" src="../../images/ADMIRALogo96x96.png" border="0"/></a></span>
-                    </div>text/javascript" src="../../rdfquery/jquery.rdf.json.js"></script>
                     <script type="text/javascript" src="../../rdfquery/jquery.rdf.xml.js"></script>
                     <script type="text/javascript" src="../../rdfquery/jquery.rdf.turtle.js"></script>               
                     <!-- Import MochiKit modules: require MochiKit library functions to be fully qualified -->
@@ -90,7 +87,7 @@ def datasetDetailsErrorForm(formdata, outputstr):
                 
                 <body>
                     <div>
-                        <span><a href="/"><img alt="site_logo" src="../../images/ADMIRALogo96x96.png" border="0"/></a></span>
+                        <span><a href="/"><img alt="site_logo" src="/images/Admiral-logo-284x100.png" border="0"/></a></span>
                     </div>
                     <h2>%(status)s%(dirName)s</h2>
                     
