@@ -31,7 +31,7 @@ import HttpUtils
 from MiscLib import TestUtils
 
 
-save_stdout              = sys.stdout
+save_stdout              =  sys.stdout
 dcterms                  =  URIRef("http://purl.org/dc/terms/")
 oxds                     =  URIRef("http://vocab.ox.ac.uk/dataset/schema#") 
 NamespaceDictionary      =  {
@@ -46,6 +46,7 @@ ElementDescriptionUri    =  URIRef(dcterms + "description")
 
 DefaultManifestName      =  "manifest.rdf"
 BaseDir                  =  "/home/"
+ErrorStatus              =  "You do not have permissions to submit this dataset directory : "
 
 def submitMetadata(formdata, outputstr):
     """
@@ -69,10 +70,19 @@ def submitMetadata(formdata, outputstr):
         manifestFilePath     = dirName + str(os.path.sep) + DefaultManifestName
         Logger.debug("Element List = " + repr(ElementUriList))
         Logger.debug("Element Value List = " + repr(ElementValueList))
-        updateMetadataInDirectoryBeforeSubmission(manifestFilePath, ElementUriList, ElementValueList)       
-       
-        # Redirect to the Submission Confirmation page
-        redirectToSubmissionConfirmationPage(dirName);
+        
+        # Check for the dataset directory write access. Update the manifest only if the user has write access to the dataset directory.
+        accessStatus = IsDirectoryAccessible(srcdir, basedir)
+        
+        # Redirect to the error page if the user has no write permissions on the selected dataset directory     
+        if accessStatus!=0 :   
+            redirectToErrorPage(dirName, convertToUriString(ErrorStatus))             
+        else :
+            # Update the manifest only if the user has write access to the dataset directory.
+            updateMetadataInDirectoryBeforeSubmission(manifestFilePath, ElementUriList, ElementValueList)       
+           
+            # Redirect to the Submission Confirmation page
+            redirectToSubmissionConfirmationPage(dirName);
         return
         
     except SubmitDatasetUtils.SubmitDatasetError, e:
@@ -96,6 +106,18 @@ def submitMetadata(formdata, outputstr):
     finally:
         sys.stdout = save_stdout
     return
+
+def redirectToErrorPage(dirName,statusText):
+    print "Status: 303 Dataset Directory Selection Error"
+    print "Location: DatasetDetailsErrorHandler.py?dir=%s&status=%s" % (dirName, statusText)
+    print
+
+if __name__ == "__main__":
+    logging.basicConfig(level=logging.DEBUG)
+    form = cgi.FieldStorage()   # Parse the query
+    os.chdir("/home/")           # Base directory for admiral server data
+    processDatasetSubmissionForm(form, sys.stdout)
+
 
 def redirectToSubmissionConfirmationPage(dirName):
     print "Status: 303 Meatadata saving successful"

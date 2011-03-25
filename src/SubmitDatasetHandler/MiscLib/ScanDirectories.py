@@ -27,8 +27,7 @@ logger = logging.getLogger("ScanDirectories")
 def ScanDirectoriesEx(srcdir, DirFunc, recursive=True):
     """
     Scan all sub-directories in a given source directory.
-    Exc
-    eptions are thrown back to the calling program.
+    Exceptions are thrown back to the calling program.
     """
     directoryList = os.listdir(srcdir)
     for directoryComponent in directoryList:
@@ -115,3 +114,15 @@ def CollectWritableDirectories(srcDir, baseDir, recursive=True):
             collection.append(path.replace(baseDir,"",1))
     ScanDirectoriesEx(srcDir, CollectDirs, recursive)
     return collection
+
+
+def IsDirectoryAccessible(srcDir, baseDir):
+    uname =  os.environ['REMOTE_USER']
+    logger.debug("Remote user = " + repr(uname))
+    accesspath = "/usr/local/sbin/testuseraccess.sh" + " " + uname + " " + srcDir
+    logger.debug("accesspath = " + repr(accesspath))
+    accessStatus = os.system(accesspath)
+    logger.debug("accessStatus = " + repr(accessStatus))
+    return accessStatus
+ 
+ 
