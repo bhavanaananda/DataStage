@@ -111,15 +111,18 @@ def CollectWritableDirectories(srcDir, baseDir, recursive=True):
 
 
 def IsDirectoryWritable(dirPath):
-    uname =  os.environ['REMOTE_USER']
-    logger.debug("Remote user = " + repr(uname))
-    accesspath = "/usr/local/sbin/testuseraccess.sh" + " " + uname + " " + dirPath
-    logger.debug("accesspath = " + repr(accesspath))
-    accessStatus = os.system(accesspath)
-    logger.debug("accessStatus = " + repr(accessStatus))
-    if accessStatus == 0:
-        return True
+    if  os.environ.has_key("REMOTE_USER"):
+        uname =  os.environ['REMOTE_USER']
+        logger.debug("Remote user = " + repr(uname))
+        accesspath = "/usr/local/sbin/testuseraccess.sh" + " " + uname + " " + dirPath
+        logger.debug("accesspath = " + repr(accesspath))
+        accessStatus = os.system(accesspath)
+        logger.debug("accessStatus = " + repr(accessStatus))
+        if accessStatus == 0:
+            return True
+        else :
+            return False
     else :
-        return False
+        return True
  
  

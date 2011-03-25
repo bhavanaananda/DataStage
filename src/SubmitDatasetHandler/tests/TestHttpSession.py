@@ -1,4 +1,4 @@
-# $Id: TestHttpUtils.py 1047 2009-01-15 14:48:58Z graham $
+# $Id: TestHttpSession.py 1047 2009-01-15 14:48:58Z graham $
 #
 # Unit testing for WebBrick library functions (Functions.py)
 # See http://pyunit.sourceforge.net/pyunit.html
@@ -12,9 +12,9 @@ from os.path import normpath
 sys.path.append("..")
 
 from MiscLib import TestUtils
-import HttpSession, HttpUtils, TestConfig
+import HttpSession, TestConfig
 
-logger               =  logging.getLogger("TestHttpSession")
+logger  =  logging.getLogger("TestHttpSession")
 
 class TestHttpSession(unittest.TestCase):
   
@@ -39,13 +39,13 @@ class TestHttpSession(unittest.TestCase):
     
     #def expectedReturnReason(expected, actual):
 
-    def testSimpleHttpGet_orig(self):
-        HttpUtils.setRequestEndPoint(self.endpointhost, self.basepath)
-        HttpUtils.setRequestUserPass(self.username, self.password)
-        (responsetype, responsedata) = HttpUtils.doHTTP_GET(endpointpath=self.basepath, resource="datasets", expect_status=200, expect_reason="OK", accept_type="*/*")
-        self.assertEquals(responsetype, "text/html", "List datasets response type: %s"%responsetype)
-        self.assertTrue(re.search("<title>.*List of Datasets.*</title>", responsedata) != None, "List datasets response data")
-        return
+    #def testSimpleHttpGet_orig(self):
+    #    HttpUtils.setRequestEndPoint(self.endpointhost, self.basepath)
+    #    HttpUtils.setRequestUserPass(self.username, self.password)
+    #    (responsetype, responsedata) = HttpUtils.doHTTP_GET(endpointpath=self.basepath, resource="datasets", expect_status=200, expect_reason="OK", accept_type="*/*")
+    #    self.assertEquals(responsetype, "text/html", "List datasets response type: %s"%responsetype)
+    #    self.assertTrue(re.search("<title>.*List of Datasets.*</title>", responsedata) != None, "List datasets response data")
+    #    return
 
     def testSimpleHttpGet(self):
         session = HttpSession.makeHttpSession(self.endpointhost, self.basepath, self.username, self.password)
