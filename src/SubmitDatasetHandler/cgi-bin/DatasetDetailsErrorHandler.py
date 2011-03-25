@@ -30,7 +30,7 @@ import SubmitDatasetUtils
 Logger = logging.getLogger("DatasetDetailsErrorHandler")
 
 def datasetDetailsErrorForm(formdata, outputstr):
-    """
+    """ 
     Print (to stdout) a new HTML page reflecting the outcome of the request
     
     formdata    is a dictionary containing parameters from the dataset details form
