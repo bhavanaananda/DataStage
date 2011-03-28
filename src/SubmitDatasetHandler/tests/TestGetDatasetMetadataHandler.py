@@ -15,7 +15,7 @@ try:
 except ImportError:
     import json as json
 
-import GetDatasetMetadataHandler, ManifestRDFUtils, SubmitDatasetUtils, HttpUtils, TestConfig
+import GetDatasetMetadataHandler, ManifestRDFUtils, SubmitDatasetUtils, TestConfig
 from MiscLib import TestUtils
 
 Logger =  logging.getLogger("TestGetDatasetMetadataHandler")

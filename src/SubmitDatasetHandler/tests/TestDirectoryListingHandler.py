@@ -14,10 +14,10 @@ try:
 except ImportError:
     import json as json
 
-import DirectoryListingHandler, SubmitDatasetUtils, HttpUtils, TestConfig
+import DirectoryListingHandler, SubmitDatasetUtils, TestConfig
 from MiscLib import TestUtils
 
-logger           =  logging.getLogger("TestDirectoryListingHandler")
+logger = logging.getLogger("TestDirectoryListingHandler")
     
 class TestDirectoryListingHandler(unittest.TestCase):
 

@@ -72,18 +72,16 @@ def submitMetadata(formdata, outputstr):
         Logger.debug("Element Value List = " + repr(ElementValueList))
         basedir = "/home"
         
-        # Check for the dataset directory write access. Update the manifest only if the user has write access to the dataset directory.
-        accessStatus = IsDirectoryWritable(dirName)
-        
+        # Check for the dataset directory write access. Update the manifest only if the user has write access to the dataset directory.       
         # Redirect to the error page if the user has no write permissions on the selected dataset directory     
-        if accessStatus!=0 :   
-            redirectToErrorPage(dirName, convertToUriString(ErrorStatus))             
-        else :
+        if IsDirectoryWritable(dirName) :   
             # Update the manifest only if the user has write access to the dataset directory.
             updateMetadataInDirectoryBeforeSubmission(manifestFilePath, ElementUriList, ElementValueList)       
            
             # Redirect to the Submission Confirmation page
             redirectToSubmissionConfirmationPage(dirName);
+        else :
+            redirectToErrorPage(dirName, convertToUriString(ErrorStatus))                    
         return
         
     except SubmitDatasetUtils.SubmitDatasetError, e:

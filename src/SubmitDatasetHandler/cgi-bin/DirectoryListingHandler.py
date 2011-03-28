@@ -30,9 +30,6 @@ try:
 except ImportError:
     import json as json
 
-#import SubmitDatasetUtils
-#import HttpUtils
-#from MiscLib import TestUtils
 from MiscLib.ScanDirectories import CollectWritableDirectories
 
 logger =  logging.getLogger("DirectoryListingHandler")

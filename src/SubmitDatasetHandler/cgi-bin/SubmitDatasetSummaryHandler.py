@@ -71,6 +71,7 @@ def datasetSummaryForm(formdata, outputstr):
                     <script type="text/javascript" src="../../rdfquery/jquery.rdf.js"></script>
                     <script type="text/javascript" src="../../rdfquery/jquery.rdfa.js"></script>
                     <script type="text/javascript" src="../../rdfquery/jquery.datatype.js"></script>
+                    <script type="text/javascript" src="../../rdfquery/jquery.rdf.xml.js"></script>
                     <script type="text/javascript" src="../../rdfquery/jquery.rdf.turtle.js"></script>               
                     <!-- Import MochiKit modules: require MochiKit library functions to be fully qualified -->
                     <script type="text/javascript">MochiKit = {__export__: false};</script>

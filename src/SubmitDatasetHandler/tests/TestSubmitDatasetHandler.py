@@ -12,7 +12,7 @@ import SubmitDatasetDetailsHandler
 import SubmitDatasetConfirmationHandler
 import ManifestRDFUtils
 import SubmitDatasetUtils
-import HttpUtils
+import HttpSession
 from MiscLib import TestUtils
 import TestConfig
 #from TestConfig import setTestConfig.DatasetsBaseDir
@@ -41,12 +41,16 @@ ExpectedUpdatedDictionary =  {
 class TestSubmitDatasetHandler(unittest.TestCase):
 
     def setUp(self):
+        self.endpointhost = "localhost"
+        self.basepath = "/admiral-test/"
+        self.session  = HttpSession.makeHttpSession(self.endpointhost, self.basepath, TestConfig.Username, TestConfig.Password)
+ 
         return
        
     def tearDown(self):
         try:
-            SubmitDatasetUtils.deleteDataset(TestConfig.SiloName,  SubmitDatasetUtils.getFormParam('datId', TestConfig.formdata))
-            SubmitDatasetUtils.deleteDataset(TestConfig.SiloName,  SubmitDatasetUtils.getFormParam('datId', TestConfig.formdata) +"-packed");
+            SubmitDatasetUtils.deleteDataset(self.session, TestConfig.SiloName,  SubmitDatasetUtils.getFormParam('datId', TestConfig.formdata))
+            SubmitDatasetUtils.deleteDataset(self.session, TestConfig.SiloName,  SubmitDatasetUtils.getFormParam('datId', TestConfig.formdata) +"-packed");
         except:
             pass
         return
@@ -67,7 +71,7 @@ class TestSubmitDatasetHandler(unittest.TestCase):
         #self.assertEqual( firstLine, "Content-type: text/html\n", "Submission Handler could not action the client request!")
         self.assertEqual( firstLine.strip(), "Status: 303 Dataset submission successful","Submission Handler could not action the client request!")
            
-        SubmitDatasetUtils.deleteDataset(TestConfig.SiloName,  TestConfig.DatasetId +"-packed");
+        SubmitDatasetUtils.deleteDataset(self.session, TestConfig.SiloName,  TestConfig.DatasetId +"-packed");
         #SubmitDatasetUtils.deleteDataset(TestConfig.SiloName, datasetId);
         return
 
@@ -79,12 +83,12 @@ class TestSubmitDatasetHandler(unittest.TestCase):
         SubmitDatasetConfirmationHandler.processDatasetSubmissionForm(TestConfig.formdata, outputStr)
 
         # Check that the dataset is created
-        found = SubmitDatasetUtils.ifDatasetExists(TestConfig.SiloName, TestConfig.DatasetId)
+        found = SubmitDatasetUtils.ifDatasetExists(self.session, TestConfig.SiloName, TestConfig.DatasetId)
           
         self.assertEquals(found, True, "Dataset Creation Failed!" )
         
         # Check that the new dataset can be dereferenced in the databank 
-        HttpUtils.doHTTP_GET(resource="/" + TestConfig.SiloName +"/datasets/"+ TestConfig.DatasetId+"-packed", 
+        self.session.doHTTP_GET(resource="/" + TestConfig.SiloName +"/datasets/"+ TestConfig.DatasetId+"-packed", 
             expect_status=200, expect_reason="OK", accept_type="application/json")
         
         # Check that a HTML Response page is returned
@@ -94,7 +98,7 @@ class TestSubmitDatasetHandler(unittest.TestCase):
         # self.assertEqual( firstLine, "Content-type: text/html\n", "Submission Handler could not action the client request!")
         self.assertEqual( firstLine.strip(), "Status: 303 Dataset submission successful","Submission Handler could not action the client request!")
          
-        SubmitDatasetUtils.deleteDataset(TestConfig.SiloName, TestConfig.DatasetId+"-packed")
+        SubmitDatasetUtils.deleteDataset(self.session, TestConfig.SiloName, TestConfig.DatasetId+"-packed")
         return
         
         # Test that the named dataset has been created in the databank
@@ -103,15 +107,15 @@ class TestSubmitDatasetHandler(unittest.TestCase):
          
         # Invoke dataset submission program, passing faked form submission parameters
         SubmitDatasetConfirmationHandler.processDatasetSubmissionForm(TestConfig.formdata, outputStr)
-        SubmitDatasetUtils.deleteDataset(TestConfig.SiloName, TestConfig.DatasetId)
+        SubmitDatasetUtils.deleteDataset(self.session, TestConfig.SiloName, TestConfig.DatasetId)
 
         # Check that the dataset is deleted
-        found = SubmitDatasetUtils.ifDatasetExists(TestConfig.SiloName, TestConfig.DatasetId)
+        found = SubmitDatasetUtils.ifDatasetExists(self.session, TestConfig.SiloName, TestConfig.DatasetId)
             
         self.assertEquals(found, False, "Dataset Deletion Failed!" )     
         
         # Check that the dataset deleted cannot be dereferenced in the databank 
-        HttpUtils.doHTTP_GET(resource="/" + TestConfig.SiloName +"/datasets/"+ TestConfig.DatasetId, 
+        self.session.doHTTP_GET(resource="/" + TestConfig.SiloName +"/datasets/"+ TestConfig.DatasetId, 
             expect_status=404, expect_reason="Not Found", accept_type="application/json")
         
         # Check that a HTML Response page is returned   
@@ -120,7 +124,7 @@ class TestSubmitDatasetHandler(unittest.TestCase):
         # self.assertEqual( firstLine, "Content-type: text/html\n", "Submission Handler could not action the client request!")
         self.assertEqual( firstLine.strip(), "Status: 303 Dataset submission successful","Submission Handler could not action the client request!")
  
-        SubmitDatasetUtils.deleteDataset(TestConfig.SiloName, TestConfig.DatasetId+"-packed")
+        SubmitDatasetUtils.deleteDataset(self.session, TestConfig.SiloName, TestConfig.DatasetId+"-packed")
         return
     
     def testSubmitDatasetHandlerDirectorySubmission(self):
@@ -132,7 +136,7 @@ class TestSubmitDatasetHandler(unittest.TestCase):
         # Check that the dataset created for unzipped data can be dereferenced in the databank 
         datasetId  =  SubmitDatasetUtils.getFormParam('datId', TestConfig.formdata)
         datasetDir =  SubmitDatasetUtils.getFormParam('datDir', TestConfig.formdata)
-        HttpUtils.doHTTP_GET(resource="/" + TestConfig.SiloName +"/datasets/"+datasetId+"-packed",
+        self.session.doHTTP_GET(resource="/" + TestConfig.SiloName +"/datasets/"+datasetId+"-packed",
             expect_status=200, expect_reason="OK", accept_type="application/json")
         
         # Invoke dataset submission program yet again. 
@@ -140,10 +144,10 @@ class TestSubmitDatasetHandler(unittest.TestCase):
         SubmitDatasetConfirmationHandler.processDatasetSubmissionForm(TestConfig.formdata, outputStr)
          # Check that the dataset created for unzipped data can be dereferenced in the databank 
          
-        HttpUtils.doHTTP_GET(resource="/" + TestConfig.SiloName +"/datasets/"+TestConfig.DatasetId+"-packed", 
+        self.session.doHTTP_GET(resource="/" + TestConfig.SiloName +"/datasets/"+TestConfig.DatasetId+"-packed", 
             expect_status=200, expect_reason="OK", accept_type="application/json")
             
-        SubmitDatasetUtils.deleteDataset(TestConfig.SiloName, TestConfig.DatasetId+"-packed")
+        SubmitDatasetUtils.deleteDataset(self.session, TestConfig.SiloName, TestConfig.DatasetId+"-packed")
         return
     
     
@@ -158,7 +162,7 @@ class TestSubmitDatasetHandler(unittest.TestCase):
         SubmitDatasetConfirmationHandler.processDatasetSubmissionForm(formdata, outputStr)
         
         # Check that the dataset created for unzipped data can be dereferenced in the databank 
-        HttpUtils.doHTTP_GET(resource="/" + TestConfig.SiloName +"/datasets/"+TestConfig.DatasetId+"-packed", 
+        self.session.doHTTP_GET(resource="/" + TestConfig.SiloName +"/datasets/"+TestConfig.DatasetId+"-packed", 
             expect_status=200, expect_reason="OK", accept_type="application/json")
         
         # Invoke dataset submission program yet again. 
@@ -166,9 +170,9 @@ class TestSubmitDatasetHandler(unittest.TestCase):
         SubmitDatasetConfirmationHandler.processDatasetSubmissionForm(formdata, outputStr)
          # Check that the dataset created for unzipped data can be dereferenced in the databank 
          
-        HttpUtils.doHTTP_GET(resource="/" + TestConfig.SiloName +"/datasets/"+TestConfig.DatasetId+"-packed", expect_status=200, expect_reason="OK", accept_type="application/json")
+        self.session.doHTTP_GET(resource="/" + TestConfig.SiloName +"/datasets/"+TestConfig.DatasetId+"-packed", expect_status=200, expect_reason="OK", accept_type="application/json")
         
-        SubmitDatasetUtils.deleteDataset(TestConfig.SiloName, TestConfig.DatasetId+"-packed")
+        SubmitDatasetUtils.deleteDataset(self.session, TestConfig.SiloName, TestConfig.DatasetId+"-packed")
         return
     
     def testSubmitDatasetHandlerUpdateMetadataBeforeSubmission(self):
