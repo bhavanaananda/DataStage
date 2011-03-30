@@ -95,8 +95,8 @@ class Session:
                 #                _endpointuser = None
                 #                _endpointpass = None
             if endpointpath: self._endpointpath = endpointpath
-            logger.debug("setRequestEndPoint: endpointhost %s " % self._endpointhost)
-            logger.debug("setRequestEndPoint: endpointpath %s " % self._endpointpath)
+            #logger.debug("setRequestEndPoint: endpointhost %s " % self._endpointhost)
+            #logger.debug("setRequestEndPoint: endpointpath %s " % self._endpointpath)
         return
     
     def setRequestUserPass(self, endpointuser=None, endpointpass=None):

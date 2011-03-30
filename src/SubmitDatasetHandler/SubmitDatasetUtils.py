@@ -81,7 +81,7 @@ def printStackTrace():
 
 def getDatasetsListFromSilo(session, siloName):
     (responsetype, datasetsListFromSilo) = session.doHTTP_GET(
-        endpointpath=session._endpointpath,
+        endpointpath="/" + siloName  +"/",
         resource="datasets", 
         expect_status=200, expect_reason="OK", accept_type="application/json")
     assert responsetype.lower() == "application/json", "Expected application/json, got "+responsetype
@@ -125,7 +125,7 @@ def createDataset(session, siloName, datasetName ):
         #            reqdata, reqtype, 
         #            resource = "/" + siloName + "/datasets/", 
         #            expect_status=201, expect_reason="Created")
-        session.doHTTP_POST(endpointpath=session._endpointpath, resource="datasets",
+        session.doHTTP_POST(endpointpath="/" + siloName  +"/", resource="datasets",
         data=reqdata, data_type=reqtype, expect_status=201, expect_reason="Created")
     return
 
@@ -141,7 +141,7 @@ def deleteDataset(session, siloName, datasetName ):
     #    resource = "/" + siloName + "/datasets/" + datasetName, 
     #    expect_status=200, expect_reason="OK")
     resourceString = "datasets/" + datasetName
-    session.doHTTP_DELETE(endpointpath=session._endpointpath, resource=resourceString, expect_status=200, expect_reason="OK")
+    session.doHTTP_DELETE(endpointpath="/" + siloName  +"/", resource=resourceString, expect_status=200, expect_reason="OK")
 
     return
 
@@ -167,7 +167,7 @@ def submitFileToDataset(session, siloName, datasetName, fileName, filePath, mime
     resourceString = "datasets/" + datasetName + "-packed"
     session.doHTTP_POST(
         data=reqdata, data_type=reqtype, 
-        endpointpath=session._endpointpath, resource=resourceString,
+        endpointpath="/" + siloName  +"/", resource=resourceString,
         expect_status=[201,204], expect_reason=["Created","No Content"],
         accept_type="text/plain")       # Without this, Databank returns 302 (why?)
     return
@@ -196,7 +196,7 @@ def unzipRemoteFileToNewDataset(session, siloName, datasetName, zipFileName):
     resourceString = "items/" + datasetName + "-packed"
     session.doHTTP_POST(
         data=reqdata, data_type=reqtype, 
-        endpointpath=session._endpointpath, 
+        endpointpath="/" + siloName  +"/", 
         resource=resourceString, 
         expect_status=[200,201], expect_reason=["OK","Created"])
     return datasetName
@@ -217,7 +217,7 @@ def getFileFromDataset(session, siloName, datasetName, fileName):
     logger.debug("getFileFromDataset: siloName %s, datasetName %s, fileName %s"%(siloName, datasetName, fileName))
     resourceString = "datasets/" + datasetName +  "/" + fileName
     readFileTypeContent = session.doHTTP_GET(
-            endpointpath=session._endpointpath,
+            endpointpath="/" + siloName  +"/",
             resource = resourceString,
             expect_status=200, expect_reason="OK")
     return readFileTypeContent
