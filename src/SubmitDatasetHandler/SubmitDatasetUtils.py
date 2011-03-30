@@ -81,7 +81,8 @@ def printStackTrace():
 
 def getDatasetsListFromSilo(session, siloName):
     (responsetype, datasetsListFromSilo) = session.doHTTP_GET(
-        resource="/" + siloName +"/datasets/", 
+        endpointpath=session._endpointpath,
+        resource="datasets", 
         expect_status=200, expect_reason="OK", accept_type="application/json")
     assert responsetype.lower() == "application/json", "Expected application/json, got "+responsetype
     datasetsListFromSilo = json.loads(datasetsListFromSilo)
