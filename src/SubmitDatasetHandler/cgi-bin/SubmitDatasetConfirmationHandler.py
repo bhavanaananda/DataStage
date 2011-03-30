@@ -69,10 +69,10 @@ def processDatasetSubmissionForm(formdata, outputstr):
     dirName              =  SubmitDatasetUtils.getFormParam("datDir"      ,  formdata)
     ElementValueList     =  [userName, datasetName, title, description]
 
-    if endpointhost==None:
-        endpointhost = "localhost"
-    if basepath==None:
-        basepath = "/admiral-test/"
+    #if endpointhost==None:
+    endpointhost = "localhost"
+    #if basepath==None:
+    basepath = "/admiral-test/"
     ###print("\n---- processDatasetSubmissionForm:formdata ---- \n"+repr(formdata))
   
     # Zip the selected Directory
