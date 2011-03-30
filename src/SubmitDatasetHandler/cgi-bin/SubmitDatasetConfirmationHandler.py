@@ -72,7 +72,7 @@ def processDatasetSubmissionForm(formdata, outputstr):
     if endpointhost==None:
         endpointhost = "localhost"
     if basepath==None:
-        basepath = ""
+        basepath = "/admiral-test/"
     ###print("\n---- processDatasetSubmissionForm:formdata ---- \n"+repr(formdata))
   
     # Zip the selected Directory
@@ -113,7 +113,7 @@ def processDatasetSubmissionForm(formdata, outputstr):
         SubmitDatasetUtils.printHTMLHeaders()
         SubmitDatasetUtils.generateErrorResponsePageFromException(e) 
 
-    except session.HTTPUtilsError, e:
+    except session.HTTPSessionError, e:
         SubmitDatasetUtils.printHTMLHeaders()
         SubmitDatasetUtils.generateErrorResponsePage(
             SubmitDatasetUtils.HTTP_ERROR,

@@ -120,10 +120,12 @@ def createDataset(session, siloName, datasetName ):
             ]
         files =[]
         (reqtype, reqdata) = session.encode_multipart_formdata(fields, files)
-        session.doHTTP_POST(
-            reqdata, reqtype, 
-            resource = "/" + siloName + "/datasets/", 
-            expect_status=201, expect_reason="Created")
+        #        session.doHTTP_POST(
+        #            reqdata, reqtype, 
+        #            resource = "/" + siloName + "/datasets/", 
+        #            expect_status=201, expect_reason="Created")
+        session.doHTTP_POST(endpointpath=session._endpointpath, resource="datasets",
+        data=reqdata, data_type=reqtype, expect_status=201, expect_reason="Created")
     return
 
 def deleteDataset(session, siloName, datasetName ):      
@@ -134,9 +136,12 @@ def deleteDataset(session, siloName, datasetName ):
     datasetName name of the dataset 
     """
     logger.debug("deleteDataset: siloName %s, datasetName %s"%(siloName, datasetName))
-    session.doHTTP_DELETE(
-        resource = "/" + siloName + "/datasets/" + datasetName, 
-        expect_status=200, expect_reason="OK")
+    #    session.doHTTP_DELETE(
+    #    resource = "/" + siloName + "/datasets/" + datasetName, 
+    #    expect_status=200, expect_reason="OK")
+    resourceString = "datasets/" + datasetName
+    session.doHTTP_DELETE(endpointpath=session._endpointpath, resource=resourceString, expect_status=200, expect_reason="OK")
+
     return
 
 def submitFileToDataset(session, siloName, datasetName, fileName, filePath, mimeType, targetName):
@@ -158,9 +163,10 @@ def submitFileToDataset(session, siloName, datasetName, fileName, filePath, mime
         ]
     (reqtype, reqdata) = session.encode_multipart_formdata(fields, files)
     logger.debug("Call doHTTP_POST: reqtype %s")
+    resourceString = "datasets/" + datasetName + "-packed"
     session.doHTTP_POST(
-        reqdata, reqtype, 
-        resource = "/" + siloName + "/datasets/"+ datasetName+"-packed",
+        data=reqdata, data_type=reqtype, 
+        endpointpath=session._endpointpath, resource=resourceString,
         expect_status=[201,204], expect_reason=["Created","No Content"],
         accept_type="text/plain")       # Without this, Databank returns 302 (why?)
     return
@@ -186,9 +192,11 @@ def unzipRemoteFileToNewDataset(session, siloName, datasetName, zipFileName):
         ]
     files = []
     (reqtype, reqdata) = session.encode_multipart_formdata(fields, files)
+    resourceString = "items/" + datasetName + "-packed"
     session.doHTTP_POST(
-        reqdata, reqtype, 
-        resource="/" + siloName +"/items/"+ datasetName+"-packed", 
+        data=reqdata, data_type=reqtype, 
+        endpointpath=session._endpointpath, 
+        resource=resourceString, 
         expect_status=[200,201], expect_reason=["OK","Created"])
     return datasetName
 
@@ -206,8 +214,10 @@ def getFileFromDataset(session, siloName, datasetName, fileName):
     containing the file content.
     """
     logger.debug("getFileFromDataset: siloName %s, datasetName %s, fileName %s"%(siloName, datasetName, fileName))
+    resourceString = "datasets/" + datasetName +  "/" + fileName
     readFileTypeContent = session.doHTTP_GET(
-            resource = "/" + siloName +"/datasets/" + datasetName + "/" + fileName,
+            endpointpath=session._endpointpath,
+            resource = resourceString,
             expect_status=200, expect_reason="OK")
     return readFileTypeContent
 
