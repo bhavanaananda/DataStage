@@ -1,4 +1,4 @@
-#!/usr/local/bin/python
+﻿#!/usr/local/bin/python
 # -*- coding: utf-8 -*-
 """
 An implementation of the W3C SPARQL Algebra on top of sparql-p's expansion trees

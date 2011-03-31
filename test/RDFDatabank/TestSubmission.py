@@ -18,8 +18,8 @@ try:
 except ImportError:
     import json
 #My system is running rdflib version 2.4.2. So adding rdflib v3.0 to sys path
-#rdflib_path = os.path.join(os.getcwd(), 'rdflib')
-#sys.path.insert(0, rdflib_path)
+rdflib_path = os.path.join(os.getcwd(), 'rdflib')
+sys.path.insert(0, rdflib_path)
 import rdflib
 from rdflib.namespace import RDF
 from rdflib.graph import Graph
@@ -55,7 +55,7 @@ class TestSubmission(SparqlQueryTestCase.SparqlQueryTestCase):
         self.setRequestUserPass(
             endpointuser=RDFDatabankConfig.endpointuser,
             endpointpass=RDFDatabankConfig.endpointpass)
-        self.doHTTP_DELETE(
+        resp = self.doHTTP_DELETE(
             resource="datasets/TestSubmission", 
             expect_status="*", expect_reason="*")
         return
@@ -71,11 +71,13 @@ class TestSubmission(SparqlQueryTestCase.SparqlQueryTestCase):
             ]
         files =[]
         (reqtype, reqdata) = SparqlQueryTestCase.encode_multipart_formdata(fields, files)
-        self.doHTTP_POST(
+        (resp,respdata) = self.doHTTP_POST(
             reqdata, reqtype, 
             resource="datasets/", 
             expect_status=201, expect_reason="Created")
-        #TODO: TEST FOR LOCATION HEADER
+        LHobtained = resp.getheader('Content-Location', None)
+        LHexpected = "%sdatasets/TestSubmission"%self._endpointpath
+        self.assertEquals(LHobtained, LHexpected, 'Content-Location not correct')
         return
 
     def uploadTestSubmissionZipfile(self, file_to_upload="testdir.zip"):
@@ -86,11 +88,13 @@ class TestSubmission(SparqlQueryTestCase.SparqlQueryTestCase):
             [ ("file", file_to_upload, zipdata, "application/zip") 
             ]
         (reqtype, reqdata) = SparqlQueryTestCase.encode_multipart_formdata(fields, files)
-        self.doHTTP_POST(
+        (resp,respdata) = self.doHTTP_POST(
             reqdata, reqtype, 
             resource="datasets/TestSubmission/", 
             expect_status=201, expect_reason="Created")
-        #TODO: TEST FOR LOCATION HEADER
+        LHobtained = resp.getheader('Content-Location', None)
+        LHexpected = "%sdatasets/TestSubmission/%s"%(self._endpointpath, file_to_upload)
+        self.assertEquals(LHobtained, LHexpected, 'Content-Location not correct')
         return zipdata
 
     def updateTestSubmissionZipfile(self, file_to_upload="testdir.zip", filename=None):
@@ -105,7 +109,7 @@ class TestSubmission(SparqlQueryTestCase.SparqlQueryTestCase):
             [ ("file", file_to_upload, zipdata, "application/zip") 
             ]
         (reqtype, reqdata) = SparqlQueryTestCase.encode_multipart_formdata(fields, files)
-        self.doHTTP_POST(
+        (resp,respdata)= self.doHTTP_POST(
             reqdata, reqtype, 
             resource="datasets/TestSubmission/", 
             expect_status=204, expect_reason="No Content")
@@ -116,7 +120,7 @@ class TestSubmission(SparqlQueryTestCase.SparqlQueryTestCase):
         """List all silos your account has access to - GET /silo"""
         #Write a test to list all the silos. Test to see if it returns 200 OK and the list of silos is not empty
         # Access list silos, check response
-        data = self.doHTTP_GET(
+        (resp, data) = self.doHTTP_GET(
             endpointpath=None,
             resource="/silos/", 
             expect_status=200, expect_reason="OK", expect_type="application/JSON")
@@ -126,7 +130,7 @@ class TestSubmission(SparqlQueryTestCase.SparqlQueryTestCase):
     def testListDatasets(self):
         """List all datasets in a silo - GET /silo_name/datasets"""
         # Access list of datasets in the silo, check response
-        data = self.doHTTP_GET(
+        (resp, data) = self.doHTTP_GET(
             resource="datasets/", 
             expect_status=200, expect_reason="OK", expect_type="application/json")
         # Save initial list of datasets
@@ -136,7 +140,7 @@ class TestSubmission(SparqlQueryTestCase.SparqlQueryTestCase):
         # Create a new dataset
         self.createTestSubmissionDataset()
         # Read list of datasets, check that new list is original + new dataset
-        data = self.doHTTP_GET(
+        (resp, data) = self.doHTTP_GET(
             resource="datasets/", 
             expect_status=200, expect_reason="OK", expect_type="application/json")
         newlist = []
@@ -148,11 +152,11 @@ class TestSubmission(SparqlQueryTestCase.SparqlQueryTestCase):
         for ds in newlist: self.failUnless((ds in datasetlist) or (ds == "TestSubmission"), "Datset "+ds+" in new list, not in original list")
         self.failUnless("TestSubmission" in newlist, "testSubmission in new list")
         # Delete new dataset
-        self.doHTTP_DELETE(
+        resp = self.doHTTP_DELETE(
             resource="datasets/TestSubmission", 
             expect_status=200, expect_reason="OK")
         # read list of datasets, check result is same as original list
-        data = self.doHTTP_GET(
+        (resp, data) = self.doHTTP_GET(
             resource="datasets/", 
             expect_status=200, expect_reason="OK", expect_type="application/json")
         newlist = []
@@ -166,21 +170,21 @@ class TestSubmission(SparqlQueryTestCase.SparqlQueryTestCase):
     def testSiloState(self):
         """Get state informaton of a silo - GET /silo_name/states"""
         # Access state information of silo, check response
-        data = self.doHTTP_GET(
+        (resp, data) = self.doHTTP_GET(
             resource="states/", 
             expect_status=200, expect_reason="OK", expect_type="application/json")
         # check silo name and base_uri
         silo_name = RDFDatabankConfig.endpointpath.strip('/')
-        silo_base = 'http://%s%sdatasets/'%(RDFDatabankConfig.endpointhost, RDFDatabankConfig.endpointpath)
+        silo_base  = URIRef(self.getRequestUri("datasets/"))
         self.assertEqual(data['silo'], silo_name, 'Silo name is %s not %s' %(data['silo'], silo_name))
-        self.assertEqual(data['uri_base'], silo_base, 'Silo uri_base is %s not %s' %(data['uri_base'], silo_base))
+        self.assertEqual(data['uri_base'].strip(), silo_base.strip(), 'Silo uri_base is %s not %s' %(data['uri_base'], silo_base))
         self.failUnless(len(data['datasets'])>0, "No datasets returned")
         # Save initial list of datasets
         datasetlist = data['datasets']
         # Create a new dataset
         self.createTestSubmissionDataset()
         # Read list of datasets, check that new list is original + new dataset
-        data = self.doHTTP_GET(
+        (resp, data) = self.doHTTP_GET(
             resource="states/", 
             expect_status=200, expect_reason="OK", expect_type="application/json")
         newlist = data['datasets']
@@ -190,11 +194,11 @@ class TestSubmission(SparqlQueryTestCase.SparqlQueryTestCase):
         for ds in newlist: self.failUnless((ds in datasetlist) or (ds == "TestSubmission"), "Datset "+ds+" in new list, not in original list")
         self.failUnless("TestSubmission" in newlist, "testSubmission in new list")
         # Delete new dataset
-        self.doHTTP_DELETE(
+        resp = self.doHTTP_DELETE(
             resource="datasets/TestSubmission", 
             expect_status=200, expect_reason="OK")
         # read list of datasets, check result is same as original list
-        data = self.doHTTP_GET(
+        (resp, data) = self.doHTTP_GET(
             resource="states/", 
             expect_status=200, expect_reason="OK", expect_type="application/json")
         newlist = data['datasets']
@@ -205,20 +209,20 @@ class TestSubmission(SparqlQueryTestCase.SparqlQueryTestCase):
 
     def testDatasetNotPresent(self):
         """Verify dataset is not present - GET /silo_name/dataset_name"""
-        self.doHTTP_GET(resource="TestSubmission", expect_status=404, expect_reason="Not Found")
+        (resp, respdata) = self.doHTTP_GET(resource="TestSubmission", expect_status=404, expect_reason="Not Found")
 
     def testDatasetCreation(self):
         """Create dataset - POST id to /silo_name"""
         # Create a new dataset, check response
         self.createTestSubmissionDataset()
         # Access dataset, check response
-        rdfdata = self.doHTTP_GET(
+        (resp, rdfdata) = self.doHTTP_GET(
             resource="datasets/TestSubmission", 
             expect_status=200, expect_reason="OK", expect_type="application/rdf+xml")
         rdfgraph = Graph()
         rdfstream = StringIO(rdfdata)
         rdfgraph.parse(rdfstream) 
-        self.assertEqual(len(rdfgraph),7,'Graph length %i' %len(rdfgraph))
+        self.assertEqual(len(rdfgraph),8,'Graph length %i' %len(rdfgraph))
         oxds = "http://vocab.ox.ac.uk/dataset/schema#"
         dcterms = "http://purl.org/dc/terms/"
         subj  = URIRef(self.getRequestUri("datasets/TestSubmission"))
@@ -226,10 +230,11 @@ class TestSubmission(SparqlQueryTestCase.SparqlQueryTestCase):
         self.failUnless((subj,RDF.type,stype) in rdfgraph, 'Testing submission type: '+subj+", "+stype)
         self.failUnless((subj,URIRef(dcterms+"created"),None) in rdfgraph, 'dcterms:created')
         self.failUnless((subj,URIRef(dcterms+"identifier"),None) in rdfgraph, 'dcterms:identifier')
-        self.failUnless((subj,URIRef(dcterms+"creator"),None) in rdfgraph, 'dcterms:creator')
+        self.failUnless((subj,URIRef(dcterms+"mediator"),None) in rdfgraph, 'dcterms:mediator')
+        self.failUnless((subj,URIRef(dcterms+"publisher"),None) in rdfgraph, 'dcterms:publisher')
         self.failUnless((subj,URIRef(oxds+"isEmbargoed"),None) in rdfgraph, 'oxds:isEmbargoed')
         self.failUnless((subj,URIRef(oxds+"embargoedUntil"),None) in rdfgraph, 'oxds:embargoedUntil')
-        self.failUnless((subj,URIRef(oxds+"currentVersion"),'1') in rdfgraph, 'oxds:currentVersion')
+        self.failUnless((subj,URIRef(oxds+"currentVersion"),'0') in rdfgraph, 'oxds:currentVersion')
 
     def testDatasetCreation2(self):
         """Create dataset - POST to /silo_name/dataset_name"""
@@ -237,18 +242,21 @@ class TestSubmission(SparqlQueryTestCase.SparqlQueryTestCase):
         fields = []
         files =[]
         (reqtype, reqdata) = SparqlQueryTestCase.encode_multipart_formdata(fields, files)
-        self.doHTTP_POST(
+        (resp,respdata)= self.doHTTP_POST(
             reqdata, reqtype, 
             resource="datasets/TestSubmission", 
             expect_status=201, expect_reason="Created")
+        LHobtained = resp.getheader('Content-Location', None)
+        LHexpected = "%sdatasets/TestSubmission"%self._endpointpath
+        self.assertEquals(LHobtained, LHexpected, 'Content-Location not correct')
         # Access dataset, check response
-        rdfdata = self.doHTTP_GET(
+        (resp, rdfdata) = self.doHTTP_GET(
             resource="datasets/TestSubmission", 
             expect_status=200, expect_reason="OK", expect_type="application/rdf+xml")
         rdfgraph = Graph()
         rdfstream = StringIO(rdfdata)
         rdfgraph.parse(rdfstream) 
-        self.assertEqual(len(rdfgraph),7,'Graph length %i' %len(rdfgraph))
+        self.assertEqual(len(rdfgraph),8,'Graph length %i' %len(rdfgraph))
         oxds = "http://vocab.ox.ac.uk/dataset/schema#"
         dcterms = "http://purl.org/dc/terms/"
         subj  = URIRef(self.getRequestUri("datasets/TestSubmission"))
@@ -256,30 +264,31 @@ class TestSubmission(SparqlQueryTestCase.SparqlQueryTestCase):
         self.failUnless((subj,RDF.type,stype) in rdfgraph, 'Testing submission type: '+subj+", "+stype)
         self.failUnless((subj,URIRef(dcterms+"created"),None) in rdfgraph, 'dcterms:created')
         self.failUnless((subj,URIRef(dcterms+"identifier"),None) in rdfgraph, 'dcterms:identifier')
-        self.failUnless((subj,URIRef(dcterms+"creator"),None) in rdfgraph, 'dcterms:creator')
+        self.failUnless((subj,URIRef(dcterms+"mediator"),None) in rdfgraph, 'dcterms:mediator')
+        self.failUnless((subj,URIRef(dcterms+"publisher"),None) in rdfgraph, 'dcterms:publisher')
         self.failUnless((subj,URIRef(oxds+"isEmbargoed"),None) in rdfgraph, 'oxds:isEmbargoed')
         self.failUnless((subj,URIRef(oxds+"embargoedUntil"),None) in rdfgraph, 'oxds:embargoedUntil')
-        self.failUnless((subj,URIRef(oxds+"currentVersion"),'1') in rdfgraph, 'oxds:currentVersion')
+        self.failUnless((subj,URIRef(oxds+"currentVersion"),'0') in rdfgraph, 'oxds:currentVersion')
 
     def testDatasetRecreation(self):
         """Create dataset - POST existing id to /silo_name"""
         # Create a new dataset, check response
         self.createTestSubmissionDataset()
         # Access dataset, check response
-        rdfdata = self.doHTTP_GET(
+        (resp, rdfdata) = self.doHTTP_GET(
             resource="datasets/TestSubmission", 
             expect_status=200, expect_reason="OK", expect_type="application/rdf+xml")
         rdfgraph = Graph()
         rdfstream = StringIO(rdfdata)
         rdfgraph.parse(rdfstream) 
-        self.assertEqual(len(rdfgraph),7,'Graph length %i' %len(rdfgraph))
+        self.assertEqual(len(rdfgraph),8,'Graph length %i' %len(rdfgraph))
         #Recreate the dataset, check response
         fields = \
             [ ("id", "TestSubmission")
             ]
         files =[]
         (reqtype, reqdata) = SparqlQueryTestCase.encode_multipart_formdata(fields, files)
-        self.doHTTP_POST(
+        (resp,respdata) = self.doHTTP_POST(
             reqdata, reqtype, 
             resource="datasets",
             expect_status=409, expect_reason="Conflict: Dataset Already Exists")
@@ -287,33 +296,33 @@ class TestSubmission(SparqlQueryTestCase.SparqlQueryTestCase):
         fields = []
         files =[]
         (reqtype, reqdata) = SparqlQueryTestCase.encode_multipart_formdata(fields, files)
-        self.doHTTP_POST(
+        (resp,respdata) = self.doHTTP_POST(
             reqdata, reqtype, 
             resource="datasets/TestSubmission", 
             expect_status=403, expect_reason="Forbidden")
         # Access dataset, check response
-        rdfdata = self.doHTTP_GET(
+        (resp, rdfdata) = self.doHTTP_GET(
             resource="datasets/TestSubmission", 
             expect_status=200, expect_reason="OK", expect_type="application/rdf+xml")
         rdfgraph = Graph()
         rdfstream = StringIO(rdfdata)
         rdfgraph.parse(rdfstream) 
-        self.assertEqual(len(rdfgraph),7,'Graph length %i' %len(rdfgraph))
+        self.assertEqual(len(rdfgraph),8,'Graph length %i' %len(rdfgraph))
 
     def testDeleteDataset(self):
         """Delete dataset - DELETE /silo_name/dataset_name"""
         # Create a new dataset, check response
         self.createTestSubmissionDataset()
         # Access dataset, check response
-        data = self.doHTTP_GET(
+        (resp, respdata) = self.doHTTP_GET(
             resource="datasets/TestSubmission", 
             expect_status=200, expect_reason="OK", expect_type="application/json")
         # Delete dataset, check response
-        self.doHTTP_DELETE(
+        resp = self.doHTTP_DELETE(
             resource="datasets/TestSubmission", 
             expect_status=200, expect_reason="OK")
         # Access dataset, test response indicating non-existent
-        data = self.doHTTP_GET(
+        (resp, respdata) = self.doHTTP_GET(
             resource="datasets/TestSubmission", 
             expect_status=404, expect_reason="Not Found")
 
@@ -330,36 +339,40 @@ class TestSubmission(SparqlQueryTestCase.SparqlQueryTestCase):
             ,("TestSubmission.9", 403, "Forbidden")
             ,("""Test"Submission""", 403, "Forbidden")
             ,("Test'Submission", 403, "Forbidden")
-            #,("Test Submission", 403, "Forbidden") #This is being posted as 'Test' - Why?
+            #,("""Test Submission""", 403, "Forbidden") #The name is truncated to Test and dataset is created. This does not happen when using the form
             ,("TestSubmission$", 403, "Forbidden")
+            ,("T", 403, "Forbidden")
         ]
         fields = []
         files =[]
         (reqtype, reqdata) = SparqlQueryTestCase.encode_multipart_formdata(fields, files)
         for name, status, reason in names:
             #Create a new dataset, check response
-            self.doHTTP_POST(
+            (resp,respdata) = self.doHTTP_POST(
                 reqdata, reqtype, 
                 resource="datasets/%s"%name, 
                 expect_status=status, expect_reason=reason)
             # Access dataset, check response
             if status == 201:
-                rdfdata = self.doHTTP_GET(
+                LHobtained = urllib.unquote(resp.getheader('Content-Location', None))
+                LHexpected = "%sdatasets/%s"%(self._endpointpath, name)
+                self.assertEquals(LHobtained, LHexpected, 'Content-Location not correct')
+                (resp, rdfdata) = self.doHTTP_GET(
                     resource="datasets/%s"%name, 
                     expect_status=200, expect_reason="OK", expect_type="application/rdf+xml")
                 rdfgraph = Graph()
                 rdfstream = StringIO(rdfdata)
                 rdfgraph.parse(rdfstream) 
-                self.assertEqual(len(rdfgraph),7,'Graph length %i' %len(rdfgraph))
+                self.assertEqual(len(rdfgraph),8,'Graph length %i' %len(rdfgraph))
             elif status == 403:
-                rdfdata = self.doHTTP_GET(
+                (resp, respdata) = self.doHTTP_GET(
                     resource="datasets/%s"%name, 
                     expect_status=404, expect_reason="Not Found")
         #Delete Datasets
         for name, status, reason in names:
             if not status == 201:
                 continue
-            self.doHTTP_DELETE(
+            resp = self.doHTTP_DELETE(
                 resource="datasets/%s"%name, 
                 expect_status=200, expect_reason="OK")
 
@@ -368,20 +381,21 @@ class TestSubmission(SparqlQueryTestCase.SparqlQueryTestCase):
         # Create a new dataset, check response
         self.createTestSubmissionDataset()
         # Access state info
-        data = self.doHTTP_GET(
+        (resp, data) = self.doHTTP_GET(
             resource="states/TestSubmission", 
             expect_status=200, expect_reason="OK", expect_type="application/json")
         state = data['state']
         parts = data['parts']
+        self.assertEqual(len(state.keys()), 11, "States")
         self.assertEqual(state['item_id'], "TestSubmission", "Submission item identifier")
         self.assertEqual(len(state['versions']), 1, "Initially one version")
-        self.assertEqual(state['versions'][0], '1', "Version 1")
-        self.assertEqual(state['currentversion'], '1', "Current version == 1")
+        self.assertEqual(state['versions'][0], '0', "Version 0")
+        self.assertEqual(state['currentversion'], '0', "Current version == 0")
         self.assertEqual(state['rdffileformat'], 'xml', "RDF file type")
         self.assertEqual(state['rdffilename'], 'manifest.rdf', "RDF file name")
-        self.assertEqual(state['files']['1'], ['manifest.rdf'], "List should contain just manifest.rdf")
-        self.assertEqual(len(state['metadata_files']['1']), 0, "metadata_files of version 1")
-        self.assertEqual(len(state['subdir']['1']), 0,   "Subdirectory count for version 1")
+        self.assertEqual(state['files']['0'], ['manifest.rdf'], "List should contain just manifest.rdf")
+        self.assertEqual(len(state['metadata_files']['0']), 0, "metadata_files of version 0")
+        self.assertEqual(len(state['subdir']['0']), 0,   "Subdirectory count for version 0")
         self.assertEqual(state['metadata']['createdby'], RDFDatabankConfig.endpointuser, "Created by")
         self.assertEqual(state['metadata']['embargoed'], True, "Embargoed?")
         # date
@@ -395,13 +409,13 @@ class TestSubmission(SparqlQueryTestCase.SparqlQueryTestCase):
         # Create a new dataset, check response
         self.createTestSubmissionDataset()
         #Access state information
-        data = self.doHTTP_GET(
+        (resp, respdata) = self.doHTTP_GET(
             resource="states/TestSubmission", 
             expect_status=200, expect_reason="OK", expect_type="application/json")
         # Upload zip file, check response
         zipdata = self.uploadTestSubmissionZipfile()
         # Access and check list of contents
-        rdfdata = self.doHTTP_GET(
+        (resp, rdfdata) = self.doHTTP_GET(
             resource="datasets/TestSubmission", 
             expect_status=200, expect_reason="OK", expect_type="application/rdf+xml")
         rdfgraph = Graph()
@@ -413,41 +427,42 @@ class TestSubmission(SparqlQueryTestCase.SparqlQueryTestCase):
         ore  = "http://www.openarchives.org/ore/terms/"
         oxds = "http://vocab.ox.ac.uk/dataset/schema#"
         stype = URIRef(oxds+"DataSet")
-        self.assertEqual(len(rdfgraph),9,'Graph length %i' %len(rdfgraph))
+        self.assertEqual(len(rdfgraph),10,'Graph length %i' %len(rdfgraph))
         self.failUnless((subj,RDF.type,stype) in rdfgraph, 'Testing submission type: '+subj+", "+stype)
         self.failUnless((subj,URIRef(dcterms+"created"),None) in rdfgraph, 'dcterms:created')
         self.failUnless((subj,URIRef(ore+"aggregates"),URIRef(base+"testdir.zip")) in rdfgraph)
         self.failUnless((subj,URIRef(dcterms+"identifier"),None) in rdfgraph, 'dcterms:identifier')
-        self.failUnless((subj,URIRef(dcterms+"creator"),None) in rdfgraph, 'dcterms:creator')
+        self.failUnless((subj,URIRef(dcterms+"mediator"),None) in rdfgraph, 'dcterms:mediator')
+        self.failUnless((subj,URIRef(dcterms+"publisher"),None) in rdfgraph, 'dcterms:publisher')
         self.failUnless((subj,URIRef(oxds+"isEmbargoed"),None) in rdfgraph, 'oxds:isEmbargoed')
         self.failUnless((subj,URIRef(oxds+"embargoedUntil"),None) in rdfgraph, 'oxds:embargoedUntil')
-        self.failUnless((subj,URIRef(oxds+"currentVersion"),'2') in rdfgraph, 'oxds:currentVersion')
+        self.failUnless((subj,URIRef(oxds+"currentVersion"),'1') in rdfgraph, 'oxds:currentVersion')
         self.failUnless((subj,URIRef(dcterms+"modified"),None) in rdfgraph, 'dcterms:modified')
         # Access and check zip file content
-        zipfile = self.doHTTP_GET(
+        (resp, zipfile) = self.doHTTP_GET(
             resource="datasets/TestSubmission/testdir.zip",
             expect_status=200, expect_reason="OK", expect_type="application/zip")
         self.assertEqual(zipdata, zipfile, "Difference between local and remote zipfile!")
         #Access state information and check
-        data = self.doHTTP_GET(
+        (resp, data) = self.doHTTP_GET(
             resource="states/TestSubmission", 
             expect_status=200, expect_reason="OK", expect_type="application/json")
         state = data['state']
         parts = data['parts']
+        self.assertEqual(len(state.keys()), 11, "States")
         self.assertEqual(state['item_id'], "TestSubmission", "Submission item identifier")
         self.assertEqual(len(state['versions']), 2, "Two versions")
-        self.assertEqual(state['versions'][0], '1', "Version 1")
-        self.assertEqual(state['versions'][1], '2', "Version 2")
-        self.assertEqual(state['currentversion'], '2', "Current version == 2")
+        self.assertEqual(state['versions'][0], '0', "Version 0")
+        self.assertEqual(state['versions'][1], '1', "Version 1")
+        self.assertEqual(state['currentversion'], '1', "Current version == 1")
         self.assertEqual(state['rdffileformat'], 'xml', "RDF file type")
         self.assertEqual(state['rdffilename'], 'manifest.rdf', "RDF file name")
-        #TODO: The files of version 1 are also being updated - correct this
-        #self.assertEqual(state['files']['1'], ['manifest.rdf'], "List should contain just manifest.rdf")
-        self.assertEqual(len(state['files']['2']), 2, "List should contain manifest.rdf and testdir.zip")
+        self.assertEqual(state['files']['0'], ['manifest.rdf'], "List should contain just manifest.rdf")
+        self.assertEqual(len(state['files']['1']), 2, "List should contain manifest.rdf and testdir.zip")
+        self.assertEqual(len(state['metadata_files']['0']), 0, "metadata_files of version 0")
         self.assertEqual(len(state['metadata_files']['1']), 0, "metadata_files of version 1")
-        self.assertEqual(len(state['metadata_files']['2']), 0, "metadata_files of version 2")
+        self.assertEqual(len(state['subdir']['0']), 0,   "Subdirectory count for version 0")
         self.assertEqual(len(state['subdir']['1']), 0,   "Subdirectory count for version 1")
-        self.assertEqual(len(state['subdir']['2']), 0,   "Subdirectory count for version 2")
         self.assertEqual(state['metadata']['createdby'], RDFDatabankConfig.endpointuser, "Created by")
         self.assertEqual(state['metadata']['embargoed'], True, "Embargoed?")
         self.assertEqual(len(parts.keys()), 4, "Parts")
@@ -462,7 +477,7 @@ class TestSubmission(SparqlQueryTestCase.SparqlQueryTestCase):
         # Upload zip file, check response
         zipdata = self.uploadTestSubmissionZipfile()
         # Access and check list of contents
-        rdfdata = self.doHTTP_GET(
+        (resp, rdfdata) = self.doHTTP_GET(
             resource="datasets/TestSubmission", 
             expect_status=200, expect_reason="OK", expect_type="application/rdf+xml")
         rdfgraph = Graph()
@@ -470,23 +485,23 @@ class TestSubmission(SparqlQueryTestCase.SparqlQueryTestCase):
         rdfgraph.parse(rdfstream)
         subj  = URIRef(self.getRequestUri("datasets/TestSubmission"))
         oxds = "http://vocab.ox.ac.uk/dataset/schema#"
-        self.assertEqual(len(rdfgraph),9,'Graph length %i' %len(rdfgraph))
-        self.failUnless((subj,URIRef(oxds+"currentVersion"),"2") in rdfgraph, 'oxds:currentVersion')
+        self.assertEqual(len(rdfgraph),10,'Graph length %i' %len(rdfgraph))
+        self.failUnless((subj,URIRef(oxds+"currentVersion"),"1") in rdfgraph, 'oxds:currentVersion')
         # Access and check zip file content and version
-        zipfile = self.doHTTP_GET(
+        (resp, zipfile) = self.doHTTP_GET(
             resource="datasets/TestSubmission/testdir.zip",
             expect_status=200, expect_reason="OK", expect_type="application/zip")
         self.assertEqual(zipdata, zipfile, "Difference between local and remote zipfile!")
         # Delete file, check response
-        self.doHTTP_DELETE(
+        resp = self.doHTTP_DELETE(
             resource="datasets/TestSubmission/testdir.zip", 
             expect_status=200, expect_reason="OK")
         # Access and check zip file does not exist
-        zipfile = self.doHTTP_GET(
+        (resp, zipfile) = self.doHTTP_GET(
             resource="datasets/TestSubmission/testdir.zip",
             expect_status=404, expect_reason="Not Found")
        # Access and check list of contents
-        rdfdata = self.doHTTP_GET(
+        (resp, rdfdata) = self.doHTTP_GET(
             resource="datasets/TestSubmission", 
             expect_status=200, expect_reason="OK", expect_type="application/rdf+xml")
         rdfgraph = Graph()
@@ -497,39 +512,40 @@ class TestSubmission(SparqlQueryTestCase.SparqlQueryTestCase):
         ore  = "http://www.openarchives.org/ore/terms/"
         oxds = "http://vocab.ox.ac.uk/dataset/schema#"
         stype = URIRef(oxds+"DataSet")
-        self.assertEqual(len(rdfgraph),8,'Graph length %i' %len(rdfgraph))
+        self.assertEqual(len(rdfgraph),9,'Graph length %i' %len(rdfgraph))
         self.failUnless((subj,RDF.type,stype) in rdfgraph, 'Testing submission type: '+subj+", "+stype)
         self.failUnless((subj,URIRef(dcterms+"created"),None) in rdfgraph, 'dcterms:created')
         self.failUnless((subj,URIRef(dcterms+"identifier"),None) in rdfgraph, 'dcterms:identifier')
-        self.failUnless((subj,URIRef(dcterms+"creator"),None) in rdfgraph, 'dcterms:creator')
+        self.failUnless((subj,URIRef(dcterms+"mediator"),None) in rdfgraph, 'dcterms:mediator')
+        self.failUnless((subj,URIRef(dcterms+"publisher"),None) in rdfgraph, 'dcterms:publisher')
         self.failUnless((subj,URIRef(oxds+"isEmbargoed"),None) in rdfgraph, 'oxds:isEmbargoed')
         self.failUnless((subj,URIRef(oxds+"embargoedUntil"),None) in rdfgraph, 'oxds:embargoedUntil')
-        self.failUnless((subj,URIRef(oxds+"currentVersion"),'3') in rdfgraph, 'oxds:currentVersion')
+        self.failUnless((subj,URIRef(oxds+"currentVersion"),'2') in rdfgraph, 'oxds:currentVersion')
         self.failUnless((subj,URIRef(dcterms+"modified"),None) in rdfgraph, 'dcterms:modified')
         #Access state information and check
-        data = self.doHTTP_GET(
+        (resp, data) = self.doHTTP_GET(
             resource="states/TestSubmission", 
             expect_status=200, expect_reason="OK", expect_type="application/json")
         state = data['state']
         parts = data['parts']
+        self.assertEqual(len(state.keys()), 11, "States")
         self.assertEqual(state['item_id'], "TestSubmission", "Submission item identifier")
         self.assertEqual(len(state['versions']), 3, "Three versions")
-        self.assertEqual(state['versions'][0], '1', "Version 1")
-        self.assertEqual(state['versions'][1], '2', "Version 2")
-        self.assertEqual(state['versions'][2], '3', "Version 3")
-        self.assertEqual(state['currentversion'], '3', "Current version == 3")
+        self.assertEqual(state['versions'][0], '0', "Version 0")
+        self.assertEqual(state['versions'][1], '1', "Version 1")
+        self.assertEqual(state['versions'][2], '2', "Version 2")
+        self.assertEqual(state['currentversion'], '2', "Current version == 2")
         self.assertEqual(state['rdffileformat'], 'xml', "RDF file type")
         self.assertEqual(state['rdffilename'], 'manifest.rdf', "RDF file name")
-        #Need to fix bug - state information of the previous verison is updated on file delete
-        #self.assertEqual(len(state['files']['1']), 1, "List should contain just manifest.rdf")
-        self.assertEqual(len(state['files']['2']), 2, "List should contain manifest.rdf and testdir.zip")
-        self.assertEqual(len(state['files']['3']), 1, "List should contain just manifest.rdf")
+        self.assertEqual(len(state['files']['0']), 1, "List should contain just manifest.rdf")
+        self.assertEqual(len(state['files']['1']), 2, "List should contain manifest.rdf and testdir.zip")
+        self.assertEqual(len(state['files']['2']), 1, "List should contain just manifest.rdf")
+        self.assertEqual(len(state['metadata_files']['0']), 0, "metadata_files of version 0")
         self.assertEqual(len(state['metadata_files']['1']), 0, "metadata_files of version 1")
         self.assertEqual(len(state['metadata_files']['2']), 0, "metadata_files of version 2")
-        self.assertEqual(len(state['metadata_files']['3']), 0, "metadata_files of version 3")
+        self.assertEqual(len(state['subdir']['0']), 0,   "Subdirectory count for version 0")
         self.assertEqual(len(state['subdir']['1']), 0,   "Subdirectory count for version 1")
         self.assertEqual(len(state['subdir']['2']), 0,   "Subdirectory count for version 2")
-        self.assertEqual(len(state['subdir']['3']), 0,   "Subdirectory count for version 3")
         self.assertEqual(state['metadata']['createdby'], RDFDatabankConfig.endpointuser, "Created by")
         self.assertEqual(state['metadata']['embargoed'], True, "Embargoed?")
         self.assertEqual(len(parts.keys()), 3, "Parts")
@@ -537,13 +553,13 @@ class TestSubmission(SparqlQueryTestCase.SparqlQueryTestCase):
         self.assertEqual(len(parts['manifest.rdf'].keys()), 13, "File stats for manifest.rdf")
 
     def testFileUpdate(self):
-        """POST file to dataset twice - POST file to /silo_name/datasets/dataset_name"""
+        """Update file in dataset - POST file to /silo_name/datasets/dataset_name (x 2)"""
         # Create a new dataset, check response
         self.createTestSubmissionDataset()
         # Upload zip file, check response (uploads the file testdir.zip)
         zipdata = self.uploadTestSubmissionZipfile()
         # Access and check list of contents
-        rdfdata = self.doHTTP_GET(
+        (resp, rdfdata) = self.doHTTP_GET(
             resource="datasets/TestSubmission", 
             expect_status=200, expect_reason="OK", expect_type="application/rdf+xml")
         rdfgraph = Graph()
@@ -551,17 +567,17 @@ class TestSubmission(SparqlQueryTestCase.SparqlQueryTestCase):
         rdfgraph.parse(rdfstream)
         subj  = URIRef(self.getRequestUri("datasets/TestSubmission")) 
         oxds = "http://vocab.ox.ac.uk/dataset/schema#"
-        self.assertEqual(len(rdfgraph),9,'Graph length %i' %len(rdfgraph))
-        self.failUnless((subj,URIRef(oxds+"currentVersion"),'2') in rdfgraph, 'oxds:currentVersion')
+        self.assertEqual(len(rdfgraph),10,'Graph length %i' %len(rdfgraph))
+        self.failUnless((subj,URIRef(oxds+"currentVersion"),'1') in rdfgraph, 'oxds:currentVersion')
         # Access and check zip file content and version
-        zipfile = self.doHTTP_GET(
+        (resp, zipfile) = self.doHTTP_GET(
             resource="datasets/TestSubmission/testdir.zip",
             expect_status=200, expect_reason="OK", expect_type="application/zip")
         self.assertEqual(zipdata, zipfile, "Difference between local and remote zipfile!")
         # Upload zip file again, check response
         zipdata = self.updateTestSubmissionZipfile(file_to_upload="testdir2.zip", filename="testdir.zip")
         # Access and check list of contents
-        rdfdata = self.doHTTP_GET(
+        (resp, rdfdata) = self.doHTTP_GET(
             resource="datasets/TestSubmission", 
             expect_status=200, expect_reason="OK", expect_type="application/rdf+xml")
         rdfgraph = Graph()
@@ -573,51 +589,407 @@ class TestSubmission(SparqlQueryTestCase.SparqlQueryTestCase):
         ore  = "http://www.openarchives.org/ore/terms/"
         oxds = "http://vocab.ox.ac.uk/dataset/schema#"
         stype = URIRef(oxds+"DataSet")
-        self.assertEqual(len(rdfgraph),9,'Graph length %i' %len(rdfgraph))
+        self.assertEqual(len(rdfgraph),10,'Graph length %i' %len(rdfgraph))
         self.failUnless((subj,RDF.type,stype) in rdfgraph, 'Testing submission type: '+subj+", "+stype)
         self.failUnless((subj,URIRef(dcterms+"created"),None) in rdfgraph, 'dcterms:created')
         self.failUnless((subj,URIRef(ore+"aggregates"),URIRef(base+"testdir.zip")) in rdfgraph)
         self.failUnless((subj,URIRef(dcterms+"identifier"),None) in rdfgraph, 'dcterms:identifier')
-        self.failUnless((subj,URIRef(dcterms+"creator"),None) in rdfgraph, 'dcterms:creator')
+        self.failUnless((subj,URIRef(dcterms+"mediator"),None) in rdfgraph, 'dcterms:mediator')
+        self.failUnless((subj,URIRef(dcterms+"publisher"),None) in rdfgraph, 'dcterms:publisher')
         self.failUnless((subj,URIRef(oxds+"isEmbargoed"),None) in rdfgraph, 'oxds:isEmbargoed')
         self.failUnless((subj,URIRef(oxds+"embargoedUntil"),None) in rdfgraph, 'oxds:embargoedUntil')
-        self.failUnless((subj,URIRef(oxds+"currentVersion"),'3') in rdfgraph, 'oxds:currentVersion')
+        self.failUnless((subj,URIRef(oxds+"currentVersion"),'2') in rdfgraph, 'oxds:currentVersion')
         self.failUnless((subj,URIRef(dcterms+"modified"),None) in rdfgraph, 'dcterms:modified')  
         # Access and check zip file content
-        zipfile = self.doHTTP_GET(
+        (resp, zipfile) = self.doHTTP_GET(
             resource="datasets/TestSubmission/testdir.zip",
             expect_status=200, expect_reason="OK", expect_type="application/zip")
         self.assertEqual(zipdata, zipfile, "Difference between local and remote zipfile!")
         #Access state information and check
-        data = self.doHTTP_GET(
+        (resp, data) = self.doHTTP_GET(
             resource="states/TestSubmission", 
             expect_status=200, expect_reason="OK", expect_type="application/json")
         state = data['state']
         parts = data['parts']
+        self.assertEqual(len(state.keys()), 11, "States")
         self.assertEqual(state['item_id'], "TestSubmission", "Submission item identifier")
         self.assertEqual(len(state['versions']), 3, "Three versions")
-        self.assertEqual(state['versions'][0], '1', "Version 1")
-        self.assertEqual(state['versions'][1], '2', "Version 2")
-        self.assertEqual(state['versions'][2], '3', "Version 3")
-        self.assertEqual(state['currentversion'], '3', "Current version == 3")
+        self.assertEqual(state['versions'][0], '0', "Version 0")
+        self.assertEqual(state['versions'][1], '1', "Version 1")
+        self.assertEqual(state['versions'][2], '2', "Version 2")
+        self.assertEqual(state['currentversion'], '2', "Current version == 2")
         self.assertEqual(state['rdffileformat'], 'xml', "RDF file type")
         self.assertEqual(state['rdffilename'], 'manifest.rdf', "RDF file name")
-        #Need to fix bug - state information of the previous verison is updated on file upload
-        #self.assertEqual(len(state['files']['1']), 1, "List should contain just manifest.rdf")
+        self.assertEqual(len(state['files']['0']), 1, "List should contain just manifest.rdf")
+        self.assertEqual(len(state['files']['1']), 2, "List should contain manifest.rdf and testdir.zip")
         self.assertEqual(len(state['files']['2']), 2, "List should contain manifest.rdf and testdir.zip")
-        self.assertEqual(len(state['files']['3']), 2, "List should contain manifest.rdf and testdir.zip")
+        self.assertEqual(len(state['metadata_files']['0']), 0, "metadata_files of version 0")
         self.assertEqual(len(state['metadata_files']['1']), 0, "metadata_files of version 1")
         self.assertEqual(len(state['metadata_files']['2']), 0, "metadata_files of version 2")
-        self.assertEqual(len(state['metadata_files']['3']), 0, "metadata_files of version 3")
+        self.assertEqual(len(state['subdir']['0']), 0,   "Subdirectory count for version 0")
         self.assertEqual(len(state['subdir']['1']), 0,   "Subdirectory count for version 1")
         self.assertEqual(len(state['subdir']['2']), 0,   "Subdirectory count for version 2")
-        self.assertEqual(len(state['subdir']['3']), 0,   "Subdirectory count for version 3")
         self.assertEqual(state['metadata']['createdby'], RDFDatabankConfig.endpointuser, "Created by")
         self.assertEqual(state['metadata']['embargoed'], True, "Embargoed?")
         self.assertEqual(len(parts.keys()), 4, "Parts")
         self.assertEqual(len(parts['4=TestSubmission'].keys()), 13, "File stats for 4=TestSubmission")
         self.assertEqual(len(parts['manifest.rdf'].keys()), 13, "File stats for manifest.rdf")
         self.assertEqual(len(parts['testdir.zip'].keys()), 13, "File stats for testdir.zip")
+
+    def testGetDatasetByVersion(self):
+        """Upload files to a dataset - POST file to /silo_name/datasets/dataset_name. Access each of the versions and the files in that version"""
+        #Definitions
+        subj  = URIRef(self.getRequestUri("datasets/TestSubmission"))
+        base = self.getRequestUri("datasets/TestSubmission/")
+        dcterms = "http://purl.org/dc/terms/"
+        ore  = "http://www.openarchives.org/ore/terms/"
+        oxds = "http://vocab.ox.ac.uk/dataset/schema#"
+        stype = URIRef(oxds+"DataSet")
+        #---------Version 0
+        # Create a new dataset, check response
+        self.createTestSubmissionDataset()
+        # Access and check list of contents
+        (resp, rdfdata) = self.doHTTP_GET(
+            resource="datasets/TestSubmission", 
+            expect_status=200, expect_reason="OK", expect_type="application/rdf+xml")
+        rdfgraph = Graph()
+        rdfstream = StringIO(rdfdata)
+        rdfgraph.parse(rdfstream) 
+        self.assertEqual(len(rdfgraph),8,'Graph length %i' %len(rdfgraph))
+        #Access state information and check
+        (resp, data) = self.doHTTP_GET(
+            resource="states/TestSubmission", 
+            expect_status=200, expect_reason="OK", expect_type="application/json")
+        state = data['state']
+        parts = data['parts']
+        self.assertEqual(len(state.keys()), 11, "States")
+        self.assertEqual(len(parts.keys()), 3, "Parts")
+        #---------Version 1
+        # Upload zip file, check response
+        zipdata = self.uploadTestSubmissionZipfile()
+        # Access and check list of contents
+        (resp, rdfdata) = self.doHTTP_GET(
+            resource="datasets/TestSubmission", 
+            expect_status=200, expect_reason="OK", expect_type="application/rdf+xml")
+        rdfgraph = Graph()
+        rdfstream = StringIO(rdfdata)
+        rdfgraph.parse(rdfstream) 
+        self.assertEqual(len(rdfgraph),10,'Graph length %i' %len(rdfgraph))
+        # Access and check zip file content
+        (resp, zipfile) = self.doHTTP_GET(
+            resource="datasets/TestSubmission/testdir.zip",
+            expect_status=200, expect_reason="OK", expect_type="application/zip")
+        self.assertEqual(zipdata, zipfile, "Difference between local and remote zipfile!")
+        #Access state information and check
+        (resp, data) = self.doHTTP_GET(
+            resource="states/TestSubmission", 
+            expect_status=200, expect_reason="OK", expect_type="application/json")
+        state = data['state']
+        parts = data['parts']
+        self.assertEqual(len(state.keys()), 11, "States")
+        self.assertEqual(len(parts.keys()), 4, "Parts")
+        # Access and check list of contents of version 0
+        (resp, rdfdata) = self.doHTTP_GET(
+            resource="datasets/TestSubmission/version0", 
+            expect_status=200, expect_reason="OK", expect_type="application/rdf+xml")
+        rdfgraph = Graph()
+        rdfstream = StringIO(rdfdata)
+        rdfgraph.parse(rdfstream) 
+        self.assertEqual(len(rdfgraph),8,'Graph length %i' %len(rdfgraph))
+        #---------Version 2
+        # Upload zip file, check response
+        zipdata2 = self.uploadTestSubmissionZipfile(file_to_upload="testdir2.zip")
+        # Access and check list of contents
+        (resp, rdfdata) = self.doHTTP_GET(
+            resource="datasets/TestSubmission", 
+            expect_status=200, expect_reason="OK", expect_type="application/rdf+xml")
+        rdfgraph = Graph()
+        rdfstream = StringIO(rdfdata)
+        rdfgraph.parse(rdfstream) 
+        self.assertEqual(len(rdfgraph),11,'Graph length %i' %len(rdfgraph))
+        # Access and check zip file content
+        (resp, zipfile) = self.doHTTP_GET(
+            resource="datasets/TestSubmission/testdir.zip",
+            expect_status=200, expect_reason="OK", expect_type="application/zip")
+        self.assertEqual(zipdata, zipfile, "Difference between local and remote zipfile - testdir.zip!")
+        (resp, zipfile2) = self.doHTTP_GET(
+            resource="datasets/TestSubmission/testdir2.zip",
+            expect_status=200, expect_reason="OK", expect_type="application/zip")
+        self.assertEqual(zipdata2, zipfile2, "Difference between local and remote zipfile - testdir2.zip!")
+        #Access state information and check
+        (resp, data) = self.doHTTP_GET(
+            resource="states/TestSubmission", 
+            expect_status=200, expect_reason="OK", expect_type="application/json")
+        state = data['state']
+        parts = data['parts']
+        self.assertEqual(len(state.keys()), 11, "States")
+        self.assertEqual(len(parts.keys()), 5, "Parts")
+        #---------Version 3
+        # Delete file, check response
+        resp = self.doHTTP_DELETE(
+            resource="datasets/TestSubmission/testdir.zip", 
+            expect_status=200, expect_reason="OK")
+        # Access and check list of contents
+        (resp, rdfdata) = self.doHTTP_GET(
+            resource="datasets/TestSubmission", 
+            expect_status=200, expect_reason="OK", expect_type="application/rdf+xml")
+        rdfgraph = Graph()
+        rdfstream = StringIO(rdfdata)
+        rdfgraph.parse(rdfstream) 
+        self.assertEqual(len(rdfgraph),10,'Graph length %i' %len(rdfgraph))
+        # Access and check zip file content
+        (resp, zipfile) = self.doHTTP_GET(
+            resource="datasets/TestSubmission/testdir.zip",
+            expect_status=404, expect_reason="Not Found")
+        (resp, zipfile2) = self.doHTTP_GET(
+            resource="datasets/TestSubmission/testdir2.zip",
+            expect_status=200, expect_reason="OK", expect_type="application/zip")
+        self.assertEqual(zipdata2, zipfile2, "Difference between local and remote zipfile - testdir2.zip!")
+        #Access state information and check
+        (resp, data) = self.doHTTP_GET(
+            resource="states/TestSubmission", 
+            expect_status=200, expect_reason="OK", expect_type="application/json")
+        state = data['state']
+        parts = data['parts']
+        self.assertEqual(len(state.keys()), 11, "States")
+        self.assertEqual(len(parts.keys()), 4, "Parts")
+        #---------Version 4
+        # Update zip file, check response
+        zipdata3 = self.updateTestSubmissionZipfile(file_to_upload="testrdf4.zip", filename="testdir2.zip")
+        # Access and check list of contents
+        (resp, rdfdata) = self.doHTTP_GET(
+            resource="datasets/TestSubmission", 
+            expect_status=200, expect_reason="OK", expect_type="application/rdf+xml")
+        rdfgraph = Graph()
+        rdfstream = StringIO(rdfdata)
+        rdfgraph.parse(rdfstream) 
+        self.assertEqual(len(rdfgraph),10,'Graph length %i' %len(rdfgraph))
+        # Access and check zip file content
+        (resp, zipfile) = self.doHTTP_GET(
+            resource="datasets/TestSubmission/testdir.zip",
+            expect_status=404, expect_reason="Not Found")
+        (resp, zipfile2) = self.doHTTP_GET(
+            resource="datasets/TestSubmission/testdir2.zip",
+            expect_status=200, expect_reason="OK", expect_type="application/zip")
+        self.assertEqual(zipdata3, zipfile2, "Difference between local and remote zipfile - testdir2.zip!")
+        #Access state information and check
+        (resp, data) = self.doHTTP_GET(
+            resource="states/TestSubmission", 
+            expect_status=200, expect_reason="OK", expect_type="application/json")
+        state = data['state']
+        parts = data['parts']
+        self.assertEqual(len(state.keys()), 11, "States")
+        self.assertEqual(len(parts.keys()), 4, "Parts")
+        #=========Access each of the versions
+        #---------Version 0
+        # Access and check list of contents of version 0
+        (resp, rdfdata) = self.doHTTP_GET(
+            resource="datasets/TestSubmission/version0", 
+            expect_status=200, expect_reason="OK", expect_type="application/rdf+xml")
+        rdfgraph = Graph()
+        rdfstream = StringIO(rdfdata)
+        rdfgraph.parse(rdfstream) 
+        self.assertEqual(len(rdfgraph),8,'Graph length %i' %len(rdfgraph))
+        self.failUnless((subj,RDF.type,stype) in rdfgraph, 'Testing submission type: '+subj+", "+stype)
+        self.failUnless((subj,URIRef(dcterms+"created"),None) in rdfgraph, 'dcterms:created')
+        self.failUnless((subj,URIRef(dcterms+"identifier"),None) in rdfgraph, 'dcterms:identifier')
+        self.failUnless((subj,URIRef(dcterms+"mediator"),None) in rdfgraph, 'dcterms:mediator')
+        self.failUnless((subj,URIRef(dcterms+"publisher"),None) in rdfgraph, 'dcterms:publisher')
+        self.failUnless((subj,URIRef(oxds+"isEmbargoed"),None) in rdfgraph, 'oxds:isEmbargoed')
+        self.failUnless((subj,URIRef(oxds+"embargoedUntil"),None) in rdfgraph, 'oxds:embargoedUntil')
+        self.failUnless((subj,URIRef(oxds+"currentVersion"),'0') in rdfgraph, 'oxds:currentVersion')
+        #Access state information and check
+        (resp, data) = self.doHTTP_GET(
+            resource="states/TestSubmission/version0", 
+            expect_status=200, expect_reason="OK", expect_type="application/json")
+        state = data['state']
+        parts = data['parts']
+        self.assertEqual(len(state.keys()), 11, "States")
+        self.assertEqual(len(parts.keys()), 3, "Parts")
+        self.assertEqual(len(parts['4=TestSubmission'].keys()), 13, "File stats for 4=TestSubmission")
+        self.assertEqual(len(parts['manifest.rdf'].keys()), 13, "File stats for manifest.rdf")
+        #---------Version 1
+        # Access and check list of contents of version 1
+        (resp, rdfdata) = self.doHTTP_GET(
+            resource="datasets/TestSubmission/version1", 
+            expect_status=200, expect_reason="OK", expect_type="application/rdf+xml")
+        rdfgraph = Graph()
+        rdfstream = StringIO(rdfdata)
+        rdfgraph.parse(rdfstream) 
+        self.assertEqual(len(rdfgraph),10,'Graph length %i' %len(rdfgraph))
+        self.failUnless((subj,RDF.type,stype) in rdfgraph, 'Testing submission type: '+subj+", "+stype)
+        self.failUnless((subj,URIRef(dcterms+"created"),None) in rdfgraph, 'dcterms:created')
+        self.failUnless((subj,URIRef(ore+"aggregates"),URIRef(base+"testdir.zip")) in rdfgraph)
+        self.failUnless((subj,URIRef(dcterms+"identifier"),None) in rdfgraph, 'dcterms:identifier')
+        self.failUnless((subj,URIRef(dcterms+"mediator"),None) in rdfgraph, 'dcterms:mediator')
+        self.failUnless((subj,URIRef(dcterms+"publisher"),None) in rdfgraph, 'dcterms:publisher')
+        self.failUnless((subj,URIRef(oxds+"isEmbargoed"),None) in rdfgraph, 'oxds:isEmbargoed')
+        self.failUnless((subj,URIRef(oxds+"embargoedUntil"),None) in rdfgraph, 'oxds:embargoedUntil')
+        self.failUnless((subj,URIRef(oxds+"currentVersion"),'1') in rdfgraph, 'oxds:currentVersion')
+        self.failUnless((subj,URIRef(dcterms+"modified"),None) in rdfgraph, 'dcterms:modified')
+        # Access and check zip file content
+        (resp, zipfile) = self.doHTTP_GET(
+            resource="datasets/TestSubmission/testdir.zip/version1",
+            expect_status=200, expect_reason="OK", expect_type="application/zip")
+        self.assertEqual(zipdata, zipfile, "Difference between local and remote zipfile - Version 1!")
+        #Access state information and check
+        (resp, data) = self.doHTTP_GET(
+            resource="states/TestSubmission/version1", 
+            expect_status=200, expect_reason="OK", expect_type="application/json")
+        state = data['state']
+        parts = data['parts']
+        self.assertEqual(len(state.keys()), 11, "States")
+        self.assertEqual(len(parts.keys()), 4, "Parts")
+        self.assertEqual(len(parts['4=TestSubmission'].keys()), 13, "File stats for 4=TestSubmission")
+        self.assertEqual(len(parts['manifest.rdf'].keys()), 13, "File stats for manifest.rdf")
+        self.assertEqual(len(parts['testdir.zip'].keys()), 13, "File stats for testdir.zip")
+        #---------Version 2
+        # Access and check list of contents of version 2
+        (resp, rdfdata) = self.doHTTP_GET(
+            resource="datasets/TestSubmission/version2", 
+            expect_status=200, expect_reason="OK", expect_type="application/rdf+xml")
+        rdfgraph = Graph()
+        rdfstream = StringIO(rdfdata)
+        rdfgraph.parse(rdfstream) 
+        self.assertEqual(len(rdfgraph),11,'Graph length %i' %len(rdfgraph))
+        self.failUnless((subj,RDF.type,stype) in rdfgraph, 'Testing submission type: '+subj+", "+stype)
+        self.failUnless((subj,URIRef(dcterms+"created"),None) in rdfgraph, 'dcterms:created')
+        self.failUnless((subj,URIRef(ore+"aggregates"),URIRef(base+"testdir.zip")) in rdfgraph)
+        self.failUnless((subj,URIRef(ore+"aggregates"),URIRef(base+"testdir2.zip")) in rdfgraph)
+        self.failUnless((subj,URIRef(dcterms+"identifier"),None) in rdfgraph, 'dcterms:identifier')
+        self.failUnless((subj,URIRef(dcterms+"mediator"),None) in rdfgraph, 'dcterms:mediator')
+        self.failUnless((subj,URIRef(dcterms+"publisher"),None) in rdfgraph, 'dcterms:publisher')
+        self.failUnless((subj,URIRef(oxds+"isEmbargoed"),None) in rdfgraph, 'oxds:isEmbargoed')
+        self.failUnless((subj,URIRef(oxds+"embargoedUntil"),None) in rdfgraph, 'oxds:embargoedUntil')
+        self.failUnless((subj,URIRef(oxds+"currentVersion"),'2') in rdfgraph, 'oxds:currentVersion')
+        self.failUnless((subj,URIRef(dcterms+"modified"),None) in rdfgraph, 'dcterms:modified')
+        # Access and check zip file content
+        (resp, zipfile) = self.doHTTP_GET(
+            resource="datasets/TestSubmission/testdir.zip/version2",
+            expect_status=200, expect_reason="OK", expect_type="application/zip")
+        self.assertEqual(zipdata, zipfile, "Difference between local and remote zipfile - Version 2!")
+        (resp, zipfile2) = self.doHTTP_GET(
+            resource="datasets/TestSubmission/testdir2.zip/version2",
+            expect_status=200, expect_reason="OK", expect_type="application/zip")
+        self.assertEqual(zipdata2, zipfile2, "Difference between local and remote zipfile - Version 2!")
+        #Access state information and check
+        (resp, data) = self.doHTTP_GET(
+            resource="states/TestSubmission/version2", 
+            expect_status=200, expect_reason="OK", expect_type="application/json")
+        state = data['state']
+        parts = data['parts']
+        self.assertEqual(len(state.keys()), 11, "States")
+        self.assertEqual(len(parts.keys()), 5, "Parts")
+        self.assertEqual(len(parts['4=TestSubmission'].keys()), 13, "File stats for 4=TestSubmission")
+        self.assertEqual(len(parts['manifest.rdf'].keys()), 13, "File stats for manifest.rdf")
+        self.assertEqual(len(parts['testdir.zip'].keys()), 13, "File stats for testdir.zip")
+        self.assertEqual(len(parts['testdir2.zip'].keys()), 13, "File stats for testdir2.zip")
+        #---------Version 3
+        # Access and check list of contents of version 3
+        (resp, rdfdata) = self.doHTTP_GET(
+            resource="datasets/TestSubmission/version3", 
+            expect_status=200, expect_reason="OK", expect_type="application/rdf+xml")
+        rdfgraph = Graph()
+        rdfstream = StringIO(rdfdata)
+        rdfgraph.parse(rdfstream) 
+        self.assertEqual(len(rdfgraph),10,'Graph length %i' %len(rdfgraph))
+        self.failUnless((subj,RDF.type,stype) in rdfgraph, 'Testing submission type: '+subj+", "+stype)
+        self.failUnless((subj,URIRef(dcterms+"created"),None) in rdfgraph, 'dcterms:created')
+        self.failUnless((subj,URIRef(ore+"aggregates"),URIRef(base+"testdir2.zip")) in rdfgraph)
+        self.failUnless((subj,URIRef(dcterms+"identifier"),None) in rdfgraph, 'dcterms:identifier')
+        self.failUnless((subj,URIRef(dcterms+"mediator"),None) in rdfgraph, 'dcterms:mediator')
+        self.failUnless((subj,URIRef(dcterms+"publisher"),None) in rdfgraph, 'dcterms:publisher')
+        self.failUnless((subj,URIRef(oxds+"isEmbargoed"),None) in rdfgraph, 'oxds:isEmbargoed')
+        self.failUnless((subj,URIRef(oxds+"embargoedUntil"),None) in rdfgraph, 'oxds:embargoedUntil')
+        self.failUnless((subj,URIRef(oxds+"currentVersion"),'3') in rdfgraph, 'oxds:currentVersion')
+        self.failUnless((subj,URIRef(dcterms+"modified"),None) in rdfgraph, 'dcterms:modified')
+        # Access and check zip file content
+        (resp, zipfile) = self.doHTTP_GET(
+            resource="datasets/TestSubmission/testdir2.zip/version3",
+            expect_status=200, expect_reason="OK", expect_type="application/zip")
+        self.assertEqual(zipdata2, zipfile, "Difference between local and remote zipfile - Version 3!")
+        (resp, zipfile) = self.doHTTP_GET(
+            resource="datasets/TestSubmission/testdir.zip/version3",
+            expect_status=404, expect_reason="Not Found")
+        #Access state information and check
+        (resp, data) = self.doHTTP_GET(
+            resource="states/TestSubmission/version3", 
+            expect_status=200, expect_reason="OK", expect_type="application/json")
+        state = data['state']
+        parts = data['parts']
+        self.assertEqual(len(state.keys()), 11, "States")
+        self.assertEqual(len(parts.keys()), 4, "Parts")
+        self.assertEqual(len(parts['4=TestSubmission'].keys()), 13, "File stats for 4=TestSubmission")
+        self.assertEqual(len(parts['manifest.rdf'].keys()), 13, "File stats for manifest.rdf")
+        self.assertEqual(len(parts['testdir2.zip'].keys()), 13, "File stats for testdir2.zip")
+        #---------Version 4
+        # Access and check list of contents of version 4
+        (resp, rdfdata) = self.doHTTP_GET(
+            resource="datasets/TestSubmission/version4", 
+            expect_status=200, expect_reason="OK", expect_type="application/rdf+xml")
+        rdfgraph = Graph()
+        rdfstream = StringIO(rdfdata)
+        rdfgraph.parse(rdfstream) 
+        self.assertEqual(len(rdfgraph),10,'Graph length %i' %len(rdfgraph))
+        self.failUnless((subj,RDF.type,stype) in rdfgraph, 'Testing submission type: '+subj+", "+stype)
+        self.failUnless((subj,URIRef(dcterms+"created"),None) in rdfgraph, 'dcterms:created')
+        self.failUnless((subj,URIRef(ore+"aggregates"),URIRef(base+"testdir2.zip")) in rdfgraph)
+        self.failUnless((subj,URIRef(dcterms+"identifier"),None) in rdfgraph, 'dcterms:identifier')
+        self.failUnless((subj,URIRef(dcterms+"mediator"),None) in rdfgraph, 'dcterms:mediator')
+        self.failUnless((subj,URIRef(dcterms+"publisher"),None) in rdfgraph, 'dcterms:publisher')
+        self.failUnless((subj,URIRef(oxds+"isEmbargoed"),None) in rdfgraph, 'oxds:isEmbargoed')
+        self.failUnless((subj,URIRef(oxds+"embargoedUntil"),None) in rdfgraph, 'oxds:embargoedUntil')
+        self.failUnless((subj,URIRef(oxds+"currentVersion"),'4') in rdfgraph, 'oxds:currentVersion')
+        self.failUnless((subj,URIRef(dcterms+"modified"),None) in rdfgraph, 'dcterms:modified')
+        # Access and check zip file content
+        (resp, zipfile) = self.doHTTP_GET(
+            resource="datasets/TestSubmission/testdir2.zip/version4",
+            expect_status=200, expect_reason="OK", expect_type="application/zip")
+        self.assertEqual(zipdata3, zipfile, "Difference between local and remote zipfile - Version 4!")
+        (resp, zipfile) = self.doHTTP_GET(
+            resource="datasets/TestSubmission/testdir.zip/version4",
+            expect_status=404, expect_reason="Not Found")
+        #Access state information and check
+        (resp, data) = self.doHTTP_GET(
+            resource="states/TestSubmission/version4", 
+            expect_status=200, expect_reason="OK", expect_type="application/json")
+        state = data['state']
+        parts = data['parts']
+        self.assertEqual(len(state.keys()), 11, "States")
+        self.assertEqual(len(parts.keys()), 4, "Parts")
+        self.assertEqual(state['item_id'], "TestSubmission", "Submission item identifier")
+        self.assertEqual(len(state['versions']), 5, "Five versions")
+        self.assertEqual(state['versions'],['0', '1', '2', '3', '4'], "Versions")
+        self.assertEqual(state['currentversion'], '4', "Current version == 4")
+        self.assertEqual(state['rdffileformat'], 'xml', "RDF file type")
+        self.assertEqual(state['rdffilename'], 'manifest.rdf', "RDF file name")
+        self.assertEqual(state['files']['0'], ['manifest.rdf'], "List should contain just manifest.rdf")
+        self.assertEqual(len(state['files']['1']), 2, "List should contain manifest.rdf and testdir.zip")
+        self.assertEqual(len(state['files']['2']), 3, "List should contain manifest.rdf, testdir.zip and testdir2.zip")
+        self.assertEqual(len(state['files']['3']), 2, "List should contain manifest.rdf and testdir2.zip")
+        self.assertEqual(len(state['files']['4']), 2, "List should contain manifest.rdf and testdir2.zip")
+        self.assertEqual(len(state['metadata_files']['0']), 0, "metadata_files of version 0")
+        self.assertEqual(len(state['metadata_files']['1']), 0, "metadata_files of version 1")
+        self.assertEqual(len(state['metadata_files']['2']), 0, "metadata_files of version 2")
+        self.assertEqual(len(state['metadata_files']['3']), 0, "metadata_files of version 3")
+        self.assertEqual(len(state['metadata_files']['4']), 0, "metadata_files of version 4")
+        self.assertEqual(len(state['subdir']['0']), 0,   "Subdirectory count for version 0")
+        self.assertEqual(len(state['subdir']['1']), 0,   "Subdirectory count for version 1")
+        self.assertEqual(len(state['subdir']['2']), 0,   "Subdirectory count for version 2")
+        self.assertEqual(len(state['subdir']['3']), 0,   "Subdirectory count for version 3")
+        self.assertEqual(len(state['subdir']['4']), 0,   "Subdirectory count for version 4")
+        self.assertEqual(state['metadata']['createdby'], RDFDatabankConfig.endpointuser, "Created by")
+        self.assertEqual(state['metadata']['embargoed'], True, "Embargoed?")
+        self.assertEqual(len(parts['4=TestSubmission'].keys()), 13, "File stats for 4=TestSubmission")
+        self.assertEqual(len(parts['manifest.rdf'].keys()), 13, "File stats for manifest.rdf")
+        self.assertEqual(len(parts['testdir2.zip'].keys()), 13, "File stats for testdir2.zip")
+        # Access and check list of contents of version 5
+        (resp, respdata) = self.doHTTP_GET(
+            resource="datasets/TestSubmission/version5", 
+            expect_status=404, expect_reason="Not Found")
+        (resp, zipfile) = self.doHTTP_GET(
+            resource="datasets/TestSubmission/testdir2.zip/version5",
+            expect_status=404, expect_reason="Not Found")
 
     def testMetadataFileUpdate(self):
         """POST manifest to dataset - POST manifest.rdf to /silo_name/datasets/dataset_name"""
@@ -626,7 +998,7 @@ class TestSubmission(SparqlQueryTestCase.SparqlQueryTestCase):
         # Upload metadata file, check response
         zipdata = self.updateTestSubmissionZipfile(file_to_upload="manifest.rdf")
         # Access and check list of contents
-        rdfdata = self.doHTTP_GET(
+        (resp, rdfdata) = self.doHTTP_GET(
             resource="datasets/TestSubmission", 
             expect_status=200, expect_reason="OK", expect_type="application/rdf+xml")
         rdfgraph = Graph()
@@ -639,60 +1011,63 @@ class TestSubmission(SparqlQueryTestCase.SparqlQueryTestCase):
         oxds = "http://vocab.ox.ac.uk/dataset/schema#"        
         owl = "http://www.w3.org/2002/07/owl#"
         stype = URIRef(oxds+"DataSet")
-        self.assertEqual(len(rdfgraph),10,'Graph length %i' %len(rdfgraph))
+        self.assertEqual(len(rdfgraph),11,'Graph length %i' %len(rdfgraph))
         self.failUnless((subj,RDF.type,stype) in rdfgraph, 'Testing submission type: '+subj+", "+stype)
         self.failUnless((subj,URIRef(dcterms+"created"),None) in rdfgraph, 'dcterms:created')
         self.failUnless((subj,URIRef(dcterms+"identifier"),None) in rdfgraph, 'dcterms:identifier')
-        self.failUnless((subj,URIRef(dcterms+"creator"),None) in rdfgraph, 'dcterms:creator')
+        self.failUnless((subj,URIRef(dcterms+"mediator"),None) in rdfgraph, 'dcterms:mediator')
+        self.failUnless((subj,URIRef(dcterms+"publisher"),None) in rdfgraph, 'dcterms:piblisher')
         self.failUnless((subj,URIRef(oxds+"isEmbargoed"),None) in rdfgraph, 'oxds:isEmbargoed')
         self.failUnless((subj,URIRef(oxds+"embargoedUntil"),None) in rdfgraph, 'oxds:embargoedUntil')
-        self.failUnless((subj,URIRef(oxds+"currentVersion"),'2') in rdfgraph, 'oxds:currentVersion')
+        self.failUnless((subj,URIRef(oxds+"currentVersion"),'1') in rdfgraph, 'oxds:currentVersion')
         self.failUnless((subj,URIRef(dcterms+"modified"),None) in rdfgraph, 'dcterms:modified')
         self.failUnless((subj,URIRef(dcterms+"title"),"Test dataset with merged metadata") in rdfgraph, 'dcterms:title')
         self.failUnless((subj,URIRef(owl+"sameAs"),URIRef("http://example.org/testrdf/")) in rdfgraph, 'owl:sameAs')
         # Update metadata file, check response
         zipdata = self.updateTestSubmissionZipfile(file_to_upload="manifest2.rdf", filename="manifest.rdf")
         # Access and check list of contents
-        rdfdata = self.doHTTP_GET(
+        (resp, rdfdata) = self.doHTTP_GET(
             resource="datasets/TestSubmission", 
             expect_status=200, expect_reason="OK", expect_type="application/rdf+xml")
         rdfgraph = Graph()
         rdfstream = StringIO(rdfdata)
         rdfgraph.parse(rdfstream) 
-        self.assertEqual(len(rdfgraph),10,'Graph length %i' %len(rdfgraph))
+        self.assertEqual(len(rdfgraph),11,'Graph length %i' %len(rdfgraph))
         self.failUnless((subj,RDF.type,stype) in rdfgraph, 'Testing submission type: '+subj+", "+stype)
         self.failUnless((subj,URIRef(dcterms+"created"),None) in rdfgraph, 'dcterms:created')
         self.failUnless((subj,URIRef(dcterms+"identifier"),None) in rdfgraph, 'dcterms:identifier')
-        self.failUnless((subj,URIRef(dcterms+"creator"),None) in rdfgraph, 'dcterms:creator')
+        self.failUnless((subj,URIRef(dcterms+"mediator"),None) in rdfgraph, 'dcterms:mediator')
+        self.failUnless((subj,URIRef(dcterms+"publisher"),None) in rdfgraph, 'dcterms:publisher')
         self.failUnless((subj,URIRef(oxds+"isEmbargoed"),None) in rdfgraph, 'oxds:isEmbargoed')
         self.failUnless((subj,URIRef(oxds+"embargoedUntil"),None) in rdfgraph, 'oxds:embargoedUntil')
-        self.failUnless((subj,URIRef(oxds+"currentVersion"),'3') in rdfgraph, 'oxds:currentVersion')
+        self.failUnless((subj,URIRef(oxds+"currentVersion"),'2') in rdfgraph, 'oxds:currentVersion')
         self.failUnless((subj,URIRef(dcterms+"modified"),None) in rdfgraph, 'dcterms:modified')
         self.failUnless((subj,URIRef(dcterms+"title"),'Test dataset with updated and merged metadata') in rdfgraph, 'dcterms:title')
         self.failUnless((subj,URIRef(owl+"sameAs"),URIRef("http://example.org/testrdf/")) in rdfgraph, 'owl:sameAs')
         #Access state information and check
-        data = self.doHTTP_GET(
+        (resp, data) = self.doHTTP_GET(
             resource="states/TestSubmission", 
             expect_status=200, expect_reason="OK", expect_type="application/json")
         state = data['state']
         parts = data['parts']
+        self.assertEqual(len(state.keys()), 11, "States")
         self.assertEqual(state['item_id'], "TestSubmission", "Submission item identifier")
         self.assertEqual(len(state['versions']), 3, "Three versions")
-        self.assertEqual(state['versions'][0], '1', "Version 1")
-        self.assertEqual(state['versions'][1], '2', "Version 2")
-        self.assertEqual(state['versions'][2], '3', "Version 3")
-        self.assertEqual(state['currentversion'], '3', "Current version == 3")
+        self.assertEqual(state['versions'][0], '0', "Version 0")
+        self.assertEqual(state['versions'][1], '1', "Version 1")
+        self.assertEqual(state['versions'][2], '2', "Version 2")
+        self.assertEqual(state['currentversion'], '2', "Current version == 2")
         self.assertEqual(state['rdffileformat'], 'xml', "RDF file type")
         self.assertEqual(state['rdffilename'], 'manifest.rdf', "RDF file name")
+        self.assertEqual(len(state['files']['0']), 1, "List should contain just manifest.rdf")
         self.assertEqual(len(state['files']['1']), 1, "List should contain just manifest.rdf")
         self.assertEqual(len(state['files']['2']), 1, "List should contain just manifest.rdf")
-        self.assertEqual(len(state['files']['3']), 1, "List should contain just manifest.rdf")
+        self.assertEqual(len(state['metadata_files']['0']), 0, "metadata_files of version 0")
         self.assertEqual(len(state['metadata_files']['1']), 0, "metadata_files of version 1")
         self.assertEqual(len(state['metadata_files']['2']), 0, "metadata_files of version 2")
-        self.assertEqual(len(state['metadata_files']['3']), 0, "metadata_files of version 3")
+        self.assertEqual(len(state['subdir']['0']), 0,   "Subdirectory count for version 0")
         self.assertEqual(len(state['subdir']['1']), 0,   "Subdirectory count for version 1")
         self.assertEqual(len(state['subdir']['2']), 0,   "Subdirectory count for version 2")
-        self.assertEqual(len(state['subdir']['3']), 0,   "Subdirectory count for version 3")
         self.assertEqual(state['metadata']['createdby'], RDFDatabankConfig.endpointuser, "Created by")
         self.assertEqual(state['metadata']['embargoed'], True, "Embargoed?")
         self.assertEqual(len(parts.keys()), 3, "Parts")
@@ -704,11 +1079,11 @@ class TestSubmission(SparqlQueryTestCase.SparqlQueryTestCase):
         # Create a new dataset, check response
         self.createTestSubmissionDataset()
         # Delete metadata file, check response
-        self.doHTTP_DELETE(
+        resp = self.doHTTP_DELETE(
             resource="datasets/TestSubmission/manifest.rdf", 
             expect_status=403, expect_reason="Forbidden")
         # Access and check list of contents
-        rdfdata = self.doHTTP_GET(
+        (resp, rdfdata) = self.doHTTP_GET(
             resource="datasets/TestSubmission", 
             expect_status=200, expect_reason="OK", expect_type="application/rdf+xml")
         rdfgraph = Graph()
@@ -718,14 +1093,15 @@ class TestSubmission(SparqlQueryTestCase.SparqlQueryTestCase):
         dcterms = "http://purl.org/dc/terms/"
         oxds = "http://vocab.ox.ac.uk/dataset/schema#"        
         stype = URIRef(oxds+"DataSet")
-        self.assertEqual(len(rdfgraph),7,'Graph length %i' %len(rdfgraph))
+        self.assertEqual(len(rdfgraph),8,'Graph length %i' %len(rdfgraph))
         self.failUnless((subj,RDF.type,stype) in rdfgraph, 'Testing submission type: '+subj+", "+stype)
         self.failUnless((subj,URIRef(dcterms+"created"),None) in rdfgraph, 'dcterms:created')
         self.failUnless((subj,URIRef(dcterms+"identifier"),None) in rdfgraph, 'dcterms:identifier')
-        self.failUnless((subj,URIRef(dcterms+"creator"),None) in rdfgraph, 'dcterms:creator')
+        self.failUnless((subj,URIRef(dcterms+"mediator"),None) in rdfgraph, 'dcterms:mediator')
+        self.failUnless((subj,URIRef(dcterms+"publisher"),None) in rdfgraph, 'dcterms:publisher')
         self.failUnless((subj,URIRef(oxds+"isEmbargoed"),None) in rdfgraph, 'oxds:isEmbargoed')
         self.failUnless((subj,URIRef(oxds+"embargoedUntil"),None) in rdfgraph, 'oxds:embargoedUntil')
-        self.failUnless((subj,URIRef(oxds+"currentVersion"),'1') in rdfgraph, 'oxds:currentVersion')
+        self.failUnless((subj,URIRef(oxds+"currentVersion"),'0') in rdfgraph, 'oxds:currentVersion')
 
     def testPutCreateFile(self):
         """PUT file contents to new filename - PUT file contents to /silo_name/datasets/dataset_name/file_name"""
@@ -733,10 +1109,13 @@ class TestSubmission(SparqlQueryTestCase.SparqlQueryTestCase):
         self.createTestSubmissionDataset()
         # Put zip file, check response
         zipdata = open("data/testdir.zip").read()       
-        self.doHTTP_PUT(zipdata, resource="datasets/TestSubmission/testdir.zip", 
-            expect_status=201, expect_reason="Created", expect_type="*/*")
+        (resp, respdata) = self.doHTTP_PUT(zipdata, resource="datasets/TestSubmission/testdir.zip", 
+            expect_status=201, expect_reason="Created", expect_type="text/plain")
+        LHobtained = resp.getheader('Content-Location', None)
+        LHexpected = "%sdatasets/TestSubmission/testdir.zip"%self._endpointpath
+        self.assertEquals(LHobtained, LHexpected, 'Content-Location not correct')
         # Access and check list of contents
-        rdfdata = self.doHTTP_GET(
+        (resp, rdfdata) = self.doHTTP_GET(
             resource="datasets/TestSubmission", 
             expect_status=200, expect_reason="OK", expect_type="application/rdf+xml")
         rdfgraph = Graph()
@@ -748,41 +1127,42 @@ class TestSubmission(SparqlQueryTestCase.SparqlQueryTestCase):
         ore  = "http://www.openarchives.org/ore/terms/"
         oxds = "http://vocab.ox.ac.uk/dataset/schema#"
         stype = URIRef(oxds+"DataSet")
-        self.assertEqual(len(rdfgraph),9,'Graph length %i' %len(rdfgraph))
+        self.assertEqual(len(rdfgraph),10,'Graph length %i' %len(rdfgraph))
         self.failUnless((subj,RDF.type,stype) in rdfgraph, 'Testing submission type: '+subj+", "+stype)
         self.failUnless((subj,URIRef(dcterms+"created"),None) in rdfgraph, 'dcterms:created')
         self.failUnless((subj,URIRef(ore+"aggregates"),URIRef(base+"testdir.zip")) in rdfgraph)
         self.failUnless((subj,URIRef(dcterms+"identifier"),None) in rdfgraph, 'dcterms:identifier')
-        self.failUnless((subj,URIRef(dcterms+"creator"),None) in rdfgraph, 'dcterms:creator')
+        self.failUnless((subj,URIRef(dcterms+"mediator"),None) in rdfgraph, 'dcterms:mediator')
+        self.failUnless((subj,URIRef(dcterms+"publisher"),None) in rdfgraph, 'dcterms:publisher')
         self.failUnless((subj,URIRef(oxds+"isEmbargoed"),None) in rdfgraph, 'oxds:isEmbargoed')
         self.failUnless((subj,URIRef(oxds+"embargoedUntil"),None) in rdfgraph, 'oxds:embargoedUntil')
-        self.failUnless((subj,URIRef(oxds+"currentVersion"),'2') in rdfgraph, 'oxds:currentVersion')
+        self.failUnless((subj,URIRef(oxds+"currentVersion"),'1') in rdfgraph, 'oxds:currentVersion')
         self.failUnless((subj,URIRef(dcterms+"modified"),None) in rdfgraph, 'dcterms:modified')
         # Access and check zip file content
-        zipfile = self.doHTTP_GET(
+        (resp, zipfile) = self.doHTTP_GET(
             resource="datasets/TestSubmission/testdir.zip",
             expect_status=200, expect_reason="OK", expect_type="application/zip")
         self.assertEqual(zipdata, zipfile, "Difference between local and remote zipfile!")
         #Access state information and check
-        data = self.doHTTP_GET(
+        (resp, data) = self.doHTTP_GET(
             resource="states/TestSubmission", 
             expect_status=200, expect_reason="OK", expect_type="application/json")
         state = data['state']
         parts = data['parts']
+        self.assertEqual(len(state.keys()), 11, "States")
         self.assertEqual(state['item_id'], "TestSubmission", "Submission item identifier")
         self.assertEqual(len(state['versions']), 2, "Two versions")
-        self.assertEqual(state['versions'][0], '1', "Version 1")
-        self.assertEqual(state['versions'][1], '2', "Version 2")
-        self.assertEqual(state['currentversion'], '2', "Current version == 2")
+        self.assertEqual(state['versions'][0], '0', "Version 0")
+        self.assertEqual(state['versions'][1], '1', "Version 1")
+        self.assertEqual(state['currentversion'], '1', "Current version == 1")
         self.assertEqual(state['rdffileformat'], 'xml', "RDF file type")
         self.assertEqual(state['rdffilename'], 'manifest.rdf', "RDF file name")
-        #TODO: The files of version 1 are also being updated - correct this
-        #self.assertEqual(state['files']['1'], ['manifest.rdf'], "List should contain just manifest.rdf")
-        self.assertEqual(len(state['files']['2']), 2, "List should contain manifest.rdf and testdir.zip")
+        self.assertEqual(state['files']['0'], ['manifest.rdf'], "List should contain just manifest.rdf")
+        self.assertEqual(len(state['files']['1']), 2, "List should contain manifest.rdf and testdir.zip")
+        self.assertEqual(len(state['metadata_files']['0']), 0, "metadata_files of version 0")
         self.assertEqual(len(state['metadata_files']['1']), 0, "metadata_files of version 1")
-        self.assertEqual(len(state['metadata_files']['2']), 0, "metadata_files of version 2")
+        self.assertEqual(len(state['subdir']['0']), 0,   "Subdirectory count for version 0")
         self.assertEqual(len(state['subdir']['1']), 0,   "Subdirectory count for version 1")
-        self.assertEqual(len(state['subdir']['2']), 0,   "Subdirectory count for version 2")
         self.assertEqual(state['metadata']['createdby'], RDFDatabankConfig.endpointuser, "Created by")
         self.assertEqual(state['metadata']['embargoed'], True, "Embargoed?")
         self.assertEqual(len(parts.keys()), 4, "Parts")
@@ -794,12 +1174,21 @@ class TestSubmission(SparqlQueryTestCase.SparqlQueryTestCase):
         """PUT file contents to existing filename - PUT file contents to /silo_name/datasets/dataset_name/file_name"""
         # Create a new dataset, check response
         self.createTestSubmissionDataset()
+        # Upload zip file, check response
+        zipdata = self.uploadTestSubmissionZipfile(file_to_upload="testdir.zip")
+        # Access content
+        (resp, respdata) = self.doHTTP_GET(
+            resource="datasets/TestSubmission", 
+            expect_status=200, expect_reason="OK", expect_type="application/rdf+xml")
         # Put zip file, check response
-        zipdata = open("data/testdir.zip").read()       
-        self.doHTTP_PUT(zipdata, resource="datasets/TestSubmission/testdir.zip", 
-            expect_status=201, expect_reason="Created", expect_type="*/*")
+        zipdata2 = open("data/testrdf3.zip").read()       
+        (resp, respdata) = self.doHTTP_PUT(zipdata2, resource="datasets/TestSubmission/testrdf3.zip", 
+            expect_status=201, expect_reason="Created", expect_type="text/plain")
+        LHobtained = resp.getheader('Content-Location', None)
+        LHexpected = "%sdatasets/TestSubmission/testrdf3.zip"%self._endpointpath
+        self.assertEquals(LHobtained, LHexpected, 'Content-Location not correct')
         # Access and check list of contents
-        rdfdata = self.doHTTP_GET(
+        (resp, rdfdata) = self.doHTTP_GET(
             resource="datasets/TestSubmission", 
             expect_status=200, expect_reason="OK", expect_type="application/rdf+xml")
         rdfgraph = Graph()
@@ -807,19 +1196,23 @@ class TestSubmission(SparqlQueryTestCase.SparqlQueryTestCase):
         rdfgraph.parse(rdfstream)
         subj  = URIRef(self.getRequestUri("datasets/TestSubmission")) 
         oxds = "http://vocab.ox.ac.uk/dataset/schema#"
-        self.assertEqual(len(rdfgraph),9,'Graph length %i' %len(rdfgraph))
+        self.assertEqual(len(rdfgraph),11,'Graph length %i' %len(rdfgraph))
         self.failUnless((subj,URIRef(oxds+"currentVersion"),'2') in rdfgraph, 'oxds:currentVersion')
         # Access and check zip file content and version
-        zipfile = self.doHTTP_GET(
+        (resp, zipfile) = self.doHTTP_GET(
             resource="datasets/TestSubmission/testdir.zip",
             expect_status=200, expect_reason="OK", expect_type="application/zip")
         self.assertEqual(zipdata, zipfile, "Difference between local and remote zipfile!")
+        (resp, zipfile2) = self.doHTTP_GET(
+            resource="datasets/TestSubmission/testrdf3.zip",
+            expect_status=200, expect_reason="OK", expect_type="application/zip")
+        self.assertEqual(zipdata2, zipfile2, "Difference between local and remote zipfile!")
         # Put zip file again, check response
-        zipdata = open("data/testdir2.zip").read()       
-        self.doHTTP_PUT(zipdata, resource="datasets/TestSubmission/testdir.zip", 
-            expect_status=204, expect_reason="No Content", expect_type="*/*")
+        zipdata3 = open("data/testdir2.zip").read()       
+        (resp, respdata) = self.doHTTP_PUT(zipdata3, resource="datasets/TestSubmission/testdir.zip", 
+            expect_status=204, expect_reason="No Content", expect_type="text/plain")
         # Access and check list of contents
-        rdfdata = self.doHTTP_GET(
+        (resp, rdfdata) = self.doHTTP_GET(
             resource="datasets/TestSubmission", 
             expect_status=200, expect_reason="OK", expect_type="application/rdf+xml")
         rdfgraph = Graph()
@@ -831,50 +1224,67 @@ class TestSubmission(SparqlQueryTestCase.SparqlQueryTestCase):
         ore  = "http://www.openarchives.org/ore/terms/"
         oxds = "http://vocab.ox.ac.uk/dataset/schema#"
         stype = URIRef(oxds+"DataSet")
-        self.assertEqual(len(rdfgraph),9,'Graph length %i' %len(rdfgraph))
+        self.assertEqual(len(rdfgraph),11,'Graph length %i' %len(rdfgraph))
         self.failUnless((subj,RDF.type,stype) in rdfgraph, 'Testing submission type: '+subj+", "+stype)
         self.failUnless((subj,URIRef(dcterms+"created"),None) in rdfgraph, 'dcterms:created')
         self.failUnless((subj,URIRef(ore+"aggregates"),URIRef(base+"testdir.zip")) in rdfgraph)
+        self.failUnless((subj,URIRef(ore+"aggregates"),URIRef(base+"testrdf3.zip")) in rdfgraph)
         self.failUnless((subj,URIRef(dcterms+"identifier"),None) in rdfgraph, 'dcterms:identifier')
-        self.failUnless((subj,URIRef(dcterms+"creator"),None) in rdfgraph, 'dcterms:creator')
+        self.failUnless((subj,URIRef(dcterms+"mediator"),None) in rdfgraph, 'dcterms:mediator')
+        self.failUnless((subj,URIRef(dcterms+"publisher"),None) in rdfgraph, 'dcterms:publisher')
         self.failUnless((subj,URIRef(oxds+"isEmbargoed"),None) in rdfgraph, 'oxds:isEmbargoed')
         self.failUnless((subj,URIRef(oxds+"embargoedUntil"),None) in rdfgraph, 'oxds:embargoedUntil')
         self.failUnless((subj,URIRef(oxds+"currentVersion"),'3') in rdfgraph, 'oxds:currentVersion')
         self.failUnless((subj,URIRef(dcterms+"modified"),None) in rdfgraph, 'dcterms:modified')  
         # Access and check zip file content
-        zipfile = self.doHTTP_GET(
+        (resp, zipfile) = self.doHTTP_GET(
             resource="datasets/TestSubmission/testdir.zip",
             expect_status=200, expect_reason="OK", expect_type="application/zip")
-        self.assertEqual(zipdata, zipfile, "Difference between local and remote zipfile!")
+        self.assertEqual(zipdata3, zipfile, "Difference between local and remote zipfile!")
+        (resp, zipfile2) = self.doHTTP_GET(
+            resource="datasets/TestSubmission/testrdf3.zip",
+            expect_status=200, expect_reason="OK", expect_type="application/zip")
+        self.assertEqual(zipdata2, zipfile2, "Difference between local and remote zipfile!")
         #Access state information and check
-        data = self.doHTTP_GET(
+        (resp, data) = self.doHTTP_GET(
             resource="states/TestSubmission", 
             expect_status=200, expect_reason="OK", expect_type="application/json")
         state = data['state']
         parts = data['parts']
+        self.assertEqual(len(state.keys()), 11, "States")
         self.assertEqual(state['item_id'], "TestSubmission", "Submission item identifier")
-        self.assertEqual(len(state['versions']), 3, "Three versions")
-        self.assertEqual(state['versions'][0], '1', "Version 1")
-        self.assertEqual(state['versions'][1], '2', "Version 2")
-        self.assertEqual(state['versions'][2], '3', "Version 3")
+        self.assertEqual(len(state['versions']), 4, "Four versions")
+        self.assertEqual(state['versions'][0], '0', "Version 0")
+        self.assertEqual(state['versions'][1], '1', "Version 1")
+        self.assertEqual(state['versions'][2], '2', "Version 2")
+        self.assertEqual(state['versions'][3], '3', "Version 3")
         self.assertEqual(state['currentversion'], '3', "Current version == 3")
         self.assertEqual(state['rdffileformat'], 'xml', "RDF file type")
         self.assertEqual(state['rdffilename'], 'manifest.rdf', "RDF file name")
-        #self.assertEqual(state['files']['1'], ['manifest.rdf'], "List should contain just manifest.rdf")
-        self.assertEqual(len(state['files']['2']), 2, "List should contain manifest.rdf and testdir.zip")
-        self.assertEqual(len(state['files']['3']), 2, "List should contain manifest.rdf and testdir.zip")
+        self.assertEqual(state['files']['0'], ['manifest.rdf'], "List should contain just manifest.rdf")
+        self.assertEqual(len(state['files']['1']), 2, "List should contain manifest.rdf and testdir.zip")
+        self.assertEqual(len(state['files']['2']), 3, "List should contain manifest.rdf, testdir.zip and testrdf3.zip")
+        self.assertEqual(len(state['files']['3']), 3, "List should contain manifest.rdf, testdir.zip and testrdf3.zip")
+        self.assertEqual(len(state['metadata_files']['0']), 0, "metadata_files of version 0")
         self.assertEqual(len(state['metadata_files']['1']), 0, "metadata_files of version 1")
         self.assertEqual(len(state['metadata_files']['2']), 0, "metadata_files of version 2")
         self.assertEqual(len(state['metadata_files']['3']), 0, "metadata_files of version 3")
+        self.assertEqual(len(state['subdir']['0']), 0,   "Subdirectory count for version 0")
         self.assertEqual(len(state['subdir']['1']), 0,   "Subdirectory count for version 1")
         self.assertEqual(len(state['subdir']['2']), 0,   "Subdirectory count for version 2")
         self.assertEqual(len(state['subdir']['3']), 0,   "Subdirectory count for version 3")
         self.assertEqual(state['metadata']['createdby'], RDFDatabankConfig.endpointuser, "Created by")
         self.assertEqual(state['metadata']['embargoed'], True, "Embargoed?")
-        self.assertEqual(len(parts.keys()), 4, "Parts")
+        self.assertEqual(len(parts.keys()), 5, "Parts")
         self.assertEqual(len(parts['4=TestSubmission'].keys()), 13, "File stats for 4=TestSubmission")
         self.assertEqual(len(parts['manifest.rdf'].keys()), 13, "File stats for manifest.rdf")
         self.assertEqual(len(parts['testdir.zip'].keys()), 13, "File stats for testdir.zip")
+        self.assertEqual(len(parts['testrdf3.zip'].keys()), 13, "File stats for testrdf3.zip")
+        # Access and check zip file content of version 1
+        (resp, zipfile) = self.doHTTP_GET(
+            resource="datasets/TestSubmission/testdir.zip/version1",
+            expect_status=200, expect_reason="OK", expect_type="application/zip")
+        self.assertEqual(zipdata, zipfile, "Difference between local and remote zipfile!")
 
     def testPutMetadataFile(self):
         """Add metadata to manifest - PUT metadata to /silo_name/datasets/dataset_name/manifest.rdf"""
@@ -882,10 +1292,10 @@ class TestSubmission(SparqlQueryTestCase.SparqlQueryTestCase):
         self.createTestSubmissionDataset()
         # Put manifest file, check response
         zipdata = open("data/manifest.rdf").read()       
-        self.doHTTP_PUT(zipdata, resource="datasets/TestSubmission/manifest.rdf", 
-            expect_status=204, expect_reason="No Content", expect_type="*/*")
+        (resp, respdata) = self.doHTTP_PUT(zipdata, resource="datasets/TestSubmission/manifest.rdf", 
+            expect_status=204, expect_reason="No Content", expect_type="text/plain")
         # Access and check list of contents
-        rdfdata = self.doHTTP_GET(
+        (resp, rdfdata) = self.doHTTP_GET(
             resource="datasets/TestSubmission", 
             expect_status=200, expect_reason="OK", expect_type="application/rdf+xml")
         rdfgraph = Graph()
@@ -898,62 +1308,65 @@ class TestSubmission(SparqlQueryTestCase.SparqlQueryTestCase):
         oxds = "http://vocab.ox.ac.uk/dataset/schema#"        
         owl = "http://www.w3.org/2002/07/owl#"
         stype = URIRef(oxds+"DataSet")
-        self.assertEqual(len(rdfgraph),10,'Graph length %i' %len(rdfgraph))
+        self.assertEqual(len(rdfgraph),11,'Graph length %i' %len(rdfgraph))
         self.failUnless((subj,RDF.type,stype) in rdfgraph, 'Testing submission type: '+subj+", "+stype)
         self.failUnless((subj,URIRef(dcterms+"created"),None) in rdfgraph, 'dcterms:created')
         self.failUnless((subj,URIRef(dcterms+"identifier"),None) in rdfgraph, 'dcterms:identifier')
-        self.failUnless((subj,URIRef(dcterms+"creator"),None) in rdfgraph, 'dcterms:creator')
+        self.failUnless((subj,URIRef(dcterms+"mediator"),None) in rdfgraph, 'dcterms:mediator')
+        self.failUnless((subj,URIRef(dcterms+"publisher"),None) in rdfgraph, 'dcterms:publisher')
         self.failUnless((subj,URIRef(oxds+"isEmbargoed"),None) in rdfgraph, 'oxds:isEmbargoed')
         self.failUnless((subj,URIRef(oxds+"embargoedUntil"),None) in rdfgraph, 'oxds:embargoedUntil')
-        self.failUnless((subj,URIRef(oxds+"currentVersion"),'2') in rdfgraph, 'oxds:currentVersion')
+        self.failUnless((subj,URIRef(oxds+"currentVersion"),'1') in rdfgraph, 'oxds:currentVersion')
         self.failUnless((subj,URIRef(dcterms+"modified"),None) in rdfgraph, 'dcterms:modified')
         self.failUnless((subj,URIRef(dcterms+"title"),"Test dataset with merged metadata") in rdfgraph, 'dcterms:title')
         self.failUnless((subj,URIRef(owl+"sameAs"),URIRef("http://example.org/testrdf/")) in rdfgraph, 'owl:sameAs')
         # Update metadata file, check response
         zipdata = open("data/manifest2.rdf").read()       
-        self.doHTTP_PUT(zipdata, resource="datasets/TestSubmission/manifest.rdf", 
-            expect_status=204, expect_reason="No Content", expect_type="*/*")
+        (resp, respdata) = self.doHTTP_PUT(zipdata, resource="datasets/TestSubmission/manifest.rdf", 
+            expect_status=204, expect_reason="No Content", expect_type="text/plain")
         # Access and check list of contents
-        rdfdata = self.doHTTP_GET(
+        (resp, rdfdata) = self.doHTTP_GET(
             resource="datasets/TestSubmission", 
             expect_status=200, expect_reason="OK", expect_type="application/rdf+xml")
         rdfgraph = Graph()
         rdfstream = StringIO(rdfdata)
         rdfgraph.parse(rdfstream) 
-        self.assertEqual(len(rdfgraph),10,'Graph length %i' %len(rdfgraph))
+        self.assertEqual(len(rdfgraph),11,'Graph length %i' %len(rdfgraph))
         self.failUnless((subj,RDF.type,stype) in rdfgraph, 'Testing submission type: '+subj+", "+stype)
         self.failUnless((subj,URIRef(dcterms+"created"),None) in rdfgraph, 'dcterms:created')
         self.failUnless((subj,URIRef(dcterms+"identifier"),None) in rdfgraph, 'dcterms:identifier')
-        self.failUnless((subj,URIRef(dcterms+"creator"),None) in rdfgraph, 'dcterms:creator')
+        self.failUnless((subj,URIRef(dcterms+"mediator"),None) in rdfgraph, 'dcterms:mediator')
+        self.failUnless((subj,URIRef(dcterms+"publisher"),None) in rdfgraph, 'dcterms:publisher')
         self.failUnless((subj,URIRef(oxds+"isEmbargoed"),None) in rdfgraph, 'oxds:isEmbargoed')
         self.failUnless((subj,URIRef(oxds+"embargoedUntil"),None) in rdfgraph, 'oxds:embargoedUntil')
-        self.failUnless((subj,URIRef(oxds+"currentVersion"),'3') in rdfgraph, 'oxds:currentVersion')
+        self.failUnless((subj,URIRef(oxds+"currentVersion"),'2') in rdfgraph, 'oxds:currentVersion')
         self.failUnless((subj,URIRef(dcterms+"modified"),None) in rdfgraph, 'dcterms:modified')
-        self.failUnless((subj,URIRef(dcterms+"title"),'Test dataset with updated and merged metadata') in rdfgraph, 'dcterms:title')
         self.failUnless((subj,URIRef(owl+"sameAs"),URIRef("http://example.org/testrdf/")) in rdfgraph, 'owl:sameAs')
+        self.failUnless((subj,URIRef(dcterms+"title"),'Test dataset with updated and merged metadata') in rdfgraph, 'dcterms:title')
         #Access state information and check
-        data = self.doHTTP_GET(
+        (resp, data) = self.doHTTP_GET(
             resource="states/TestSubmission", 
             expect_status=200, expect_reason="OK", expect_type="application/json")
         state = data['state']
         parts = data['parts']
+        self.assertEqual(len(state.keys()), 11, "States")
         self.assertEqual(state['item_id'], "TestSubmission", "Submission item identifier")
         self.assertEqual(len(state['versions']), 3, "Three versions")
-        self.assertEqual(state['versions'][0], '1', "Version 1")
-        self.assertEqual(state['versions'][1], '2', "Version 2")
-        self.assertEqual(state['versions'][2], '3', "Version 3")
-        self.assertEqual(state['currentversion'], '3', "Current version == 3")
+        self.assertEqual(state['versions'][0], '0', "Version 0")
+        self.assertEqual(state['versions'][1], '1', "Version 1")
+        self.assertEqual(state['versions'][2], '2', "Version 2")
+        self.assertEqual(state['currentversion'], '2', "Current version == 2")
         self.assertEqual(state['rdffileformat'], 'xml', "RDF file type")
         self.assertEqual(state['rdffilename'], 'manifest.rdf', "RDF file name")
+        self.assertEqual(len(state['files']['0']), 1, "List should contain just manifest.rdf")
         self.assertEqual(len(state['files']['1']), 1, "List should contain just manifest.rdf")
         self.assertEqual(len(state['files']['2']), 1, "List should contain just manifest.rdf")
-        self.assertEqual(len(state['files']['3']), 1, "List should contain just manifest.rdf")
+        self.assertEqual(len(state['metadata_files']['0']), 0, "metadata_files of version 0")
         self.assertEqual(len(state['metadata_files']['1']), 0, "metadata_files of version 1")
         self.assertEqual(len(state['metadata_files']['2']), 0, "metadata_files of version 2")
-        self.assertEqual(len(state['metadata_files']['3']), 0, "metadata_files of version 3")
+        self.assertEqual(len(state['subdir']['0']), 0,   "Subdirectory count for version 0")
         self.assertEqual(len(state['subdir']['1']), 0,   "Subdirectory count for version 1")
         self.assertEqual(len(state['subdir']['2']), 0,   "Subdirectory count for version 2")
-        self.assertEqual(len(state['subdir']['3']), 0,   "Subdirectory count for version 3")
         self.assertEqual(state['metadata']['createdby'], RDFDatabankConfig.endpointuser, "Created by")
         self.assertEqual(state['metadata']['embargoed'], True, "Embargoed?")
         self.assertEqual(len(parts.keys()), 3, "Parts")
@@ -965,13 +1378,13 @@ class TestSubmission(SparqlQueryTestCase.SparqlQueryTestCase):
         # Create a new dataset, check response
         self.createTestSubmissionDataset()
         #Access dataset and check content
-        rdfdata = self.doHTTP_GET(
+        (resp, rdfdata) = self.doHTTP_GET(
             resource="datasets/TestSubmission", 
             expect_status=200, expect_reason="OK", expect_type="application/rdf+xml")
         rdfgraph = Graph()
         rdfstream = StringIO(rdfdata)
         rdfgraph.parse(rdfstream) 
-        self.assertEqual(len(rdfgraph),7,'Graph length %i' %len(rdfgraph))
+        self.assertEqual(len(rdfgraph),8,'Graph length %i' %len(rdfgraph))
         oxds = "http://vocab.ox.ac.uk/dataset/schema#"
         dcterms = "http://purl.org/dc/terms/"
         subj  = URIRef(self.getRequestUri("datasets/TestSubmission"))
@@ -985,18 +1398,18 @@ class TestSubmission(SparqlQueryTestCase.SparqlQueryTestCase):
             ]
         files =[]
         (reqtype, reqdata) = SparqlQueryTestCase.encode_multipart_formdata(fields, files)
-        self.doHTTP_POST(
+        (resp,respdata) = self.doHTTP_POST(
             reqdata, reqtype, 
             resource="datasets/TestSubmission", 
             expect_status=204, expect_reason="Updated")
         #Access dataset and check content
-        rdfdata = self.doHTTP_GET(
+        (resp, rdfdata) = self.doHTTP_GET(
             resource="datasets/TestSubmission", 
             expect_status=200, expect_reason="OK", expect_type="application/rdf+xml")
         rdfgraph = Graph()
         rdfstream = StringIO(rdfdata)
         rdfgraph.parse(rdfstream) 
-        self.assertEqual(len(rdfgraph),7,'Graph length %i' %len(rdfgraph))
+        self.assertEqual(len(rdfgraph),8,'Graph length %i' %len(rdfgraph))
         oxds = "http://vocab.ox.ac.uk/dataset/schema#"
         dcterms = "http://purl.org/dc/terms/"
         subj  = URIRef(self.getRequestUri("datasets/TestSubmission"))
@@ -1005,11 +1418,12 @@ class TestSubmission(SparqlQueryTestCase.SparqlQueryTestCase):
         self.failUnless((subj,URIRef(oxds+"isEmbargoed"),'False') in rdfgraph, 'oxds:isEmbargoed')
         self.failUnless((subj,URIRef(dcterms+"identifier"),None) in rdfgraph, 'dcterms:identifier')
         self.failUnless((subj,URIRef(dcterms+"created"),None) in rdfgraph, 'dcterms:created')
-        self.failUnless((subj,URIRef(dcterms+"creator"),None) in rdfgraph, 'dcterms:creator')
-        self.failUnless((subj,URIRef(oxds+"currentVersion"),'2') in rdfgraph, 'oxds:currentVersion')
+        self.failUnless((subj,URIRef(dcterms+"mediator"),None) in rdfgraph, 'dcterms:mediator')
+        self.failUnless((subj,URIRef(dcterms+"publisher"),None) in rdfgraph, 'dcterms:publisher')
+        self.failUnless((subj,URIRef(oxds+"currentVersion"),'1') in rdfgraph, 'oxds:currentVersion')
         self.failUnless((subj,URIRef(dcterms+"modified"),None) in rdfgraph, 'dcterms:modified')
         #Access state information and check
-        data = self.doHTTP_GET(
+        (resp, data) = self.doHTTP_GET(
             resource="states/TestSubmission", 
             expect_status=200, expect_reason="OK", expect_type="application/json")
         state = data['state']
@@ -1021,13 +1435,13 @@ class TestSubmission(SparqlQueryTestCase.SparqlQueryTestCase):
         # Create a new dataset, check response
         self.createTestSubmissionDataset()
         #Access dataset and check content
-        rdfdata = self.doHTTP_GET(
+        (resp, rdfdata) = self.doHTTP_GET(
             resource="datasets/TestSubmission", 
             expect_status=200, expect_reason="OK", expect_type="application/rdf+xml")
         rdfgraph = Graph()
         rdfstream = StringIO(rdfdata)
         rdfgraph.parse(rdfstream) 
-        self.assertEqual(len(rdfgraph),7,'Graph length %i' %len(rdfgraph))
+        self.assertEqual(len(rdfgraph),8,'Graph length %i' %len(rdfgraph))
         oxds = "http://vocab.ox.ac.uk/dataset/schema#"
         dcterms = "http://purl.org/dc/terms/"
         subj  = URIRef(self.getRequestUri("datasets/TestSubmission"))
@@ -1047,18 +1461,18 @@ class TestSubmission(SparqlQueryTestCase.SparqlQueryTestCase):
             ]
         files =[]
         (reqtype, reqdata) = SparqlQueryTestCase.encode_multipart_formdata(fields, files)
-        self.doHTTP_POST(
+        (resp,respdata) = self.doHTTP_POST(
             reqdata, reqtype, 
             resource="datasets/TestSubmission", 
             expect_status=204, expect_reason="Updated")
         #Access dataset and check content
-        rdfdata = self.doHTTP_GET(
+        (resp, rdfdata) = self.doHTTP_GET(
             resource="datasets/TestSubmission", 
             expect_status=200, expect_reason="OK", expect_type="application/rdf+xml")
         rdfgraph = Graph()
         rdfstream = StringIO(rdfdata)
         rdfgraph.parse(rdfstream) 
-        self.assertEqual(len(rdfgraph),8,'Graph length %i' %len(rdfgraph))
+        self.assertEqual(len(rdfgraph),9,'Graph length %i' %len(rdfgraph))
         oxds = "http://vocab.ox.ac.uk/dataset/schema#"
         dcterms = "http://purl.org/dc/terms/"
         subj  = URIRef(self.getRequestUri("datasets/TestSubmission"))
@@ -1068,11 +1482,12 @@ class TestSubmission(SparqlQueryTestCase.SparqlQueryTestCase):
         self.failUnless((subj,URIRef(oxds+"embargoedUntil"),d2) in rdfgraph, 'oxds:embargoedUntil')
         self.failUnless((subj,URIRef(dcterms+"identifier"),None) in rdfgraph, 'dcterms:identifier')
         self.failUnless((subj,URIRef(dcterms+"created"),None) in rdfgraph, 'dcterms:created')
-        self.failUnless((subj,URIRef(dcterms+"creator"),None) in rdfgraph, 'dcterms:creator')
-        self.failUnless((subj,URIRef(oxds+"currentVersion"),'2') in rdfgraph, 'oxds:currentVersion')
+        self.failUnless((subj,URIRef(dcterms+"mediator"),None) in rdfgraph, 'dcterms:mediator')
+        self.failUnless((subj,URIRef(dcterms+"publisher"),None) in rdfgraph, 'dcterms:publisher')
+        self.failUnless((subj,URIRef(oxds+"currentVersion"),'1') in rdfgraph, 'oxds:currentVersion')
         self.failUnless((subj,URIRef(dcterms+"modified"),None) in rdfgraph, 'dcterms:modified')
         #Access state information and check
-        data = self.doHTTP_GET(
+        (resp, data) = self.doHTTP_GET(
             resource="states/TestSubmission", 
             expect_status=200, expect_reason="OK", expect_type="application/json")
         state = data['state']
@@ -1091,17 +1506,19 @@ class TestSubmission(SparqlQueryTestCase.SparqlQueryTestCase):
             ]
         files = []
         (reqtype, reqdata) = SparqlQueryTestCase.encode_multipart_formdata(fields, files)
-        self.doHTTP_POST(
+        (resp,respdata) = self.doHTTP_POST(
             reqdata, reqtype, 
             resource="items/TestSubmission", 
             expect_status=201, expect_reason="Created")
-        #TODO: TEST FOR LOCATION HEADER
+        LHobtained = resp.getheader('Content-Location', None)
+        LHexpected = "%sdatasets/TestSubmission-testdir"%self._endpointpath
+        self.assertEquals(LHobtained, LHexpected, 'Content-Location not correct')
         # Access parent dataset, check response
-        data = self.doHTTP_GET(
+        (resp, respdata) = self.doHTTP_GET(
             resource="datasets/TestSubmission", 
             expect_status=200, expect_reason="OK", expect_type="application/json")
         # Access and check list of contents in TestSubmission
-        rdfdata = self.doHTTP_GET(
+        (resp, rdfdata) = self.doHTTP_GET(
             resource="datasets/TestSubmission", 
             expect_status=200, expect_reason="OK", expect_type="application/rdf+xml")
         rdfgraph = Graph()
@@ -1113,19 +1530,20 @@ class TestSubmission(SparqlQueryTestCase.SparqlQueryTestCase):
         ore  = "http://www.openarchives.org/ore/terms/"
         oxds = "http://vocab.ox.ac.uk/dataset/schema#"
         stype = URIRef(oxds+"DataSet")
-        self.assertEqual(len(rdfgraph),10,'Graph length %i' %len(rdfgraph))
+        self.assertEqual(len(rdfgraph),11,'Graph length %i' %len(rdfgraph))
         self.failUnless((subj,RDF.type,stype) in rdfgraph, 'Testing submission type: '+subj+", "+stype)
         self.failUnless((subj,URIRef(dcterms+"created"),None) in rdfgraph, 'dcterms:created')
         self.failUnless((subj,URIRef(ore+"aggregates"),URIRef(base+"testdir.zip")) in rdfgraph)
         self.failUnless((URIRef(base+"testdir.zip"),URIRef(dcterms+"hasVersion"),None) in rdfgraph, 'dcterms:hasVersion')
         self.failUnless((subj,URIRef(dcterms+"identifier"),None) in rdfgraph, 'dcterms:identifier')
-        self.failUnless((subj,URIRef(dcterms+"creator"),None) in rdfgraph, 'dcterms:creator')
+        self.failUnless((subj,URIRef(dcterms+"mediator"),None) in rdfgraph, 'dcterms:mediator')
+        self.failUnless((subj,URIRef(dcterms+"publisher"),None) in rdfgraph, 'dcterms:publisher')
         self.failUnless((subj,URIRef(oxds+"isEmbargoed"),None) in rdfgraph, 'oxds:isEmbargoed')
         self.failUnless((subj,URIRef(oxds+"embargoedUntil"),None) in rdfgraph, 'oxds:embargoedUntil')
-        self.failUnless((subj,URIRef(oxds+"currentVersion"),"2") in rdfgraph, 'oxds:currentVersion')
+        self.failUnless((subj,URIRef(oxds+"currentVersion"),"1") in rdfgraph, 'oxds:currentVersion')
         self.failUnless((subj,URIRef(dcterms+"modified"),None) in rdfgraph, 'dcterms:modified')
         # Access new dataset, check response
-        rdfdata = self.doHTTP_GET(
+        (resp, rdfdata) = self.doHTTP_GET(
             resource="datasets/TestSubmission-testdir",  
             expect_status=200, expect_reason="OK", expect_type="application/rdf+xml")
         rdfgraph = Graph()
@@ -1134,10 +1552,11 @@ class TestSubmission(SparqlQueryTestCase.SparqlQueryTestCase):
         subj  = URIRef(self.getRequestUri("datasets/TestSubmission-testdir"))
         stype = URIRef("http://vocab.ox.ac.uk/dataset/schema#Grouping")
         base = self.getRequestUri("datasets/TestSubmission-testdir/")
-        self.assertEqual(len(rdfgraph),14,'Graph length %i' %len(rdfgraph))
+        self.assertEqual(len(rdfgraph),15,'Graph length %i' %len(rdfgraph))
         self.failUnless((subj,RDF.type,stype) in rdfgraph, 'Testing submission type: '+subj+", "+stype)
         self.failUnless((subj,URIRef(dcterms+"identifier"),None) in rdfgraph, 'dcterms:identifier')
-        self.failUnless((subj,URIRef(dcterms+"creator"),None) in rdfgraph, 'dcterms:creator')
+        self.failUnless((subj,URIRef(dcterms+"mediator"),None) in rdfgraph, 'dcterms:mediator')
+        self.failUnless((subj,URIRef(dcterms+"publisher"),None) in rdfgraph, 'dcterms:publisher')
         self.failUnless((subj,URIRef(oxds+"isEmbargoed"),None) in rdfgraph, 'oxds:isEmbargoed')
         self.failUnless((subj,URIRef(oxds+"embargoedUntil"),None) in rdfgraph, 'oxds:embargoedUntil')
         self.failUnless((subj,URIRef(dcterms+"created"),None) in rdfgraph, 'dcterms:created')
@@ -1148,32 +1567,33 @@ class TestSubmission(SparqlQueryTestCase.SparqlQueryTestCase):
         self.failUnless((subj,URIRef(ore+"aggregates"),URIRef(base+"directory/file1.b")) in rdfgraph)
         self.failUnless((subj,URIRef(ore+"aggregates"),URIRef(base+"directory/file2.a")) in rdfgraph)
         self.failUnless((subj,URIRef(ore+"aggregates"),URIRef(base+"test-csv.csv")) in rdfgraph)
-        self.failUnless((subj,URIRef(oxds+"currentVersion"),"2") in rdfgraph, 'oxds:currentVersion')
+        self.failUnless((subj,URIRef(oxds+"currentVersion"),"1") in rdfgraph, 'oxds:currentVersion')
         # Access and check content of a resource
-        filedata = self.doHTTP_GET(
+        (resp, filedata) = self.doHTTP_GET(
             resource="datasets/TestSubmission-testdir/directory/file1.b",
-            expect_status=200, expect_reason="OK", expect_type="*/*")
+            expect_status=200, expect_reason="OK", expect_type="text/plain")
         checkdata = open("data/testdir/directory/file1.b").read()
         self.assertEqual(filedata, checkdata, "Difference between local and remote data!")
         #Access state information of TestSubmission-testdir
-        data = self.doHTTP_GET(
+        (resp, data) = self.doHTTP_GET(
             resource="states/TestSubmission-testdir", 
             expect_status=200, expect_reason="OK", expect_type="application/json")
         state = data['state']
         parts = data['parts']
+        self.assertEqual(len(state.keys()), 11, "States")
         self.assertEqual(state['item_id'], "TestSubmission-testdir", "Submission item identifier")
         self.assertEqual(len(state['versions']), 2, "Two versions")
-        self.assertEqual(state['versions'][0], '1', "Version 1")
-        self.assertEqual(state['versions'][1], '2', "Version 2")
-        self.assertEqual(state['currentversion'], '2', "Current version == 2")
+        self.assertEqual(state['versions'][0], '0', "Version 0")
+        self.assertEqual(state['versions'][1], '1', "Version 1")
+        self.assertEqual(state['currentversion'], '1', "Current version == 1")
         self.assertEqual(state['rdffileformat'], 'xml', "RDF file type")
         self.assertEqual(state['rdffilename'], 'manifest.rdf', "RDF file name")
-        self.assertEqual(len(state['files']['1']), 1, "List should contain just manifest.rdf")
-        self.assertEqual(len(state['files']['2']), 3, "List should contain manifest.rdf, testdir and test-csv.csv")
+        self.assertEqual(len(state['files']['0']), 1, "List should contain just manifest.rdf")
+        self.assertEqual(len(state['files']['1']), 3, "List should contain manifest.rdf, testdir and test-csv.csv")
+        self.assertEqual(len(state['metadata_files']['0']), 0, "metadata_files of version 0")
         self.assertEqual(len(state['metadata_files']['1']), 0, "metadata_files of version 1")
-        self.assertEqual(len(state['metadata_files']['2']), 0, "metadata_files of version 2")
-        self.assertEqual(state['subdir']['1'], [],   "Subdirectory for version 1")
-        self.assertEqual(state['subdir']['2'], ['directory'],   "Subdirectory for version 2")
+        self.assertEqual(state['subdir']['0'], [],   "Subdirectory for version 0")
+        self.assertEqual(state['subdir']['1'], ['directory'],   "Subdirectory for version 1")
         self.assertEqual(state['metadata']['createdby'], RDFDatabankConfig.endpointuser, "Created by")
         self.assertEqual(state['metadata']['embargoed'], True, "Embargoed?")
         self.assertEqual(len(parts.keys()), 5, "Parts")
@@ -1183,7 +1603,7 @@ class TestSubmission(SparqlQueryTestCase.SparqlQueryTestCase):
         self.assertEqual(len(parts['test-csv.csv'].keys()), 13, "File stats for test-csv.csv")
         
         # Delete the dataset TestSubmission-testdir
-        self.doHTTP_DELETE(
+        resp = self.doHTTP_DELETE(
             resource="datasets/TestSubmission-testdir", 
             expect_status="*", expect_reason="*")
 
@@ -1201,303 +1621,19 @@ class TestSubmission(SparqlQueryTestCase.SparqlQueryTestCase):
             ]
         files = []
         (reqtype, reqdata) = SparqlQueryTestCase.encode_multipart_formdata(fields, files)
-        self.doHTTP_POST(
+        (resp,respdata) = self.doHTTP_POST(
             reqdata, reqtype, 
             resource="items/TestSubmission", 
             expect_status=201, expect_reason="Created")
-        #TODO: TEST FOR LOCATION HEADER
+        LHobtained = resp.getheader('Content-Location', None)
+        LHexpected = "%sdatasets/TestSubmission-testdir"%self._endpointpath 
+        self.assertEquals(LHobtained, LHexpected, 'Content-Location not correct')
         # Access parent dataset, check response
-        data = self.doHTTP_GET(
+        (resp, respdata) = self.doHTTP_GET(
             resource="datasets/TestSubmission", 
             expect_status=200, expect_reason="OK", expect_type="application/json")
         # Access and check list of contents in TestSubmission
-        rdfdata = self.doHTTP_GET(
-            resource="datasets/TestSubmission", 
-            expect_status=200, expect_reason="OK", expect_type="application/rdf+xml")
-        rdfgraph = Graph()
-        rdfstream = StringIO(rdfdata)
-        rdfgraph.parse(rdfstream) 
-        subj  = URIRef(self.getRequestUri("datasets/TestSubmission"))
-        base = self.getRequestUri("datasets/TestSubmission/")
-        dcterms = "http://purl.org/dc/terms/"
-        ore  = "http://www.openarchives.org/ore/terms/"
-        oxds = "http://vocab.ox.ac.uk/dataset/schema#"
-        stype = URIRef(oxds+"DataSet")
-        self.assertEqual(len(rdfgraph),11,'Graph length %i' %len(rdfgraph))
-        self.failUnless((subj,RDF.type,stype) in rdfgraph, 'Testing submission type: '+subj+", "+stype)
-        self.failUnless((subj,URIRef(dcterms+"created"),None) in rdfgraph, 'dcterms:created')
-        self.failUnless((subj,URIRef(ore+"aggregates"),URIRef(base+"testdir.zip")) in rdfgraph)
-        self.failUnless((subj,URIRef(ore+"aggregates"),URIRef(base+"testdir2.zip")) in rdfgraph)
-        self.failUnless((URIRef(base+"testdir.zip"),URIRef(dcterms+"hasVersion"),None) in rdfgraph, 'dcterms:hasVersion')
-        self.failUnless((subj,URIRef(dcterms+"identifier"),None) in rdfgraph, 'dcterms:identifier')
-        self.failUnless((subj,URIRef(dcterms+"creator"),None) in rdfgraph, 'dcterms:creator')
-        self.failUnless((subj,URIRef(oxds+"isEmbargoed"),None) in rdfgraph, 'oxds:isEmbargoed')
-        self.failUnless((subj,URIRef(oxds+"embargoedUntil"),None) in rdfgraph, 'oxds:embargoedUntil')
-        self.failUnless((subj,URIRef(oxds+"currentVersion"),"3") in rdfgraph, 'oxds:currentVersion')
-        self.failUnless((subj,URIRef(dcterms+"modified"),None) in rdfgraph, 'dcterms:modified')
-        # Access new dataset, check response
-        rdfdata = self.doHTTP_GET(
-            resource="datasets/TestSubmission-testdir",  
-            expect_status=200, expect_reason="OK", expect_type="application/rdf+xml")
-        rdfgraph = Graph()
-        rdfstream = StringIO(rdfdata)
-        rdfgraph.parse(rdfstream)
-        subj  = URIRef(self.getRequestUri("datasets/TestSubmission-testdir"))
-        stype = URIRef("http://vocab.ox.ac.uk/dataset/schema#Grouping")
-        base = self.getRequestUri("datasets/TestSubmission-testdir/")
-        self.assertEqual(len(rdfgraph),14,'Graph length %i' %len(rdfgraph))
-        self.failUnless((subj,RDF.type,stype) in rdfgraph, 'Testing submission type: '+subj+", "+stype)
-        self.failUnless((subj,URIRef(dcterms+"identifier"),None) in rdfgraph, 'dcterms:identifier')
-        self.failUnless((subj,URIRef(dcterms+"creator"),None) in rdfgraph, 'dcterms:creator')
-        self.failUnless((subj,URIRef(oxds+"isEmbargoed"),None) in rdfgraph, 'oxds:isEmbargoed')
-        self.failUnless((subj,URIRef(oxds+"embargoedUntil"),None) in rdfgraph, 'oxds:embargoedUntil')
-        self.failUnless((subj,URIRef(dcterms+"created"),None) in rdfgraph, 'dcterms:created')
-        self.failUnless((subj,URIRef(dcterms+"modified"),None) in rdfgraph, 'dcterms:modified')
-        self.failUnless((subj,URIRef(dcterms+"isVersionOf"),None) in rdfgraph, 'dcterms:isVersionOf')
-        self.failUnless((subj,URIRef(ore+"aggregates"),URIRef(base+"directory")) in rdfgraph)
-        self.failUnless((subj,URIRef(ore+"aggregates"),URIRef(base+"directory/file1.a")) in rdfgraph)
-        self.failUnless((subj,URIRef(ore+"aggregates"),URIRef(base+"directory/file1.b")) in rdfgraph)
-        self.failUnless((subj,URIRef(ore+"aggregates"),URIRef(base+"directory/file2.a")) in rdfgraph)
-        self.failUnless((subj,URIRef(ore+"aggregates"),URIRef(base+"test-csv.csv")) in rdfgraph)
-        self.failUnless((subj,URIRef(oxds+"currentVersion"),"2") in rdfgraph, 'oxds:currentVersion')
-        # Access and check content of a resource
-        filedata = self.doHTTP_GET(
-            resource="datasets/TestSubmission-testdir/directory/file1.b",
-            expect_status=200, expect_reason="OK", expect_type="*/*")
-        checkdata = open("data/testdir/directory/file1.b").read()
-        self.assertEqual(filedata, checkdata, "Difference between local and remote data!")
-        #Access state information of TestSubmission-testdir
-        data = self.doHTTP_GET(
-            resource="states/TestSubmission-testdir", 
-            expect_status=200, expect_reason="OK", expect_type="application/json")
-        state = data['state']
-        parts = data['parts']
-        self.assertEqual(state['item_id'], "TestSubmission-testdir", "Submission item identifier")
-        self.assertEqual(len(state['versions']), 2, "Two versions")
-        self.assertEqual(state['versions'][0], '1', "Version 1")
-        self.assertEqual(state['versions'][1], '2', "Version 2")
-        self.assertEqual(state['currentversion'], '2', "Current version == 2")
-        self.assertEqual(state['rdffileformat'], 'xml', "RDF file type")
-        self.assertEqual(state['rdffilename'], 'manifest.rdf', "RDF file name")
-        self.assertEqual(len(state['files']['1']), 1, "List should contain just manifest.rdf")
-        self.assertEqual(len(state['files']['2']), 3, "List should contain manifest.rdf, test-csv.csv and testdir")
-        self.assertEqual(len(state['metadata_files']['1']), 0, "metadata_files of version 1")
-        self.assertEqual(len(state['metadata_files']['2']), 0, "metadata_files of version 2")
-        self.assertEqual(state['subdir']['1'], [],   "Subdirectory for version 1")
-        self.assertEqual(state['subdir']['2'], ['directory'],   "Subdirectory for version 2")
-        self.assertEqual(state['metadata']['createdby'], RDFDatabankConfig.endpointuser, "Created by")
-        self.assertEqual(state['metadata']['embargoed'], True, "Embargoed?")
-        self.assertEqual(len(parts.keys()), 5, "Parts")
-        self.assertEqual(len(parts['4=TestSubmission-testdir'].keys()), 13, "File stats for 4=TestSubmission-testdir")
-        self.assertEqual(len(parts['manifest.rdf'].keys()), 13, "File stats for manifest.rdf")
-        self.assertEqual(len(parts['directory'].keys()), 0, "File stats for directory")
-        self.assertEqual(len(parts['test-csv.csv'].keys()), 13, "File stats for test-csv.csv")
-        # Delete the dataset TestSubmission-testdir
-        self.doHTTP_DELETE(
-            resource="datasets/TestSubmission-testdir", 
-            expect_status="*", expect_reason="*")
-
-    def testFileUploadToUnpackedDataset(self):
-        """Upload a file to an unpacked dataset - POST filename to /silo_name/datasets/dataset_name"""
-        # Create a new dataset, check response
-        self.createTestSubmissionDataset()
-        # Upload zip file, check response
-        zipdata = self.uploadTestSubmissionZipfile()
-        # Unpack ZIP file into a new dataset, check response
-        fields = \
-            [ ("filename", "testdir.zip")
-            ]
-        files = []
-        (reqtype, reqdata) = SparqlQueryTestCase.encode_multipart_formdata(fields, files)
-        self.doHTTP_POST(
-            reqdata, reqtype, 
-            resource="items/TestSubmission", 
-            expect_status=201, expect_reason="Created")
-        #TODO: TEST FOR LOCATION HEADER
-        # Access and check list of contents in TestSubmission
-        rdfdata = self.doHTTP_GET(
-            resource="datasets/TestSubmission", 
-            expect_status=200, expect_reason="OK", expect_type="application/rdf+xml")
-        rdfgraph = Graph()
-        rdfstream = StringIO(rdfdata)
-        rdfgraph.parse(rdfstream) 
-        self.assertEqual(len(rdfgraph),10,'Graph length %i' %len(rdfgraph))
-        # Access new dataset TestSubmission-testdir, check response
-        rdfdata = self.doHTTP_GET(
-            resource="datasets/TestSubmission-testdir",  
-            expect_status=200, expect_reason="OK", expect_type="application/rdf+xml")
-        rdfgraph = Graph()
-        rdfstream = StringIO(rdfdata)
-        rdfgraph.parse(rdfstream)
-        subj  = URIRef(self.getRequestUri("datasets/TestSubmission-testdir"))
-        stype = URIRef("http://vocab.ox.ac.uk/dataset/schema#Grouping")
-        base = self.getRequestUri("datasets/TestSubmission-testdir/")
-        dcterms = "http://purl.org/dc/terms/"
-        ore  = "http://www.openarchives.org/ore/terms/"
-        oxds = "http://vocab.ox.ac.uk/dataset/schema#"
-        self.assertEqual(len(rdfgraph),14,'Graph length %i' %len(rdfgraph))
-        self.failUnless((subj,RDF.type,stype) in rdfgraph, 'Testing submission type: '+subj+", "+stype)
-        self.failUnless((subj,URIRef(dcterms+"identifier"),None) in rdfgraph, 'dcterms:identifier')
-        self.failUnless((subj,URIRef(dcterms+"creator"),None) in rdfgraph, 'dcterms:creator')
-        self.failUnless((subj,URIRef(oxds+"isEmbargoed"),None) in rdfgraph, 'oxds:isEmbargoed')
-        self.failUnless((subj,URIRef(oxds+"embargoedUntil"),None) in rdfgraph, 'oxds:embargoedUntil')
-        self.failUnless((subj,URIRef(dcterms+"created"),None) in rdfgraph, 'dcterms:created')
-        self.failUnless((subj,URIRef(dcterms+"modified"),None) in rdfgraph, 'dcterms:modified')
-        self.failUnless((subj,URIRef(dcterms+"isVersionOf"),None) in rdfgraph, 'dcterms:isVersionOf')
-        self.failUnless((subj,URIRef(ore+"aggregates"),URIRef(base+"directory")) in rdfgraph)
-        self.failUnless((subj,URIRef(ore+"aggregates"),URIRef(base+"directory/file1.a")) in rdfgraph)
-        self.failUnless((subj,URIRef(ore+"aggregates"),URIRef(base+"directory/file1.b")) in rdfgraph)
-        self.failUnless((subj,URIRef(ore+"aggregates"),URIRef(base+"directory/file2.a")) in rdfgraph)
-        self.failUnless((subj,URIRef(ore+"aggregates"),URIRef(base+"test-csv.csv")) in rdfgraph)
-        self.failUnless((subj,URIRef(oxds+"currentVersion"),"2") in rdfgraph, 'oxds:currentVersion')
-        # Upload zip file to dataset TestSubmission-testdir
-        fields = \
-            [ ("filename", "testdir2.zip")
-            ]
-        zipdata = open("data/testdir2.zip").read()
-        files = \
-            [ ("file", "testdir2.zip", zipdata, "application/zip") 
-            ]
-        (reqtype, reqdata) = SparqlQueryTestCase.encode_multipart_formdata(fields, files)
-        self.doHTTP_POST(
-            reqdata, reqtype, 
-            resource="datasets/TestSubmission-testdir/", 
-            expect_status=201, expect_reason="Created")
-        # Access dataset TestSubmission-testdir, check response
-        rdfdata = self.doHTTP_GET(
-            resource="datasets/TestSubmission-testdir",  
-            expect_status=200, expect_reason="OK", expect_type="application/rdf+xml")
-        rdfgraph = Graph()
-        rdfstream = StringIO(rdfdata)
-        rdfgraph.parse(rdfstream)
-        subj  = URIRef(self.getRequestUri("datasets/TestSubmission-testdir"))
-        stype = URIRef("http://vocab.ox.ac.uk/dataset/schema#Grouping")
-        base = self.getRequestUri("datasets/TestSubmission-testdir/")
-        self.assertEqual(len(rdfgraph),15,'Graph length %i' %len(rdfgraph))
-        self.failUnless((subj,RDF.type,stype) in rdfgraph, 'Testing submission type: '+subj+", "+stype)
-        self.failUnless((subj,URIRef(dcterms+"identifier"),None) in rdfgraph, 'dcterms:identifier')
-        self.failUnless((subj,URIRef(dcterms+"creator"),None) in rdfgraph, 'dcterms:creator')
-        self.failUnless((subj,URIRef(oxds+"isEmbargoed"),None) in rdfgraph, 'oxds:isEmbargoed')
-        self.failUnless((subj,URIRef(oxds+"embargoedUntil"),None) in rdfgraph, 'oxds:embargoedUntil')
-        self.failUnless((subj,URIRef(dcterms+"created"),None) in rdfgraph, 'dcterms:created')
-        self.failUnless((subj,URIRef(dcterms+"modified"),None) in rdfgraph, 'dcterms:modified')
-        self.failUnless((subj,URIRef(dcterms+"isVersionOf"),None) in rdfgraph, 'dcterms:isVersionOf')
-        self.failUnless((subj,URIRef(ore+"aggregates"),URIRef(base+"directory")) in rdfgraph)
-        self.failUnless((subj,URIRef(ore+"aggregates"),URIRef(base+"directory/file1.a")) in rdfgraph)
-        self.failUnless((subj,URIRef(ore+"aggregates"),URIRef(base+"directory/file1.b")) in rdfgraph)
-        self.failUnless((subj,URIRef(ore+"aggregates"),URIRef(base+"directory/file2.a")) in rdfgraph)
-        self.failUnless((subj,URIRef(ore+"aggregates"),URIRef(base+"test-csv.csv")) in rdfgraph)
-        self.failUnless((subj,URIRef(ore+"aggregates"),URIRef(base+"testdir2.zip")) in rdfgraph)
-        self.failUnless((subj,URIRef(oxds+"currentVersion"),"3") in rdfgraph, 'oxds:currentVersion')
-        #Access state information of TestSubmission-testdir
-        data = self.doHTTP_GET(
-            resource="states/TestSubmission-testdir", 
-            expect_status=200, expect_reason="OK", expect_type="application/json")
-        state = data['state']
-        parts = data['parts']
-        self.assertEqual(state['item_id'], "TestSubmission-testdir", "Submission item identifier")
-        self.assertEqual(len(state['versions']), 3, "Three versions")
-        self.assertEqual(state['versions'][0], '1', "Version 1")
-        self.assertEqual(state['versions'][1], '2', "Version 2")
-        self.assertEqual(state['versions'][2], '3', "Version 3")
-        self.assertEqual(state['currentversion'], '3', "Current version == 3")
-        self.assertEqual(state['rdffileformat'], 'xml', "RDF file type")
-        self.assertEqual(state['rdffilename'], 'manifest.rdf', "RDF file name")
-        self.assertEqual(len(state['files']['1']), 1, "List should contain just manifest.rdf")
-        #TODO: Uploading a file also changes the file information for the previous version - correct this
-        #self.assertEqual(len(state['files']['2']), 3, "List should contain manifest.rdf, test-csv.csv and directory")
-        self.assertEqual(len(state['files']['3']), 4, "List should contain manifest.rdf, test-csv.csv, directory and testdir2.zip")
-        self.assertEqual(len(state['metadata_files']['1']), 0, "metadata_files of version 1")
-        self.assertEqual(len(state['metadata_files']['2']), 0, "metadata_files of version 2")
-        self.assertEqual(len(state['metadata_files']['3']), 0, "metadata_files of version 3")
-        self.assertEqual(state['subdir']['1'], [],   "Subdirectory for version 1")
-        self.assertEqual(state['subdir']['2'], ['directory'],   "Subdirectory for version 2")
-        self.assertEqual(state['subdir']['3'], ['directory'],   "Subdirectory for version 3")
-        self.assertEqual(state['metadata']['createdby'], RDFDatabankConfig.endpointuser, "Created by")
-        self.assertEqual(state['metadata']['embargoed'], True, "Embargoed?")
-        self.assertEqual(len(parts.keys()), 6, "Parts")
-        self.assertEqual(len(parts['4=TestSubmission-testdir'].keys()), 13, "File stats for 4=TestSubmission-testdir")
-        self.assertEqual(len(parts['manifest.rdf'].keys()), 13, "File stats for manifest.rdf")
-        self.assertEqual(len(parts['directory'].keys()), 0, "File stats for directory")
-        self.assertEqual(len(parts['test-csv.csv'].keys()), 13, "File stats for test-csv.csv")
-        self.assertEqual(len(parts['testdir2.zip'].keys()), 13, "File stats for testdir2.zip")
-        # Delete the dataset TestSubmission-testdir
-        self.doHTTP_DELETE(
-            resource="datasets/TestSubmission-testdir", 
-            expect_status="*", expect_reason="*")
-        # Delete the dataset TestSubmission
-        self.doHTTP_DELETE(
-            resource="datasets/TestSubmission", 
-            expect_status="*", expect_reason="*")
-
-    def testUpdateUnpackedDataset(self):
-        """Unpack zip file to an existing dataset - POST zip filename to /silo_name/items/dataset_name"""
-        # Create a new dataset, check response
-        self.createTestSubmissionDataset()
-        # Upload zip file, check response
-        zipdata = self.uploadTestSubmissionZipfile()
-        # Upload second zip file, check response
-        zipdata = self.uploadTestSubmissionZipfile(file_to_upload="testdir2.zip")
-        # Unpack ZIP file into a new dataset, check response
-        fields = \
-            [ ("filename", "testdir.zip")
-            ]
-        files = []
-        (reqtype, reqdata) = SparqlQueryTestCase.encode_multipart_formdata(fields, files)
-        self.doHTTP_POST(
-            reqdata, reqtype, 
-            resource="items/TestSubmission", 
-            expect_status=201, expect_reason="Created")
-        #TODO: TEST FOR LOCATION HEADER
-        # Access and check list of contents in TestSubmission
-        rdfdata = self.doHTTP_GET(
-            resource="datasets/TestSubmission", 
-            expect_status=200, expect_reason="OK", expect_type="application/rdf+xml")
-        rdfgraph = Graph()
-        rdfstream = StringIO(rdfdata)
-        rdfgraph.parse(rdfstream) 
-        self.assertEqual(len(rdfgraph),11,'Graph length %i' %len(rdfgraph))
-        # Access new dataset, check response
-        rdfdata = self.doHTTP_GET(
-            resource="datasets/TestSubmission-testdir",  
-            expect_status=200, expect_reason="OK", expect_type="application/rdf+xml")
-        rdfgraph = Graph()
-        rdfstream = StringIO(rdfdata)
-        rdfgraph.parse(rdfstream)
-        subj  = URIRef(self.getRequestUri("datasets/TestSubmission-testdir"))
-        stype = URIRef("http://vocab.ox.ac.uk/dataset/schema#Grouping")
-        base = self.getRequestUri("datasets/TestSubmission-testdir/")
-        dcterms = "http://purl.org/dc/terms/"
-        ore  = "http://www.openarchives.org/ore/terms/"
-        oxds = "http://vocab.ox.ac.uk/dataset/schema#"
-        self.assertEqual(len(rdfgraph),14,'Graph length %i' %len(rdfgraph))
-        self.failUnless((subj,RDF.type,stype) in rdfgraph, 'Testing submission type: '+subj+", "+stype)
-        self.failUnless((subj,URIRef(dcterms+"identifier"),None) in rdfgraph, 'dcterms:identifier')
-        self.failUnless((subj,URIRef(dcterms+"creator"),None) in rdfgraph, 'dcterms:creator')
-        self.failUnless((subj,URIRef(oxds+"isEmbargoed"),None) in rdfgraph, 'oxds:isEmbargoed')
-        self.failUnless((subj,URIRef(oxds+"embargoedUntil"),None) in rdfgraph, 'oxds:embargoedUntil')
-        self.failUnless((subj,URIRef(dcterms+"created"),None) in rdfgraph, 'dcterms:created')
-        self.failUnless((subj,URIRef(dcterms+"modified"),None) in rdfgraph, 'dcterms:modified')
-        self.failUnless((subj,URIRef(dcterms+"isVersionOf"),None) in rdfgraph, 'dcterms:isVersionOf')
-        self.failUnless((subj,URIRef(ore+"aggregates"),URIRef(base+"directory")) in rdfgraph)
-        self.failUnless((subj,URIRef(ore+"aggregates"),URIRef(base+"directory/file1.a")) in rdfgraph)
-        self.failUnless((subj,URIRef(ore+"aggregates"),URIRef(base+"directory/file1.b")) in rdfgraph)
-        self.failUnless((subj,URIRef(ore+"aggregates"),URIRef(base+"directory/file2.a")) in rdfgraph)
-        self.failUnless((subj,URIRef(ore+"aggregates"),URIRef(base+"test-csv.csv")) in rdfgraph)
-        self.failUnless((subj,URIRef(oxds+"currentVersion"),"2") in rdfgraph, 'oxds:currentVersion')
-        # Unpack second ZIP file into dataset TestSubmission-testdir, check response
-        fields = \
-            [ ("filename", "testdir2.zip"),
-              ("id", "TestSubmission-testdir")
-            ]
-        files = []
-        (reqtype, reqdata) = SparqlQueryTestCase.encode_multipart_formdata(fields, files)
-        self.doHTTP_POST(
-            reqdata, reqtype, 
-            resource="items/TestSubmission", 
-            expect_status=201, expect_reason="Created") 
-        # Access and check list of contents in TestSubmission
-        rdfdata = self.doHTTP_GET(
+        (resp, rdfdata) = self.doHTTP_GET(
             resource="datasets/TestSubmission", 
             expect_status=200, expect_reason="OK", expect_type="application/rdf+xml")
         rdfgraph = Graph()
@@ -1515,15 +1651,15 @@ class TestSubmission(SparqlQueryTestCase.SparqlQueryTestCase):
         self.failUnless((subj,URIRef(ore+"aggregates"),URIRef(base+"testdir.zip")) in rdfgraph)
         self.failUnless((subj,URIRef(ore+"aggregates"),URIRef(base+"testdir2.zip")) in rdfgraph)
         self.failUnless((URIRef(base+"testdir.zip"),URIRef(dcterms+"hasVersion"),None) in rdfgraph, 'dcterms:hasVersion')
-        self.failUnless((URIRef(base+"testdir2.zip"),URIRef(dcterms+"hasVersion"),None) in rdfgraph, 'dcterms:hasVersion')
         self.failUnless((subj,URIRef(dcterms+"identifier"),None) in rdfgraph, 'dcterms:identifier')
-        self.failUnless((subj,URIRef(dcterms+"creator"),None) in rdfgraph, 'dcterms:creator')
+        self.failUnless((subj,URIRef(dcterms+"mediator"),None) in rdfgraph, 'dcterms:mediator')
+        self.failUnless((subj,URIRef(dcterms+"publisher"),None) in rdfgraph, 'dcterms:publisher')
         self.failUnless((subj,URIRef(oxds+"isEmbargoed"),None) in rdfgraph, 'oxds:isEmbargoed')
         self.failUnless((subj,URIRef(oxds+"embargoedUntil"),None) in rdfgraph, 'oxds:embargoedUntil')
-        self.failUnless((subj,URIRef(oxds+"currentVersion"),"3") in rdfgraph, 'oxds:currentVersion')
+        self.failUnless((subj,URIRef(oxds+"currentVersion"),"2") in rdfgraph, 'oxds:currentVersion')
         self.failUnless((subj,URIRef(dcterms+"modified"),None) in rdfgraph, 'dcterms:modified')
-        # Access dataset TestSubmission-testdir, check response
-        rdfdata = self.doHTTP_GET(
+        # Access new dataset, check response
+        (resp, rdfdata) = self.doHTTP_GET(
             resource="datasets/TestSubmission-testdir",  
             expect_status=200, expect_reason="OK", expect_type="application/rdf+xml")
         rdfgraph = Graph()
@@ -1532,98 +1668,274 @@ class TestSubmission(SparqlQueryTestCase.SparqlQueryTestCase):
         subj  = URIRef(self.getRequestUri("datasets/TestSubmission-testdir"))
         stype = URIRef("http://vocab.ox.ac.uk/dataset/schema#Grouping")
         base = self.getRequestUri("datasets/TestSubmission-testdir/")
-        owl = "http://www.w3.org/2002/07/owl#"
-        self.assertEqual(len(rdfgraph),18,'Graph length %i' %len(rdfgraph))
+        self.assertEqual(len(rdfgraph),15,'Graph length %i' %len(rdfgraph))
         self.failUnless((subj,RDF.type,stype) in rdfgraph, 'Testing submission type: '+subj+", "+stype)
         self.failUnless((subj,URIRef(dcterms+"identifier"),None) in rdfgraph, 'dcterms:identifier')
-        self.failUnless((subj,URIRef(dcterms+"creator"),None) in rdfgraph, 'dcterms:creator')
+        self.failUnless((subj,URIRef(dcterms+"mediator"),None) in rdfgraph, 'dcterms:mediator')
+        self.failUnless((subj,URIRef(dcterms+"publisher"),None) in rdfgraph, 'dcterms:publisher')
         self.failUnless((subj,URIRef(oxds+"isEmbargoed"),None) in rdfgraph, 'oxds:isEmbargoed')
         self.failUnless((subj,URIRef(oxds+"embargoedUntil"),None) in rdfgraph, 'oxds:embargoedUntil')
         self.failUnless((subj,URIRef(dcterms+"created"),None) in rdfgraph, 'dcterms:created')
-        self.failUnless((subj,URIRef(dcterms+"title"),"Test dataset with merged metadata") in rdfgraph, 'dcterms:title')
         self.failUnless((subj,URIRef(dcterms+"modified"),None) in rdfgraph, 'dcterms:modified')
         self.failUnless((subj,URIRef(dcterms+"isVersionOf"),None) in rdfgraph, 'dcterms:isVersionOf')
-        self.failUnless((subj,URIRef(owl+"sameAs"),URIRef("http://example.org/testdir2/")) in rdfgraph, 'owl:sameAs')
-        self.failUnless((subj,URIRef(ore+"aggregates"),URIRef(base+"testdir2")) in rdfgraph)
-        self.failUnless((subj,URIRef(ore+"aggregates"),URIRef(base+"testdir2/directory")) in rdfgraph)
-        self.failUnless((subj,URIRef(ore+"aggregates"),URIRef(base+"testdir2/directory/file1.a")) in rdfgraph)
-        self.failUnless((subj,URIRef(ore+"aggregates"),URIRef(base+"testdir2/directory/file1.b")) in rdfgraph)
-        self.failUnless((subj,URIRef(ore+"aggregates"),URIRef(base+"testdir2/directory/file1.c")) in rdfgraph)
-        self.failUnless((subj,URIRef(ore+"aggregates"),URIRef(base+"testdir2/directory/file2.a")) in rdfgraph)
-        self.failUnless((subj,URIRef(ore+"aggregates"),URIRef(base+"testdir2/test-csv.csv")) in rdfgraph)
-        self.failUnless((subj,URIRef(oxds+"currentVersion"),"3") in rdfgraph, 'oxds:currentVersion')
+        self.failUnless((subj,URIRef(ore+"aggregates"),URIRef(base+"directory")) in rdfgraph)
+        self.failUnless((subj,URIRef(ore+"aggregates"),URIRef(base+"directory/file1.a")) in rdfgraph)
+        self.failUnless((subj,URIRef(ore+"aggregates"),URIRef(base+"directory/file1.b")) in rdfgraph)
+        self.failUnless((subj,URIRef(ore+"aggregates"),URIRef(base+"directory/file2.a")) in rdfgraph)
+        self.failUnless((subj,URIRef(ore+"aggregates"),URIRef(base+"test-csv.csv")) in rdfgraph)
+        self.failUnless((subj,URIRef(oxds+"currentVersion"),"1") in rdfgraph, 'oxds:currentVersion')
+        # Access and check content of a resource
+        (resp, filedata) = self.doHTTP_GET(
+            resource="datasets/TestSubmission-testdir/directory/file1.b",
+            expect_status=200, expect_reason="OK", expect_type="text/plain")
+        checkdata = open("data/testdir/directory/file1.b").read()
+        self.assertEqual(filedata, checkdata, "Difference between local and remote data!")
         #Access state information of TestSubmission-testdir
-        data = self.doHTTP_GET(
+        (resp, data) = self.doHTTP_GET(
             resource="states/TestSubmission-testdir", 
             expect_status=200, expect_reason="OK", expect_type="application/json")
         state = data['state']
         parts = data['parts']
+        self.assertEqual(len(state.keys()), 11, "States")
         self.assertEqual(state['item_id'], "TestSubmission-testdir", "Submission item identifier")
-        self.assertEqual(len(state['versions']), 3, "Three versions")
-        self.assertEqual(state['versions'][0], '1', "Version 1")
-        self.assertEqual(state['versions'][1], '2', "Version 2")
-        self.assertEqual(state['versions'][2], '3', "Version 3")
-        self.assertEqual(state['currentversion'], '3', "Current version == 3")
+        self.assertEqual(len(state['versions']), 2, "Two versions")
+        self.assertEqual(state['versions'][0], '0', "Version 0")
+        self.assertEqual(state['versions'][1], '1', "Version 1")
+        self.assertEqual(state['currentversion'], '1', "Current version == 1")
         self.assertEqual(state['rdffileformat'], 'xml', "RDF file type")
         self.assertEqual(state['rdffilename'], 'manifest.rdf', "RDF file name")
-        self.assertEqual(len(state['files']['1']), 1, "List should contain just manifest.rdf")
-        self.assertEqual(len(state['files']['2']), 3, "List should contain manifest.rdf, directory and test-csv.csv")
-        self.assertEqual(len(state['files']['3']), 2, "List should contain manifest.rdf and testdri2")
+        self.assertEqual(len(state['files']['0']), 1, "List should contain just manifest.rdf")
+        self.assertEqual(len(state['files']['1']), 3, "List should contain manifest.rdf, test-csv.csv and testdir")
+        self.assertEqual(len(state['metadata_files']['0']), 0, "metadata_files of version 0")
         self.assertEqual(len(state['metadata_files']['1']), 0, "metadata_files of version 1")
-        self.assertEqual(len(state['metadata_files']['2']), 0, "metadata_files of version 2")
-        self.assertEqual(len(state['metadata_files']['3']), 0, "metadata_files of version 3")
-        self.assertEqual(state['subdir']['1'], [],   "Subdirectory count for version 1")
-        self.assertEqual(state['subdir']['2'], ['directory'],   "Subdirectory for version 2")
-        self.assertEqual(state['subdir']['3'], ['testdir2'],   "Subdirectory for version 3")
+        self.assertEqual(state['subdir']['0'], [],   "Subdirectory for version 0")
+        self.assertEqual(state['subdir']['1'], ['directory'],   "Subdirectory for version 1")
         self.assertEqual(state['metadata']['createdby'], RDFDatabankConfig.endpointuser, "Created by")
         self.assertEqual(state['metadata']['embargoed'], True, "Embargoed?")
-        self.assertEqual(len(parts.keys()), 4, "Parts")
+        self.assertEqual(len(parts.keys()), 5, "Parts")
         self.assertEqual(len(parts['4=TestSubmission-testdir'].keys()), 13, "File stats for 4=TestSubmission-testdir")
         self.assertEqual(len(parts['manifest.rdf'].keys()), 13, "File stats for manifest.rdf")
-        self.assertEqual(len(parts['testdir2'].keys()), 0, "File stats for testdir2")
+        self.assertEqual(len(parts['directory'].keys()), 0, "File stats for directory")
+        self.assertEqual(len(parts['test-csv.csv'].keys()), 13, "File stats for test-csv.csv")
         # Delete the dataset TestSubmission-testdir
-        self.doHTTP_DELETE(
+        resp = self.doHTTP_DELETE(
             resource="datasets/TestSubmission-testdir", 
             expect_status="*", expect_reason="*")
-        # Delete the dataset TestSubmission
-        self.doHTTP_DELETE(
-            resource="datasets/TestSubmission", 
-            expect_status="*", expect_reason="*")
 
-    def testMetadataMerging(self):
-        """Unpack zip file to a dataset - POST zip filename to /silo_name/items/dataset_name
-        manifest.rdf in zipfile is munged with datsets existing manifest"""
+    def testFileUploadToUnpackedDataset(self):
+        """Upload a file to an unpacked dataset - POST filename to /silo_name/datasets/dataset_name"""
         # Create a new dataset, check response
         self.createTestSubmissionDataset()
-        # Submit ZIP file data/testrdf.zip, check response
-        fields = []
-        zipdata = open("data/testrdf.zip").read()
-        files = \
-            [ ("file", "testrdf.zip", zipdata, "application/zip") 
-            ]
-        (reqtype, reqdata) = SparqlQueryTestCase.encode_multipart_formdata(fields, files)
-        self.doHTTP_POST(
-            reqdata, reqtype, 
-            resource="datasets/TestSubmission/", 
-            expect_status=201, expect_reason="Created")
-        #TODO: TEST FOR LOCATION HEADER
+        # Upload zip file, check response
+        zipdata = self.uploadTestSubmissionZipfile()
         # Unpack ZIP file into a new dataset, check response
         fields = \
-            [ ("filename", "testrdf.zip")
+            [ ("filename", "testdir.zip")
             ]
         files = []
         (reqtype, reqdata) = SparqlQueryTestCase.encode_multipart_formdata(fields, files)
-        self.doHTTP_POST(
+        (resp,respdata) = self.doHTTP_POST(
             reqdata, reqtype, 
             resource="items/TestSubmission", 
             expect_status=201, expect_reason="Created")
-        #TODO: TEST FOR LOCATION HEADER
-        # Access parent dataset, check response
-        data = self.doHTTP_GET(
+        LHobtained = resp.getheader('Content-Location', None)
+        LHexpected = "%sdatasets/TestSubmission-testdir"%self._endpointpath
+        self.assertEquals(LHobtained, LHexpected, 'Content-Location not correct')
+        # Access and check list of contents in TestSubmission
+        (resp, rdfdata) = self.doHTTP_GET(
             resource="datasets/TestSubmission", 
+            expect_status=200, expect_reason="OK", expect_type="application/rdf+xml")
+        rdfgraph = Graph()
+        rdfstream = StringIO(rdfdata)
+        rdfgraph.parse(rdfstream) 
+        self.assertEqual(len(rdfgraph),11,'Graph length %i' %len(rdfgraph))
+        # Access new dataset TestSubmission-testdir, check response
+        (resp, rdfdata) = self.doHTTP_GET(
+            resource="datasets/TestSubmission-testdir",  
+            expect_status=200, expect_reason="OK", expect_type="application/rdf+xml")
+        rdfgraph = Graph()
+        rdfstream = StringIO(rdfdata)
+        rdfgraph.parse(rdfstream)
+        subj  = URIRef(self.getRequestUri("datasets/TestSubmission-testdir"))
+        stype = URIRef("http://vocab.ox.ac.uk/dataset/schema#Grouping")
+        base = self.getRequestUri("datasets/TestSubmission-testdir/")
+        dcterms = "http://purl.org/dc/terms/"
+        ore  = "http://www.openarchives.org/ore/terms/"
+        oxds = "http://vocab.ox.ac.uk/dataset/schema#"
+        self.assertEqual(len(rdfgraph),15,'Graph length %i' %len(rdfgraph))
+        self.failUnless((subj,RDF.type,stype) in rdfgraph, 'Testing submission type: '+subj+", "+stype)
+        self.failUnless((subj,URIRef(dcterms+"identifier"),None) in rdfgraph, 'dcterms:identifier')
+        self.failUnless((subj,URIRef(dcterms+"mediator"),None) in rdfgraph, 'dcterms:mediator')
+        self.failUnless((subj,URIRef(dcterms+"publisher"),None) in rdfgraph, 'dcterms:publisher')
+        self.failUnless((subj,URIRef(oxds+"isEmbargoed"),None) in rdfgraph, 'oxds:isEmbargoed')
+        self.failUnless((subj,URIRef(oxds+"embargoedUntil"),None) in rdfgraph, 'oxds:embargoedUntil')
+        self.failUnless((subj,URIRef(dcterms+"created"),None) in rdfgraph, 'dcterms:created')
+        self.failUnless((subj,URIRef(dcterms+"modified"),None) in rdfgraph, 'dcterms:modified')
+        self.failUnless((subj,URIRef(dcterms+"isVersionOf"),None) in rdfgraph, 'dcterms:isVersionOf')
+        self.failUnless((subj,URIRef(ore+"aggregates"),URIRef(base+"directory")) in rdfgraph)
+        self.failUnless((subj,URIRef(ore+"aggregates"),URIRef(base+"directory/file1.a")) in rdfgraph)
+        self.failUnless((subj,URIRef(ore+"aggregates"),URIRef(base+"directory/file1.b")) in rdfgraph)
+        self.failUnless((subj,URIRef(ore+"aggregates"),URIRef(base+"directory/file2.a")) in rdfgraph)
+        self.failUnless((subj,URIRef(ore+"aggregates"),URIRef(base+"test-csv.csv")) in rdfgraph)
+        self.failUnless((subj,URIRef(oxds+"currentVersion"),"1") in rdfgraph, 'oxds:currentVersion')
+        # Upload zip file to dataset TestSubmission-testdir
+        fields = \
+            [ ("filename", "testdir2.zip")
+            ]
+        zipdata = open("data/testdir2.zip").read()
+        files = \
+            [ ("file", "testdir2.zip", zipdata, "application/zip") 
+            ]
+        (reqtype, reqdata) = SparqlQueryTestCase.encode_multipart_formdata(fields, files)
+        (resp,respdata) = self.doHTTP_POST(
+            reqdata, reqtype, 
+            resource="datasets/TestSubmission-testdir/", 
+            expect_status=201, expect_reason="Created")
+        LHobtained = resp.getheader('Content-Location', None)
+        LHexpected = "%sdatasets/TestSubmission-testdir/testdir2.zip"%self._endpointpath
+        self.assertEquals(LHobtained, LHexpected, 'Content-Location not correct')
+        # Access dataset TestSubmission-testdir, check response
+        (resp, rdfdata) = self.doHTTP_GET(
+            resource="datasets/TestSubmission-testdir",  
+            expect_status=200, expect_reason="OK", expect_type="application/rdf+xml")
+        rdfgraph = Graph()
+        rdfstream = StringIO(rdfdata)
+        rdfgraph.parse(rdfstream)
+        subj  = URIRef(self.getRequestUri("datasets/TestSubmission-testdir"))
+        stype = URIRef("http://vocab.ox.ac.uk/dataset/schema#Grouping")
+        base = self.getRequestUri("datasets/TestSubmission-testdir/")
+        self.assertEqual(len(rdfgraph),16,'Graph length %i' %len(rdfgraph))
+        self.failUnless((subj,RDF.type,stype) in rdfgraph, 'Testing submission type: '+subj+", "+stype)
+        self.failUnless((subj,URIRef(dcterms+"identifier"),None) in rdfgraph, 'dcterms:identifier')
+        self.failUnless((subj,URIRef(dcterms+"mediator"),None) in rdfgraph, 'dcterms:mediator')
+        self.failUnless((subj,URIRef(dcterms+"publisher"),None) in rdfgraph, 'dcterms:publisher')
+        self.failUnless((subj,URIRef(oxds+"isEmbargoed"),None) in rdfgraph, 'oxds:isEmbargoed')
+        self.failUnless((subj,URIRef(oxds+"embargoedUntil"),None) in rdfgraph, 'oxds:embargoedUntil')
+        self.failUnless((subj,URIRef(dcterms+"created"),None) in rdfgraph, 'dcterms:created')
+        self.failUnless((subj,URIRef(dcterms+"modified"),None) in rdfgraph, 'dcterms:modified')
+        self.failUnless((subj,URIRef(dcterms+"isVersionOf"),None) in rdfgraph, 'dcterms:isVersionOf')
+        self.failUnless((subj,URIRef(ore+"aggregates"),URIRef(base+"directory")) in rdfgraph)
+        self.failUnless((subj,URIRef(ore+"aggregates"),URIRef(base+"directory/file1.a")) in rdfgraph)
+        self.failUnless((subj,URIRef(ore+"aggregates"),URIRef(base+"directory/file1.b")) in rdfgraph)
+        self.failUnless((subj,URIRef(ore+"aggregates"),URIRef(base+"directory/file2.a")) in rdfgraph)
+        self.failUnless((subj,URIRef(ore+"aggregates"),URIRef(base+"test-csv.csv")) in rdfgraph)
+        self.failUnless((subj,URIRef(ore+"aggregates"),URIRef(base+"testdir2.zip")) in rdfgraph)
+        self.failUnless((subj,URIRef(oxds+"currentVersion"),"2") in rdfgraph, 'oxds:currentVersion')
+        #Access state information of TestSubmission-testdir
+        (resp, data) = self.doHTTP_GET(
+            resource="states/TestSubmission-testdir", 
             expect_status=200, expect_reason="OK", expect_type="application/json")
-        # Access and check list of contents in parent dataset - TestSubmission
-        rdfdata = self.doHTTP_GET(
+        state = data['state']
+        parts = data['parts']
+        self.assertEqual(len(state.keys()), 11, "States")
+        self.assertEqual(state['item_id'], "TestSubmission-testdir", "Submission item identifier")
+        self.assertEqual(len(state['versions']), 3, "Three versions")
+        self.assertEqual(state['versions'][0], '0', "Version 0")
+        self.assertEqual(state['versions'][1], '1', "Version 1")
+        self.assertEqual(state['versions'][2], '2', "Version 2")
+        self.assertEqual(state['currentversion'], '2', "Current version == 2")
+        self.assertEqual(state['rdffileformat'], 'xml', "RDF file type")
+        self.assertEqual(state['rdffilename'], 'manifest.rdf', "RDF file name")
+        self.assertEqual(len(state['files']['0']), 1, "List should contain just manifest.rdf")
+        self.assertEqual(len(state['files']['1']), 3, "List should contain manifest.rdf, test-csv.csv and directory")
+        self.assertEqual(len(state['files']['2']), 4, "List should contain manifest.rdf, test-csv.csv, directory and testdir2.zip")
+        self.assertEqual(len(state['metadata_files']['0']), 0, "metadata_files of version 0")
+        self.assertEqual(len(state['metadata_files']['1']), 0, "metadata_files of version 1")
+        self.assertEqual(len(state['metadata_files']['2']), 0, "metadata_files of version 2")
+        self.assertEqual(state['subdir']['0'], [],   "Subdirectory for version 0")
+        self.assertEqual(state['subdir']['1'], ['directory'],   "Subdirectory for version 1")
+        self.assertEqual(state['subdir']['2'], ['directory'],   "Subdirectory for version 2")
+        self.assertEqual(state['metadata']['createdby'], RDFDatabankConfig.endpointuser, "Created by")
+        self.assertEqual(state['metadata']['embargoed'], True, "Embargoed?")
+        self.assertEqual(len(parts.keys()), 6, "Parts")
+        self.assertEqual(len(parts['4=TestSubmission-testdir'].keys()), 13, "File stats for 4=TestSubmission-testdir")
+        self.assertEqual(len(parts['manifest.rdf'].keys()), 13, "File stats for manifest.rdf")
+        self.assertEqual(len(parts['directory'].keys()), 0, "File stats for directory")
+        self.assertEqual(len(parts['test-csv.csv'].keys()), 13, "File stats for test-csv.csv")
+        self.assertEqual(len(parts['testdir2.zip'].keys()), 13, "File stats for testdir2.zip")
+        # Delete the dataset TestSubmission-testdir
+        resp = self.doHTTP_DELETE(
+            resource="datasets/TestSubmission-testdir", 
+            expect_status="*", expect_reason="*")
+        # Delete the dataset TestSubmission
+        resp = self.doHTTP_DELETE(
+            resource="datasets/TestSubmission", 
+            expect_status="*", expect_reason="*")
+
+    def testUpdateUnpackedDataset(self):
+        """Unpack zip file to an existing dataset - POST zip filename to /silo_name/items/dataset_name"""
+        # Create a new dataset, check response
+        self.createTestSubmissionDataset()
+        # Upload zip file, check response
+        zipdata = self.uploadTestSubmissionZipfile()
+        # Upload second zip file, check response
+        zipdata = self.uploadTestSubmissionZipfile(file_to_upload="testdir2.zip")
+        # Unpack ZIP file into a new dataset, check response
+        fields = \
+            [ ("filename", "testdir.zip")
+            ]
+        files = []
+        (reqtype, reqdata) = SparqlQueryTestCase.encode_multipart_formdata(fields, files)
+        (resp,respdata) = self.doHTTP_POST(
+            reqdata, reqtype, 
+            resource="items/TestSubmission", 
+            expect_status=201, expect_reason="Created")
+        LHobtained = resp.getheader('Content-Location', None)
+        LHexpected = "%sdatasets/TestSubmission-testdir"%self._endpointpath
+        self.assertEquals(LHobtained, LHexpected, 'Content-Location not correct')
+        # Access and check response for TestSubmission
+        (resp, rdfdata) = self.doHTTP_GET(
+            resource="datasets/TestSubmission", 
+            expect_status=200, expect_reason="OK", expect_type="application/rdf+xml")
+        rdfgraph = Graph()
+        rdfstream = StringIO(rdfdata)
+        rdfgraph.parse(rdfstream) 
+        self.assertEqual(len(rdfgraph),12,'Graph length %i' %len(rdfgraph))
+        # Access and check list of contents in TestSubmission-testdir
+        (resp, rdfdata) = self.doHTTP_GET(
+            resource="datasets/TestSubmission-testdir",  
+            expect_status=200, expect_reason="OK", expect_type="application/rdf+xml")
+        rdfgraph = Graph()
+        rdfstream = StringIO(rdfdata)
+        rdfgraph.parse(rdfstream)
+        subj  = URIRef(self.getRequestUri("datasets/TestSubmission-testdir"))
+        stype = URIRef("http://vocab.ox.ac.uk/dataset/schema#Grouping")
+        base = self.getRequestUri("datasets/TestSubmission-testdir/")
+        dcterms = "http://purl.org/dc/terms/"
+        ore  = "http://www.openarchives.org/ore/terms/"
+        oxds = "http://vocab.ox.ac.uk/dataset/schema#"
+        self.assertEqual(len(rdfgraph),15,'Graph length %i' %len(rdfgraph))
+        self.failUnless((subj,RDF.type,stype) in rdfgraph, 'Testing submission type: '+subj+", "+stype)
+        self.failUnless((subj,URIRef(dcterms+"identifier"),None) in rdfgraph, 'dcterms:identifier')
+        self.failUnless((subj,URIRef(dcterms+"mediator"),None) in rdfgraph, 'dcterms:mediator')
+        self.failUnless((subj,URIRef(dcterms+"publisher"),None) in rdfgraph, 'dcterms:publisher')
+        self.failUnless((subj,URIRef(oxds+"isEmbargoed"),None) in rdfgraph, 'oxds:isEmbargoed')
+        self.failUnless((subj,URIRef(oxds+"embargoedUntil"),None) in rdfgraph, 'oxds:embargoedUntil')
+        self.failUnless((subj,URIRef(dcterms+"created"),None) in rdfgraph, 'dcterms:created')
+        self.failUnless((subj,URIRef(dcterms+"modified"),None) in rdfgraph, 'dcterms:modified')
+        self.failUnless((subj,URIRef(dcterms+"isVersionOf"),None) in rdfgraph, 'dcterms:isVersionOf')
+        self.failUnless((subj,URIRef(ore+"aggregates"),URIRef(base+"directory")) in rdfgraph)
+        self.failUnless((subj,URIRef(ore+"aggregates"),URIRef(base+"directory/file1.a")) in rdfgraph)
+        self.failUnless((subj,URIRef(ore+"aggregates"),URIRef(base+"directory/file1.b")) in rdfgraph)
+        self.failUnless((subj,URIRef(ore+"aggregates"),URIRef(base+"directory/file2.a")) in rdfgraph)
+        self.failUnless((subj,URIRef(ore+"aggregates"),URIRef(base+"test-csv.csv")) in rdfgraph)
+        self.failUnless((subj,URIRef(oxds+"currentVersion"),"1") in rdfgraph, 'oxds:currentVersion')
+        # Unpack second ZIP file into dataset TestSubmission-testdir, check response
+        fields = \
+            [ ("filename", "testdir2.zip"),
+              ("id", "TestSubmission-testdir")
+            ]
+        files = []
+        (reqtype, reqdata) = SparqlQueryTestCase.encode_multipart_formdata(fields, files)
+        (resp,respdata) = self.doHTTP_POST(
+            reqdata, reqtype, 
+            resource="items/TestSubmission", 
+            expect_status=201, expect_reason="Created") 
+        LHobtained = resp.getheader('Content-Location', None)
+        LHexpected = "%sdatasets/TestSubmission-testdir"%self._endpointpath
+        self.assertEquals(LHobtained, LHexpected, 'Content-Location not correct')
+        # Access and check list of contents in TestSubmission
+        (resp, rdfdata) = self.doHTTP_GET(
             resource="datasets/TestSubmission", 
             expect_status=200, expect_reason="OK", expect_type="application/rdf+xml")
         rdfgraph = Graph()
@@ -1635,19 +1947,278 @@ class TestSubmission(SparqlQueryTestCase.SparqlQueryTestCase):
         ore  = "http://www.openarchives.org/ore/terms/"
         oxds = "http://vocab.ox.ac.uk/dataset/schema#"
         stype = URIRef(oxds+"DataSet")
-        self.assertEqual(len(rdfgraph),10,'Graph length %i' %len(rdfgraph))
+        self.assertEqual(len(rdfgraph),13,'Graph length %i' %len(rdfgraph))
+        self.failUnless((subj,RDF.type,stype) in rdfgraph, 'Testing submission type: '+subj+", "+stype)
+        self.failUnless((subj,URIRef(dcterms+"created"),None) in rdfgraph, 'dcterms:created')
+        self.failUnless((subj,URIRef(ore+"aggregates"),URIRef(base+"testdir.zip")) in rdfgraph)
+        self.failUnless((subj,URIRef(ore+"aggregates"),URIRef(base+"testdir2.zip")) in rdfgraph)
+        self.failUnless((URIRef(base+"testdir.zip"),URIRef(dcterms+"hasVersion"),None) in rdfgraph, 'dcterms:hasVersion')
+        self.failUnless((URIRef(base+"testdir2.zip"),URIRef(dcterms+"hasVersion"),None) in rdfgraph, 'dcterms:hasVersion')
+        self.failUnless((subj,URIRef(dcterms+"identifier"),None) in rdfgraph, 'dcterms:identifier')
+        self.failUnless((subj,URIRef(dcterms+"mediator"),None) in rdfgraph, 'dcterms:mediator')
+        self.failUnless((subj,URIRef(dcterms+"publisher"),None) in rdfgraph, 'dcterms:publisher')
+        self.failUnless((subj,URIRef(oxds+"isEmbargoed"),None) in rdfgraph, 'oxds:isEmbargoed')
+        self.failUnless((subj,URIRef(oxds+"embargoedUntil"),None) in rdfgraph, 'oxds:embargoedUntil')
+        self.failUnless((subj,URIRef(oxds+"currentVersion"),"2") in rdfgraph, 'oxds:currentVersion')
+        self.failUnless((subj,URIRef(dcterms+"modified"),None) in rdfgraph, 'dcterms:modified')
+        # Access dataset TestSubmission-testdir, check response
+        (resp, rdfdata) = self.doHTTP_GET(
+            resource="datasets/TestSubmission-testdir",  
+            expect_status=200, expect_reason="OK", expect_type="application/rdf+xml")
+        rdfgraph = Graph()
+        rdfstream = StringIO(rdfdata)
+        rdfgraph.parse(rdfstream)
+        subj  = URIRef(self.getRequestUri("datasets/TestSubmission-testdir"))
+        stype1 = URIRef("http://vocab.ox.ac.uk/dataset/schema#DataSet")
+        stype = URIRef("http://vocab.ox.ac.uk/dataset/schema#Grouping")
+        base = self.getRequestUri("datasets/TestSubmission-testdir/")
+        owl = "http://www.w3.org/2002/07/owl#"
+        self.assertEqual(len(rdfgraph),20,'Graph length %i' %len(rdfgraph))
+        self.failUnless((subj,RDF.type,stype) in rdfgraph, 'Testing submission type: '+subj+", "+stype)
+        self.failUnless((subj,URIRef(dcterms+"identifier"),None) in rdfgraph, 'dcterms:identifier')
+        self.failUnless((subj,URIRef(dcterms+"mediator"),None) in rdfgraph, 'dcterms:mediator')
+        self.failUnless((subj,URIRef(dcterms+"publisher"),None) in rdfgraph, 'dcterms:publisher')
+        self.failUnless((subj,URIRef(oxds+"isEmbargoed"),None) in rdfgraph, 'oxds:isEmbargoed')
+        self.failUnless((subj,URIRef(oxds+"embargoedUntil"),None) in rdfgraph, 'oxds:embargoedUntil')
+        self.failUnless((subj,URIRef(dcterms+"created"),None) in rdfgraph, 'dcterms:created')
+        self.failUnless((subj,URIRef(dcterms+"title"),"Test dataset with merged metadata") in rdfgraph, 'dcterms:title')
+        self.failUnless((subj,URIRef(dcterms+"modified"),None) in rdfgraph, 'dcterms:modified')
+        self.failUnless((subj,URIRef(dcterms+"isVersionOf"),None) in rdfgraph, 'dcterms:isVersionOf')
+        self.failUnless((subj,URIRef(owl+"sameAs"),URIRef("http://example.org/testdir2/")) in rdfgraph, 'owl:sameAs')
+        self.failUnless((subj,URIRef(ore+"aggregates"),URIRef(base+"directory1")) in rdfgraph)
+        self.failUnless((subj,URIRef(ore+"aggregates"),URIRef(base+"directory1/file1.a")) in rdfgraph)
+        self.failUnless((subj,URIRef(ore+"aggregates"),URIRef(base+"directory1/file1.b")) in rdfgraph)
+        self.failUnless((subj,URIRef(ore+"aggregates"),URIRef(base+"directory1/file1.c")) in rdfgraph)
+        self.failUnless((subj,URIRef(ore+"aggregates"),URIRef(base+"directory2")) in rdfgraph)
+        self.failUnless((subj,URIRef(ore+"aggregates"),URIRef(base+"directory2/file2.a")) in rdfgraph)
+        self.failUnless((subj,URIRef(ore+"aggregates"),URIRef(base+"directory2/file2.b")) in rdfgraph)
+        self.failUnless((subj,URIRef(ore+"aggregates"),URIRef(base+"test-csv.csv")) in rdfgraph)
+        self.failUnless((subj,URIRef(oxds+"currentVersion"),"2") in rdfgraph, 'oxds:currentVersion')
+        #Access state information of TestSubmission-testdir
+        (resp, data) = self.doHTTP_GET(
+            resource="states/TestSubmission-testdir", 
+            expect_status=200, expect_reason="OK", expect_type="application/json")
+        state = data['state']
+        parts = data['parts']
+        self.assertEqual(len(state.keys()), 11, "States")
+        self.assertEqual(state['item_id'], "TestSubmission-testdir", "Submission item identifier")
+        self.assertEqual(len(state['versions']), 3, "Three versions")
+        self.assertEqual(state['versions'][0], '0', "Version 0")
+        self.assertEqual(state['versions'][1], '1', "Version 1")
+        self.assertEqual(state['versions'][2], '2', "Version 2")
+        self.assertEqual(state['currentversion'], '2', "Current version == 2")
+        self.assertEqual(state['rdffileformat'], 'xml', "RDF file type")
+        self.assertEqual(state['rdffilename'], 'manifest.rdf', "RDF file name")
+        self.assertEqual(len(state['files']['0']), 1, "List should contain just manifest.rdf")
+        self.assertEqual(len(state['files']['1']), 3, "List should contain manifest.rdf, directory and test-csv.csv")
+        self.assertEqual(len(state['files']['2']), 4, "List should contain manifest.rdf, directory1, directory2 and test-csv.csv")
+        self.assertEqual(len(state['metadata_files']['0']), 0, "metadata_files of version 0")
+        self.assertEqual(len(state['metadata_files']['1']), 0, "metadata_files of version 1")
+        self.assertEqual(len(state['metadata_files']['2']), 0, "metadata_files of version 2")
+        self.assertEqual(state['subdir']['0'], [],   "Subdirectory count for version 0")
+        self.assertEqual(state['subdir']['1'], ['directory'], "Subdirectory for version 1")
+        self.assertEqual(len(state['subdir']['2']), 2, "Subdirectory for version 2 should be directory1 and directory2")
+        self.assertEqual(state['metadata']['createdby'], RDFDatabankConfig.endpointuser, "Created by")
+        self.assertEqual(state['metadata']['embargoed'], True, "Embargoed?")
+        self.assertEqual(len(parts.keys()), 6, "Parts")
+        self.assertEqual(len(parts['4=TestSubmission-testdir'].keys()), 13, "File stats for 4=TestSubmission-testdir")
+        self.assertEqual(len(parts['manifest.rdf'].keys()), 13, "File stats for manifest.rdf")
+        self.assertEqual(len(parts['test-csv.csv'].keys()), 13, "File stats for test-csv.csv")
+        self.assertEqual(len(parts['directory1'].keys()), 0, "File stats for directory1")
+        self.assertEqual(len(parts['directory2'].keys()), 0, "File stats for directory2")
+        # Access dataset TestSubmission-testdir version 1
+        (resp, rdfdata) = self.doHTTP_GET(
+            resource="datasets/TestSubmission-testdir/version1",  
+            expect_status=200, expect_reason="OK", expect_type="application/rdf+xml")
+        rdfgraph = Graph()
+        rdfstream = StringIO(rdfdata)
+        rdfgraph.parse(rdfstream)
+        self.assertEqual(len(rdfgraph),15,'Graph length %i' %len(rdfgraph))
+        self.failUnless((subj,RDF.type,stype) in rdfgraph, 'Testing submission type: '+subj+", "+stype)
+        self.failUnless((subj,URIRef(dcterms+"identifier"),None) in rdfgraph, 'dcterms:identifier')
+        self.failUnless((subj,URIRef(dcterms+"mediator"),None) in rdfgraph, 'dcterms:mediator')
+        self.failUnless((subj,URIRef(dcterms+"publisher"),None) in rdfgraph, 'dcterms:publisher')
+        self.failUnless((subj,URIRef(oxds+"isEmbargoed"),None) in rdfgraph, 'oxds:isEmbargoed')
+        self.failUnless((subj,URIRef(oxds+"embargoedUntil"),None) in rdfgraph, 'oxds:embargoedUntil')
+        self.failUnless((subj,URIRef(dcterms+"created"),None) in rdfgraph, 'dcterms:created')
+        self.failUnless((subj,URIRef(dcterms+"modified"),None) in rdfgraph, 'dcterms:modified')
+        self.failUnless((subj,URIRef(dcterms+"isVersionOf"),None) in rdfgraph, 'dcterms:isVersionOf')
+        self.failUnless((subj,URIRef(ore+"aggregates"),URIRef(base+"directory")) in rdfgraph)
+        self.failUnless((subj,URIRef(ore+"aggregates"),URIRef(base+"directory/file1.a")) in rdfgraph)
+        self.failUnless((subj,URIRef(ore+"aggregates"),URIRef(base+"directory/file1.b")) in rdfgraph)
+        self.failUnless((subj,URIRef(ore+"aggregates"),URIRef(base+"directory/file2.a")) in rdfgraph)
+        self.failUnless((subj,URIRef(ore+"aggregates"),URIRef(base+"test-csv.csv")) in rdfgraph)
+        self.failUnless((subj,URIRef(oxds+"currentVersion"),"1") in rdfgraph, 'oxds:currentVersion')
+        #Access state information of TestSubmission-testdir version 1
+        (resp, data) = self.doHTTP_GET(
+            resource="states/TestSubmission-testdir/version1", 
+            expect_status=200, expect_reason="OK", expect_type="application/json")
+        state = data['state']
+        parts = data['parts']
+        self.assertEqual(len(state.keys()), 11, "States")
+        self.assertEqual(len(parts.keys()), 5, "Parts")
+        self.assertEqual(len(parts['4=TestSubmission-testdir'].keys()), 13, "File stats for 4=TestSubmission-testdir")
+        self.assertEqual(len(parts['manifest.rdf'].keys()), 13, "File stats for manifest.rdf")
+        self.assertEqual(len(parts['test-csv.csv'].keys()), 13, "File stats for test-csv.csv")
+        self.assertEqual(len(parts['directory'].keys()), 0, "File stats for directory")
+        # Access and check list of contents in TestSubmission-testdir version 0
+        (resp, rdfdata) = self.doHTTP_GET(
+            resource="datasets/TestSubmission-testdir/version0",  
+            expect_status=200, expect_reason="OK", expect_type="application/rdf+xml")
+        rdfgraph = Graph()
+        rdfstream = StringIO(rdfdata)
+        rdfgraph.parse(rdfstream)
+        self.assertEqual(len(rdfgraph),8,'Graph length %i' %len(rdfgraph))
+        self.failUnless((subj,RDF.type,stype1) in rdfgraph, 'Testing submission type: '+subj+", "+stype1)
+        self.failUnless((subj,URIRef(dcterms+"identifier"),None) in rdfgraph, 'dcterms:identifier')
+        self.failUnless((subj,URIRef(dcterms+"mediator"),None) in rdfgraph, 'dcterms:mediator')
+        self.failUnless((subj,URIRef(dcterms+"publisher"),None) in rdfgraph, 'dcterms:publisher')
+        self.failUnless((subj,URIRef(oxds+"isEmbargoed"),None) in rdfgraph, 'oxds:isEmbargoed')
+        self.failUnless((subj,URIRef(oxds+"embargoedUntil"),None) in rdfgraph, 'oxds:embargoedUntil')
+        self.failUnless((subj,URIRef(dcterms+"created"),None) in rdfgraph, 'dcterms:created')
+        self.failUnless((subj,URIRef(oxds+"currentVersion"),"0") in rdfgraph, 'oxds:currentVersion')
+        #Access state information of TestSubmission-testdir version 0
+        (resp, data) = self.doHTTP_GET(
+            resource="states/TestSubmission-testdir/version0", 
+            expect_status=200, expect_reason="OK", expect_type="application/json")
+        state = data['state']
+        parts = data['parts']
+        self.assertEqual(len(state.keys()), 11, "States")
+        self.assertEqual(len(parts.keys()), 3, "Parts")
+        self.assertEqual(len(parts['4=TestSubmission-testdir'].keys()), 13, "File stats for 4=TestSubmission-testdir")
+        self.assertEqual(len(parts['manifest.rdf'].keys()), 13, "File stats for manifest.rdf")
+        # Access dataset TestSubmission-testdir version 2
+        (resp, rdfdata) = self.doHTTP_GET(
+            resource="datasets/TestSubmission-testdir/version2",  
+            expect_status=200, expect_reason="OK", expect_type="application/rdf+xml")
+        rdfgraph = Graph()
+        rdfstream = StringIO(rdfdata)
+        rdfgraph.parse(rdfstream)
+        self.assertEqual(len(rdfgraph),20,'Graph length %i' %len(rdfgraph))
+        self.failUnless((subj,RDF.type,stype) in rdfgraph, 'Testing submission type: '+subj+", "+stype)
+        self.failUnless((subj,URIRef(dcterms+"identifier"),None) in rdfgraph, 'dcterms:identifier')
+        self.failUnless((subj,URIRef(dcterms+"mediator"),None) in rdfgraph, 'dcterms:mediator')
+        self.failUnless((subj,URIRef(dcterms+"publisher"),None) in rdfgraph, 'dcterms:publisher')
+        self.failUnless((subj,URIRef(oxds+"isEmbargoed"),None) in rdfgraph, 'oxds:isEmbargoed')
+        self.failUnless((subj,URIRef(oxds+"embargoedUntil"),None) in rdfgraph, 'oxds:embargoedUntil')
+        self.failUnless((subj,URIRef(dcterms+"created"),None) in rdfgraph, 'dcterms:created')
+        self.failUnless((subj,URIRef(dcterms+"title"),"Test dataset with merged metadata") in rdfgraph, 'dcterms:title')
+        self.failUnless((subj,URIRef(dcterms+"modified"),None) in rdfgraph, 'dcterms:modified')
+        self.failUnless((subj,URIRef(dcterms+"isVersionOf"),None) in rdfgraph, 'dcterms:isVersionOf')
+        self.failUnless((subj,URIRef(owl+"sameAs"),URIRef("http://example.org/testdir2/")) in rdfgraph, 'owl:sameAs')
+        self.failUnless((subj,URIRef(ore+"aggregates"),URIRef(base+"directory1")) in rdfgraph)
+        self.failUnless((subj,URIRef(ore+"aggregates"),URIRef(base+"directory1/file1.a")) in rdfgraph)
+        self.failUnless((subj,URIRef(ore+"aggregates"),URIRef(base+"directory1/file1.b")) in rdfgraph)
+        self.failUnless((subj,URIRef(ore+"aggregates"),URIRef(base+"directory1/file1.c")) in rdfgraph)
+        self.failUnless((subj,URIRef(ore+"aggregates"),URIRef(base+"directory2")) in rdfgraph)
+        self.failUnless((subj,URIRef(ore+"aggregates"),URIRef(base+"directory2/file2.a")) in rdfgraph)
+        self.failUnless((subj,URIRef(ore+"aggregates"),URIRef(base+"directory2/file2.b")) in rdfgraph)
+        self.failUnless((subj,URIRef(ore+"aggregates"),URIRef(base+"test-csv.csv")) in rdfgraph)
+        self.failUnless((subj,URIRef(oxds+"currentVersion"),"2") in rdfgraph, 'oxds:currentVersion')
+        #Access state information of TestSubmission-testdir version 2
+        (resp, data) = self.doHTTP_GET(
+            resource="states/TestSubmission-testdir/version2", 
+            expect_status=200, expect_reason="OK", expect_type="application/json")
+        state = data['state']
+        parts = data['parts']
+        self.assertEqual(len(state.keys()), 11, "States")
+        self.assertEqual(state['item_id'], "TestSubmission-testdir", "Submission item identifier")
+        self.assertEqual(len(state['versions']), 3, "Three versions")
+        self.assertEqual(state['versions'][0], '0', "Version 0")
+        self.assertEqual(state['versions'][1], '1', "Version 1")
+        self.assertEqual(state['versions'][2], '2', "Version 2")
+        self.assertEqual(state['currentversion'], '2', "Current version == 2")
+        self.assertEqual(state['rdffileformat'], 'xml', "RDF file type")
+        self.assertEqual(state['rdffilename'], 'manifest.rdf', "RDF file name")
+        self.assertEqual(len(state['files']['0']), 1, "List should contain just manifest.rdf")
+        self.assertEqual(len(state['files']['1']), 3, "List should contain manifest.rdf, directory and test-csv.csv")
+        self.assertEqual(len(state['files']['2']), 4, "List should contain manifest.rdf, directory1, directory2 and test-csv.csv")
+        self.assertEqual(len(state['metadata_files']['0']), 0, "metadata_files of version 0")
+        self.assertEqual(len(state['metadata_files']['1']), 0, "metadata_files of version 1")
+        self.assertEqual(len(state['metadata_files']['2']), 0, "metadata_files of version 2")
+        self.assertEqual(state['subdir']['0'], [],   "Subdirectory count for version 0")
+        self.assertEqual(state['subdir']['1'], ['directory'], "Subdirectory for version 1")
+        self.assertEqual(len(state['subdir']['2']), 2, "Subdirectory for version 2 should be directory1 and directory2")
+        self.assertEqual(state['metadata']['createdby'], RDFDatabankConfig.endpointuser, "Created by")
+        self.assertEqual(state['metadata']['embargoed'], True, "Embargoed?")
+        self.assertEqual(len(parts.keys()), 6, "Parts")
+        self.assertEqual(len(parts['4=TestSubmission-testdir'].keys()), 13, "File stats for 4=TestSubmission-testdir")
+        self.assertEqual(len(parts['manifest.rdf'].keys()), 13, "File stats for manifest.rdf")
+        self.assertEqual(len(parts['test-csv.csv'].keys()), 13, "File stats for test-csv.csv")
+        self.assertEqual(len(parts['directory1'].keys()), 0, "File stats for directory1")
+        self.assertEqual(len(parts['directory2'].keys()), 0, "File stats for directory2")
+        # Delete the dataset TestSubmission-testdir
+        resp = self.doHTTP_DELETE(
+            resource="datasets/TestSubmission-testdir", 
+            expect_status="*", expect_reason="*")
+        # Delete the dataset TestSubmission
+        resp = self.doHTTP_DELETE(
+            resource="datasets/TestSubmission", 
+            expect_status="*", expect_reason="*")
+
+    def testMetadataMerging(self):
+        """POST zipfile to /silo_name/items/dataset_name. Unpack zip file to a dataset.
+        manifest.rdf located in unpacked zipfile is munged with existing manifest of the dataset."""
+        # Create a new dataset, check response
+        self.createTestSubmissionDataset()
+        # Submit ZIP file data/testrdf.zip, check response
+        fields = []
+        zipdata = open("data/testrdf.zip").read()
+        files = \
+            [ ("file", "testrdf.zip", zipdata, "application/zip") 
+            ]
+        (reqtype, reqdata) = SparqlQueryTestCase.encode_multipart_formdata(fields, files)
+        (resp,respdata) = self.doHTTP_POST(
+            reqdata, reqtype, 
+            resource="datasets/TestSubmission/", 
+            expect_status=201, expect_reason="Created")
+        LHobtained = resp.getheader('Content-Location', None)
+        LHexpected = "%sdatasets/TestSubmission/testrdf.zip"%self._endpointpath
+        self.assertEquals(LHobtained, LHexpected, 'Content-Location not correct')
+        # Unpack ZIP file into a new dataset, check response
+        fields = \
+            [ ("filename", "testrdf.zip")
+            ]
+        files = []
+        (reqtype, reqdata) = SparqlQueryTestCase.encode_multipart_formdata(fields, files)
+        (resp,respdata) = self.doHTTP_POST(
+            reqdata, reqtype, 
+            resource="items/TestSubmission", 
+            expect_status=201, expect_reason="Created")
+        LHobtained = resp.getheader('Content-Location', None)
+        LHexpected = "%sdatasets/TestSubmission-testrdf"%self._endpointpath
+        self.assertEquals(LHobtained, LHexpected, 'Content-Location not correct')
+        # Access parent dataset, check response
+        (resp, respdata) = self.doHTTP_GET(
+            resource="datasets/TestSubmission", 
+            expect_status=200, expect_reason="OK", expect_type="application/json")
+        # Access and check list of contents in parent dataset - TestSubmission
+        (resp, rdfdata) = self.doHTTP_GET(
+            resource="datasets/TestSubmission", 
+            expect_status=200, expect_reason="OK", expect_type="application/rdf+xml")
+        rdfgraph = Graph()
+        rdfstream = StringIO(rdfdata)
+        rdfgraph.parse(rdfstream) 
+        subj  = URIRef(self.getRequestUri("datasets/TestSubmission"))
+        base = self.getRequestUri("datasets/TestSubmission/")
+        dcterms = "http://purl.org/dc/terms/"
+        ore  = "http://www.openarchives.org/ore/terms/"
+        oxds = "http://vocab.ox.ac.uk/dataset/schema#"
+        stype = URIRef(oxds+"DataSet")
+        self.assertEqual(len(rdfgraph),11,'Graph length %i' %len(rdfgraph))
         self.failUnless((subj,RDF.type,stype) in rdfgraph, 'Testing submission type: '+subj+", "+stype)
         self.failUnless((subj,URIRef(dcterms+"created"),None) in rdfgraph, 'dcterms:created')
         self.failUnless((subj,URIRef(ore+"aggregates"),URIRef(base+"testrdf.zip")) in rdfgraph)
         self.failUnless((URIRef(base+"testrdf.zip"),URIRef(dcterms+"hasVersion"),None) in rdfgraph, 'dcterms:hasVersion')
         self.failUnless((subj,URIRef(dcterms+"identifier"),None) in rdfgraph, 'dcterms:identifier')
-        self.failUnless((subj,URIRef(dcterms+"creator"),None) in rdfgraph, 'dcterms:creator')
+        self.failUnless((subj,URIRef(dcterms+"mediator"),None) in rdfgraph, 'dcterms:mediator')
+        self.failUnless((subj,URIRef(dcterms+"publisher"),None) in rdfgraph, 'dcterms:publisher')
         self.failUnless((subj,URIRef(oxds+"isEmbargoed"),None) in rdfgraph, 'oxds:isEmbargoed')
         self.failUnless((subj,URIRef(oxds+"embargoedUntil"),None) in rdfgraph, 'oxds:embargoedUntil')
-        self.failUnless((subj,URIRef(oxds+"currentVersion"),'2') in rdfgraph, 'oxds:currentVersion')
+        self.failUnless((subj,URIRef(oxds+"currentVersion"),'1') in rdfgraph, 'oxds:currentVersion')
         self.failUnless((subj,URIRef(dcterms+"modified"),None) in rdfgraph, 'dcterms:modified')
         # Access and check list of contents in child dataset - TestSubmission-testrdf
-        rdfdata = self.doHTTP_GET(
+        (resp, rdfdata) = self.doHTTP_GET(
             resource="datasets/TestSubmission-testrdf", 
             expect_status=200, expect_reason="OK", expect_type="application/rdf+xml")
         rdfgraph = Graph()
@@ -1657,34 +2228,32 @@ class TestSubmission(SparqlQueryTestCase.SparqlQueryTestCase):
         base = self.getRequestUri("datasets/TestSubmission-testrdf/")
         owl = "http://www.w3.org/2002/07/owl#"
         stype = URIRef(oxds+"Grouping")
-        self.assertEqual(len(rdfgraph),16,'Graph length %i' %len(rdfgraph))
+        self.assertEqual(len(rdfgraph),17,'Graph length %i' %len(rdfgraph))
         self.failUnless((subj,RDF.type,stype) in rdfgraph, 'Testing submission type: '+subj+", "+stype)
         self.failUnless((subj,URIRef(owl+"sameAs"),URIRef("http://example.org/testrdf/")) in rdfgraph, 'owl:sameAs')
         self.failUnless((subj,URIRef(dcterms+"modified"),None) in rdfgraph, 'dcterms:modified')
         self.failUnless((subj,URIRef(dcterms+"isVersionOf"),None) in rdfgraph, 'dcterms:isVersionOf')
-        #self.failUnless((URIRef("http://example.org/testrdf/"),URIRef(dcterms+"title"),"Test dataset with merged metadata") in rdfgraph, 'dcterms:title')
-        #self.failUnless((URIRef("http://example.org/testrdf/"),RDF.type,stype) in rdfgraph, 'Testing submission type: '+subj+", "+stype)
         self.failUnless((subj,URIRef(dcterms+"title"),"Test dataset with merged metadata") in rdfgraph, 'dcterms:title')
         self.failUnless((subj,URIRef(ore+"aggregates"),URIRef(base+"directory")) in rdfgraph)
         self.failUnless((subj,URIRef(ore+"aggregates"),URIRef(base+"directory/file1.a")) in rdfgraph)
         self.failUnless((subj,URIRef(ore+"aggregates"),URIRef(base+"directory/file1.b")) in rdfgraph)
         self.failUnless((subj,URIRef(ore+"aggregates"),URIRef(base+"directory/file2.a")) in rdfgraph)
         self.failUnless((subj,URIRef(ore+"aggregates"),URIRef(base+"test-csv.csv")) in rdfgraph)
-        #self.failUnless((subj,URIRef(ore+"aggregates"),URIRef(base+"testdir/manifest.rdf")) in rdfgraph)
         self.failUnless((subj,URIRef(dcterms+"identifier"),None) in rdfgraph, 'dcterms:identifier')
-        self.failUnless((subj,URIRef(dcterms+"creator"),None) in rdfgraph, 'dcterms:creator')
+        self.failUnless((subj,URIRef(dcterms+"mediator"),None) in rdfgraph, 'dcterms:mediator')
+        self.failUnless((subj,URIRef(dcterms+"publisher"),None) in rdfgraph, 'dcterms:publisher')
         self.failUnless((subj,URIRef(oxds+"isEmbargoed"),None) in rdfgraph, 'oxds:isEmbargoed')
         self.failUnless((subj,URIRef(oxds+"embargoedUntil"),None) in rdfgraph, 'oxds:embargoedUntil')
         self.failUnless((subj,URIRef(dcterms+"created"),None) in rdfgraph, 'dcterms:created')
-        self.failUnless((subj,URIRef(oxds+"currentVersion"),'2') in rdfgraph, 'oxds:currentVersion')
+        self.failUnless((subj,URIRef(oxds+"currentVersion"),'1') in rdfgraph, 'oxds:currentVersion')
         # Delete the dataset TestSubmission-testrdf
-        self.doHTTP_DELETE(
+        resp = self.doHTTP_DELETE(
             resource="datasets/TestSubmission-testrdf", 
             expect_status="*", expect_reason="*")
 
     def testMetadataInDirectoryMerging(self):
-        """Unpack zip file to a dataset - POST zip filename to /silo_name/items/dataset_name
-        manifest.rdf from within a folder in unpacked zipfile is munged with datsets existing manifest"""
+        """POST zipfile to /silo_name/items/dataset_name. Unpack zip file to a dataset.
+        manifest.rdf located within a folder in unpacked zipfile is munged with datsets existing manifest"""
 
         # Create a new dataset, check response
         self.createTestSubmissionDataset()
@@ -1695,28 +2264,32 @@ class TestSubmission(SparqlQueryTestCase.SparqlQueryTestCase):
             [ ("file", "testrdf2.zip", zipdata, "application/zip") 
             ]
         (reqtype, reqdata) = SparqlQueryTestCase.encode_multipart_formdata(fields, files)
-        self.doHTTP_POST(
+        (resp,respdata) = self.doHTTP_POST(
             reqdata, reqtype, 
             resource="datasets/TestSubmission/", 
             expect_status=201, expect_reason="Created")
-        #TODO: TEST FOR LOCATION HEADER
+        LHobtained = resp.getheader('Content-Location', None)
+        LHexpected = "%sdatasets/TestSubmission/testrdf2.zip"%self._endpointpath
+        self.assertEquals(LHobtained, LHexpected, 'Content-Location not correct')
         # Unpack ZIP file into a new dataset, check response
         fields = \
             [ ("filename", "testrdf2.zip")
             ]
         files = []
         (reqtype, reqdata) = SparqlQueryTestCase.encode_multipart_formdata(fields, files)
-        self.doHTTP_POST(
+        (resp,respdata) = self.doHTTP_POST(
             reqdata, reqtype, 
             resource="items/TestSubmission", 
             expect_status=201, expect_reason="Created")
-        #TODO: TEST FOR LOCATION HEADER
+        LHobtained = resp.getheader('Content-Location', None)
+        LHexpected = "%sdatasets/TestSubmission-testrdf2"%self._endpointpath
+        self.assertEquals(LHobtained, LHexpected, 'Content-Location not correct')
         # Access parent dataset, check response
-        data = self.doHTTP_GET(
+        (resp, respdata) = self.doHTTP_GET(
             resource="datasets/TestSubmission", 
             expect_status=200, expect_reason="OK", expect_type="application/json")
         # Access and check list of contents in parent dataset - TestSubmission
-        rdfdata = self.doHTTP_GET(
+        (resp, rdfdata) = self.doHTTP_GET(
             resource="datasets/TestSubmission", 
             expect_status=200, expect_reason="OK", expect_type="application/rdf+xml")
         rdfgraph = Graph()
@@ -1728,19 +2301,20 @@ class TestSubmission(SparqlQueryTestCase.SparqlQueryTestCase):
         ore  = "http://www.openarchives.org/ore/terms/"
         oxds = "http://vocab.ox.ac.uk/dataset/schema#"
         stype = URIRef(oxds+"DataSet")
-        self.assertEqual(len(rdfgraph),10,'Graph length %i' %len(rdfgraph))
+        self.assertEqual(len(rdfgraph),11,'Graph length %i' %len(rdfgraph))
         self.failUnless((subj,RDF.type,stype) in rdfgraph, 'Testing submission type: '+subj+", "+stype)
         self.failUnless((subj,URIRef(dcterms+"created"),None) in rdfgraph, 'dcterms:created')
         self.failUnless((subj,URIRef(ore+"aggregates"),URIRef(base+"testrdf2.zip")) in rdfgraph)
         self.failUnless((URIRef(base+"testrdf2.zip"),URIRef(dcterms+"hasVersion"),None) in rdfgraph, 'dcterms:hasVersion')
         self.failUnless((subj,URIRef(dcterms+"identifier"),None) in rdfgraph, 'dcterms:identifier')
-        self.failUnless((subj,URIRef(dcterms+"creator"),None) in rdfgraph, 'dcterms:creator')
+        self.failUnless((subj,URIRef(dcterms+"mediator"),None) in rdfgraph, 'dcterms:mediator')
+        self.failUnless((subj,URIRef(dcterms+"publisher"),None) in rdfgraph, 'dcterms:publisher')
         self.failUnless((subj,URIRef(oxds+"isEmbargoed"),None) in rdfgraph, 'oxds:isEmbargoed')
         self.failUnless((subj,URIRef(oxds+"embargoedUntil"),None) in rdfgraph, 'oxds:embargoedUntil')
-        self.failUnless((subj,URIRef(oxds+"currentVersion"),'2') in rdfgraph, 'oxds:currentVersion')
+        self.failUnless((subj,URIRef(oxds+"currentVersion"),'1') in rdfgraph, 'oxds:currentVersion')
         self.failUnless((subj,URIRef(dcterms+"modified"),None) in rdfgraph, 'dcterms:modified')
         # Access and check list of contents in child dataset - TestSubmission-testrdf
-        rdfdata = self.doHTTP_GET(
+        (resp, rdfdata) = self.doHTTP_GET(
             resource="datasets/TestSubmission-testrdf2", 
             expect_status=200, expect_reason="OK", expect_type="application/rdf+xml")
         rdfgraph = Graph()
@@ -1750,7 +2324,7 @@ class TestSubmission(SparqlQueryTestCase.SparqlQueryTestCase):
         base = self.getRequestUri("datasets/TestSubmission-testrdf2/")
         owl = "http://www.w3.org/2002/07/owl#"
         stype = URIRef(oxds+"Grouping")
-        self.assertEqual(len(rdfgraph),17,'Graph length %i' %len(rdfgraph))
+        self.assertEqual(len(rdfgraph),18,'Graph length %i' %len(rdfgraph))
         self.failUnless((subj,RDF.type,stype) in rdfgraph, 'Testing submission type: '+subj+", "+stype)
         self.failUnless((subj,URIRef(owl+"sameAs"),URIRef("http://example.org/testrdf/")) in rdfgraph, 'owl:sameAs')
         self.failUnless((subj,URIRef(dcterms+"modified"),None) in rdfgraph, 'dcterms:modified')
@@ -1763,14 +2337,238 @@ class TestSubmission(SparqlQueryTestCase.SparqlQueryTestCase):
         self.failUnless((subj,URIRef(ore+"aggregates"),URIRef(base+"testrdf2/directory/file2.a")) in rdfgraph)
         self.failUnless((subj,URIRef(ore+"aggregates"),URIRef(base+"testrdf2/test-csv.csv")) in rdfgraph)
         self.failUnless((subj,URIRef(dcterms+"identifier"),None) in rdfgraph, 'dcterms:identifier')
-        self.failUnless((subj,URIRef(dcterms+"creator"),None) in rdfgraph, 'dcterms:creator')
+        self.failUnless((subj,URIRef(dcterms+"mediator"),None) in rdfgraph, 'dcterms:mediator')
+        self.failUnless((subj,URIRef(dcterms+"publisher"),None) in rdfgraph, 'dcterms:publisher')
         self.failUnless((subj,URIRef(oxds+"isEmbargoed"),None) in rdfgraph, 'oxds:isEmbargoed')
         self.failUnless((subj,URIRef(oxds+"embargoedUntil"),None) in rdfgraph, 'oxds:embargoedUntil')
         self.failUnless((subj,URIRef(dcterms+"created"),None) in rdfgraph, 'dcterms:created')
-        self.failUnless((subj,URIRef(oxds+"currentVersion"),'2') in rdfgraph, 'oxds:currentVersion')
+        self.failUnless((subj,URIRef(oxds+"currentVersion"),'1') in rdfgraph, 'oxds:currentVersion')
         # Delete the dataset TestSubmission-testrdf2
-        self.doHTTP_DELETE(
+        resp = self.doHTTP_DELETE(
             resource="datasets/TestSubmission-testrdf2", 
+            expect_status="*", expect_reason="*")
+
+    def testReferencedMetadataMerging(self):
+        """POST zipfile to /silo_name/items/dataset_name. Unpack zip file to a dataset.
+        manifest.rdf located within the unpacked zipfile is munged with datsets existing manifest.
+        Also, manifest.rdf in the unpacked zipfile, references other metadata files, using the property rdfs:seeAlso.
+        The metadata from these files are munged."""
+
+        # Create a new dataset, check response
+        self.createTestSubmissionDataset()
+        # Submit ZIP file data/testrdf3.zip, check response
+        fields = []
+        zipdata = open("data/testrdf3.zip").read()
+        files = \
+            [ ("file", "testrdf3.zip", zipdata, "application/zip") 
+            ]
+        (reqtype, reqdata) = SparqlQueryTestCase.encode_multipart_formdata(fields, files)
+        (resp,respdata) = self.doHTTP_POST(
+            reqdata, reqtype, 
+            resource="datasets/TestSubmission/", 
+            expect_status=201, expect_reason="Created")
+        LHobtained = resp.getheader('Content-Location', None)
+        LHexpected = "%sdatasets/TestSubmission/testrdf3.zip"%self._endpointpath
+        self.assertEquals(LHobtained, LHexpected, 'Content-Location not correct')
+        # Unpack ZIP file into a new dataset, check response
+        fields = \
+            [ ("filename", "testrdf3.zip")
+            ]
+        files = []
+        (reqtype, reqdata) = SparqlQueryTestCase.encode_multipart_formdata(fields, files)
+        (resp,respdata) = self.doHTTP_POST(
+            reqdata, reqtype, 
+            resource="items/TestSubmission", 
+            expect_status=201, expect_reason="Created")
+        LHobtained = resp.getheader('Content-Location', None)
+        LHexpected = "%sdatasets/TestSubmission-testrdf3"%self._endpointpath
+        self.assertEquals(LHobtained, LHexpected, 'Content-Location not correct')
+        # Access parent dataset, check response
+        (resp, respdata) = self.doHTTP_GET(
+            resource="datasets/TestSubmission", 
+            expect_status=200, expect_reason="OK", expect_type="application/json")
+        # Access and check list of contents in parent dataset - TestSubmission
+        (resp, rdfdata) = self.doHTTP_GET(
+            resource="datasets/TestSubmission", 
+            expect_status=200, expect_reason="OK", expect_type="application/rdf+xml")
+        rdfgraph = Graph()
+        rdfstream = StringIO(rdfdata)
+        rdfgraph.parse(rdfstream) 
+        subj  = URIRef(self.getRequestUri("datasets/TestSubmission"))
+        base = self.getRequestUri("datasets/TestSubmission/")
+        dcterms = "http://purl.org/dc/terms/"
+        ore  = "http://www.openarchives.org/ore/terms/"
+        oxds = "http://vocab.ox.ac.uk/dataset/schema#"
+        stype = URIRef(oxds+"DataSet")
+        self.assertEqual(len(rdfgraph),11,'Graph length %i' %len(rdfgraph))
+        self.failUnless((subj,RDF.type,stype) in rdfgraph, 'Testing submission type: '+subj+", "+stype)
+        self.failUnless((subj,URIRef(dcterms+"created"),None) in rdfgraph, 'dcterms:created')
+        self.failUnless((subj,URIRef(ore+"aggregates"),URIRef(base+"testrdf3.zip")) in rdfgraph)
+        self.failUnless((URIRef(base+"testrdf3.zip"),URIRef(dcterms+"hasVersion"),None) in rdfgraph, 'dcterms:hasVersion')
+        self.failUnless((subj,URIRef(dcterms+"identifier"),None) in rdfgraph, 'dcterms:identifier')
+        self.failUnless((subj,URIRef(dcterms+"mediator"),None) in rdfgraph, 'dcterms:mediator')
+        self.failUnless((subj,URIRef(dcterms+"publisher"),None) in rdfgraph, 'dcterms:publisher')
+        self.failUnless((subj,URIRef(oxds+"isEmbargoed"),None) in rdfgraph, 'oxds:isEmbargoed')
+        self.failUnless((subj,URIRef(oxds+"embargoedUntil"),None) in rdfgraph, 'oxds:embargoedUntil')
+        self.failUnless((subj,URIRef(oxds+"currentVersion"),'1') in rdfgraph, 'oxds:currentVersion')
+        self.failUnless((subj,URIRef(dcterms+"modified"),None) in rdfgraph, 'dcterms:modified')
+        # Access and check list of contents in child dataset - TestSubmission-testrdf3
+        (resp, rdfdata) = self.doHTTP_GET(
+            resource="datasets/TestSubmission-testrdf3", 
+            expect_status=200, expect_reason="OK", expect_type="application/rdf+xml")
+        rdfgraph = Graph()
+        rdfstream = StringIO(rdfdata)
+        rdfgraph.parse(rdfstream) 
+        subj  = URIRef(self.getRequestUri("datasets/TestSubmission-testrdf3"))
+        base = self.getRequestUri("datasets/TestSubmission-testrdf3/")
+        dc = "http://purl.org/dc/elements/1.1/"
+        stype = URIRef(oxds+"Grouping")
+        self.assertEqual(len(rdfgraph),21,'Graph length %i' %len(rdfgraph))
+        self.failUnless((subj,RDF.type,stype) in rdfgraph, 'Testing submission type: '+subj+", "+stype)
+        self.failUnless((subj,URIRef(dcterms+"modified"),None) in rdfgraph, 'dcterms:modified')
+        self.failUnless((subj,URIRef(dcterms+"isVersionOf"),None) in rdfgraph, 'dcterms:isVersionOf')
+        self.failUnless((subj,URIRef(dcterms+"title"),"Test dataset 3 with updated and merged metadata") in rdfgraph, 'dcterms:title')
+        self.failUnless((subj,URIRef(dc+"description"),"file1.a is another file") in rdfgraph, 'dc:description')
+        self.failUnless((subj,URIRef(dc+"description"),"file1.b is a text file") in rdfgraph, 'dc:description')
+        self.failUnless((subj,URIRef(ore+"aggregates"),URIRef(base+"testrdf3")) in rdfgraph)
+        self.failUnless((subj,URIRef(ore+"aggregates"),URIRef(base+"testrdf3/directory")) in rdfgraph)
+        self.failUnless((subj,URIRef(ore+"aggregates"),URIRef(base+"testrdf3/directory/file1.a")) in rdfgraph)
+        self.failUnless((subj,URIRef(ore+"aggregates"),URIRef(base+"testrdf3/directory/file1.b")) in rdfgraph)
+        self.failUnless((subj,URIRef(ore+"aggregates"),URIRef(base+"testrdf3/directory/file2.a")) in rdfgraph)
+        self.failUnless((subj,URIRef(ore+"aggregates"),URIRef(base+"testrdf3/directory/1a.rdf")) in rdfgraph)
+        self.failUnless((subj,URIRef(ore+"aggregates"),URIRef(base+"testrdf3/directory/1b.rdf")) in rdfgraph)
+        self.failUnless((subj,URIRef(ore+"aggregates"),URIRef(base+"testrdf3/test-csv.csv")) in rdfgraph)
+        self.failUnless((subj,URIRef(dcterms+"identifier"),None) in rdfgraph, 'dcterms:identifier')
+        self.failUnless((subj,URIRef(dcterms+"mediator"),None) in rdfgraph, 'dcterms:mediator')
+        self.failUnless((subj,URIRef(dcterms+"publisher"),None) in rdfgraph, 'dcterms:publisher')
+        self.failUnless((subj,URIRef(oxds+"isEmbargoed"),None) in rdfgraph, 'oxds:isEmbargoed')
+        self.failUnless((subj,URIRef(oxds+"embargoedUntil"),None) in rdfgraph, 'oxds:embargoedUntil')
+        self.failUnless((subj,URIRef(dcterms+"created"),None) in rdfgraph, 'dcterms:created')
+        self.failUnless((subj,URIRef(oxds+"currentVersion"),'1') in rdfgraph, 'oxds:currentVersion')
+        # Delete the dataset TestSubmission-testrdf3
+        resp = self.doHTTP_DELETE(
+            resource="datasets/TestSubmission-testrdf3", 
+            expect_status="*", expect_reason="*")
+
+    def testReferencedMetadataMerging2(self):
+        """POST zipfile to /silo_name/items/dataset_name. Unpack zip file to a dataset.
+        manifest.rdf located within the unpacked zipfile is munged with datsets existing manifest.
+        Also, manifest.rdf in the unpacked zipfile, references other metadata files, using the property rdfs:seeAlso.
+        The metadata from these files are munged. One of the referenced files, references other files, which if they exists are also munged."""
+
+        # Create a new dataset, check response
+        self.createTestSubmissionDataset()
+        # Submit ZIP file data/testrdf4.zip, check response
+        fields = []
+        zipdata = open("data/testrdf4.zip").read()
+        files = \
+            [ ("file", "testrdf4.zip", zipdata, "application/zip") 
+            ]
+        (reqtype, reqdata) = SparqlQueryTestCase.encode_multipart_formdata(fields, files)
+        (resp,respdata) = self.doHTTP_POST(
+            reqdata, reqtype, 
+            resource="datasets/TestSubmission/", 
+            expect_status=201, expect_reason="Created")
+        LHobtained = resp.getheader('Content-Location', None)
+        LHexpected = "%sdatasets/TestSubmission/testrdf4.zip"%self._endpointpath
+        self.assertEquals(LHobtained, LHexpected, 'Content-Location not correct')
+        # Unpack ZIP file into a new dataset, check response
+        fields = \
+            [ ("filename", "testrdf4.zip")
+            ]
+        files = []
+        (reqtype, reqdata) = SparqlQueryTestCase.encode_multipart_formdata(fields, files)
+        (resp,respdata) = self.doHTTP_POST(
+            reqdata, reqtype, 
+            resource="items/TestSubmission", 
+            expect_status=201, expect_reason="Created")
+        LHobtained = resp.getheader('Content-Location', None)
+        LHexpected = "%sdatasets/TestSubmission-testrdf4"%self._endpointpath
+        self.assertEquals(LHobtained, LHexpected, 'Content-Location not correct')
+        # Access parent dataset, check response
+        (resp, respdata) = self.doHTTP_GET(
+            resource="datasets/TestSubmission", 
+            expect_status=200, expect_reason="OK", expect_type="application/json")
+        # Access and check list of contents in parent dataset - TestSubmission
+        (resp, rdfdata) = self.doHTTP_GET(
+            resource="datasets/TestSubmission", 
+            expect_status=200, expect_reason="OK", expect_type="application/rdf+xml")
+        rdfgraph = Graph()
+        rdfstream = StringIO(rdfdata)
+        rdfgraph.parse(rdfstream) 
+        subj  = URIRef(self.getRequestUri("datasets/TestSubmission"))
+        base = self.getRequestUri("datasets/TestSubmission/")
+        dcterms = "http://purl.org/dc/terms/"
+        ore  = "http://www.openarchives.org/ore/terms/"
+        oxds = "http://vocab.ox.ac.uk/dataset/schema#"
+        stype = URIRef(oxds+"DataSet")
+        self.assertEqual(len(rdfgraph),11,'Graph length %i' %len(rdfgraph))
+        self.failUnless((subj,RDF.type,stype) in rdfgraph, 'Testing submission type: '+subj+", "+stype)
+        self.failUnless((subj,URIRef(dcterms+"created"),None) in rdfgraph, 'dcterms:created')
+        self.failUnless((subj,URIRef(ore+"aggregates"),URIRef(base+"testrdf4.zip")) in rdfgraph)
+        self.failUnless((URIRef(base+"testrdf4.zip"),URIRef(dcterms+"hasVersion"),None) in rdfgraph, 'dcterms:hasVersion')
+        self.failUnless((subj,URIRef(dcterms+"identifier"),None) in rdfgraph, 'dcterms:identifier')
+        self.failUnless((subj,URIRef(dcterms+"mediator"),None) in rdfgraph, 'dcterms:mediator')
+        self.failUnless((subj,URIRef(dcterms+"publisher"),None) in rdfgraph, 'dcterms:publisher')
+        self.failUnless((subj,URIRef(oxds+"isEmbargoed"),None) in rdfgraph, 'oxds:isEmbargoed')
+        self.failUnless((subj,URIRef(oxds+"embargoedUntil"),None) in rdfgraph, 'oxds:embargoedUntil')
+        self.failUnless((subj,URIRef(oxds+"currentVersion"),'1') in rdfgraph, 'oxds:currentVersion')
+        self.failUnless((subj,URIRef(dcterms+"modified"),None) in rdfgraph, 'dcterms:modified')
+        # Access and check list of contents in child dataset - TestSubmission-testrdf3
+        (resp, rdfdata) = self.doHTTP_GET(
+            resource="datasets/TestSubmission-testrdf4", 
+            expect_status=200, expect_reason="OK", expect_type="application/rdf+xml")
+        rdfgraph = Graph()
+        rdfstream = StringIO(rdfdata)
+        rdfgraph.parse(rdfstream) 
+        subj = URIRef(self.getRequestUri("datasets/TestSubmission-testrdf4"))
+        subj2 = URIRef("directory/file1.a")
+        subj3 = URIRef("directory/file1.b") 
+        base = self.getRequestUri("datasets/TestSubmission-testrdf4/")
+        owl = "http://www.w3.org/2002/07/owl#"
+        dc = "http://purl.org/dc/elements/1.1/"
+        stype = URIRef(oxds+"Grouping")
+        stype2 = URIRef(oxds+"item")
+        self.assertEqual(len(rdfgraph),28,'Graph length %i' %len(rdfgraph))
+        self.failUnless((subj,RDF.type,stype) in rdfgraph, 'Testing submission type: '+subj+", "+stype)
+        self.failUnless((subj,URIRef(dcterms+"modified"),None) in rdfgraph, 'dcterms:modified')
+        self.failUnless((subj,URIRef(dcterms+"isVersionOf"),None) in rdfgraph, 'dcterms:isVersionOf')
+        self.failUnless((subj,URIRef(ore+"aggregates"),URIRef(base+"testrdf4")) in rdfgraph)
+        self.failUnless((subj,URIRef(ore+"aggregates"),URIRef(base+"testrdf4/directory")) in rdfgraph)
+        self.failUnless((subj,URIRef(ore+"aggregates"),URIRef(base+"testrdf4/directory/file1.a")) in rdfgraph)
+        self.failUnless((subj,URIRef(ore+"aggregates"),URIRef(base+"testrdf4/directory/file1.b")) in rdfgraph)
+        self.failUnless((subj,URIRef(ore+"aggregates"),URIRef(base+"testrdf4/directory/file2.a")) in rdfgraph)
+        self.failUnless((subj,URIRef(ore+"aggregates"),URIRef(base+"testrdf4/directory/1a.rdf")) in rdfgraph)
+        self.failUnless((subj,URIRef(ore+"aggregates"),URIRef(base+"testrdf4/directory/1b.rdf")) in rdfgraph)
+        self.failUnless((subj,URIRef(ore+"aggregates"),URIRef(base+"testrdf4/directory/2a.rdf")) in rdfgraph)
+        self.failUnless((subj,URIRef(ore+"aggregates"),URIRef(base+"testrdf4/test-csv.csv")) in rdfgraph)
+        self.failUnless((subj,URIRef(dcterms+"identifier"),None) in rdfgraph, 'dcterms:identifier')
+        self.failUnless((subj,URIRef(dcterms+"mediator"),None) in rdfgraph, 'dcterms:mediator')
+        self.failUnless((subj,URIRef(dcterms+"publisher"),None) in rdfgraph, 'dcterms:publisher')
+        self.failUnless((subj,URIRef(oxds+"isEmbargoed"),None) in rdfgraph, 'oxds:isEmbargoed')
+        self.failUnless((subj,URIRef(oxds+"embargoedUntil"),None) in rdfgraph, 'oxds:embargoedUntil')
+        self.failUnless((subj,URIRef(dcterms+"created"),None) in rdfgraph, 'dcterms:created')
+        self.failUnless((subj,URIRef(oxds+"currentVersion"),'1') in rdfgraph, 'oxds:currentVersion')
+        self.failUnless((subj,URIRef(dc+"description"),"This is a archived test item 2a ") in rdfgraph, 'dc:description')
+        self.failUnless((subj,URIRef(dcterms+"title"),"Test item 2a") in rdfgraph, 'dcterms:title')
+        self.failUnless((subj,URIRef(owl+"sameAs"),URIRef("2aFiles")) in rdfgraph, 'dcterms:title')
+        
+        self.failUnless((subj2,RDF.type,stype2) in rdfgraph, 'Testing submission type: '+subj2+", "+stype2)
+        self.failUnless((subj2,URIRef(dc+"description"),"This is a archived test item 1a ") in rdfgraph, 'dc:description')
+        self.failUnless((subj2,URIRef(dcterms+"title"),"Test item 1a") in rdfgraph, 'dcterms:title')
+        
+        self.failUnless((subj3,RDF.type,stype2) in rdfgraph, 'Testing submission type: '+subj3+", "+stype2)
+        self.failUnless((subj3,URIRef(dc+"description"),"This is test item 1b of type file") in rdfgraph, 'dc:description')
+        self.failUnless((subj3,URIRef(dcterms+"title"),"Test item 1b") in rdfgraph, 'dcterms:title')
+        
+        # Delete the dataset TestSubmission-testrdf4
+        resp = self.doHTTP_DELETE(
+            resource="datasets/TestSubmission-testrdf4", 
+            expect_status="*", expect_reason="*")
+
+        # Delete the dataset TestSubmission
+        resp = self.doHTTP_DELETE(
+            resource="datasets/TestSubmission", 
             expect_status="*", expect_reason="*")
 
     # Sentinel/placeholder tests
@@ -1785,9 +2583,8 @@ class TestSubmission(SparqlQueryTestCase.SparqlQueryTestCase):
         assert (True)
 
     def testPending(self):
-        #Need to return location headers for 201
-        #Need to fix bug - state information of the previous verison is updated on file upload / delete
         #Need to have performance tests and analyse performance
+        #Need to set the permission of file being uploaded
         assert (False), "Pending tests follow"
 
 # Assemble test suite
@@ -1819,6 +2616,7 @@ def getTestSuite(select="unit"):
             , "testFileUpload"
             , "testFileDelete"
             , "testFileUpdate"
+            , "testGetDatasetByVersion"
             , "testMetadataFileUpdate"
             , "testMetadataFileDelete"
             , "testPutCreateFile"
@@ -1832,6 +2630,8 @@ def getTestSuite(select="unit"):
             , "testMetadataInDirectoryMerging"
             , "testFileUploadToUnpackedDataset"
             , "testUpdateUnpackedDataset"
+            , "testReferencedMetadataMerging"
+            , "testReferencedMetadataMerging2"
             ],
         "component":
             [ "testComponents"

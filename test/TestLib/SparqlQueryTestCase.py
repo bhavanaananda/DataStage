@@ -131,7 +131,8 @@ class SparqlQueryTestCase(unittest.TestCase):
         return urlparse.urljoin(self._endpointpath,rel)
 
     def getRequestUri(self, rel):
-        return "http://"+self._endpointhost+self.getRequestPath(rel)
+        return "http://databank.ora.ox.ac.uk"+self.getRequestPath(rel)
+        #return "http://"+self._endpointhost+self.getRequestPath(rel)
 
     def doRequest(self, command, resource, reqdata=None, reqheaders={}, expect_status=200, expect_reason="OK"):
         logger.debug(command+" "+self.getRequestUri(resource))
@@ -147,6 +148,7 @@ class SparqlQueryTestCase(unittest.TestCase):
         while path and repeat > 0:
             repeat -= 1
             #print "Request "+command+", path "+path
+            #print "Request haeders:", reqheaders
             hc.request(command, path, reqdata, reqheaders)
             response = hc.getresponse()
             if response.status != 301: break
@@ -160,6 +162,8 @@ class SparqlQueryTestCase(unittest.TestCase):
                 response.read()  # Seems to be needed to free up connection for new request
         logger.debug("Status: %i %s" % (response.status, response.reason))
         if expect_status != "*": self.assertEqual(response.status, expect_status)
+        if expect_status == 201: 
+            self.assertTrue(response.getheader('Content-Location', None))
         if expect_reason != "*": self.assertEqual(response.reason, expect_reason)
         responsedata = response.read()
         hc.close()
@@ -168,7 +172,7 @@ class SparqlQueryTestCase(unittest.TestCase):
     def doHTTP_GET(self,
             endpointhost=None, endpointpath=None, resource=None,
             expect_status=200, expect_reason="OK",
-            expect_type="*/*"):
+            expect_type="text/plain"):
         reqheaders   = {
             "Accept":       expect_type
             }
@@ -176,8 +180,9 @@ class SparqlQueryTestCase(unittest.TestCase):
         (response, responsedata) = self.doRequest("GET", resource, 
             reqheaders=reqheaders,
             expect_status=expect_status, expect_reason=expect_reason)
+        #print responsedata
         if (expect_type.lower() == "application/json"): responsedata = simplejson.loads(responsedata)
-        return responsedata
+        return (response, responsedata)
 
     def doQueryGET(self, query, 
             endpointhost=None, endpointpath=None, 
@@ -193,7 +198,7 @@ class SparqlQueryTestCase(unittest.TestCase):
     def doHTTP_POST(self, data, data_type="application/octet-strem",
             endpointhost=None, endpointpath=None, resource=None,
             expect_status=200, expect_reason="OK",
-            expect_type="*/*"):
+            expect_type="text/plain"):
         reqheaders   = {
             "Content-type": data_type,
             "Accept":       expect_type
@@ -203,7 +208,7 @@ class SparqlQueryTestCase(unittest.TestCase):
             reqdata=data, reqheaders=reqheaders,
             expect_status=expect_status, expect_reason=expect_reason)
         if (expect_type.lower() == "application/json"): responsedata = simplejson.loads(responsedata)
-        return responsedata
+        return (response, responsedata)
 
     def doQueryPOST(self, query, 
             endpointhost=None, endpointpath=None, 
@@ -219,11 +224,11 @@ class SparqlQueryTestCase(unittest.TestCase):
             endpointhost=None, endpointpath=None, 
             expect_status=200, expect_reason="OK",
             expect_type=("application/JSON" if JSON else None))
-        
+
     def doHTTP_PUT(self, data, data_type="application/octet-strem",
             endpointhost=None, endpointpath=None, resource=None,
             expect_status=200, expect_reason="OK",
-            expect_type="*/*"):
+            expect_type="text/plain"):
         reqheaders   = {
             "Content-type": data_type,
             "Accept":       expect_type
@@ -232,7 +237,7 @@ class SparqlQueryTestCase(unittest.TestCase):
         (response, responsedata) = self.doRequest("PUT", resource,
             reqdata=data, reqheaders=reqheaders,
             expect_status=expect_status, expect_reason=expect_reason)
-        return response.status       
+        return (response, responsedata)
 
     def doHTTP_DELETE(self,
             endpointhost=None, endpointpath=None, resource=None,
@@ -240,7 +245,7 @@ class SparqlQueryTestCase(unittest.TestCase):
         self.setRequestEndPoint(endpointhost, endpointpath)
         (response, _) = self.doRequest("DELETE", resource,
             expect_status=expect_status, expect_reason=expect_reason)
-        return response.status
+        return response
 
     def assertVarBinding(self, data, var, type, value):
         """

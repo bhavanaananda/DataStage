@@ -3,7 +3,7 @@
 # Get RDFDatabank dataset manifest using command line curl.
 #
 
-RDBROOT=http://databank.ora.ox.ac.uk/admiral-test/datasets 
+RDBROOT=http://163.1.127.173/admiral-test/datasets
 DATASET=${1-test}
 
 # --data-binary @- posts multiline from stdin
