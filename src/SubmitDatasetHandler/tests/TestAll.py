@@ -8,7 +8,9 @@ import sys, unittest, logging
 
 # Add main library directory to python path
 sys.path.append("../..")
+sys.path.append("..")
 
+import TestConfig
 import TestSubmitDataset
 import TestSubmitDatasetHandler
 import TestDirectoryListingHandler
@@ -36,7 +38,7 @@ if __name__ == "__main__":
     print "Edit TestConfig.py to specify hostname and other parameters"
     print "Create test accounts on target system to match TestConfig.py"
     print "============================================================"
-    TestSubmitDatasetHandler.setDatasetsBaseDir(".")
+    TestConfig.setDatasetsBaseDir(".")
     TestUtils.runTests("TestAll", getTestSuite, sys.argv)
 
 # End.
