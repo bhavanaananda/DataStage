@@ -95,7 +95,7 @@ def processDatasetSubmissionForm(formdata, outputstr):
         #Create Session
         session  = HttpSession.makeHttpSession(endpointhost, basepath, userName, userPass)   
                    
-        SubmitDatasetUtils.createDataset(session, siloName, datasetName)                             
+        SubmitDatasetUtils.createDataset(session, datasetName)                             
         # Update the local manifest
         manifestFilePath     = dirName + str(os.path.sep) + DefaultManifestName
         Logger.debug("Element List = " + repr(ElementUriList))
@@ -105,9 +105,9 @@ def processDatasetSubmissionForm(formdata, outputstr):
         #Logger.debug("datasetName %s, dirName %s, zipFileName %s"%(datasetName,dirName,zipFileName))
         SubmitDatasetUtils.zipLocalDirectory(dirName, FilePat, zipFilePath)
         # Submit zip file to dataset
-        SubmitDatasetUtils.submitFileToDataset(session, siloName, datasetName, zipFileName, zipFilePath, ZipMimeType, zipFileName)
+        SubmitDatasetUtils.submitFileToDataset(session, datasetName, zipFileName, zipFilePath, ZipMimeType, zipFileName)
         # Unzip the contents into a new dataset
-        datasetUnzippedName = SubmitDatasetUtils.unzipRemoteFileToNewDataset(session, siloName, datasetName, zipFileName)       
+        datasetUnzippedName = SubmitDatasetUtils.unzipRemoteFileToNewDataset(session, datasetName, zipFileName)       
         # Redirect to the Dataset Summary page
         redirectToSubmissionSummaryPage(dirName, datasetName+"-packed", datasetUnzippedName, convertToUriString(SuccessStatus))
         return
