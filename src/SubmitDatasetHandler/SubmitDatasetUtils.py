@@ -80,8 +80,7 @@ def printStackTrace():
     return
 
 def getDatasetsListFromSilo(session):
-    (responsetype, datasetsListFromSilo) = session.doHTTP_GET(
-        endpointpath=session._endpointpath,
+    (responsetype, datasetsListFromSilo) = session.doHTTP_GET(        
         resource="datasets", 
         expect_status=200, expect_reason="OK", accept_type="application/json")
     assert responsetype.lower() == "application/json", "Expected application/json, got "+responsetype
@@ -92,7 +91,6 @@ def ifDatasetExists(session, datasetName):
     """
     Check if the dataset already exists.
     
-    siloName    name of Databank silo in which the existence of dataset is being checked
     datasetName name of the dataset whose existence is being checked
     """
     # Check if the dataset exists in the databank silo
@@ -108,24 +106,19 @@ def createDataset(session, datasetName ):
     """
     Create a new empty dataset.
     
-    siloName    name of Databank silo in which dataset is created
     datasetName name for the new dataset 
     """
     #Check if the dataset already exists
     datasetFound = ifDatasetExists(session, datasetName+"-packed")    
     # Create a dataset if the dataset does not exist
     if not datasetFound: 
-        #logger.debug("createDataset: siloName %s, datasetName %s"%(siloName, datasetName))
+        #logger.debug("createDataset: datasetName %s"%(datasetName))
         fields = \
             [ ("id", datasetName+"-packed")
             ]
         files =[]
         (reqtype, reqdata) = session.encode_multipart_formdata(fields, files)
-        #        session.doHTTP_POST(
-        #            reqdata, reqtype, 
-        #            resource = "/" + siloName + "/datasets/", 
-        #            expect_status=201, expect_reason="Created")
-        session.doHTTP_POST(endpointpath=session._endpointpath, resource="datasets",
+        session.doHTTP_POST(  resource="datasets",
             data=reqdata, data_type=reqtype, expect_status=201, expect_reason="Created")
     return
 
@@ -133,15 +126,11 @@ def deleteDataset(session, datasetName ):
     """
     Delete a dataset.
     
-    siloName    name of Databank silo containing the dataset
     datasetName name of the dataset 
     """
-    #logger.debug("deleteDataset: siloName %s, datasetName %s"%(siloName, datasetName))
-    #    session.doHTTP_DELETE(
-    #    resource = "/" + siloName + "/datasets/" + datasetName, 
-    #    expect_status=200, expect_reason="OK")
+
     resourceString = "datasets/" + datasetName
-    session.doHTTP_DELETE(endpointpath=session._endpointpath, resource=resourceString, expect_status=200, expect_reason="OK")
+    session.doHTTP_DELETE(  resource=resourceString, expect_status=200, expect_reason="OK")
 
     return
 
@@ -149,13 +138,12 @@ def submitFileToDataset(session, datasetName, fileName, filePath, mimeType, targ
     """
     Submit a single file to a dataset, creating a new resource in the dataset.
 
-    siloName    name of Databank silo containing the dataset
     datasetName name of the dataset 
     fileName    filename of local file to be submitted
     mimeType    MIME content type of file data to be submitted
     targetName  file path and name to be used for storage in Databank dataset
     """
-    #logger.debug("submitFileToDataset: siloName %s, datasetName %s, fileName %s, targetName %s"%(siloName, datasetName+"-packed", fileName, targetName))
+    #logger.debug("submitFileToDataset: datasetName %s, fileName %s, targetName %s"%(datasetName+"-packed", fileName, targetName))
     assert os.path.basename(targetName) == targetName, "No directories allowed in targetName: "+targetName
     fields = []
     fileData = getLocalFileContents(filePath)
@@ -167,7 +155,7 @@ def submitFileToDataset(session, datasetName, fileName, filePath, mimeType, targ
     resourceString = "datasets/" + datasetName + "-packed"
     session.doHTTP_POST(
         data=reqdata, data_type=reqtype, 
-        endpointpath=session._endpointpath, resource=resourceString,
+          resource=resourceString,
         expect_status=[201,204], expect_reason=["Created","No Content"],
         accept_type="text/plain")       # Without this, Databank returns 302 (why?)
     return
@@ -180,13 +168,12 @@ def unzipRemoteFileToNewDataset(session, datasetName, zipFileName):
     The name of the target dataset is derived from the source dataset name and
     the ZIP file name.
 
-    siloName    name of Databank silo
     datasetName name of the source dataset 
     zipFileName name of the ZIP file in the source dataset.
 
     Returns the name of the created dataset.
     """
-    #logger.debug("unzipRemoteFileToNewDataset: siloName %s, datasetName %s, zipFileName %s"%(siloName, datasetName, zipFileName))
+    #logger.debug("unzipRemoteFileToNewDataset:  datasetName %s, zipFileName %s"%( datasetName, zipFileName))
     fields = \
         [ ("filename", zipFileName),
           ("id",datasetName )
@@ -195,8 +182,7 @@ def unzipRemoteFileToNewDataset(session, datasetName, zipFileName):
     (reqtype, reqdata) = session.encode_multipart_formdata(fields, files)
     resourceString = "items/" + datasetName + "-packed"
     session.doHTTP_POST(
-        data=reqdata, data_type=reqtype, 
-        endpointpath=session._endpointpath,
+        data=reqdata, data_type=reqtype,         
         resource=resourceString, 
         expect_status=[200,201], expect_reason=["OK","Created"])
     return datasetName
@@ -206,7 +192,6 @@ def getFileFromDataset(session, datasetName, fileName):
     Retrieve a file from a dataset, returning the file's MIME content type
     and the file content.
 
-    siloName    name of Databank silo
     datasetName name of the dataset 
     fileName    name of a file within the dataset to retrieve
 
@@ -214,10 +199,9 @@ def getFileFromDataset(session, datasetName, fileName):
     content-type of the data, and content is a byte array (i.e. a string in python 2) 
     containing the file content.
     """
-    # logger.debug("getFileFromDataset: siloName %s, datasetName %s, fileName %s"%(siloName, datasetName, fileName))
+    # logger.debug("getFileFromDataset:  datasetName %s, fileName %s"%( datasetName, fileName))
     resourceString = "datasets/" + datasetName +  "/" + fileName
-    readFileTypeContent = session.doHTTP_GET(
-            endpointpath=session._endpointpath,
+    readFileTypeContent = session.doHTTP_GET(            
             resource = resourceString,
             expect_status=200, expect_reason="OK")
     return readFileTypeContent

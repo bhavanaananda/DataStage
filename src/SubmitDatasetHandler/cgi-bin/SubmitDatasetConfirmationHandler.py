@@ -32,7 +32,7 @@ import ManifestRDFUtils
 import HttpSession
 from MiscLib import TestUtils
 
-siloName                 = "admiral-test" # @@FIXME
+siloProxyPath            = "/databanksilo/" 
 save_stdout              = sys.stdout
 dcterms                  =  URIRef("http://purl.org/dc/terms/")
 oxds                     =  URIRef("http://vocab.ox.ac.uk/dataset/schema#") 
@@ -73,8 +73,8 @@ def processDatasetSubmissionForm(formdata, outputstr):
     # In a live system, these are not provided in the form: the following values are used.
     if endpointhost==None or endpointhost=="":
         endpointhost = "localhost"
-    if basepath==None or basepath=="":
-        basepath = "/" + siloName  +"/"
+    if basepath==None:
+        basepath = siloProxyPath
 
     ###print("\n---- processDatasetSubmissionForm:formdata ---- \n"+repr(formdata))
   

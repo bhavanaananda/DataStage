@@ -24,12 +24,6 @@ import urlparse
 import base64
 import re
 
-# Default SPARQL endpoint details
-#_endpointhost = "localhost"
-#_endpointpath = "/admiral-test"     # Really just a placeholder
-#_endpointuser = ""
-#_endpointpass = ""
-
 logger = logging.getLogger('HTTPSession')
 
 __author__ = "Bhavana Ananda"
