@@ -69,6 +69,8 @@ def processDatasetSubmissionForm(formdata, outputstr):
     dirName              =  SubmitDatasetUtils.getFormParam("datDir"      ,  formdata)
     ElementValueList     =  [userName, datasetName, title, description]
 
+    # Host and silo name in the form data are used for testing.
+    # In a live system, these are not provided in the form: the following values are used.
     if endpointhost==None or endpointhost=="":
         endpointhost = "localhost"
     if basepath==None or basepath=="":

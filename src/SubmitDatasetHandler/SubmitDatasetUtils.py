@@ -126,7 +126,7 @@ def createDataset(session, siloName, datasetName ):
         #            resource = "/" + siloName + "/datasets/", 
         #            expect_status=201, expect_reason="Created")
         session.doHTTP_POST(endpointpath="/" + siloName  +"/", resource="datasets",
-        data=reqdata, data_type=reqtype, expect_status=201, expect_reason="Created")
+            data=reqdata, data_type=reqtype, expect_status=201, expect_reason="Created")
     return
 
 def deleteDataset(session, siloName, datasetName ):      

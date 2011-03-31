@@ -27,7 +27,7 @@ sys.path.append("../..")
 
 import SubmitDatasetUtils
 import ManifestRDFUtils
-import HttpUtils
+import HttpSession
 from MiscLib import TestUtils
 from MiscLib.ScanDirectories import IsDirectoryWritable
 
@@ -88,7 +88,7 @@ def submitMetadata(formdata, outputstr):
         SubmitDatasetUtils.printHTMLHeaders()
         SubmitDatasetUtils.generateErrorResponsePageFromException(e) 
 
-    except HttpUtils.HTTPUtilsError, e:
+    except HttpSession.HTTPSessionError, e:
         SubmitDatasetUtils.printHTMLHeaders()
         SubmitDatasetUtils.generateErrorResponsePage(
             SubmitDatasetUtils.HTTP_ERROR,

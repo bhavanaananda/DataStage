@@ -29,24 +29,6 @@ class TestHttpSession(unittest.TestCase):
     def tearDown(self):        
         return
         
-    # Tests
-
-    #def getRequestPath(rel): ???
-    
-    #def getRequestUri(rel): ???
-    
-    #def expectedReturnStatus(expected, actual):
-    
-    #def expectedReturnReason(expected, actual):
-
-    #def testSimpleHttpGet_orig(self):
-    #    HttpUtils.setRequestEndPoint(self.endpointhost, self.basepath)
-    #    HttpUtils.setRequestUserPass(self.username, self.password)
-    #    (responsetype, responsedata) = HttpUtils.doHTTP_GET(endpointpath=self.basepath, resource="datasets", expect_status=200, expect_reason="OK", accept_type="*/*")
-    #    self.assertEquals(responsetype, "text/html", "List datasets response type: %s"%responsetype)
-    #    self.assertTrue(re.search("<title>.*List of Datasets.*</title>", responsedata) != None, "List datasets response data")
-    #    return
-
     def testSimpleHttpGet(self):
         session = HttpSession.makeHttpSession(self.endpointhost, self.basepath, self.username, self.password)
         (responsetype, responsedata) = session.doHTTP_GET(endpointpath=self.basepath, resource="datasets", expect_status=200, expect_reason="OK", accept_type="*/*")
