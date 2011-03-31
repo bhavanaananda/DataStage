@@ -73,7 +73,7 @@ def processDatasetSubmissionForm(formdata, outputstr):
     # In a live system, these are not provided in the form: the following values are used.
     if endpointhost==None or endpointhost=="":
         endpointhost = "localhost"
-    if basepath==None or endpointhost=="":
+    if basepath==None or basepath=="":
         basepath = siloProxyPath
 
     ###print("\n---- processDatasetSubmissionForm:formdata ---- \n"+repr(formdata))
