@@ -51,8 +51,8 @@ def processDirectoryListingRequest(formdata, srcdir, outputstr):
     outputstr   output stream to receive resulting JSON entity
     """
     
-    datdir =  SubmitDatasetUtils.getFormParam("datdir",  formdata)
-    #datdir = "/home/data/DatasetsSecondDir/DatasetsSubDir"
+    #datdir =  SubmitDatasetUtils.getFormParam("datdir",  formdata)
+    datdir = "/home/data/DatasetsSecondDir/DatasetsSubDir"
     outputstr.write("Content-type: application/JSON\n")
     outputstr.write("\n")      # end of MIME headers
 
