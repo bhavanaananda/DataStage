@@ -94,6 +94,12 @@ input#datDir   {    position:relative;
 .dirtreelist   {    position    : relative;
                     float       : left; 
                }    
+               
+               
+.dirtreecontents {  position    : relative;
+                    float       : left; 
+                 } 
+
 
 .progressmessage
               {     position    : relative;

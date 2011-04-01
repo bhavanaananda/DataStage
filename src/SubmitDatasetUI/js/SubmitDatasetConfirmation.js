@@ -71,20 +71,49 @@ function displayValues(directorySelected,callback)
     });
     // Populate the other form fields with the value received
     n.eval(function(formValues,callback)
-    {                                   
+    {   
+        //Populate the values for hidden input fields                            
         jQuery("#datId").val(formValues["identifier"]);
-        jQuery("#description").val(formValues["description"]);
         jQuery("#title").val(formValues["title"]);
         jQuery("#user").val(formValues["creator"]);
+        jQuery("#description").val(formValues["description"]);
+        
+        //Populate the values for visible span display fields   
         var displayTextnames = ["datasetDir", "datasetId", "datasetTitle", "datasetDescription"];
         var inputValues      = ["datDir", "datId", "title", "description"];
         for( i=0; i< inputValues.length; i++)
         {  
            value =  jQuery("#"+inputValues[i]).val();        
            jQuery("#"+displayTextnames[i]).text(value);
-        }
+        } 
     });
-    n.exec(directorySelected, admiral.noop);          
+    n.exec(directorySelected, admiral.noop);  
+    
+    var m = new admiral.AsyncComputation();     
+    m.eval(function(value,callback)
+    {   
+       // Execute the dataset listing logic
+       admiral.directoryContentsListing(directorySelected,callback);                 
+    });
+    m.eval(function(value,callback)
+    {   
+        var baseUri  = "";
+        var seglists = admiral.segmentPaths(value.sort());
+        var segtree  = admiral.segmentTreeBuilder(seglists);
+        var seghtml  = admiral.nestedListBuilder(baseUri, segtree);
+        jQuery("#dirtreecontents").text("");
+        jQuery("#dirtreecontents").append(seghtml);     
+        seghtml.children("li").addClass("open");
+        seghtml.treeview({ collapsed: true });
+        jQuery(".links").click( function()
+        {  
+           // Display all the form fields associated with the directory selected from the list           
+           //displayValues(jQuery(this).attr("href"), jQuery(this).text());
+           return false;                              
+        });
+        callback(value);
+   });   
+    m.exec(directorySelected, admiral.noop);          
 }  
 
 // End.

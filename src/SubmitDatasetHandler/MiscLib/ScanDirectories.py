@@ -24,7 +24,7 @@ logger = logging.getLogger("ScanDirectories")
 # recursive is True if directories are to be scanned recursively,
 #           otherwise only the named directory is scanned.
 #
-def ScanDirectoriesEx(srcdir, DirFunc, recursive=True):
+def ScanDirectoriesEx(srcdir, DirFunc,listFiles=False, recursive=True):
     """
     Scan all sub-directories in a given source directory.
     Exceptions are thrown back to the calling program.
@@ -36,7 +36,10 @@ def ScanDirectoriesEx(srcdir, DirFunc, recursive=True):
             DirFunc(path)
             if recursive:
                 logger.debug("Adding Directory %s " % (path))
-                ScanDirectoriesEx(path, DirFunc)
+                ScanDirectoriesEx(path, DirFunc, listFiles, recursive)
+                
+        if listFiles==True:
+            DirFunc(path)
     return
 
 # Scan the sub-directory structure in a given directory
@@ -52,9 +55,9 @@ def ScanDirectoriesEx(srcdir, DirFunc, recursive=True):
 # recursive is True if directories are to be scanned recursively,
 #           otherwise only the named directory is scanned.
 #
-def ScanDirectories(srcdir, DirFunc, recursive=True):
+def ScanDirectories(srcdir, DirFunc, listFiles=False, recursive=True):
     try:
-        ScanDirectoriesEx(srcdir, DirFunc, recursive)
+        ScanDirectoriesEx(srcdir, DirFunc, listFiles, recursive)
     except (IOError, os.error), why:
         logger.debug("Can't scan %s: %s" % (`srcdir`, str(why)))
         print "Can't scan %s: %s" % (`srcdir`, str(why))
@@ -66,11 +69,11 @@ def ScanDirectories(srcdir, DirFunc, recursive=True):
 # recursive is True if directories are to be scanned recursively,
 #           otherwise only the named directory is scanned.
 #
-# Returns a list of directories
+# Returns a list of directory contents
 #
-def CollectDirectories(srcDir, baseDir, recursive=True):
+def CollectDirectoryContents(srcDir, baseDir, listFiles=False, recursive=True):
     """
-    Return a list of directories found under the source directory.
+    Return a list of directory contents found under the source directory.
     """
     #logger.debug("CollectDirectories: %s, %s, %s"%(srcDir,baseDir,str(os.path.sep)))
     collection = []
@@ -78,7 +81,7 @@ def CollectDirectories(srcDir, baseDir, recursive=True):
         baseDir = baseDir+os.path.sep
     def Collect(path):
         collection.append(path.replace(baseDir,"",1))
-    ScanDirectoriesEx(srcDir, Collect, recursive)
+    ScanDirectoriesEx(srcDir, Collect, listFiles, recursive)
     return collection
 
 if __name__ == "__main__":
@@ -94,7 +97,7 @@ if __name__ == "__main__":
 #
 # Returns a list of directories
 #
-def CollectWritableDirectories(srcDir, baseDir, recursive=True):
+def CollectWritableDirectories(srcDir, baseDir,listFiles=False, recursive=True):
     """
     Return a list of user accessible and writable directories found under the source directory.
     """
@@ -106,7 +109,7 @@ def CollectWritableDirectories(srcDir, baseDir, recursive=True):
         if IsDirectoryWritable(path):
             logger.debug("Adding Path to tree = " + repr(path))
             collection.append(path.replace(baseDir,"",1))
-    ScanDirectoriesEx(srcDir, CollectDirs, recursive)
+    ScanDirectoriesEx(srcDir, CollectDirs,listFiles, recursive)
     return collection
 
 

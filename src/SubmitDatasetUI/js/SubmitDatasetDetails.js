@@ -42,22 +42,10 @@ admiral.displayFormFieldsFromMetadata = function (directorySelected)
    var m = new admiral.AsyncComputation();
    
    m.eval(function(value,callback)
-   {   // Execute the dataset listing logic
+   {   
+       // Execute the dataset listing logic
        admiral.directoryListing(callback);           
-   });
-    
-//   m.eval(function(value,callback)
-//   {                    
-//       // Populate directory listing box with results received
-//       jQuery("#dirlist").empty();
-//       
-//       for (i=0; i<value.length; i++)
-//       {  
-//           newjelem='<span class="dirlistitem">'+value[i]+'</span>';
-//           jQuery("#dirlist").append(newjelem);
-//       }
-//        callback(value);
-//   });    
+   }); 
    
    m.eval(function(value,callback)
    {    var baseUri  = "";
