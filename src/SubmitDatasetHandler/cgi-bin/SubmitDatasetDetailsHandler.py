@@ -46,7 +46,10 @@ ElementDescriptionUri    =  URIRef(dcterms + "description")
 
 DefaultManifestName      =  "manifest.rdf"
 BaseDir                  =  "/home/"
-ErrorStatus              =  "You do not have permissions to submit this dataset directory : "
+
+ErrorStatus_1            =  "Please specify a Databank dataset identifier for the dataset being submitted: "
+ErrorStatus_2            =  "Please specify an ADMIRAL directory for submission to Databank."
+ErrorStatus_3            =  "You do not have permissions to submit this dataset directory : "
 
 def submitMetadata(formdata, outputstr):
     """
@@ -72,23 +75,31 @@ def submitMetadata(formdata, outputstr):
         Logger.debug("Element Value List = " + repr(ElementValueList))
         basedir = "/home"
         
+        # Check for empty Dataset ID and redirect to an error page if empty
+        if datasetName=="" or datasetName==None:
+             redirectToErrorPage(dirName, convertToUriString(ErrorStatus_1))    
+                
+        # Check for empty dataset Directory and redirect to an error page if empty
+        if dirName=="" or dirName==None:
+             redirectToErrorPage(dirName, convertToUriString(ErrorStatus_2))    
         # Check for the dataset directory write access. Update the manifest only if the user has write access to the dataset directory.       
         # Redirect to the error page if the user has no write permissions on the selected dataset directory     
-        if IsDirectoryWritable(dirName) :   
-            # Update the manifest only if the user has write access to the dataset directory.
-            updateMetadataInDirectoryBeforeSubmission(manifestFilePath, ElementUriList, ElementValueList)       
-           
-            # Redirect to the Submission Confirmation page
-            redirectToSubmissionConfirmationPage(dirName);
         else :
-            redirectToErrorPage(dirName, convertToUriString(ErrorStatus))                    
+            if  IsDirectoryWritable(dirName) :   
+                # Update the manifest only if the user has write access to the dataset directory.
+                updateMetadataInDirectoryBeforeSubmission(manifestFilePath, ElementUriList, ElementValueList)       
+               
+                # Redirect to the Submission Confirmation page
+                redirectToSubmissionConfirmationPage(dirName);
+            else :
+                redirectToErrorPage(dirName, convertToUriString(ErrorStatus_3))                    
         return
         
     except SubmitDatasetUtils.SubmitDatasetError, e:
         SubmitDatasetUtils.printHTMLHeaders()
         SubmitDatasetUtils.generateErrorResponsePageFromException(e) 
 
-    except HttpSession.HTTPSessionError, e:
+    except HttpSession.Session.HTTPSessionError, e:
         SubmitDatasetUtils.printHTMLHeaders()
         SubmitDatasetUtils.generateErrorResponsePage(
             SubmitDatasetUtils.HTTP_ERROR,
@@ -107,7 +118,7 @@ def submitMetadata(formdata, outputstr):
     return
 
 def convertToUriString(statusString):
-    statusString = ErrorStatus.replace(" ", "%20")
+    statusString = statusString.replace(" ", "%20")
     return statusString
 
 def redirectToErrorPage(dirName,statusText):
