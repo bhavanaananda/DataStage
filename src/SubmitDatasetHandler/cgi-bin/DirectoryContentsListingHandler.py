@@ -27,16 +27,13 @@ sys.path.append("../..")
 import SubmitDatasetUtils
 
 try:
-    # Running Python 2.5 with simplejson?
     import simplejson as json
 except ImportError:
     import json as json
 
 #from MiscLib.ScanFiles import CollectFiles #CollectWritableDirectories
 from MiscLib.ScanDirectories import CollectDirectoryContents 
-#from MiscLib.ScanDirectories import CollectWritableDirectories 
 logger   =  logging.getLogger("DirectoryContentsListingHandler")
-#FilePat = re.compile("^.*$(?<!\.zip)")
 FilePat = re.compile("")
 
 
@@ -47,27 +44,24 @@ def processDirectoryListingRequest(formdata, srcdir, outputstr):
     supplied output stream as as an HTTP application/JSON entity.
     
     srcdir      source directory containing files, directories and subdirectories
-    basedir     base relative to which results are expressed
     outputstr   output stream to receive resulting JSON entity
     """
     
-    #datdir =  SubmitDatasetUtils.getFormParam("datdir",  formdata)
-    datdir = "/home/data/DatasetsSecondDir/DatasetsSubDir"
+    datdir =  SubmitDatasetUtils.getFormParam("datdir",  formdata)
+    datdir = "/home/" + datdir
+    logger.debug(" datdir "+ datdir)
+
     outputstr.write("Content-type: application/JSON\n")
     outputstr.write("\n")      # end of MIME headers
 
     index = datdir.rindex('/')
+    
+    # basedir - base relative to which results are expressed
     basedir = datdir[:-(len(datdir)-index)]
 
-    #CollectDirectories
     contents = CollectDirectoryContents(datdir, basedir, listFiles=True)
-    #contents = CollectFiles(datdir, FilePat)
-
-    #result = json.dumps(dirs)
-    #outputstr.write(result)
-
     json.dump(contents, outputstr, indent=4)
-    #json.dump(srcdir, outputstr, indent=4)
+
     return
 
 if __name__ == "__main__":
