@@ -53,6 +53,13 @@
     <script>
     jQuery(document).ready( function ()
     {  
+       jQuery("#cancel").click( function()
+       {   
+            cancelURL = "/";
+            jQuery("#submitForm").attr('action', cancelURL); 
+            return true;
+       });
+    
        url = document.URL;
        
        // Get Dir value from the url to display as default and get metadata information for the dataset dir
@@ -151,8 +158,8 @@
         </div>
         <div class="box">
             <span class="labelvalue">
-                <button  name="cancel" id="cancel" type="button"> Cancel </button>
                 <input name="submit" id="submit" type="submit" value="Next"/>
+                <input name="cancel" id="cancel" type="submit" value="Cancel"/>
            </span>      
    </div>
 </form>  
