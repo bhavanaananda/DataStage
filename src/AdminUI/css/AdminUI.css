@@ -84,6 +84,7 @@ input          {    position:relative;
                }
                
 #userList      {    position:relative;
+                    float:left;
                     width: 180px      
                }                          
 
