@@ -57,8 +57,29 @@
             jQuery("#adminForm").attr('action', cancelURL); 
             return true;
        });
-
+       
+       var m = new admiral.AsyncComputation();
+       m.eval(function(value,callback)
+       {   
+	    admiral.listUsers(); 
+       });
+       m.eval(function(value,callback)
+       {
+         displayValues(value);
+       });
+       m.exec(null,admiral.noop); 
     });
+    
+    /**
+ * Read from the list received and display the list of users.
+ * 
+ * @param userList   ADMIRAL Users List.
+ * @param callback   Callback function.
+ */
+function displayValues(userList,callback)
+{       
+  jQuery("#userList").add("");           
+}  
     </script>
     
 </head> 
