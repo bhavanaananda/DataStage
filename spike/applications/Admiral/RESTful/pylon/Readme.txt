@@ -1,5 +1,5 @@
 ****************************
-REST in python using Web.py
+REST in python using Pylon
 ****************************
 
 1> Install pylon through easy install
