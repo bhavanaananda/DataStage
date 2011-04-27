@@ -10,6 +10,8 @@ cp /root/testwriteaccess.sh /usr/local/sbin
 chmod 755 /usr/local/sbin/testwriteaccess.sh
 cp /root/testuseraccess.sh /usr/local/sbin
 chmod 755 /usr/local/sbin/testuseraccess.sh
+cp /root/listAdmiralUsers.sh /usr/local/sbin
+chmod 755 /usr/local/sbin/listAdmiralUsers.sh
 
 smbpasswd -s -a admiral <<END
 %{PASSWORD}

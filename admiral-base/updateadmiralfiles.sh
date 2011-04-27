@@ -58,6 +58,9 @@ chmod 755 /usr/local/sbin/testwriteaccess.sh
 chmod -f 755 /usr/local/sbin/testuseraccess.sh
 migrate testuseraccess.sh /usr/local/sbin
 chmod 755 /usr/local/sbin/testuseraccess.sh
+chmod -f 755 /usr/local/sbin/listAdmiralUsers.sh
+migrate listAdmiralUsers.sh /usr/local/sbin
+chmod 755 /usr/local/sbin/listAdmiralUsers.sh
 
 migrate etcldap.conf               /etc
 migrate krb5.conf                  /etc
