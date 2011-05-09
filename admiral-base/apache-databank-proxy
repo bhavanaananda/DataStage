@@ -32,6 +32,11 @@ ProxyPassReverse /static http://%{DATABANKHOST}/static
 ProxyPass        /static/ http://%{DATABANKHOST}/static/
 ProxyPassReverse /static/ http://%{DATABANKHOST}/static/
 
+ProxyPass        /users http://%{HOSTFULLNAME}:8080/users
+ProxyPassReverse /users http://%{HOSTFULLNAME}:8080/users
+ProxyPass        /users/ http://%{HOSTFULLNAME}:8080/users/
+ProxyPassReverse /users/ http://%{HOSTFULLNAME}:8080/users/
+
 ProxyPass        /databanksilo http://%{DATABANKHOST}/%{DATABANKSILO}
 ProxyPassReverse /databanksilo http://%{DATABANKHOST}/%{DATABANKSILO}
 ProxyPass        /databanksilo/ http://%{DATABANKHOST}/%{DATABANKSILO}/

@@ -29,21 +29,23 @@ if (typeof admiral == "undefined")
     admiral = {};
 }
 
-admiral.listUsers = function ()
+admiral.listUsers = function (callback)
 { 
-    urlval = "http://admiral/users"
+    //urlval = "http://admiral/users"http://localhost:8080
+    urlval = "/users"
     jQuery.ajax({
                     type:         "GET",
                     url:           urlval,
                     dataType:     "json",
                     beforeSend:   function (xhr)
                         {
-                            xhr.setRequestHeader("Accept", "application/JSON");
+                            xhr.setRequestHeader("Accept", "application/json");
+                            //xhr.setRequestHeader("Accept", "text/html");
                         },
                     success:      function (data, status, xhr)
                         {   
-                            //log.debug("Display List of ADMIRAL users: " + jQuery.toJSON(data));
-                            callback(data || []);
+                            log.debug("Display List of ADMIRAL users: " + jQuery.toJSON(data));//jQuery.toJSON(data)
+                            callback(data || [] );//|| []
                         },
                     error:        function (xhr, status) 
                         { 

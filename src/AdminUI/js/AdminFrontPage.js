@@ -21,12 +21,14 @@ jQuery(document).ready( function ()
       return true;
    });
    
-   
    var m = new admiral.AsyncComputation();
             
    m.eval(function(value,callback)
-   {    
-     admiral.listUsers(); 
+   {  
+//     jQuery.getJSON('http://localhost:8080/users', function(result) {
+//                alert(jQuery.toJSON(result));
+//            }); 
+     admiral.listUsers(callback); 
    }); 
          
    m.eval(function(list,callback)
