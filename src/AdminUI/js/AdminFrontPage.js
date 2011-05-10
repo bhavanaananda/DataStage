@@ -12,7 +12,15 @@ jQuery(document).ready( function ()
       jQuery("#adminForm").attr('action', addURL); 
       return true;
    });   
- 
+   
+   jQuery("#userModifyButton").click( function()
+   {
+      //alert("add button clicked");
+      addURL = "UserDetailsPage.html";
+      jQuery("#adminForm").attr('action', addURL); 
+      return true;
+   }); 
+   
    jQuery("#cancel").click( function()
    {   
       //alert("cancel button clicked");
@@ -25,9 +33,6 @@ jQuery(document).ready( function ()
             
    m.eval(function(value,callback)
    {  
-//     jQuery.getJSON('http://localhost:8080/users', function(result) {
-//                alert(jQuery.toJSON(result));
-//            }); 
      admiral.listUsers(callback); 
    }); 
          
@@ -37,6 +42,7 @@ jQuery(document).ready( function ()
    });
    
    m.exec(null,admiral.noop); 
+   
 });
       
 /**
@@ -47,10 +53,15 @@ jQuery(document).ready( function ()
 */
 function displayValues(list,callback)
 {   
+    jQuery("#userList").empty();
     jQuery.each(list, function(key, value)
     {   
-         jQuery("#userList").append(jQuery("<option></option>").attr("value",key).text(value)); 
+         jQuery("#userList").append(jQuery("<option class='userListItem'></option>").attr("value",key).text(value)); 
     }); 
     
-    //jQuery("#userList").append(jQuery("<option></option>").attr("value","user5").text("User5"));                   
+   // Set click handler on user selected
+   jQuery("#userList > .userListItem").click( function()
+   { 
+      jQuery("#selectedUser").val(jQuery(this).text());              
+   });     
 }  

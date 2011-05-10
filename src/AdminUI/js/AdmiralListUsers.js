@@ -40,12 +40,11 @@ admiral.listUsers = function (callback)
                     beforeSend:   function (xhr)
                         {
                             xhr.setRequestHeader("Accept", "application/json");
-                            //xhr.setRequestHeader("Accept", "text/html");
                         },
                     success:      function (data, status, xhr)
                         {   
-                            log.debug("Display List of ADMIRAL users: " + jQuery.toJSON(data));//jQuery.toJSON(data)
-                            callback(data || [] );//|| []
+                            log.debug("Display List of ADMIRAL users: " + jQuery.toJSON(data));
+                            callback(data || [] );
                         },
                     error:        function (xhr, status) 
                         { 
