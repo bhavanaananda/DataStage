@@ -29,7 +29,7 @@ fi
 
 
 #sudo -u $1 ls -al "$2" | awk '$4 == "RGLeader" || $4 == "RGMember" || $4 == "RGCollaborator" {print $8}'
-sudo -u $1 ls -al "$2" | awk '{print $8}'
+sudo -u $1 ls -l "$2" | awk '{print $8}'
 # sudo -u $1 /usr/local/sbin/testaccess.sh "$2"
 # ls -al  /mnt/lv-admiral-data/home | awk '$4 == "RGLeader" || $4 == "RGMember" || $4 == "RGCollaborator" {print $8}'
 
