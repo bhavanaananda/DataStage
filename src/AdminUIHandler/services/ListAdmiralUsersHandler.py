@@ -12,8 +12,10 @@ logger = logging.getLogger("ListAdmiralUsers")
 urls = ('/users','ListAdmiralUsers')
 if __name__ == "__main__":
     #web.run(urls, globals())
-    app = web.application(urls,globals(),autoreload=False)
-    app.wsgifunc()
+    app = web.application(urls,globals())
+    app.run()
+    #app = web.application(urls,globals(),autoreload=False)
+    #app.wsgifunc()
 
 class ListAdmiralUsers:
     def GET(self):

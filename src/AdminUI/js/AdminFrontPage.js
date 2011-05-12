@@ -8,7 +8,7 @@ jQuery(document).ready( function ()
    jQuery("#userAddButton").click( function()
    {
       //alert("add button clicked");
-      addURL = "UserDetailsPage.html";
+      addURL = "UserDetailsPage.html?operation=Add&user="+jQuery("#selectedUser").val();
       jQuery("#adminForm").attr('action', addURL); 
       return true;
    });   
@@ -16,7 +16,15 @@ jQuery(document).ready( function ()
    jQuery("#userModifyButton").click( function()
    {
       //alert("add button clicked");
-      addURL = "UserDetailsPage.html";
+      addURL = "UserDetailsPage.html?operation=Modify&user="+jQuery("#selectedUser").val();
+      jQuery("#adminForm").attr('action', addURL); 
+      return true;
+   }); 
+   
+   jQuery("#userDelButton").click( function()
+   {
+      //alert("add button clicked");
+      addURL = "UserDetailsPage.html?operation=Delete&user="+jQuery("#selectedUser").val();
       jQuery("#adminForm").attr('action', addURL); 
       return true;
    }); 
@@ -25,7 +33,7 @@ jQuery(document).ready( function ()
    {   
       //alert("cancel button clicked");
       cancelURL = "/";
-      jQuery("#adminForm").attr('action', cancelURL); 
+      jQuery("#adminForm").attr('action', cancelURL); del
       return true;
    });
    
