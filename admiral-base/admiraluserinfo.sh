@@ -31,9 +31,9 @@ if [[ "$UserID" =~ "[a-z0-9_/-]" ]]; then
 fi
 
 sudo -u $RemoteUserID smbldap-userinfo -l  $UserID | grep "Full Name" | awk '{print "FullName:" $3 " " $4}'
-sudo -u $RemoteUserID ls -l /home/data/private | grep $UserID | awk '{print "UserRole:" $4}'
-sudo -u $RemoteUserID smbldap-userinfo -l  $UserID | grep "Room Number"| awk '{print "RoomNumber:" $4}'
-sudo -u $RemoteUserID smbldap-userinfo -l  $UserID| grep "Work Phone"| awk '{print "WorkPhone:" $4}'
+sudo -u $RemoteUserID ls -l /home/data/private | grep $UserID | awk '{print "UserRole:" $3}'
+sudo -u $RemoteUserID smbldap-userinfo -l  $UserID | grep "Room Number"| awk '{print "RoomNumber:" $3}'
+sudo -u $RemoteUserID smbldap-userinfo -l  $UserID| grep "Work Phone"| awk '{print "WorkPhone:" $3}'
 
 # SMBLDAP-TOOLS -f Bhavana | grep "Full name" | awk -F":" '{ print $2 }'SMBLDAP-TOOLS -f Bhavana | grep "Full name" | awk -F":" '{ print $2 }'
 # sudo -u $1 ls -al "$2" | awk '$4 == "RGLeader" || $4 == "RGMember" || $4 == "RGCollaborator" {print $8}'
