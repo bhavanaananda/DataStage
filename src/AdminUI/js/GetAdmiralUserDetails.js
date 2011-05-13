@@ -31,7 +31,8 @@ if (typeof admiral == "undefined")
 
 admiral.userDetails = function (userID)
 { 
-    urlval = "http://admiral/user/"+userID;
+    //urlval = "http://admiral/user/"+userID;
+     urlval = "/user"+userID;
     jQuery.ajax({
                     type:         "GET",
                     url:           urlval,
