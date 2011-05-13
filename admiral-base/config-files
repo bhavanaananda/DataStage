@@ -2,7 +2,7 @@ sudoers /root/sudoers
 testuseraccess.sh /root/testwriteaccess.sh
 testuseraccess.sh /root/testuseraccess.sh
 listAdmiralUsers.sh /root/listAdmiralUsers.sh
-admiraluserInfo.sh /root/admiraluserInfo.sh
+admiraluserinfo.sh /root/admiraluserinfo.sh
 smb.conf /etc/samba/smb.conf
 krb5.conf /etc/krb5.conf
 ssh_config /root/ssh_config

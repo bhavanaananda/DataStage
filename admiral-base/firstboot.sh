@@ -12,8 +12,8 @@ cp /root/testuseraccess.sh /usr/local/sbin
 chmod 755 /usr/local/sbin/testuseraccess.sh
 cp /root/listAdmiralUsers.sh /usr/local/sbin
 chmod 755 /usr/local/sbin/listAdmiralUsers.sh
-cp /root/admiraluserInfo.sh /usr/local/sbin
-chmod 755 /usr/local/sbin/admiraluserInfo.sh
+cp /root/admiraluserinfo.sh /usr/local/sbin
+chmod 755 /usr/local/sbin/admiraluserinfo.sh
 
 smbpasswd -s -a admiral <<END
 %{PASSWORD}
