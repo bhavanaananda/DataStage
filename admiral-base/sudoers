@@ -12,10 +12,12 @@ Defaults  !lecture,tty_tickets,!fqdn
 
 # User alias specification
 User_Alias TEST_ACCESS_USER = www-data
+User_Alias LIST_USERS       = www-data
+User_Alias USER_INFO        = www-data
 
 # Cmnd alias specification
 Cmnd_Alias TEST_ACCESS_CMD = /usr/local/sbin/testwriteaccess.sh
-Cmnd_Alias LIST_AUSERS_CMD = /usr/local/sbin/listAdmiralUsers.sh
+Cmnd_Alias LIST_USERS_CMD  = /usr/local/sbin/listAdmiralUsers.sh
 Cmnd_Alias USER_INFO_CMD   = /usr/local/sbin/admiraluserinfo.sh
 
 # User privilege specification
@@ -25,7 +27,7 @@ root  ALL=(ALL) ALL
 %admin ALL=(ALL) ALL
 %RGLeader ALL=(ALL) ALL
 
-# Selected users may run the /usr/local/sbin/testuseracess.sh script as any user without password
+# Selected users may run the /usr/local/sbin/testuseracess.sh/listAdmiralUsers.sh/admiraluserinfo.sh script as any user without password
 TEST_ACCESS_USER ALL = (ALL) NOPASSWD: TEST_ACCESS_CMD
-LIST_AUSERS_CMD ALL  = (ALL) NOPASSWD: LIST_AUSERS_CMD
-USER_INFO_CMD ALL    = (ALL) NOPASSWD: USER_INFO_CMD
+LIST_USERS ALL       = (ALL) NOPASSWD: LIST_USERS_CMD
+USER_INFO  ALL       = (ALL) NOPASSWD: USER_INFO_CMD
