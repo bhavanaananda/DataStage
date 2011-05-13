@@ -32,6 +32,7 @@
     <script type="text/javascript" src="../../Admiral/Error.js"></script>
     <script type="text/javascript" src="../../Admiral/AsyncComputation.js"></script>
     <script type="text/javascript" src="./../js/UserDetailsPage.js"></script>
+    <script type="text/javascript" src="./../js/GetAdmiralUserDetails.js"></script>
     
     <script>
       // Use jQuery via jQuery(...)
@@ -71,7 +72,7 @@
             </span>        
             <span class="labelvalue">
                 <span class="sublabelvalue">
-                    <input name="userFullName" id="userFullName" type="text" value="" size="40" />               
+                    <input name="fullName" id="fullName" type="text" value="" size="40" />               
                 </span>           
             </span> 
         </div>
@@ -83,10 +84,10 @@
             </span>        
             <span class="labelvalue">
                 <span class="sublabelvalue">
-                    <select name="userRole" id="userRole" size="3" >
-                       <option value="leader">Research Group Leader</option>
-                       <option value="member">Research Group Member</option>
-                       <option value="collab">Research Group Collaborator</option>
+                    <select name="userRole" id="role" size="3" >
+                       <option value="RGLeader">Research Group Leader</option>
+                       <option value="RGMeader">Research Group Member</option>
+                       <option value="RGCollaborator">Research Group Collaborator</option>
                     </select>             
                 </span>           
             </span> 
@@ -123,7 +124,7 @@
             </span>        
             <span class="labelvalue">
                 <span class="sublabelvalue">
-                    <input name="userPass" id="userPass" type="password" value="" size="20" />               
+                    <input name="pass" id="pass" type="password" value="" size="20" />               
                 </span>           
             </span> 
         </div>

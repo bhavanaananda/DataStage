@@ -35,6 +35,8 @@ sudo -u $RemoteUserID ls -l /home/data/private | grep $UserID | awk '{print "Use
 sudo -u $RemoteUserID smbldap-userinfo -l  $UserID | grep "Room Number"| awk '{print "RoomNumber:" $3}'
 sudo -u $RemoteUserID smbldap-userinfo -l  $UserID| grep "Work Phone"| awk '{print "WorkPhone:" $3}'
 
+
+#ldap groupid
 # SMBLDAP-TOOLS -f Bhavana | grep "Full name" | awk -F":" '{ print $2 }'SMBLDAP-TOOLS -f Bhavana | grep "Full name" | awk -F":" '{ print $2 }'
 # sudo -u $1 ls -al "$2" | awk '$4 == "RGLeader" || $4 == "RGMember" || $4 == "RGCollaborator" {print $8}'
 # sudo -u $1 ls -l "$2" | awk '{print $8}'

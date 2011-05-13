@@ -57,14 +57,21 @@ jQuery(document).ready( function ()
 */
 function displayValues(userDetails,callback)
 {   
-    jQuery("#userList").empty();
-    jQuery.each(list, function(key, value)
+    jQuery.each(userDetails, function(key, value)
     {
         if(key=="FullName")
-        {   jQuery("#userFullName").val(value);
+        {   jQuery("#fullName").val(value);
         }
-          
-       //    jQuery("#userList").append(jQuery("<option class='userListItem'></option>").attr("value",key).text(value)); 
+        
+       if(key=="RoomNumber")
+        {   jQuery("#roomNumber").val(value);
+        }
+        if(key=="WorkPhone")
+        {   jQuery("#workPhone").val(value);
+        }
+        if(key=="UserRole")
+        {   jQuery("#userRole").get(value).attr('selected', 'selected')
+        }
     }); 
 
 }

@@ -1,6 +1,6 @@
 import web
 from os.path import join, isdir, normpath
-import os, sys, logging, subprocess
+import os, sys, logging, subprocess, ast
 
 try:
     import simplejson as json
@@ -56,12 +56,11 @@ class ListAdmiralUsers:
             cmdOutputList = []
             cmdOutputString = cmdOutputString.strip()
             cmdOutputList = cmdOutputString.split("\n")
-
             logger.debug("cmdOutputList = " + repr(cmdOutputList))
             return json.dumps(cmdOutputList)
 
         #return "Hello, world!"
-        
+
 class AdmiralUserDetails:
     def GET(self, userID):
         outputstr = sys.stdout
@@ -79,12 +78,11 @@ class AdmiralUserDetails:
             # Convert the retrieved column of users to a list to enable easy conversion to json
             cmdOutputList = []
             cmdOutputString = cmdOutputString.strip()
-            cmdOutputList = cmdOutputString.split("\n")
+            cmdOutputString = cmdOutputString.split("\n")
 
             logger.debug("cmdOutputList = " + repr(cmdOutputList))
-            return json.dumps(cmdOutputList)
-
-
+            return json.dumps(cmdOutputString)
+       
         else:
             remoteUser = "TestUser1"
             logger.debug("Remote user = " + repr(remoteUser))
@@ -97,10 +95,14 @@ class AdmiralUserDetails:
             # Convert the retrieved column of users to a list to enable easy conversion to json
             cmdOutputList = []
             cmdOutputString = cmdOutputString.strip()
-            cmdOutputList = cmdOutputString.split("\n")
-
+            #cmdOutputList = cmdOutputString.split("\n")
+            cmdOutputString = '{"' + cmdOutputString + '"}'
+            cmdOutputString = cmdOutputString.replace("\n", '","')
+            cmdOutputString = cmdOutputString.replace(":", '":"')
             logger.debug("cmdOutputList = " + repr(cmdOutputList))
-            return json.dumps(cmdOutputList)
+            return json.dumps(ast.literal_eval(cmdOutputString))
+
 
         #return "Hello, world!"
+
 

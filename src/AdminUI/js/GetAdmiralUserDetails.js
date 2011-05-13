@@ -29,10 +29,10 @@ if (typeof admiral == "undefined")
     admiral = {};
 }
 
-admiral.userDetails = function (userID)
+admiral.userDetails = function (userID, callback)
 { 
     //urlval = "http://admiral/user/"+userID;
-     urlval = "/user"+userID;
+     urlval = "/user/"+userID;
     jQuery.ajax({
                     type:         "GET",
                     url:           urlval,

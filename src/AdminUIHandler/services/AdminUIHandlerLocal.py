@@ -44,7 +44,7 @@ class ListAdmiralUsers:
         logger.debug("cmdOutputList = " + repr(cmdOutputList))
 
         return json.dumps(cmdOutputList)
-    
+
 class AdmiralUserDetails:
     def GET(self, userID):
         outputstr = sys.stdout
