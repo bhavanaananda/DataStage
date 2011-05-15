@@ -5,16 +5,16 @@
 
 # Check arguments to prevent injection attack
 
-# $1 UserID
+# $1 RemoteUserID
 # $2 FolderPath
 
 if [[ "$1" == "" ]]; then
-    echo "listAdmiralUsers.sh - no username provided"
+    echo "listAdmiralUsers.sh - no remote username provided"
     exit 2
 fi
 
 if [[ "$1" =~ "[a-z0-9_]" ]]; then
-    echo "listAdmiralUsers.sh - invalid username provided"
+    echo "listAdmiralUsers.sh - invalid remote username"
     exit 2
 fi
 if [[ "$2" == "" ]]; then
