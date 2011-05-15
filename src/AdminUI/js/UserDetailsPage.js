@@ -70,7 +70,7 @@ function displayValues(userDetails,callback)
         {   jQuery("#workPhone").val(value);
         }
         if(key=="UserRole")
-        {   jQuery("#userRole").get(value).attr('selected', 'selected')
+        {   jQuery("#role").val(value);
         }
     }); 
 
