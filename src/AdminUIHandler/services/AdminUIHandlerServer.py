@@ -54,7 +54,7 @@ class AdmiralUserDetails:
         if  os.environ.has_key("REMOTE_USER"):
             remoteUser =  os.environ['REMOTE_USER']
         else:
-            remoteUser = "TestUser1"
+            remoteUser = "TestLeader"
             
         admiralUser = userID
         accesspath = "/usr/local/sbin/admiraluserinfo.sh" + " " + remoteUser + " " + admiralUser
