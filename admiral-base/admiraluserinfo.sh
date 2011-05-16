@@ -20,6 +20,7 @@ if [[ "$RemoteUserID" =~ "[a-z0-9_]" ]]; then
     echo "admiraluserinfo.sh - You do not have permissions to view the user details."
     exit 2
 fi
+
 if [[ "$UserID" == "" ]]; then
     echo "admiraluserinfo.sh - No UserID was provided to extract the user details"
     exit 2
@@ -30,10 +31,15 @@ if [[ "$UserID" =~ "[a-z0-9_/-]" ]]; then
     exit 2
 fi
 
-if [[smbldap-groupshow RGLeader | grep "memberUid" | awk -F":" '{ print $2 }' == $RemoteUserID]]; then
-    $RemoteUserID = "root"
-fi
-    
+leaderList=$(smbldap-groupshow RGLeader | grep "memberUid" | awk -F":" '{ print $2 }' | tr "," "\n")
+
+for leader in $leaderList
+do
+    if [[ $leader == $RemoteUserID ]]; then
+        RemoteUserID="root"
+    fi
+done
+
 sudo -u $RemoteUserID smbldap-userinfo -l  $UserID | grep "Full Name" | awk '{print "FullName:" $3 " " $4}'
 sudo -u $RemoteUserID ls -l /home/data/private | grep $UserID | awk '{print "UserRole:" $4}'
 sudo -u $RemoteUserID smbldap-userinfo -l  $UserID | grep "Room Number"| awk '{print "RoomNumber:" $3}'
