@@ -16,15 +16,6 @@ if [[ "$1" =~ "[a-z0-9_]" ]]; then
     echo "listAdmiralUsers.sh - invalid remote username"
     exit 2
 fi
-if [[ "$2" == "" ]]; then
-    echo "listAdmiralUsers.sh - no folder path provided"
-    exit 2
-fi
-
-if [[ "$2" =~ "[a-z0-9_/-]" ]]; then
-    echo "listAdmiralUsers.sh - invalid folder path provided"
-    exit 2
-fi
 
 smbldap-groupshow RGLeader | grep "memberUid" | awk -F":" '{ print $2 }'
 smbldap-groupshow RGMember | grep "memberUid" | awk -F":" '{ print $2 }'
