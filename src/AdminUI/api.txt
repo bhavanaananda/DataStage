@@ -32,4 +32,4 @@ Returns:  200 on update success, 400 for bad request, 401 Unauthorized
 DELETE
 Action: delete user
 Deletes the specified user with user_id from the ADMIRAL system
-Returns: 200 on successful delete, 404 if user with user_id doesn’t exist
+Returns: 200 on successful delete, 404 if user with user_id doesn’t exist, 401 Unauthorized

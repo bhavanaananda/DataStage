@@ -3,10 +3,13 @@ ADMIRAL SERVER:
 1> Install web.py : http://webpy.org/install
 2> Install smbldap-tools using apt-get
 3> Run the RESTful application:
-   $ python  \googlecode-admiral-jiscmrd\src\AdminUIHandler\services\AdminUIHandlerLocal.py
+   $ python  \googlecode-admiral-jiscmrd\src\AdminUIHandler\services\AdminUIHandler.py
      http://0.0.0.0:8080/
+     
+     
+4> (proxy... modwsgi replaces proxy, may be)
      ...
-4> Access the Admin UI interface from the browser:
+5> Access the Admin UI interface from the browser:
 
    The following lists all the Admiral users in json format:
    ex: http://zoo-admiral-ibrg.zoo.ox.ac.uk/users
@@ -20,7 +23,7 @@ Default port for webpy :8080
 
 \googlecode-admiral-jiscmrd\admiral-base - Contains scripts (.sh files)
 \googlecode-admiral-jiscmrd\src\AdminUI  - Contains UI (html, css, js)
-\googlecode-admiral-jiscmrd\src\AdminUIHandler - Contains RESTful services ( .py )
+\googlecode-admiral-jiscmrd\src\AdminUIHandler - Contains RESTful services ( .py ) ....
 
 The following .sh files are added to admiral-base to help the Admin UI Interface
 1> listAdmiralUsers.sh 
@@ -30,3 +33,5 @@ The following .sh files are added to admiral-base to help the Admin UI Interface
 2> admiraluserinfo.sh
 # $1 RemoteUserID requesting the UserID details
 # $2 UserID  whose details are being requested by RemoteUserID
+
+To Do : ( look at authentication issues for remote user ID)
