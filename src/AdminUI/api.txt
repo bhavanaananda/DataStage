@@ -1,0 +1,35 @@
+ADMIRAL Admin Interface
+
+http://hostname/users
+http://hostname/user/user_id
+
+Users
+/users 
+GET 
+Action: list users
+Returns json listing all the ’ADMIRAL users’
+Returns: 200 for success, 401 Unauthorized
+User
+/user/{user_id}
+GET 
+Action: user details 
+Returns all the user details in json format for the specified ADMIRAL user_id.
+Details: Full Name, Role (user/collaborator/group leader), Room Number, Phone, Password
+Returns: 200 for success, 401 Unauthorized
+
+POST
+Action: add user 
+Creates an ADMIRAL user with the supplied user_id and details
+Details: Full Name, Role (user/collaborator/group leader), Room Number, Phone, Password
+Returns: 201/204 for success, 400 for bad request, 401 Unauthorized
+
+PUT
+Action: modify user details
+Modifies the user details for the specified ADMIRAL user_id
+Details: Full Name, Role (user/collaborator/group leader), Room Number, Phone, Password
+Returns:  200 on update success, 400 for bad request, 401 Unauthorized
+
+DELETE
+Action: delete user
+Deletes the specified user with user_id from the ADMIRAL system
+Returns: 200 on successful delete, 404 if user with user_id doesn’t exist
