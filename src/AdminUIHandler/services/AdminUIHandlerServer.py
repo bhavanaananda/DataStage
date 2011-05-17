@@ -1,6 +1,6 @@
 import web
 from os.path import join, isdir, normpath
-import os, sys, logging, subprocess, ast
+import os, sys, logging, subprocess, ast, base64
 
 try:
     import simplejson as json
