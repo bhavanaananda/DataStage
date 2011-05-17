@@ -20,17 +20,16 @@ if __name__ == "__main__":
 
 class ListAdmiralUsers:
     def GET(self):
-        outputstr = sys.stdout
-        outputstr.write("Content-type: application/JSON\n")
-        outputstr.write("\n")      # end of MIME headers
+        web.header('Content-Type', 'application/JSON')
 
-        if  os.environ.has_key("REMOTE_USER"):
-            remoteUser =  os.environ['REMOTE_USER']
+        if not web.ctx.environ.has_key('HTTP_AUTHORIZATION') or  not web.ctx.environ['HTTP_AUTHORIZATION'].startswith('Basic '):
+            return web.Unauthorized()
         else:
-            remoteUser = "TestLeader"
-            
+            hash = web.ctx.environ['HTTP_AUTHORIZATION'][6:]
+            remoteUser, remotPasswd = base64.b64decode(hash).split(':')
+
         logger.debug("Remote user = " + repr(remoteUser))
-        accesspath = "/usr/local/sbin/listAdmiralUsers.sh" + " " + remoteUser 
+        accesspath = "/usr/local/sbin/listAdmiralUsers.sh" + " " + remoteUser
         logger.debug("accesspath = " + repr(accesspath))
         cmdOutput = subprocess.Popen(accesspath, shell=True, stdout=subprocess.PIPE)
         cmdOutputString = cmdOutput.stdout.read()
@@ -41,21 +40,21 @@ class ListAdmiralUsers:
         cmdOutputString = cmdOutputString.replace("\n", ",")
         cmdOutputList = cmdOutputString.split(",")
         logger.debug("cmdOutputList = " + repr(cmdOutputList))
+        web.ok
         return json.dumps(cmdOutputList, sort_keys=True)
 
         #return "List Admiral Users"
 
 class AdmiralUserDetails:
     def GET(self, userID):
-        outputstr = sys.stdout
-        outputstr.write("Content-type: application/JSON\n")
-        outputstr.write("\n")      # end of MIME headers
+        web.header('Content-Type', 'application/JSON')
 
-        if  os.environ.has_key("REMOTE_USER"):
-            remoteUser =  os.environ['REMOTE_USER']
+        if not web.ctx.environ.has_key('HTTP_AUTHORIZATION') or  not web.ctx.environ['HTTP_AUTHORIZATION'].startswith('Basic '):
+            return web.Unauthorized()
         else:
-            remoteUser = "TestLeader"
-            
+            hash = web.ctx.environ['HTTP_AUTHORIZATION'][6:]
+            remoteUser, remotPasswd = base64.b64decode(hash).split(':')
+
         admiralUser = userID
         accesspath = "/usr/local/sbin/admiraluserinfo.sh" + " " + remoteUser + " " + admiralUser
         logger.debug("accesspath = " + repr(accesspath))
@@ -73,5 +72,3 @@ class AdmiralUserDetails:
         return json.dumps(ast.literal_eval(cmdOutputString))
 
         #return "Admiral User Details"
-
-
