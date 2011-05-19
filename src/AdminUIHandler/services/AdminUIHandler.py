@@ -10,7 +10,8 @@ except ImportError:
 logger = logging.getLogger("AdminUIHandler")
 
 urls = ('/users','ListAdmiralUsers',
-        '/user/(.+)','AdmiralUserDetails')
+        '/user/(.+)','AdmiralUserDetails',
+        '/error/(.+)',"AdmiralError")
 if __name__ == "__main__":
     #web.run(urls, globals())
       app = web.application(urls,globals())
@@ -42,7 +43,6 @@ class ListAdmiralUsers:
         logger.debug("cmdOutputList = " + repr(cmdOutputList))
         web.ok
         return json.dumps(cmdOutputList, sort_keys=True)
-
         #return "List Admiral Users"
 
 class AdmiralUserDetails:
@@ -69,6 +69,16 @@ class AdmiralUserDetails:
         cmdOutputString = cmdOutputString.replace("\n", '","')
         cmdOutputString = cmdOutputString.replace(":", '":"')
         logger.debug("cmdOutputList = " + repr(cmdOutputList))
+            
+        if cmdOutputString.find("ADMIRAL SERVER ERROR") == -1 :
+            raise web.redirect('/error/'+cmdOutputString)
+            #print "Status: 303 ADMIRAL SERVER ERROR"
+            
         return json.dumps(ast.literal_eval(cmdOutputString))
-
         #return "Admiral User Details"
+        
+class AdmiralError:
+    def GET(self, errorMessage): 
+        web.header('Content-Type', 'text/html') 
+        return errorMessage  
+        #return "Admiral Server Error"
