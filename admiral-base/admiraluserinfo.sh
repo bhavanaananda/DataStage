@@ -31,6 +31,8 @@ if [[ "$UserID" =~ "[a-z0-9_/-]" ]]; then
     exit 2
 fi
 
+# Only the root has permissions to execute smbldap-userinfo
+# Check if the  $RemoteUserID is RGLeader. If $RemoteUserID is RGLeader, then execute smbldap-userinfo as root
 leaderList=$(smbldap-groupshow RGLeader | grep "memberUid" | awk -F":" '{ print $2 }' | tr "," "\n")
 
 for leader in $leaderList
@@ -40,10 +42,21 @@ do
     fi
 done
 
-sudo -u $RemoteUserID smbldap-userinfo -l  $UserID | grep "Full Name" | awk '{print "FullName:" $3 " " $4}'
-sudo -u $RemoteUserID ls -l /home/data/private | grep $UserID | awk '{print "UserRole:" $4}'
-sudo -u $RemoteUserID smbldap-userinfo -l  $UserID | grep "Room Number"| awk '{print "RoomNumber:" $3}'
-sudo -u $RemoteUserID smbldap-userinfo -l  $UserID| grep "Work Phone"| awk '{print "WorkPhone:" $3}'
+# Check if the $UserID is a valid ADMIRAL user, else output the error message
+outputMessage=$(smbldap-userinfo -l  $UserID | grep "/usr/sbin/smbldap-userinfo")
+
+if [[ outputMessage == "" ]]; then
+    sudo -u $RemoteUserID smbldap-userinfo -l  $UserID | grep "Full Name" | awk '{print "FullName:" $3 " " $4}'
+    sudo -u $RemoteUserID ls -l /home/data/private | grep $UserID | awk '{print "UserRole:" $4}'
+    sudo -u $RemoteUserID smbldap-userinfo -l  $UserID | grep "Room Number"| awk '{print "RoomNumber:" $3}'
+    sudo -u $RemoteUserID smbldap-userinfo -l  $UserID| grep "Work Phone"| awk '{print "WorkPhone:" $3}'
+else
+    error=$(sudo -u $RemoteUserID smbldap-userinfo -l  $UserID | awk  '{for(i=2; i<=NF; i++) print $i}')
+    newline='\\n'
+    space=" "
+    error=$(echo ${error//$newline/$space})
+    echo "ADMIRAL SERVER ERROR: "  $error
+fi
 
 
 #ldap groupid
