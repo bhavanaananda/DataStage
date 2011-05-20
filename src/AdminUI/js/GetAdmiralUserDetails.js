@@ -30,7 +30,7 @@ if (typeof admiral == "undefined")
 }
 
 admiral.userDetails = function (userID, callback)
-{ 
+{
     //urlval = "http://admiral/user/"+userID;
      urlval = "/user/"+userID;
     jQuery.ajax({
@@ -42,15 +42,24 @@ admiral.userDetails = function (userID, callback)
                             xhr.setRequestHeader("Accept", "application/JSON");
                         },
                     success:      function (data, status, xhr)
-                        {   
-                            //log.debug("Get ADMIRAL user details: " + jQuery.toJSON(data));
-                            callback(data || []);
+                        {
+                            if(data.redirect)
+                            {
+                              window.location.href = data.redirect;
+                            }
+                            else
+                            {
+                              //log.debug("Get ADMIRAL user details: " + jQuery.toJSON(data));
+                              callback(data || []);
+                            }
                         },
-                    error:        function (xhr, status) 
-                        { 
+                    error:        function (xhr, status)
+                        {
                             jQuery("#pageLoadStatus").text("HTTP GET "+urlval+" failed: "+status+"; HTTP status: "+xhr.status+" "+xhr.statusText);
                             jQuery("#pageLoadStatus").addClass('error');
                         },
                     cache:        false
               });
 }
+
+

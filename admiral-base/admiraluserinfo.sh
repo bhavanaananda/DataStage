@@ -45,7 +45,7 @@ done
 # Check if the $UserID is a valid ADMIRAL user, else output the error message
 outputMessage=$(smbldap-userinfo -l  $UserID | grep "/usr/sbin/smbldap-userinfo")
 
-if [[ outputMessage == "" ]]; then
+if [[ $outputMessage == "" ]]; then
     sudo -u $RemoteUserID smbldap-userinfo -l  $UserID | grep "Full Name" | awk '{print "FullName:" $3 " " $4}'
     sudo -u $RemoteUserID ls -l /home/data/private | grep $UserID | awk '{print "UserRole:" $4}'
     sudo -u $RemoteUserID smbldap-userinfo -l  $UserID | grep "Room Number"| awk '{print "RoomNumber:" $3}'

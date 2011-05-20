@@ -11,7 +11,7 @@ logger = logging.getLogger("AdminUIHandler")
 
 urls = ('/users','ListAdmiralUsers',
         '/user/(.+)','AdmiralUserDetails',
-        '/error/(.+)',"AdmiralError")
+        '/error/(.+)','AdmiralError')
 if __name__ == "__main__":
     #web.run(urls, globals())
       app = web.application(urls,globals())
@@ -60,25 +60,29 @@ class AdmiralUserDetails:
         logger.debug("accesspath = " + repr(accesspath))
         cmdOutput = subprocess.Popen(accesspath, shell=True, stdout=subprocess.PIPE)
         cmdOutputString = cmdOutput.stdout.read()
-
-        # Convert the retrieved column of users to a list to enable easy conversion to json
-        cmdOutputList = []
         cmdOutputString = cmdOutputString.strip()
-        #cmdOutputList = cmdOutputString.split("\n")
-        cmdOutputString = '{"' + cmdOutputString + '"}'
-        cmdOutputString = cmdOutputString.replace("\n", '","')
-        cmdOutputString = cmdOutputString.replace(":", '":"')
-        logger.debug("cmdOutputList = " + repr(cmdOutputList))
-            
+        #print "Status: 303 ADMIRAL SERVER ERROR"
+
         if cmdOutputString.find("ADMIRAL SERVER ERROR") == -1 :
-            raise web.redirect('/error/'+cmdOutputString)
-            #print "Status: 303 ADMIRAL SERVER ERROR"
-            
-        return json.dumps(ast.literal_eval(cmdOutputString))
+            # Convert the retrieved column of users to a list to enable easy conversion to json
+            cmdOutputList = []
+            #cmdOutputList = cmdOutputString.split("\n")
+            cmdOutputString = '{"' + cmdOutputString + '"}'
+            cmdOutputString = cmdOutputString.replace("\n", '","')
+            cmdOutputString = cmdOutputString.replace(":", '":"')
+            logger.debug("cmdOutputList = " + repr(cmdOutputList))
+            return json.dumps(ast.literal_eval(cmdOutputString))
+        else:
+            returnString = '{"redirect":"' + '/error/'+cmdOutputString  + '"}'
+            return returnString
+            #raise web.redirect('/error/'+cmdOutputString)
+            #raise web.redirect('http://www.google.com')
         #return "Admiral User Details"
-        
+
 class AdmiralError:
-    def GET(self, errorMessage): 
-        web.header('Content-Type', 'text/html') 
-        return errorMessage  
+    def GET(self, errorMessage):
+        web.header('Content-Type', 'text/plain')
+        #returnString = '{"redirect":"' +  errorMessage + '"}'
+        #return json.dumps(ast.literal_eval(returnString))
+        return  json.dumps(errorMessage)
         #return "Admiral Server Error"
