@@ -81,8 +81,37 @@ class AdmiralUserDetails:
 
 class AdmiralError:
     def GET(self, errorMessage):
-        web.header('Content-Type', 'text/plain')
         #returnString = '{"redirect":"' +  errorMessage + '"}'
         #return json.dumps(ast.literal_eval(returnString))
-        return  json.dumps(errorMessage)
-        #return "Admiral Server Error"
+
+        if web.ctx.environ.has_key('HTTP_REFERER') or  web.ctx.environ['HTTP_REFERER'].endswith('AdminFrontPage.html'):
+            web.header('Content-Type', 'text/html')
+            returnString ="""
+            <html>
+                <head>
+                    <title>ADMIRAL: ADMIRAL User Administration</title>
+                    <link rel="stylesheet" href="./../css/AdminUI.css" type="text/css" />
+                </head>
+                <body>
+                   <div>
+                     <span id="logo"><a href="/"><img alt="site_logo" src="/images/Admiral-logo-284x100.png" border="0"/></a></span>
+                     <!-- <span id="logout"><a href="/tool/AdminUI/html/AdminFrontPage.html">logout</a></span> -->
+                   </div>
+                   <h1>ADMIRAL User Administration</h1>"""
+
+            returnString=returnString + "<h2>" + errorMessage + "</h2>"
+
+            returnString=returnString + """
+                   <form id="adminForm" name="adminForm" action="/tool/AdminUI/html/AdminFrontPage.html" method="post">
+                         <div class="box">
+                           <span class="labelvalue">
+                             <input name="back" id="back" type="submit" value="Back"/>
+                           </span>
+                        </div>
+                   </form>
+                 </body>
+            </html> """
+            return returnString
+        else:
+             web.header('Content-Type', 'text/plain')
+             return  json.dumps(errorMessage)
