@@ -45,7 +45,7 @@ admiral.userDetails = function (userID, callback)
                         {
                             if(data.redirect)
                             {
-                              window.location.href = data.redirect;
+                              window.location.href = "/error/"+data.redirect;
                             }
                             else
                             {

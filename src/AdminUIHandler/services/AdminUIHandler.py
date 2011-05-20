@@ -73,7 +73,7 @@ class AdmiralUserDetails:
             logger.debug("cmdOutputList = " + repr(cmdOutputList))
             return json.dumps(ast.literal_eval(cmdOutputString))
         else:
-            returnString = '{"redirect":"' + '/error/'+cmdOutputString  + '"}'
+            returnString = '{"redirect":"' + cmdOutputString  + '"}'
             return returnString
             #raise web.redirect('/error/'+cmdOutputString)
             #raise web.redirect('http://www.google.com')
