@@ -15,7 +15,7 @@ jQuery(document).ready( function ()
        var user = keyvaluepairs[2];
        jQuery("#userOperation").val(operation);
        jQuery("#userID").val(user);
-       if ( operation!="Add")
+       if (operation!="Add")
         { 
           jQuery("#userID").attr("disabled",true);
         }
