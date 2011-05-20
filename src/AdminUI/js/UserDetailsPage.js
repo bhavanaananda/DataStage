@@ -15,7 +15,10 @@ jQuery(document).ready( function ()
        var user = keyvaluepairs[2];
        jQuery("#userOperation").val(operation);
        jQuery("#userID").val(user);
-       jQuery("#userID").attr("disabled",true);
+       if ( operation!="Add")
+        { 
+          jQuery("#userID").attr("disabled",true);
+        }
     }
     
    var m = new admiral.AsyncComputation();
