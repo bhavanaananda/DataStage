@@ -21,6 +21,11 @@ RoomNumber=$5
 WorkPhone=$6
 Password=$7
 
+if [[ "$1" == "" || "$2" == "" || "$3" == "" ]]; then
+  echo "Usage: $0 RemoteUserID UserID [FullName] [Role] [Room Number] [Work phone] [Password]"
+  exit 1
+fi
+
 if [[ "$RemoteUserID" == "" ]]; then
     echo "admiralupdateuserinfo.sh - no RemoteUserID provided"
     exit 2
