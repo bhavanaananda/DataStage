@@ -67,6 +67,8 @@ if [[ $outputMessage == "" ]]; then
 $Password
 $Password
 END
+    GidNumber=$(sudo -u $RemoteUserID smbldap-groupshow RGLeader| grep "gidNumber:"|awk -F":" '{ print $2 }')
+    smbldap-usermod -G $Role -g $GidNumber $UserID
     source /root/admiralusermanagement.sh
     # Set user data area owner and ACLs
     setdataownerandaccess $UserID $UserID $Role
