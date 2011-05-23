@@ -21,6 +21,13 @@ jQuery(document).ready( function ()
         }
     }
     
+  
+   //Set defaults for password
+   jQuery("#pass").val("");
+   jQuery("#changepass").attr("checked",false);
+   if (jQuery('#changepass').is(':checked')) { jQuery("#pass").attr("disabled",false); } else { jQuery("#pass").attr("disabled",true); }
+   
+    
    var m = new admiral.AsyncComputation();
             
    m.eval(function(value,callback)
@@ -35,7 +42,12 @@ jQuery(document).ready( function ()
    });
    
    m.exec(null,admiral.noop); 
-    
+   
+   jQuery('#changepass').click(function()
+   {
+       jQuery("#pass").attr("disabled",!this.checked);
+   });
+     
    jQuery("#back").click( function()
    {   
         //alert("back button clicked");

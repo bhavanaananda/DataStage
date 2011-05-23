@@ -14,7 +14,8 @@ cp /root/listAdmiralUsers.sh /usr/local/sbin
 chmod 755 /usr/local/sbin/listAdmiralUsers.sh
 cp /root/admiraluserinfo.sh /usr/local/sbin
 chmod 755 /usr/local/sbin/admiraluserinfo.sh
-
+cp /root/admiralupdateuserinfo.sh /usr/local/sbin
+chmod 755 /usr/local/sbin/admiralupdateuserinfo.sh
 smbpasswd -s -a admiral <<END
 %{PASSWORD}
 %{PASSWORD}

@@ -14,11 +14,13 @@ Defaults  !lecture,tty_tickets,!fqdn
 User_Alias TEST_ACCESS_USER = www-data
 User_Alias LIST_USERS       = www-data
 User_Alias USER_INFO        = www-data
+User_Alias USER_UPDATE      = www-data
 
 # Cmnd alias specification
 Cmnd_Alias TEST_ACCESS_CMD = /usr/local/sbin/testwriteaccess.sh
 Cmnd_Alias LIST_USERS_CMD  = /usr/local/sbin/listAdmiralUsers.sh
 Cmnd_Alias USER_INFO_CMD   = /usr/local/sbin/admiraluserinfo.sh
+Cmnd_Alias USER_UPDATE_CMD = /usr/local/sbin/admiralupdateuserinfo.sh
 
 # User privilege specification
 root  ALL=(ALL) ALL
@@ -27,7 +29,9 @@ root  ALL=(ALL) ALL
 %admin ALL=(ALL) ALL
 %RGLeader ALL=(ALL) ALL
 
-# Selected users may run the /usr/local/sbin/testuseracess.sh/listAdmiralUsers.sh/admiraluserinfo.sh script as any user without password
-TEST_ACCESS_USER ALL = (ALL) NOPASSWD: TEST_ACCESS_CMD
-LIST_USERS ALL       = (ALL) NOPASSWD: LIST_USERS_CMD
-USER_INFO  ALL       = (ALL) NOPASSWD: USER_INFO_CMD
+# Selected users may run the /usr/local/sbin/testuseracess.sh||listAdmiralUsers.sh||admiraluserinfo.sh||admiralupdateuserinfo.sh
+# script as any user without password
+TEST_ACCESS_USER ALL  = (ALL) NOPASSWD: TEST_ACCESS_CMD
+LIST_USERS  ALL       = (ALL) NOPASSWD: LIST_USERS_CMD
+USER_INFO   ALL       = (ALL) NOPASSWD: USER_INFO_CMD
+USER_UPDATE ALL       = (ALL) NOPASSWD: USER_UPDATE_CMD

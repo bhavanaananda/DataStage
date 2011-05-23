@@ -31,7 +31,16 @@ The following .sh files are added to admiral-base to help the Admin UI Interface
    # $2 FolderPath ex: /home/data/private
 
 2> admiraluserinfo.sh
-# $1 RemoteUserID requesting the UserID details
-# $2 UserID  whose details are being requested by RemoteUserID
+   # $1 RemoteUserID requesting the UserID details
+   # $2 UserID  whose details are being requested by RemoteUserID
+
+3> admiralupdateuserinfo.sh
+   # $1 RemoteUserID trying to update the UserID details
+   # $2 UserID for whose details are being updated
+   # $3 FullName Updated FullName of the Admiral User with ID=UserID
+   # $4 Role Updated Role of the Admiral User with ID=UserID
+   # $5 RoomNumber Updated Room Number of the Admiral User with ID=UserID
+   # $6 WorkPhone Updated Work Phone Number of the Admiral User with ID=UserID
+   # $7 Password Updated Password for the Admiral User with ID=UserID
 
 To Do : ( look at authentication issues for remote user ID)

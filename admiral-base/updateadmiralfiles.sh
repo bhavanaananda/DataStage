@@ -64,6 +64,9 @@ chmod 755 /usr/local/sbin/listAdmiralUsers.sh
 chmod -f 755 /usr/local/sbin/admiraluserinfo.sh
 migrate admiraluserinfo.sh /usr/local/sbin
 chmod 755 /usr/local/sbin/admiraluserinfo.sh
+chmod -f 755 /usr/local/sbin/admiralupdateuserinfo.sh
+migrate admiralupdateuserinfo.sh /usr/local/sbin
+chmod 755 /usr/local/sbin/admiralupdateuserinfo.sh
 
 migrate etcldap.conf               /etc
 migrate krb5.conf                  /etc
