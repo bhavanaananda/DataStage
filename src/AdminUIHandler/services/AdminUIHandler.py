@@ -9,7 +9,8 @@ except ImportError:
 
 logger = logging.getLogger("AdminUIHandler")
 
-urls = ('/users','ListAdmiralUsers',
+urls = ('/admin','AdminUIFormHandler',
+	    '/users','ListAdmiralUsers',
         '/user/(.+)','AdmiralUserDetails',
         '/error/(.+)','AdmiralError')
 if __name__ == "__main__":
@@ -19,6 +20,19 @@ if __name__ == "__main__":
     # app = web.application(urls, globals(), autoreload=False)
     # application = app.wsgifunc()
 
+class AdminUIFormHandler:
+    def POST(self):
+        form = web.input()
+        UserID = form.userID
+        FullName = form.fullName
+        Role = form.role
+        RoomNumber = form.roomNumber
+        WorkPhone = form.workPhone
+        Password = form.userpass    	   	
+    	
+    	cmdOutputList = [UserID,FullName,Role,RoomNumber,WorkPhone,Password]
+        return	json.dumps(cmdOutputList)
+	 
 class ListAdmiralUsers:
     def GET(self):
         web.header('Content-Type', 'application/JSON')
@@ -46,7 +60,7 @@ class ListAdmiralUsers:
         #return "List Admiral Users"
 
 class AdmiralUserDetails:
-    def GET(self, userID):
+    def POST(self, userID):
         web.header('Content-Type', 'application/JSON')
 
         if not web.ctx.environ.has_key('HTTP_AUTHORIZATION') or  not web.ctx.environ['HTTP_AUTHORIZATION'].startswith('Basic '):
@@ -77,6 +91,48 @@ class AdmiralUserDetails:
             return returnString
             #raise web.redirect('/error/'+cmdOutputString)
             #raise web.redirect('http://www.google.com')
+            
+	def GET(self, userID):
+		web.header('Content-Type', 'application/JSON')
+		
+#		form = web.input()
+#		UserID = form.userID
+#		FullName = form.fullName
+#		Role = form.role
+#		RoomNumber = form.roomNumber
+#		WorkPhone = form.workPhone
+#		Password = form.userpass
+		cmdOutputList = ["a","b"]
+		return json.dumps(cmdOutputList)
+        #return "admiralupdateuserinfo.sh"+ " "+RemoteUserID+ " "+UserID+ " "+FullName+ " "+Role+ " "+RoomNumber+ " "+Workphone+ " "+Password
+#		if not web.ctx.environ.has_key('HTTP_AUTHORIZATION') or  not web.ctx.environ['HTTP_AUTHORIZATION'].startswith('Basic '):
+#			return web.Unauthorized()
+#		else:
+#			hash = web.ctx.environ['HTTP_AUTHORIZATION'][6:]
+#			remoteUser, remotPasswd = base64.b64decode(hash).split(':')
+#
+#		admiralUser = userID
+#		#admiralupdateuserinfo.sh RemoteUserID UserID [FullName] [Role] [Room Number] [Work phone] [Password]
+#		accesspath = "/usr/local/sbin/admiralupdateuserinfo.sh" + " " + remoteUser + " " + admiralUser
+#		logger.debug("accesspath = " + repr(accesspath))
+#		cmdOutput = subprocess.Popen(accesspath, shell=True, stdout=subprocess.PIPE)
+#		cmdOutputString = cmdOutput.stdout.read()
+#		cmdOutputString = cmdOutputString.strip()
+#		#print "Status: 303 ADMIRAL SERVER ERROR"
+#
+#		if cmdOutputString.find("ADMIRAL SERVER ERROR") == -1 :
+#			# Convert the retrieved column of users to a list to enable easy conversion to json
+#			cmdOutputList = []
+#			#cmdOutputList = cmdOutputString.split("\n")
+#			cmdOutputString = '{"' + cmdOutputString + '"}'
+#			cmdOutputString = cmdOutputString.replace("\n", '","')
+#			cmdOutputString = cmdOutputString.replace(":", '":"')
+#			logger.debug("cmdOutputList = " + repr(cmdOutputList))
+#			return json.dumps(ast.literal_eval(cmdOutputString))
+#		else:
+#			returnString = '{"redirect":"' + cmdOutputString  + '"}'
+#			return returnString            
+            
         #return "Admiral User Details"
 
 class AdmiralError:

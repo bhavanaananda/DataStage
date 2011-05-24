@@ -23,37 +23,72 @@ jQuery(document).ready( function ()
     
   
    //Set defaults for password
-   jQuery("#pass").val("");
+   jQuery("#userpass").val("");
    jQuery("#changepass").attr("checked",false);
-   if (jQuery('#changepass').is(':checked')) { jQuery("#pass").attr("disabled",false); } else { jQuery("#pass").attr("disabled",true); }
+   if (jQuery('#changepass').is(':checked')) { jQuery("#userpass").attr("disabled",false); } else { jQuery("#userpass").attr("disabled",true); }
    
     
    var m = new admiral.AsyncComputation();
             
    m.eval(function(value,callback)
    { 
-     var userID= jQuery("#userID").val();
-     admiral.userDetails(userID,callback); 
+       var userID= jQuery("#userID").val();
+       admiral.userDetails(userID,callback); 
    }); 
          
    m.eval(function(details,callback)
    {
-     displayValues(details);
+       displayValues(details);
    });
    
    m.exec(null,admiral.noop); 
    
    jQuery('#changepass').click(function()
    {
-       jQuery("#pass").attr("disabled",!this.checked);
+       jQuery("#userpass").attr("disabled",!this.checked);
    });
      
    jQuery("#back").click( function()
    {   
-        //alert("back button clicked");
-        backURL = "AdminFrontPage.html";
-        jQuery("#adminForm").attr('action', backURL); 
-        return true;
+       //alert("back button clicked");
+       backURL = "AdminFrontPage.html";
+       jQuery("#adminForm").attr('action', backURL); 
+       return true;
+   });
+   
+   jQuery("#userOperation").click( function()
+   {  
+       var m = new admiral.AsyncComputation();
+       m.eval(function(value,callback)
+       { 
+//         var userID= jQuery("#userID").val();
+//         var userFullName= jQuery("#fullName").val();
+//         var userRole= jQuery("#role").val();
+//         var userRoomNumber= jQuery("#roomNumber").val();
+//         var userWorkPhone= jQuery("#workPhone").val();        
+//         var userPassword="";
+         //operURL = "/admin";
+         //jQuery("#adminForm").attr('action', operURL); 
+
+         // Update the password only if the change password checkbox is checked
+         if (jQuery('#changepass').is(':checked')) 
+         { 
+           userPassword=jQuery("#userpass").val();
+         }
+         
+         if(jQuery("#userOperation").val() == "Modify")
+         {
+           var userID= jQuery("#userID").val();
+           admiral.adminUserOperation(userID,callback); 
+         }
+         
+       }); 
+             
+       m.eval(function(operationDetails,callback)
+       {
+        // displayValues(operationDetails);
+       });      
+          m.exec(null,admiral.noop); 
    });
     
    // Set click handler on user selected
@@ -61,7 +96,8 @@ jQuery(document).ready( function ()
    { 
       jQuery("#selectedUser").val(jQuery(this).text());              
    });     
-
+   
+   return false;
 });
 
    /**
