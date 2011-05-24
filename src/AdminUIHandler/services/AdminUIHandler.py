@@ -29,7 +29,7 @@ class AdminUIFormHandler:
         RoomNumber = form.roomNumber
         WorkPhone = form.workPhone
         Password = form.userpass    	   	
-    	
+    	cmdOutputList = []
     	cmdOutputList = [UserID,FullName,Role,RoomNumber,WorkPhone,Password]
         return	json.dumps(cmdOutputList)
 	 
@@ -60,7 +60,7 @@ class ListAdmiralUsers:
         #return "List Admiral Users"
 
 class AdmiralUserDetails:
-    def POST(self, userID):
+    def GET(self, userID):
         web.header('Content-Type', 'application/JSON')
 
         if not web.ctx.environ.has_key('HTTP_AUTHORIZATION') or  not web.ctx.environ['HTTP_AUTHORIZATION'].startswith('Basic '):
@@ -92,7 +92,7 @@ class AdmiralUserDetails:
             #raise web.redirect('/error/'+cmdOutputString)
             #raise web.redirect('http://www.google.com')
             
-	def GET(self, userID):
+	def PUT(self, userID):
 		web.header('Content-Type', 'application/JSON')
 		
 #		form = web.input()
