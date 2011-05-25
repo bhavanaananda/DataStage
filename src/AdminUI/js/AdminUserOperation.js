@@ -29,16 +29,16 @@ if (typeof admiral == "undefined")
     admiral = {};
 }
 
-admiral.adminUserOperation = function (userID, callback)
+admiral.adminUserOperation = function (userID,userFullName,userRole,userRoomNumber,userWorkPhone,userPassword, userOperation, callback)
 {
     //urlval = "http://admiral/user/"+userID;
     urlval = "/admin";
-    //jsondata=jQuery.toJSON(" UserID:userID, UserFullName:userFullName, UserRole:userRole, UserRoomNumber:userRoomNumber,UserWorkPhone:userWorkPhone,UserPassword:userPassword ")
+    jsondata=jQuery.toJSON({UserID:userID, UserFullName:userFullName, UserRole:userRole, UserRoomNumber:userRoomNumber,UserWorkPhone:userWorkPhone,UserPassword:userPassword, UserOperation:userOperation})
     //jsondata=jQuery.toJSON({UserID:"a",UserFullName:"aa"});
     jQuery.ajax({
                     type:         "POST",
                     url:           urlval,
-                    //data:          jsondata,
+                    data:          jsondata,
                     dataType:     "json",
                     beforeSend:   function (xhr)
                         {

@@ -22,15 +22,16 @@ if __name__ == "__main__":
 
 class AdminUIFormHandler:
     def POST(self):
-        form = web.input()
-        UserID = form.userID
-        FullName = form.fullName
-        Role = form.role
-        RoomNumber = form.roomNumber
-        WorkPhone = form.workPhone
-        Password = form.userpass    	   	
+        form = web.input(UserID="", FullName="", Role="", RoomNumber="", WorkPhone="",UserPassword="", UserOperation="")
+        UserID = form.UserID
+        FullName = form.FullName
+        Role = form.Role
+        RoomNumber = form.RoomNumber
+        WorkPhone = form.WorkPhone
+        Password = form.Userpass
+        Operation = form.UserOperation   	   	
     	cmdOutputList = []
-    	cmdOutputList = [UserID,FullName,Role,RoomNumber,WorkPhone,Password]
+    	cmdOutputList = [UserID,FullName,Role,RoomNumber,WorkPhone,Password,Operation]
         return	json.dumps(cmdOutputList)
 	 
 class ListAdmiralUsers:
