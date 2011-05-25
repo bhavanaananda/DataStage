@@ -61,12 +61,13 @@ jQuery(document).ready( function ()
        var m = new admiral.AsyncComputation();
        m.eval(function(value,callback)
        { 
-//         var userID= jQuery("#userID").val();
-//         var userFullName= jQuery("#fullName").val();
-//         var userRole= jQuery("#role").val();
-//         var userRoomNumber= jQuery("#roomNumber").val();
-//         var userWorkPhone= jQuery("#workPhone").val();        
-//         var userPassword="";
+         var userID= jQuery("#userID").val();
+         var userFullName= jQuery("#fullName").val();
+         var userRole= jQuery("#role").val();
+         var userRoomNumber= jQuery("#roomNumber").val();
+         var userWorkPhone= jQuery("#workPhone").val();        
+         var userPassword="";
+         var userOperation=jQuery("#userOperation").val();
          //operURL = "/admin";
          //jQuery("#adminForm").attr('action', operURL); 
 
@@ -78,8 +79,7 @@ jQuery(document).ready( function ()
          
          if(jQuery("#userOperation").val() == "Modify")
          {
-           var userID= jQuery("#userID").val();
-           admiral.adminUserOperation(userID,callback); 
+           admiral.adminUserOperation(userID,userFullName,userRole,userRoomNumber,userWorkPhone,userPassword, userOperation, callback); 
          }
          
        }); 
