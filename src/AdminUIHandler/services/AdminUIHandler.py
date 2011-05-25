@@ -28,7 +28,7 @@ class AdminUIFormHandler:
         Role = form.Role
         RoomNumber = form.RoomNumber
         WorkPhone = form.WorkPhone
-        Password = form.Userpass
+        Password = form.UserPassword
         Operation = form.UserOperation   	   	
     	cmdOutputList = []
     	cmdOutputList = [UserID,FullName,Role,RoomNumber,WorkPhone,Password,Operation]

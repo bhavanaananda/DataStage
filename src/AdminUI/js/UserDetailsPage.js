@@ -14,6 +14,7 @@ jQuery(document).ready( function ()
     {  
        var user = keyvaluepairs[2];
        jQuery("#userOperation").val(operation);
+       jQuery("#userOperation").text(operation);
        jQuery("#userID").val(user);
        if (operation!="Add")
         { 
