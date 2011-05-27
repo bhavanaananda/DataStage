@@ -5,7 +5,7 @@ http://hostname/user/user_id
 
 ********
  Users
- /users 
+ /users/{user_id}
 ********
 
 GET:
