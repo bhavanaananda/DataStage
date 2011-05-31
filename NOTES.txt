@@ -3,3 +3,11 @@ ADMIRAL project notes
 20101019 Clean build based on per-target configuration and symlinked /private/
 file area with all tests passing.
 
+
+
+Refactoring into a common Utils folder needed for the following modules:
+Note:- Two similarly named files may need to be merged as they may contain some mutually exclusive functions
+1. HttpSession.py
+
+
+
