@@ -68,6 +68,7 @@ $Password
 $Password
 END
     fi
+    
     GidNumber=$(sudo -u $RemoteUserID smbldap-groupshow RGLeader| grep "gidNumber:"|awk -F":" '{ print $2 }')
     smbldap-usermod -G $Role -g $GidNumber $UserID
     source /root/admiralusermanagement.sh
