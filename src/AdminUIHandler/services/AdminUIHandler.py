@@ -16,84 +16,95 @@ except ImportError:
 logger = logging.getLogger("AdminUIHandler")
 
 urls = ('/admin','AdminUIFormHandler',
-        '/users','ListAdmiralUsers',
-        '/user/(.+)','AdmiralUserDetails',
-        '/error/(.+)','AdmiralError')
+        '/users/(.+)','ListOrAddAdmiralUsers',
+        '/user/(.+)','GetAdmiralUserDetails',
+        '/error/(.+)','DisplayAdmiralError')
 
 app = web.application(urls,globals())
 
 if __name__ == "__main__":
     #web.run(urls, globals())
-    #web.config.debug = False
+    #web.config.debug = False 
     app = web.application(urls,globals())
     app.run()
-
+    
     # app = web.application(urls, globals(), autoreload=False)
     # application = app.wsgifunc()
 
 class AdminUIFormHandler:
 
-    def POST(self):
+    def POST(self): 
         print "POST in AdminUIFormHandler"
         reqdata = web.data()
         print "Request POST data obtained from the client before redirection"+reqdata
         jsonInputData = json.loads(reqdata)
         print "JSON INPUT DATA =" + repr(jsonInputData)
+
         UserID     =  jsonInputData["UserID"]
         print "UserID= "+ UserID
         # FullName   =  jsonInputData["UserFullName"]
         # Role       =  jsonInputData["UserRole"]
-        RoomNumber =  jsonInputData["UserRoomNumber"]
+        RoomNumber   =  jsonInputData["UserRoomNumber"]
         print "Room Number: " + RoomNumber
         # WorkPhone  =  jsonInputData["UserWorkPhone"]
-        # Password   =  jsonInputData["UserPassword"]
-
-        Operation  =  jsonInputData["UserOperation"]
-        response=""
+        # Password   =  jsonInputData["UserPassword"]        
+        Operation    =  jsonInputData["UserOperation"] 
+        print "Operation = " + Operation
+  	   	
         if Operation=="Modify":
-                print "Operation = " + Operation
-                #Create Session
-                endpointhost = "localhost"
-                basepath = '/user/'+UserID
-                responsedata =""
-                if not web.ctx.environ.has_key('HTTP_AUTHORIZATION') or  not web.ctx.environ['HTTP_AUTHORIZATION'].startswith('Basic '):
-                        return web.Unauthorized()
-                else:
-                        hash = web.ctx.environ['HTTP_AUTHORIZATION'][6:]
-                        remoteUser, remotePasswd = base64.b64decode(hash).split(':')
-                try:
-                        session  = HttpSession.makeHttpSession(endpointhost, basepath, remoteUser,remotePasswd)
-                       # encodeddata = session.encode_multipart_formdata(jsonInputData)
-                       # (responsetype, responsedata)=session.doHTTP_PUT( resource='/user/'+UserID,data=None, data_type='application/JSON', expect_status=200, expect_reason="OK")
-                       # (responsetype, responsedata)=session.doHTTP_GET( resource='/users', expect_status=200, expect_reason="OK")
-                        connection =  httplib.HTTPConnection('localhost', timeout=30)
-                        auth = base64.encodestring("%s:%s" % (remoteUser, remotePasswd))
-                        headers = {"Authorization" : "Basic %s" % auth}
-                        data = web.http.urlencode(jsonInputData)
-                        print "URL encoded data before sending=" + data
-                        url = '/user/'+UserID
-                        connection.request('PUT', '/user/'+UserID,body=data, headers=headers)
-                        #connection.endheaders()
-                        #connection.send(jsonInputData)
-                        response = connection.getresponse()
-                        responsedata = response.read()
-                        #connection.close()
-                        #req = urllib2.Request(url, data)
-                        #response = urllib2.urlopen(req)
-                        #responsedata = response.read()
-                except session.HTTPSessionError, e:
-                        AdminUIHandlerUtils.printHTMLHeaders()
-                        AdminUIHandlerUtils.generateErrorResponsePage(AdminUIHandlerUtils.HTTP_ERROR,e.code, e.reason)
-                        AdminUIHandlerUtils.printStackTrace()
-                        print "</body>"
-                        print "</html>"
+                method="PUT"
+                url = '/user/'+UserID
+        elif Operation=="Add":
+                method="POST"
+                url = '/users/'+UserID
+        elif Operation=="Delete":
+                method="DELETE"
+                url = '/user/'+UserID
+              
+       	endpointhost = "localhost"
+       	basepath = '/user/'+UserID
+        responsedata =""
 
- #response = app.request('https://localhost/user/'+UserID, method='PUT', data=jsonInputData)
-                #respdata = json.dumps(response)
+        if not web.ctx.environ.has_key('HTTP_AUTHORIZATION') or  not web.ctx.environ['HTTP_AUTHORIZATION'].startswith('Basic '):
+       		return web.Unauthorized()
+        else:
+       		hash = web.ctx.environ['HTTP_AUTHORIZATION'][6:]
+       		remoteUser, remotePasswd = base64.b64decode(hash).split(':')
+
+        auth = base64.encodestring("%s:%s" % (remoteUser, remotePasswd))
+        headers = {"Authorization" : "Basic %s" % auth}
+        data = web.http.urlencode(jsonInputData)
+        print "URL encoded data before sending=" + data
+
+        try:    
+                session  = HttpSession.makeHttpSession(endpointhost, basepath, remoteUser,remotePasswd) 
+               # encodeddata = session.encode_multipart_formdata(jsonInputData)
+               # (responsetype, responsedata)=session.doHTTP_PUT( resource='/user/'+UserID,data=None, data_type='application/JSON', expect_status=200, expect_reason="OK")
+               # (responsetype, responsedata)=session.doHTTP_GET( resource='/users', expect_status=200, expect_reason="OK")
+        	connection =  httplib.HTTPConnection('localhost', timeout=30)
+	        connection.request(method, url, body=data, headers=headers)
+               # connection.endheaders()
+               # connection.send(jsonInputData)
+		response = connection.getresponse()
+                responsedata = response.read()
+               # connection.close()
+               # req = urllib2.Request(url, data)
+               # response = urllib2.urlopen(req)
+               # responsedata = response.read()
+        except session.HTTPSessionError, e:
+                AdminUIHandlerUtils.printHTMLHeaders()
+                AdminUIHandlerUtils.generateErrorResponsePage(AdminUIHandlerUtils.HTTP_ERROR,e.code, e.reason)
+                AdminUIHandlerUtils.printStackTrace()   
+       	        print "</body>"
+	        print "</html>"
+
+               # response = app.request('https://localhost/user/'+UserID, method='PUT', data=jsonInputData)
+               # respdata = json.dumps(response)
+
         print "POST RESULT=" + repr(responsedata)
         return json.dumps(responsedata)
-
-class ListAdmiralUsers:
+	 
+class ListOrAddAdmiralUsers:
     def GET(self):
         web.header('Content-Type', 'application/JSON')
 
@@ -119,7 +130,33 @@ class ListAdmiralUsers:
         return json.dumps(cmdOutputList, sort_keys=True)
         #return "List Admiral Users"
 
-class AdmiralUserDetails:
+    def POST(self,UserID):
+        web.header('Content-Type', 'application/JSON')
+
+        if not web.ctx.environ.has_key('HTTP_AUTHORIZATION') or  not web.ctx.environ['HTTP_AUTHORIZATION'].startswith('Basic '):
+            return web.Unauthorized()
+        else:
+            hash = web.ctx.environ['HTTP_AUTHORIZATION'][6:]
+            remoteUser, remotPasswd = base64.b64decode(hash).split(':')
+
+        logger.debug("Remote user = " + repr(remoteUser))
+        accesspath = "/usr/local/sbin/listAdmiralUsers.sh" + " " + remoteUser
+        logger.debug("accesspath = " + repr(accesspath))
+        cmdOutput = subprocess.Popen(accesspath, shell=True, stdout=subprocess.PIPE)
+        cmdOutputString = cmdOutput.stdout.read()
+
+        # Convert the retrieved column of users to a list to enable easy conversion to json
+        cmdOutputList = []
+        cmdOutputString = cmdOutputString.strip()
+        cmdOutputString = cmdOutputString.replace("\n", ",")
+        cmdOutputList = cmdOutputString.split(",")
+        logger.debug("cmdOutputList = " + repr(cmdOutputList))
+        web.ok
+        return json.dumps(cmdOutputList, sort_keys=True)
+        #return "List Admiral Users"
+
+
+class GetAdmiralUserDetails:
     def GET(self, userID):
         web.header('Content-Type', 'application/JSON')
 
@@ -153,7 +190,7 @@ class AdmiralUserDetails:
             #raise web.redirect('http://www.google.com')
             
     def PUT(self, userID):
-                #web.header('Content-Type', 'application/JSON')
+		#web.header('Content-Type', 'application/JSON')
                 print "Web.data() = " + web.data()
                 #jsonInputData = json.loads(web.data())
                 jsonInputData = urlparse.parse_qs(web.data().replace('\n', "").replace('\r', ""), keep_blank_values=True)
@@ -166,40 +203,40 @@ class AdmiralUserDetails:
                 WorkPhone  =  jsonInputData["UserWorkPhone"][0]
                 Password   =  jsonInputData["UserPassword"][0]
                 Operation  =  jsonInputData["UserOperation"][0]
+             
+		if not web.ctx.environ.has_key('HTTP_AUTHORIZATION') or  not web.ctx.environ['HTTP_AUTHORIZATION'].startswith('Basic '):
+			return web.Unauthorized()
+		else:
+			hash = web.ctx.environ['HTTP_AUTHORIZATION'][6:]
+			remoteUser, remotPasswd = base64.b64decode(hash).split(':')
 
-                if not web.ctx.environ.has_key('HTTP_AUTHORIZATION') or  not web.ctx.environ['HTTP_AUTHORIZATION'].startswith('Basic '):
-                        return web.Unauthorized()
-                else:
-                        hash = web.ctx.environ['HTTP_AUTHORIZATION'][6:]
-                        remoteUser, remotPasswd = base64.b64decode(hash).split(':')
-
-                admiralUser = userID
-                print "USAGE: admiralupdateuserinfo.sh  RemoteUserID UserID [FullName] [Role] [Room Number] [Work phone] [Password]"
-                commandString = "/usr/local/sbin/admiralupdateuserinfo.sh" + " " + "'" + remoteUser + "'" + " " + "'" + admiralUser + "'" + " " + "'" + FullName + "'" + " " + "'" + Role + "'" + " " + "'" + RoomNumber + "'" +  " " + "'" 
-                print commandString
+		admiralUser = userID
+		print "USAGE: admiralupdateuserinfo.sh  RemoteUserID UserID [FullName] [Role] [Room Number] [Work phone] [Password]"
+		commandString = "/usr/local/sbin/admiralupdateuserinfo.sh" + " " + "'" + remoteUser + "'" + " " + "'" + admiralUser + "'" + " " + "'" + FullName + "'" + " " + "'" + Role + "'" + " " + "'" + RoomNumber + "'" +  " " + "'" + WorkPhone + "'" + " " + "'" + Password + "'"
+		print commandString
                 logger.debug("commandString = " + repr(commandString))
-                cmdOutput = subprocess.Popen(commandString, shell=True, stdout=subprocess.PIPE)
-                cmdOutputString = cmdOutput.stdout.read()
-                cmdOutputString = cmdOutputString.strip()
+		cmdOutput = subprocess.Popen(commandString, shell=True, stdout=subprocess.PIPE)
+        	cmdOutputString = cmdOutput.stdout.read()
+		cmdOutputString = cmdOutputString.strip()
 
-                if cmdOutputString.find("ADMIRAL SERVER ERROR") == -1 :
-                        cmdOutputList = []
-                        cmdOutputList = cmdOutputString.split("\n")
-                        cmdOutputString = '{"' + cmdOutputString + '"}'
-                        cmdOutputString = cmdOutputString.replace("\n", '","')
-                        cmdOutputString = cmdOutputString.replace(":", '":"')
-                        logger.debug("cmdOutputList = " + repr(cmdOutputList))
+		if cmdOutputString.find("ADMIRAL SERVER ERROR") == -1 :
+			cmdOutputList = []
+			cmdOutputList = cmdOutputString.split("\n")
+			cmdOutputString = '{"' + cmdOutputString + '"}'
+			cmdOutputString = cmdOutputString.replace("\n", '","')
+			cmdOutputString = cmdOutputString.replace(":", '":"')
+			logger.debug("cmdOutputList = " + repr(cmdOutputList))
                         return json.dumps(ast.literal_eval(cmdOutputString))
-#                       return json.dumps({"Update": "Successful"})
-                else:
-                        returnString = '{"redirect":"' + cmdOutputString  + '"}'
+#			return json.dumps({"Update": "Successful"})
+		else:
+			returnString = '{"redirect":"' + cmdOutputString  + '"}'
                         return returnString
 #                       return json.dumps({"Update": "Failed"})
 
-#        return json.dumps(jsonInputData)
+#        return json.dumps(jsonInputData)    
         #return "Admiral User Details"
 
-class AdmiralError:
+class DisplayAdmiralError:
     def GET(self, errorMessage):
         #returnString = '{"redirect":"' +  errorMessage + '"}'
         #return json.dumps(ast.literal_eval(returnString))
@@ -235,6 +272,3 @@ class AdmiralError:
         else:
              web.header('Content-Type', 'text/plain')
              return  json.dumps(errorMessage)
-            
-
-                        
