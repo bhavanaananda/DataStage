@@ -15,12 +15,14 @@ User_Alias TEST_ACCESS_USER = www-data
 User_Alias LIST_USERS       = www-data
 User_Alias USER_INFO        = www-data
 User_Alias USER_UPDATE      = www-data
+User_Alias USER_ADD         = www-data
 
 # Cmnd alias specification
 Cmnd_Alias TEST_ACCESS_CMD = /usr/local/sbin/testwriteaccess.sh
 Cmnd_Alias LIST_USERS_CMD  = /usr/local/sbin/listAdmiralUsers.sh
 Cmnd_Alias USER_INFO_CMD   = /usr/local/sbin/admiraluserinfo.sh
 Cmnd_Alias USER_UPDATE_CMD = /usr/local/sbin/admiralupdateuserinfo.sh
+Cmnd_Alias USER_ADD_CMD    = /usr/local/sbin/admiraladdnewuser.sh
 
 # User privilege specification
 root  ALL=(ALL) ALL
@@ -35,3 +37,4 @@ TEST_ACCESS_USER ALL  = (ALL) NOPASSWD: TEST_ACCESS_CMD
 LIST_USERS  ALL       = (ALL) NOPASSWD: LIST_USERS_CMD
 USER_INFO   ALL       = (ALL) NOPASSWD: USER_INFO_CMD
 USER_UPDATE ALL       = (ALL) NOPASSWD: USER_UPDATE_CMD
+USER_ADD    ALL       = (ALL) NOPASSWD: USER_ADD_CMD
