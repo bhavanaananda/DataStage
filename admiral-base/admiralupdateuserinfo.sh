@@ -77,7 +77,7 @@ END
       
     # Set up Apache access control configuration
     /root/createapacheuserconfig.sh $UserID    
-    sudo -u $RemoteUserID /etc/init.d/apache2 restart
+    sudo -u $RemoteUserID apache2ctl graceful
 else
     error=$(sudo -u $RemoteUserID smbldap-userinfo -l  $UserID | awk  '{for(i=2; i<=NF; i++) print $i}')
     newline='\\n'
