@@ -72,9 +72,9 @@ class AdminUIFormHandler:
 
         auth = base64.encodestring("%s:%s" % (remoteUser, remotePasswd))
         headers = {"Authorization" : "Basic %s" % auth}
-        data = jsonInputData
+        data = reqdata#jsonInputData
         #data = web.http.urlencode(jsonInputData)
-        print "URL encoded data before sending=" + data
+        print "URL encoded data before sending=" + repr(data)
         try:
                 session  = HttpSession.makeHttpSession(endpointhost, basepath, remoteUser,remotePasswd)
                # encodeddata = session.encode_multipart_formdata(jsonInputData)
@@ -103,13 +103,6 @@ class AdminUIFormHandler:
                returnString = '{"redirect":"' + e.code + "-" + e.reason + '"}'
                print returnString
                return returnString
-               # response = app.request('https://localhost/user/'+UserID, method='PUT', data=jsonInputData)
-               # respdata = json.dumps(response)
-        except httplib.Exception, e:
-               returnString = '{"redirect":"' + e.code + "-" + e.reason + '"}'
-               print returnString
-               return returnString
-
                # response = app.request('https://localhost/user/'+UserID, method='PUT', data=jsonInputData)
                # respdata = json.dumps(response)
 
@@ -226,7 +219,7 @@ class GetAdmiralUserDetails:
             #raise web.redirect('http://www.google.com')
 
     def PUT(self, userID):
-        #web.header('Content-Type', 'application/JSON')
+        web.header('Content-Type', 'application/JSON')
         print "Web.data() = " + web.data()
         
         jsonInputData = json.loads(web.data())
