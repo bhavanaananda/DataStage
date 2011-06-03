@@ -72,7 +72,8 @@ class AdminUIFormHandler:
 
         auth = base64.encodestring("%s:%s" % (remoteUser, remotePasswd))
         headers = {"Authorization" : "Basic %s" % auth}
-        data = web.http.urlencode(jsonInputData)
+        data = jsonInputData
+        #data = web.http.urlencode(jsonInputData)
         print "URL encoded data before sending=" + data
         try:
                 session  = HttpSession.makeHttpSession(endpointhost, basepath, remoteUser,remotePasswd)
