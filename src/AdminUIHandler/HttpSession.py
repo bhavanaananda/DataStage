@@ -189,7 +189,8 @@ class Session:
                 }
             self.setRequestEndPoint(endpointhost, endpointpath)
             (response, responsedata) = self.doRequest("PUT", resource,
-                reqdata=data, reqheaders=reqheaders,
+                #reqdata=data,
+                 reqheaders=reqheaders,
                 expect_status=expect_status, expect_reason=expect_reason)
             responsetype = self.getResponseType(response)
             return (responsetype, responsedata)    

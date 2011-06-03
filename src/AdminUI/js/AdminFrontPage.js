@@ -8,7 +8,7 @@ jQuery(document).ready( function ()
    jQuery("#userAddButton").click( function()
    {
       //alert("add button clicked");
-      addURL = "UserDetailsPage.html?operation=Add&user="+jQuery("#selectedUser").val();
+      addURL = 'UserDetailsPage.html?operation=Add&user='
       jQuery("#adminForm").attr('action', addURL); 
       return true;
    });   
