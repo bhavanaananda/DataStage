@@ -1,6 +1,6 @@
 #!/bin/bash
 #
-# Configuration parameters for host zoo-admiral-devel
+# Configuration parameters for host zoo-admiral-ibrg
 #
 # (See also: admiralconfig.sh)
 #
