@@ -55,10 +55,10 @@ admiral.listDatasets = function (host, silo, getlist, callback)
         tableelem.append(
       	        "<thead>"+
                 "  <tr>"+
-                "    <th> Dataset </th>"+
-                "    <th> Version number </th>"+
-                "    <th> Submitted on   </th>"+
-                "    <th> Submitted by   </th>"+
+                "    <th> Dataset identifier </th>"+
+                "    <th> Version            </th>"+
+                "    <th> Submitted on       </th>"+
+                "    <th> Submitted by       </th>"+
                 "  </tr>"+
                 "</thead>"
                 );
