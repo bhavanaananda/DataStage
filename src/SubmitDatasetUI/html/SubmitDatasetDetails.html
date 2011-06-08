@@ -71,7 +71,7 @@
         //var dir = url.split("=");
        }
        admiral.displayFormFieldsFromMetadata(dir); 
-        
+        ...........................................................................
     });
     </script>
     
@@ -80,22 +80,24 @@
 <body>
     <div>
         <span id="logo"><a href="/"><img alt="site_logo" src="/images/Admiral-logo-284x100.png" border="0"/></a></span>
+        ->
+        <span><a href="http://databank.ora.ox.ac.uk"><img name="databank_logo" id="databank_logo" alt="databank_logo" src="http://databank.ora.ox.ac.uk/static/databank_logo_generic.png" border="0"/></a></span>
         <!-- <span id="logout"><a href="../../SubmitDatasetHandler/cgi-bin/LogoutHandler.py">logout</a></span> -->
     </div>
 
-   <h1>Submit ADMIRAL dataset to Oxford University Databank</h1>
+   <h2>Submit an ADMIRAL data package to the Oxford DataBank</h2>
 
-   <h2>Select dataset for submission</h2>
+   <h3>Select a data package for submission</h3>
    <form id="submitForm" name="submitForm" action="../../SubmitDatasetHandler/cgi-bin/SubmitDatasetDetailsHandler.py" method="post">
    <div class=" outer">  
         <div class="box">  
             <span class="label">
                 <span class="mainlabel">
-                    Available ADMIRAL Directories :
+                    Choose an ADMIRAL directory :
                 </span>
                 <span class="sublabel">
-                    (Choose one directory from among those shown, by clicking on it.
-                    All files within the chosen directory will be submitted as an ADMIRAL Dataset)
+                    (Choose one directory containing all the content you wish to include in the data package, by clicking on it.
+                     This may include sub-directories. All files within the chosen directory will be submitted as a DataBank package)
                 </span>
             </span>       
             <span class="labelvalue">
@@ -110,14 +112,14 @@
         <div class="box">
            <span class="label">
                  <span class="mainlabel">
-                       Databank dataset identifier:
+                       Choose a data package identifier:
                  </span>
                  <span class="sublabel">
-                        (Enter a unique identifier to be used for the Databank dataset.
+                        (Enter a unique identifier to be used for the DataBank data package.
                         This defaults to the directory name, but another identifier may be entered.
                  </span>
                  <span class="sublabel">
-                        May contain alphanumeric characters and  .  _  : and  - but no spaces or commas.)
+                        May contain alphanumeric characters and  full stops, underscores, colons and hyphens [.  _  : and  -] but no spaces or commas [,])
                  </span>
            </span>
            <span class="labelvalue">                 
@@ -129,10 +131,10 @@
         <div class="box">
            <span class="label">
                  <span class="mainlabel">
-                    Title for dataset:
+                    Create title for data package:
                  </span>
                  <span class="sublabel">
-                        (Enter title for dataset)
+                       
                  </span>
            </span>
            <span class="labelvalue">
@@ -144,10 +146,10 @@
         <div class="box">
            <span class="label">
                <span class="mainlabel">
-                    Description for dataset :
+                    Add description for data package :
                </span>   
                <span class="sublabel">
-                    (Enter brief description)
+                    (Enter a brief description, explanation or abstract for the data package. You can cut and paste.)
                </span>  
            </span>
            <span class="labelvalue">
@@ -158,8 +160,8 @@
         </div>
         <div class="box">
             <span class="labelvalue">
-                <input name="submit" id="submit" type="submit" value="Next"/>
                 <input name="cancel" id="cancel" type="submit" value="Home"/>
+                <input name="submit" id="submit" type="submit" value="Next"/>
            </span>      
    </div>
 </form>  
