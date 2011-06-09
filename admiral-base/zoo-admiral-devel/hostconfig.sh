@@ -16,7 +16,7 @@ WORKGROUP="EvolutionaryDevelopment"
 # Databank host and silo names
 
 DATABANKHOST="databank.ora.ox.ac.uk"
-DATABANKSILO="admiral-test"
+DATABANKSILO="Development"
 
 # End.
 

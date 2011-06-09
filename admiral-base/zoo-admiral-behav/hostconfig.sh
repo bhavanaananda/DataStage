@@ -16,6 +16,6 @@ WORKGROUP="BehaviouralEcology"
 # Databank host and silo names
 
 DATABANKHOST="databank.ora.ox.ac.uk"
-DATABANKSILO="admiral-test"
+DATABANKSILO="BehaviouralEcology"
 
 # End.

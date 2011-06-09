@@ -5,12 +5,8 @@
 <head>
     <title>ADMIRAL: Datasets</title>
 
-    <!-- TODO: move to separate CSS file -->
-    <style>
-    td {
-        background-color: #FFE;
-    }
-    </style>
+    <!-- Import stylesheet -->
+    <link rel="stylesheet" href="../css/SelectDataset.css" type="text/css" />
 
     <!-- Import jQuery framework -->
     <script type="text/javascript" src="../../jQuery/js/jquery-1.4.2.js"></script> 
@@ -80,20 +76,22 @@
 </head>
 
 <body>
-    <div>
+    <!--<div>
         <span><a href="/"><img alt="site_logo" src="/images/Admiral-logo-284x100.png" border="0"/></a></span>
-    </div>
-   <h1>ADMIRAL Datasets in Oxford University databank</h1>
-   <h3>ADMIRAL Research group: <span id="groupname">%{RESEARCHGROUPNAME}</span></h3>
+    </div>-->
+   <h2>ADMIRAL Datasets in Oxford DataBank 
+   <span><a href="http://databank.ora.ox.ac.uk"><img name="databank_logo" id="databank_logo" alt="databank_logo" src="http://databank.ora.ox.ac.uk/static/databank_logo_generic.png" /></a></span>
+   </h2>
+   <h3>Research Group: <span id="groupname">%{RESEARCHGROUPNAME}</span></h3>
    <div>   
 	    <table id="tableDatasets" style="padding:2px">
          <!-- 
 		     <thead>
 		         <tr>
-		           <th> Dataset </th>
-		           <th> Version number </th>
-		           <th> Submitted on   </th>
-		           <th> Submitted by   </th>
+		           <th> Dataset identifier </th>
+		           <th> Version            </th>
+		           <th> Submitted on       </th>
+		           <th> Submitted by       </th>
 		        </tr>
 		    </thead>
           -->

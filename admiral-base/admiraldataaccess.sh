@@ -22,15 +22,5 @@ mkdir -p /home/data/collab
 chown www-data: /home/data/collab
 chmod --recursive g+s /home/data/collab
 
-mkdir -p /home/data/common
-chown www-data: /home/data/common
-chmod --recursive u=rwx,g=rws,o= /home/data/common/
-chmod --recursive g+s /home/data/common
-
-setfacl --recursive -m g:RGLeader:rwx /home/data/common
-setfacl --recursive -m g:RGMember:rwx /home/data/common
-setfacl --recursive -m u:www-data:rwx /home/data/common
-
-getfacl --access /home/data/common | setfacl --recursive -d -M- /home/data/common
 
 # End.

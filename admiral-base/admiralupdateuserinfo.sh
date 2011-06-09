@@ -67,6 +67,8 @@ if [[ $outputMessage == "" ]]; then
 $Password
 $Password
 END
+    fi
+    
     GidNumber=$(sudo -u $RemoteUserID smbldap-groupshow RGLeader| grep "gidNumber:"|awk -F":" '{ print $2 }')
     smbldap-usermod -G $Role -g $GidNumber $UserID
     source /root/admiralusermanagement.sh
@@ -75,8 +77,7 @@ END
       
     # Set up Apache access control configuration
     /root/createapacheuserconfig.sh $UserID    
-    sudo -u $RemoteUserID /etc/init.d/apache2 restart
-    fi
+    sudo -u $RemoteUserID apache2ctl graceful
 else
     error=$(sudo -u $RemoteUserID smbldap-userinfo -l  $UserID | awk  '{for(i=2; i<=NF; i++) print $i}')
     newline='\\n'

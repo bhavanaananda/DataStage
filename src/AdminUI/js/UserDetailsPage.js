@@ -30,19 +30,27 @@ jQuery(document).ready( function ()
    
     
    var m = new admiral.AsyncComputation();
-            
-   m.eval(function(value,callback)
-   { 
+   
+   if (operation!="Add")
+   {
+     m.eval(function(value,callback)
+     { 
        var userID= jQuery("#userID").val();
        admiral.userDetails(userID,callback); 
-   }); 
+     }); 
          
-   m.eval(function(details,callback)
-   {
+     m.eval(function(details,callback)
+     {
        displayValues(details);
-   });
+     });
    
-   m.exec(null,admiral.noop); 
+     m.exec(null,admiral.noop);
+   } 
+   else
+   {  jQuery('#changepass').hide();
+      jQuery('#changepasswordtext').hide();
+      jQuery("#userpass").attr("disabled",false);
+   }
    
    jQuery('#changepass').click(function()
    {
@@ -73,15 +81,15 @@ jQuery(document).ready( function ()
          //jQuery("#adminForm").attr('action', operURL); 
 
          // Update the password only if the change password checkbox is checked
-         if (jQuery('#changepass').is(':checked')) 
+         if (jQuery('#changepass').is(':checked') || operation=="Add" ) 
          { 
            userPassword=jQuery("#userpass").val();
          }
          
-         if(jQuery("#userOperation").val() == "Modify")
-         {
+         //if(jQuery("#userOperation").val() == "Modify")
+         //{
            admiral.adminUserOperation(userID,userFullName,userRole,userRoomNumber,userWorkPhone,userPassword, userOperation, callback); 
-         }
+         //}
          
        }); 
              
@@ -97,8 +105,7 @@ jQuery(document).ready( function ()
    { 
       jQuery("#selectedUser").val(jQuery(this).text());              
    });     
-   
-   return false;
+
 });
 
    /**

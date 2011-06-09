@@ -18,6 +18,10 @@
  * limitations under the License.
  */
 
+#databank_logo {
+                   width:284px;
+                   height:100px;
+               }
 
 .outer         {    position:relative;
                     height:  40%;

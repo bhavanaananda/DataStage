@@ -1,6 +1,6 @@
 #!/bin/bash
 #
-# Configuration parameters for host zoo-admiral-devel
+# Configuration parameters for host zoo-admiral-silk
 #
 # (See also: admiralconfig.sh)
 #
@@ -16,7 +16,7 @@ WORKGROUP="Silk"
 # Databank host and silo names
 
 DATABANKHOST="databank.ora.ox.ac.uk"
-DATABANKSILO="admiral-test"
+DATABANKSILO="Silk"
 
 # End.
 

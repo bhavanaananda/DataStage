@@ -16,6 +16,8 @@ cp /root/admiraluserinfo.sh /usr/local/sbin
 chmod 755 /usr/local/sbin/admiraluserinfo.sh
 cp /root/admiralupdateuserinfo.sh /usr/local/sbin
 chmod 755 /usr/local/sbin/admiralupdateuserinfo.sh
+cp /root/admiraladdnewuser.sh /usr/local/sbin
+chmod 755 /usr/local/sbin/admiraladdnewuser.sh
 smbpasswd -s -a admiral <<END
 %{PASSWORD}
 %{PASSWORD}
