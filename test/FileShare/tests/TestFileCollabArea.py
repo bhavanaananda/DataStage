@@ -71,13 +71,15 @@ class TestFileCollabArea(unittest.TestCase):
         status=os.system(mountcommand)
         self.assertEqual(status, 0, 'CIFS Mount failure')
         f=None
-        try: 
-            f = open(TestConfig.cifsmountpoint+'/testCreateFileCIFS.tmp','w+')
-        except IOError as e:
-            self.assertEqual(e.errno, 13, "Operation should fail with error 13, was: "+str(e))
-            self.assertEqual(e.strerror, "Permission denied", "Operation should fail with 'Permission denied', was: "+str(e))
-            pass
-        assert (f==None), "User B can open User A's files in collab area for writing!"
+        #try: 
+        f = open(TestConfig.cifsmountpoint+'/testCreateFileCIFS.tmp','w+')
+        #except IOError as e:
+            #self.assertEqual(e.errno, 13, "Operation should fail with error 13, was: "+str(e))
+            #self.assertEqual(e.strerror, "Permission denied", "Operation should fail with 'Permission denied', was: "+str(e))
+            #pass
+        assert (f!=None), "User B cannot open User A's files in collab area for writing!"
+        f.write('Test write access of file\n')
+        f.close()
         os.system('umount.cifs '+TestConfig.cifsmountpoint)
         mountcommand = ( 'mount.cifs //%(host)s/%(share)s/collab/%(userA)s %(mountpt)s -o rw,user=%(user)s,password=%(pass)s,nounix,forcedirectio' %
                          { 'host': TestConfig.hostname
@@ -87,13 +89,15 @@ class TestFileCollabArea(unittest.TestCase):
                          , 'mountpt': TestConfig.cifsmountpoint
                          , 'pass': TestConfig.userRGleaderpass
                          } )
+        print "----\n"+mountcommand
         status=os.system(mountcommand)
         self.assertEqual(status, 0, 'CIFS Mount failure')
         f = open(TestConfig.cifsmountpoint+'/testCreateFileCIFS.tmp','r')
         assert (f), "Group leader cannot read User A's file in collab area"
         l = f.readline()
+        print "Actual File Content : " + repr(l)
         f.close()
-        self.assertEqual(l, 'Test creation of file\n', 'Unexpected file content by group leader') 
+        self.assertEqual(l, 'Test write access of file\n', 'Unexpected file content by group leader') 
         os.system('umount.cifs '+TestConfig.cifsmountpoint)
         status=os.system(mountcommand)
         self.assertEqual(status, 0, 'CIFS Mount failure')
@@ -102,7 +106,7 @@ class TestFileCollabArea(unittest.TestCase):
             f = open(TestConfig.cifsmountpoint+'/testCreateFileCIFS.tmp','w+')
         except:
             pass
-        assert (f==None), "Group Leader can open User A's files in collab area for writing!"
+        assert (f!=None), "Group Leader cannot open User A's files in collab area for writing!"
         os.system('umount.cifs '+TestConfig.cifsmountpoint)
         mountcommand = ( 'mount.cifs //%(host)s/%(share)s/collab/%(userA)s %(mountpt)s -o rw,user=%(user)s,password=%(pass)s,nounix,forcedirectio' %
                          { 'host': TestConfig.hostname

@@ -93,7 +93,7 @@ class TestFileHTTPwriteCIFSread(unittest.TestCase):
             f = open(TestConfig.cifsmountpoint+'/collab/'+TestConfig.userAname+'/testCreateFileHTTPAcollabspace.tmp','w+')
         except:
             pass
-        assert (f==None), "User B can open User A's collab files for writing!"
+        assert (f!=None), "User B cannot open User A's collab files for writing!"
         os.system('umount.cifs '+TestConfig.cifsmountpoint)
 
     def testSharedUserCIFSRGLeader(self):
@@ -123,6 +123,7 @@ class TestFileHTTPwriteCIFSread(unittest.TestCase):
         l=None
         f = open(TestConfig.cifsmountpoint+'/collab/'+TestConfig.userAname+'/testCreateFileHTTPAcollabspace.tmp','r')
         l = f.readline()
+        print "read file content: " + repr(l)
         f.close()
         self.assertEqual(l, 'Testing file creation with HTTP\n', 'Unexpected file content in user A\'s collab space for RGLeader') 
 
@@ -131,7 +132,7 @@ class TestFileHTTPwriteCIFSread(unittest.TestCase):
             f = open(TestConfig.cifsmountpoint+'/collab/'+TestConfig.userAname+'/testCreateFileHTTPAcollabspace.tmp','w+')
         except:
             pass
-        assert (f==None), "Research group leader can open User A's collab files for writing!"
+        assert (f!=None), "Research group leader cannot open User A's collab files for writing!"
         os.system('umount.cifs '+TestConfig.cifsmountpoint)
 
     def testSharedUserCIFSCollab(self):
