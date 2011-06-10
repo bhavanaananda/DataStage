@@ -54,11 +54,11 @@ function setdataownerandaccess()
     # Research group leader access
     setfacl --recursive -m g:RGLeader:rx /home/data/private/$datadir
     setfacl --recursive -m g:RGLeader:rx /home/data/shared/$datadir
-    setfacl --recursive -m g:RGLeader:rx /home/data/collab/$datadir
+    setfacl --recursive -m g:RGLeader:rwx /home/data/collab/$datadir
   
     # Research group member access
     setfacl --recursive -m g:RGMember:rx /home/data/shared/$datadir
-    setfacl --recursive -m g:RGMember:rx /home/data/collab/$datadir
+    setfacl --recursive -m g:RGMember:rwx /home/data/collab/$datadir
   
     # Research group collaborator access
     setfacl --recursive -m g:RGCollaborator:rx /home/data/collab/$datadir
