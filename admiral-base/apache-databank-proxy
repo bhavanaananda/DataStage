@@ -35,7 +35,7 @@ ProxyPassReverse /static/ http://%{DATABANKHOST}/static/
 ProxyPass        /admin http://%{HOSTFULLNAME}:8080/admin
 ProxyPassReverse /admin http://%{HOSTFULLNAME}:8080/admin
 ProxyPass        /admin/ http://%{HOSTFULLNAME}:8080/admin/
-ProxyPassReverse /admin/ http://%{HOSTFULLNAME}:8080/v/
+ProxyPassReverse /admin/ http://%{HOSTFULLNAME}:8080/admin/
 
 ProxyPass        /users http://%{HOSTFULLNAME}:8080/users
 ProxyPassReverse /users http://%{HOSTFULLNAME}:8080/users
