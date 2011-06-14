@@ -55,16 +55,22 @@ def datasetSummaryForm(formdata, outputstr):
         dataToolURL      =  "../../SubmitDatasetUI/html/SubmitDatasetDetails.html"                                 
         mainURL          =  "../../../.."
         resetURL         =  "../../SubmitDatasetUI/html/SubmitDatasetDetails.html?dir="+dirName
-        viewDatasetURL   =  "../../DisplayDataset/html/DisplayDataset.html?dir="+ dirName + "#"+ datasetUnzippedName 
+        viewDatasetURL   =  "'../../DisplayDataset/html/DisplayDataset.html?dir="+ dirName + "#"+ datasetUnzippedName +"'"
 
         pageTemplate = ("""
             <html>
                 <head>
+                    <!-- Import Stylesheets -->
+                    <link rel="stylesheet" href="../../DisplayDataset/css/DisplayDataset.css" type="text/css" />
                     <link rel="stylesheet" href="../../SubmitDatasetUI/css/SubmitDataset.css" type="text/css" />      
                     <!-- Import jQuery framework -->
                     <script type="text/javascript" src="../../jQuery/js/jquery-1.4.2.js"></script>
+                    <!-- Import treeview plugin -->
+                    <link rel="stylesheet" href="../../jQuery/jquery-treeview/jquery.treeview.css" type="text/css" />
+                    <script type="text/javascript" src="../../jQuery/jquery-treeview/jquery.treeview.js"></script>
                     <!-- Import generic code from the dataset utils package -->
                     <script type="text/javascript" src="../../DatasetUtils/js/DatasetManifestDictionary.js"></script>
+                    <script type="text/javascript" src="../../DatasetUtils/js/DatasetTree.js"></script>
                     <!-- import rdfquery libraries -->
                     <script type="text/javascript" src="../../rdfquery/jquery.uri.js"></script>
                     <script type="text/javascript" src="../../rdfquery/jquery.xmlns.js"></script>
@@ -84,6 +90,9 @@ def datasetSummaryForm(formdata, outputstr):
                     <script type="text/javascript" src="../../Admiral/admiral-base.js"></script>
                     <script type="text/javascript" src="../../Admiral/Error.js"></script>
                     <script type="text/javascript" src="../../Admiral/AsyncComputation.js"></script>
+                    <!-- Import dataset information display code -->
+                    <script type="text/javascript" src="../../DisplayDataset/DisplayDataset.js"></script>
+                    <script type="text/javascript" src="../../DisplayDataset/DisplayDatasetTree.js"></script>
                     <!--  Import admiral configuration details -->
                     <!--  NOTE: these are loaded from an absolute location in the web server -->
                     <script type="text/javascript" src="/js/admiral-config.js"></script>
@@ -101,9 +110,8 @@ def datasetSummaryForm(formdata, outputstr):
                                jQuery("#lastModified").text(datasetdetails.lastModified);                            
                             });    
                             m.exec(null,admiral.noop);
-                            
-                            jQuery('#displayDatasetPage').load('../../DisplayDataset/html/DisplayDataset.html', function(){});
-                          
+
+                            jQuery('#displayDatasetPage').load(%(viewDatasetURL)s , function(){}); 
                         });                      
                     </script>
                 </head>

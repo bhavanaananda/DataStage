@@ -23,6 +23,78 @@ if (typeof admiral == "undefined")
 	admiral = {};
 }
 
+
+jQuery(document).ready( function () 
+{
+    url = document.URL;
+    dirUrl      =   url.split("#");
+    dir         =   dirUrl[0].split("=")[1];
+    reviseURL   =  "../../SubmitDatasetUI/html/SubmitDatasetDetails.html?dir="+dir
+    jQuery("#revise").attr('href', reviseURL);      
+
+    log.debug(admiral.objectString(window.location));
+    var datasetName = window.location.hash;
+    if( datasetName.length <= 1)
+    {
+         jQuery("#pageLoadStatus").text('No dataset name specified');
+         jQuery("#pageLoadStatus").addClass('error');
+    }
+    else
+    {
+        datasetName = datasetName.slice(1);     // Remove '#'
+        var dataSetPath = "/"+admiral.databanksilo+"/datasets/"+datasetName;
+        var unpackedLink = "/"+admiral.databanksilo+"/datasets/"+datasetName;
+        var packedLink = "/"+admiral.databanksilo+"/datasets/"+datasetName+"-packed";
+        jQuery("#unpackedLink").attr('href', unpackedLink);  
+        jQuery("#packedLink").attr('href', packedLink);  
+        jQuery("#datasetPackedName").text(datasetName+"-packed");  
+        jQuery("#datasetUnpackedName").text(datasetName);          
+
+        var m = new admiral.AsyncComputation();
+        
+        m.eval(function (val, callback)
+        {  jQuery(".manifest").text("Fetching manifest...");
+           admiral.datasetManifestDictionary(dataSetPath,datasetName, callback);
+        });
+        
+        m.eval(function (datasetdetails, callback)
+        {   
+            jQuery("#pageLoadStatus").text("");
+            jQuery("#datasetName").text(datasetdetails.datasetName);
+            jQuery("#createdBy").text(datasetdetails.createdBy);
+            jQuery("#currentVersion").text(datasetdetails.currentVersion);
+            jQuery("#embargoExpiryDate").text(datasetdetails.embargoExpiryDate);
+            jQuery("#lastModified").text(datasetdetails.lastModified);
+            jQuery(".manifest").text("");
+            // Display or hide values absent for packed datasets
+            if (datasetdetails.derivedFrom)
+            {
+                jQuery("#title").text(datasetdetails.title);
+                jQuery("#description").text(datasetdetails.description);
+                jQuery("#derivedFrom > a").text(datasetdetails.derivedFrom);
+                jQuery("#derivedFrom > a").attr("href", datasetdetails.derivedFrom);
+            }
+            else
+            {
+                jQuery("tr:has(#title)").hide();
+                jQuery("tr:has(#description)").hide();
+                jQuery("tr:has(#derivedFrom)").hide();
+            };
+            callback(datasetdetails);        
+        });
+        m.eval(function(datasetdetails, callback)
+        {
+            var seglists = admiral.segmentPaths(datasetdetails.fileRelativePaths.sort());
+            var segtree  = admiral.segmentTreeBuilder(seglists);
+            var seghtml  = admiral.nestedListBuilder(datasetdetails.baseUri, segtree);
+            jQuery(".manifest").append(seghtml);
+            seghtml.treeview({ collapsed: true }); 
+        });
+        m.exec(null, admiral.noop);
+    }
+});
+    
+    
 /**
  * .....
  * 
