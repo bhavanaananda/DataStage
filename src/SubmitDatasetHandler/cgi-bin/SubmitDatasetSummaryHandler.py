@@ -107,11 +107,21 @@ def datasetSummaryForm(formdata, outputstr):
                             m.eval(function(datasetdetails,callback)                          
                             {                                                 
                                jQuery("#currentVersion").text(datasetdetails.currentVersion);
-                               jQuery("#lastModified").text(datasetdetails.lastModified);                            
-                            });    
+                               jQuery("#lastModified").text(datasetdetails.lastModified);   
+                               callback(datasetdetails);                         
+                            });  
+                            m.eval(function(val,callback)                          
+                            {  
+                               jQuery('#displayDatasetPage').load(%(viewDatasetURL)s , function(){}); 
+                               callback(val);
+                            });
+                            m.eval(function(val,callback)                          
+                            {  url=%(viewDatasetURL)s;
+                               admiral.loadDisplay(url);
+                               callback(val);
+                            });
                             m.exec(null,admiral.noop);
-
-                            jQuery('#displayDatasetPage').load(%(viewDatasetURL)s , function(){}); 
+                                          
                         });                      
                     </script>
                 </head>
