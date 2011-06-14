@@ -31,7 +31,6 @@ admiral.loadDisplay = function (url)
     reviseURL   =  "../../SubmitDatasetUI/html/SubmitDatasetDetails.html?dir="+dir
     jQuery("#revise").attr('href', reviseURL);      
 
-    //log.debug(admiral.objectString(window.location));
     var datasetName = dirUrl[1];
     if( datasetName.length <= 1)
     {
@@ -40,7 +39,6 @@ admiral.loadDisplay = function (url)
     }
     else
     {
-        datasetName = datasetName.slice(1);     // Remove '#'
         var dataSetPath = "/"+admiral.databanksilo+"/datasets/"+datasetName;
         var unpackedLink = "/"+admiral.databanksilo+"/datasets/"+datasetName;
         var packedLink = "/"+admiral.databanksilo+"/datasets/"+datasetName+"-packed";
