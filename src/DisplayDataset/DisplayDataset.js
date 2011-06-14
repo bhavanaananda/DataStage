@@ -24,9 +24,8 @@ if (typeof admiral == "undefined")
 }
 
 
-admiral.loadDisplay = function ()
+admiral.loadDisplay = function (url)
 {
-    url = document.URL;
     dirUrl      =   url.split("#");
     dir         =   dirUrl[0].split("=")[1];
     reviseURL   =  "../../SubmitDatasetUI/html/SubmitDatasetDetails.html?dir="+dir
