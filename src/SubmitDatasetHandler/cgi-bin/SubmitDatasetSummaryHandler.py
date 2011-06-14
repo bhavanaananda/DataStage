@@ -60,6 +60,8 @@ def datasetSummaryForm(formdata, outputstr):
         pageTemplate = ("""
             <html>
                 <head>
+                    <link rel="stylesheet" href="../../SubmitDatasetUI/css/SubmitDataset.css" type="text/css" />      
+                    <!-- Import jQuery framework -->
                     <script type="text/javascript" src="../../jQuery/js/jquery-1.4.2.js"></script>
                     <!-- Import generic code from the dataset utils package -->
                     <script type="text/javascript" src="../../DatasetUtils/js/DatasetManifestDictionary.js"></script>
@@ -110,7 +112,7 @@ def datasetSummaryForm(formdata, outputstr):
                     </div>
                     <h2>%(status)s   
                         <span>
-                            <a href="http://databank.ora.ox.ac.uk"><img name="databank_logo" id="databank_logo" alt="databank_logo" src="http://databank.ora.ox.ac.uk/static/databank_logo_generic.png" />
+                            <a href="http://databank.ora.ox.ac.uk"><img name="databank_logo" id="databank_logo" alt="databank_logo" src="http://databank.ora.ox.ac.uk/static/databank_logo_generic.png"  border="0"/>
                             </a>
                         </span>
                     </h2>
