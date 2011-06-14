@@ -24,7 +24,7 @@ if (typeof admiral == "undefined")
 }
 
 
-jQuery(document).ready( function () 
+admiral.loadDisplay = function ()
 {
     url = document.URL;
     dirUrl      =   url.split("#");
@@ -92,7 +92,7 @@ jQuery(document).ready( function ()
         });
         m.exec(null, admiral.noop);
     }
-});
+};
     
     
 /**
