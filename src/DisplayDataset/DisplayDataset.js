@@ -31,8 +31,8 @@ admiral.loadDisplay = function (url)
     reviseURL   =  "../../SubmitDatasetUI/html/SubmitDatasetDetails.html?dir="+dir
     jQuery("#revise").attr('href', reviseURL);      
 
-    log.debug(admiral.objectString(window.location));
-    var datasetName = window.location.hash;
+    //log.debug(admiral.objectString(window.location));
+    var datasetName = dirUrl[1];
     if( datasetName.length <= 1)
     {
          jQuery("#pageLoadStatus").text('No dataset name specified');
