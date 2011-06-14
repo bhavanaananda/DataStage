@@ -51,14 +51,14 @@
     <div>
         <span id="logo"><a href="/"><img alt="site_logo" src="/images/Admiral-logo-284x100.png" border="0"/></a></span>
     </div>
-   <h1>Submit ADMIRAL dataset to Oxford University Databank</h1>
-   <h2>Review dataset details prior to submission</h2>
+
+   <h3>Review the data package details prior to submission</h3>
    <div class="sublabel">(Click the back button if you wish to revise them)</div>
    <form id="confirmForm" action="../../SubmitDatasetHandler/cgi-bin/SubmitDatasetConfirmationHandler.py" method="post">
    <div class="outer">
         <div class="box">
             <span class="label confirm ">
-                Selected ADMIRAL directory :
+                Directory, sub-directories and files comprising this data package :
             </span>
             <span class="labelvalue">
                 <span class="sublabelvalue" id="datasetDir" name="datasetDir"></span>
@@ -69,30 +69,30 @@
             <input  name="datDir" id="datDir" type="hidden"/>
         </div>
         <div class="box">
-           <span class="label confirm">Databank dataset identifier :</span>
+           <span class="label confirm">DataBank data package :</span>
            <span class="labelvalue" id="datasetId"  name="datasetId"></span>
            <input  name="datId" id="datId" type="hidden"/>
         </div>
         <div class="box">
-           <span class="label confirm">Title for dataset:</span>
+           <span class="label confirm">Title :</span>
            <span class="labelvalue" id="datasetTitle" name="datasetTitle"></span>
            <input  name="title" id="title" type="hidden"/>
         </div>  
         <div class="box">
-           <span class="label confirm">Description of dataset :</span>
+           <span class="label confirm">Description :</span>
            <span class="labelvalue" id="datasetDescription" name="datasetDescription"></span>
            <input  name="description" id="description" type="hidden"/>
         </div>     
     </div>
 
     <!--    
-    <h2>Enter University single signon username and password</h2>
+    <h3>Enter University single signon username and password</h3>
     -->
-    <h2>Enter Oxford University Databank username and password</h2>
+    <h3>Enter Oxford DataBank username and password</h3>
     
     <div class="outer">
         <div class="box">
-            <span class="label confirm">User :</span>
+            <span class="label confirm">User Name:</span>
            <span class="labelvalue">
                 <input name="user" id="user" type="text"/>
             </span>       

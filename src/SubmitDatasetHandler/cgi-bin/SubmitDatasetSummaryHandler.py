@@ -108,16 +108,21 @@ def datasetSummaryForm(formdata, outputstr):
                     <div>
                         <span><a href="/"><img alt="site_logo" src="/images/Admiral-logo-284x100.png" border="0"/></a></span>
                     </div>
-                    <h2>%(status)s</h2>
+                    <h2>%(status)s   
+                        <span>
+                            <a href="http://databank.ora.ox.ac.uk"><img name="databank_logo" id="databank_logo" alt="databank_logo" src="http://databank.ora.ox.ac.uk/static/databank_logo_generic.png" />
+                            </a>
+                        </span>
+                    </h2>
                     <table name="submissionStatus" id = "submissionStatus" >
                       <tr><td>Dataset Identifier</td><td> %(datasetUnzippedName)s</td></tr>
                       <tr><td>Version number</td><td><span id="currentVersion">nn</span></td></tr>
                       <tr><td>Date</td><td><span id="lastModified">yyyy-mm-dd</span></td></tr>
                     </table>
-                    <h3><a href="%(viewDatasetURL)s">View details of submitted ADMIRAL dataset - %(datasetUnzippedName)s</a></h3>
-                    <h3><a href="%(resetURL)s" id="revised">Submit revised version of this dataset</a></h3>
-                    <h3><a href="%(dataToolURL)s">Submit another ADMIRAL dataset to databank</a></h3>
-                    <h3><a href="%(mainURL)s">Return to ADMIRAL front page</a></h3>
+                    <h3><a href="%(viewDatasetURL)s">View details of submitted ADMIRAL data package - %(datasetUnzippedName)s</a></h3>
+                    <h3><a href="%(resetURL)s" id="revised">Submit a revised version of this data package</a></h3>
+                    <h3><a href="%(dataToolURL)s">Submit another ADMIRAL data package to databank</a></h3>
+                    <h3><a href="%(mainURL)s">Return to your research group's ADMIRAL front page</a></h3>
                 </body>
             </html>
             """)

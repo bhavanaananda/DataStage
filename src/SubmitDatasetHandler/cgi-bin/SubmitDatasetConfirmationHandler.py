@@ -50,7 +50,7 @@ ElementDescriptionUri    =  URIRef(dcterms + "description")
 ElementUriList           =  [ElementCreatorUri, ElementIdentifierUri, ElementTitleUri, ElementDescriptionUri]
 DefaultManifestName      =  "manifest.rdf"
 BaseDir                  =  "/home/"
-SuccessStatus            =  "ADMIRAL dataset submission to Oxford University Databank was successful"
+SuccessStatus            =  "Congratulations! Your data package submission to Oxford DataBank was successful"
 
 def processDatasetSubmissionForm(formdata, outputstr):
     """
