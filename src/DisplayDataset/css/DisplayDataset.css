@@ -51,6 +51,11 @@ table, th, td
   border: 1px solid #CEE3F6;
 }
 
+table, td
+{
+  background-color: #FFE;
+}
+
 .label {
     text-color: #666;
 }

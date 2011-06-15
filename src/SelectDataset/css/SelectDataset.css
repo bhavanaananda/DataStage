@@ -46,15 +46,23 @@ table
   border-collapse:collapse;
   
 }
+
 td, th
 {
   padding:5px;
 }
+
 thead tr
 {   
   background-color: #58ACFA;
   color: white;    
 }
+
+table, td
+{
+  background-color: #FFE;
+}
+
 table, th, td
 {
   border: 1px solid #CEE3F6;
