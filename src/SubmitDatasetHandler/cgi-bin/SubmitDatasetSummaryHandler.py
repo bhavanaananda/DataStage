@@ -54,10 +54,10 @@ def datasetSummaryForm(formdata, outputstr):
         # Generate web page
         dataToolURL      =  "../../SubmitDatasetUI/html/SubmitDatasetDetails.html"                                 
         mainURL          =  "../../../.."
-        resetURL         =  "../../SubmitDatasetUI/html/SubmitDatasetDetails.html?dir="+dirName
-        loadDatasetURL   =  "'../../DisplayDataset/html/DisplayDataset.html?dir="+ dirName + "#"+ datasetUnzippedName +" #outherMain"+"'"
-        viewDatasetURL   =  "'../../DisplayDataset/html/DisplayDataset.html?dir="+ dirName + "#"+ datasetUnzippedName +"'"
-        unpackedLink     = "/"+admiral.databanksilo+"/datasets/"+datasetUnzippedName;
+        resetURL         =  "../../SubmitDatasetUI/html/SubmitDatasetDetails.html?dir=" + dirName
+        loadDatasetURL   =  "'../../DisplayDataset/html/DisplayDataset.html?dir=" + dirName + "#"+ datasetUnzippedName +" #outherMain"+"'"
+        viewDatasetURL   =  "'../../DisplayDataset/html/DisplayDataset.html?dir=" + dirName + "#"+ datasetUnzippedName +"'"
+        unpackedLink     =  "/databanksilo/datasets/" + datasetUnzippedName
         
         pageTemplate = ("""
             <html>
