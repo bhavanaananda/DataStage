@@ -29,15 +29,31 @@
    font-size:large;
    font-weight:bolder;
 }
-       
-td {
-    background-color: #FFE;
+
+table
+{
+  border-collapse:collapse;
+  
+}
+td, th
+{
+  padding:5px;
+}
+
+th
+{   
+  background-color: #58ACFA;
+  color: white;  
+  text-align: left;  
+}
+table, th, td
+{
+  border: 1px solid #CEE3F6;
 }
 
 .label {
     text-color: #666;
 }
-
 
 .submissionDetails { 
 }

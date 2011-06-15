@@ -53,12 +53,10 @@ td, th
 thead tr
 {   
   background-color: #58ACFA;
-  color: white;
-    
+  color: white;    
 }
 table, th, td
 {
-border: 1px solid #CEE3F6;
-
+  border: 1px solid #CEE3F6;
 }
        

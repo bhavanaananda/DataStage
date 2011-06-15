@@ -64,7 +64,8 @@ def datasetSummaryForm(formdata, outputstr):
                 <head>
                     <!-- Import Stylesheets -->
                     <link rel="stylesheet" href="../../DisplayDataset/css/DisplayDataset.css" type="text/css" />
-                    <link rel="stylesheet" href="../../SubmitDatasetUI/css/SubmitDataset.css" type="text/css" />      
+                    <link rel="stylesheet" href="../../jQuery/jquery-treeview/jquery.treeview.css" type="text/css" />    
+                    <link rel="stylesheet" href="../../SelectDataset/css/SelectDataset.css" type="text/css" />      
                     
                     <!-- Import jQuery framework -->
                     <script type="text/javascript" src="../../jQuery/js/jquery-1.4.2.js"></script>
@@ -72,8 +73,7 @@ def datasetSummaryForm(formdata, outputstr):
                     <!-- Import jQuery additional libraries -->
                     <script type="text/javascript" src="../../jQuery/jquery.json-2.2.js"></script> 
                     
-                    <!-- Import treeview plugin -->
-                    <link rel="stylesheet" href="../../jQuery/jquery-treeview/jquery.treeview.css" type="text/css" />                    
+                    <!-- Import treeview plugin -->                
                     <script type="text/javascript" src="../../jQuery/jquery-treeview/jquery.treeview.js"></script>
                     
                     <!-- import rdfquery libraries -->
@@ -142,10 +142,7 @@ def datasetSummaryForm(formdata, outputstr):
                 
                 <body>
                     <h2>%(status)s   
-                        <span>
-                            <a href="http://databank.ora.ox.ac.uk"><img name="databank_logo" id="databank_logo" alt="databank_logo" src="http://databank.ora.ox.ac.uk/static/databank_logo_generic.png"  border="0"/>
-                            </a>
-                        </span>
+                           <span><a href="http://databank.ora.ox.ac.uk"><img name="databank_logo" id="databank_logo" alt="databank_logo" src="http://databank.ora.ox.ac.uk/static/databank_logo_generic.png" /></a></span>
                     </h2>
                     <div id="displayDatasetPage"> </div> 
                     <!-- 
