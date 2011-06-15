@@ -55,22 +55,26 @@ def datasetSummaryForm(formdata, outputstr):
         dataToolURL      =  "../../SubmitDatasetUI/html/SubmitDatasetDetails.html"                                 
         mainURL          =  "../../../.."
         resetURL         =  "../../SubmitDatasetUI/html/SubmitDatasetDetails.html?dir="+dirName
+        loadDatasetURL   =  "'../../DisplayDataset/html/DisplayDataset.html?dir="+ dirName + "#"+ datasetUnzippedName +" #outherMain"+"'"
         viewDatasetURL   =  "'../../DisplayDataset/html/DisplayDataset.html?dir="+ dirName + "#"+ datasetUnzippedName +"'"
-
+        
         pageTemplate = ("""
             <html>
                 <head>
                     <!-- Import Stylesheets -->
                     <link rel="stylesheet" href="../../DisplayDataset/css/DisplayDataset.css" type="text/css" />
                     <link rel="stylesheet" href="../../SubmitDatasetUI/css/SubmitDataset.css" type="text/css" />      
+                    
                     <!-- Import jQuery framework -->
                     <script type="text/javascript" src="../../jQuery/js/jquery-1.4.2.js"></script>
+                    
+                    <!-- Import jQuery additional libraries -->
+                    <script type="text/javascript" src="../../jQuery/jquery.json-2.2.js"></script> 
+                    
                     <!-- Import treeview plugin -->
-                    <link rel="stylesheet" href="../../jQuery/jquery-treeview/jquery.treeview.css" type="text/css" />
+                    <link rel="stylesheet" href="../../jQuery/jquery-treeview/jquery.treeview.css" type="text/css" />                    
                     <script type="text/javascript" src="../../jQuery/jquery-treeview/jquery.treeview.js"></script>
-                    <!-- Import generic code from the dataset utils package -->
-                    <script type="text/javascript" src="../../DatasetUtils/js/DatasetManifestDictionary.js"></script>
-                    <script type="text/javascript" src="../../DatasetUtils/js/DatasetTree.js"></script>
+                    
                     <!-- import rdfquery libraries -->
                     <script type="text/javascript" src="../../rdfquery/jquery.uri.js"></script>
                     <script type="text/javascript" src="../../rdfquery/jquery.xmlns.js"></script>
@@ -80,26 +84,35 @@ def datasetSummaryForm(formdata, outputstr):
                     <script type="text/javascript" src="../../rdfquery/jquery.rdfa.js"></script>
                     <script type="text/javascript" src="../../rdfquery/jquery.datatype.js"></script>
                     <script type="text/javascript" src="../../rdfquery/jquery.rdf.xml.js"></script>
-                    <script type="text/javascript" src="../../rdfquery/jquery.rdf.turtle.js"></script>               
+                    <script type="text/javascript" src="../../rdfquery/jquery.rdf.turtle.js"></script>        
+                           
                     <!-- Import MochiKit modules: require MochiKit library functions to be fully qualified -->
                     <script type="text/javascript">MochiKit = {__export__: false};</script>
                     <script type="text/javascript" src="../../MochiKit/Base.js"></script>
                     <script type="text/javascript" src="../../MochiKit/Iter.js"></script>
                     <script type="text/javascript" src="../../MochiKit/Logging.js"></script>
+                    
                     <!-- Import Admiral functions -->
                     <script type="text/javascript" src="../../Admiral/admiral-base.js"></script>
                     <script type="text/javascript" src="../../Admiral/Error.js"></script>
                     <script type="text/javascript" src="../../Admiral/AsyncComputation.js"></script>
+                    
+                    <!-- Import generic code from the dataset utils package -->
+                    <script type="text/javascript" src="../../DatasetUtils/js/DatasetTree.js"></script>
+                    <script type="text/javascript" src="../../DatasetUtils/js/DatasetManifestDictionary.js"></script>
+
                     <!-- Import dataset information display code -->
-                    <script type="text/javascript" src="../../DisplayDataset/DisplayDataset.js"></script>
                     <script type="text/javascript" src="../../DisplayDataset/DisplayDatasetTree.js"></script>
+                    <script type="text/javascript" src="../../DisplayDataset/DisplayDataset.js"></script>
+                    
                     <!--  Import admiral configuration details -->
                     <!--  NOTE: these are loaded from an absolute location in the web server -->
                     <script type="text/javascript" src="/js/admiral-config.js"></script>
+                    
                     <script>
                         jQuery(document).ready( function ()
                         {   var m = new admiral.AsyncComputation();
-                            m.eval(function(val,callback)
+                            /* m.eval(function(val,callback)
                             { var datasetName = "%(datasetUnzippedName)s";
                               var datasetPath = "/"+admiral.databanksilo+"/datasets/"+datasetName;
                               admiral.datasetManifestDictionary(datasetPath,datasetName, callback);   
@@ -109,10 +122,10 @@ def datasetSummaryForm(formdata, outputstr):
                                jQuery("#currentVersion").text(datasetdetails.currentVersion);
                                jQuery("#lastModified").text(datasetdetails.lastModified);   
                                callback(datasetdetails);                         
-                            });  
+                            });  */
                             m.eval(function(val,callback)                          
                             {  
-                               jQuery('#displayDatasetPage').load(%(viewDatasetURL)s , function(){}); 
+                               jQuery('#displayDatasetPage').load(%(loadDatasetURL)s , function(){}); 
                                callback(val);
                             });
                             m.eval(function(val,callback)                          
@@ -151,6 +164,7 @@ def datasetSummaryForm(formdata, outputstr):
             """)
         print (pageTemplate%
             { 'viewDatasetURL'      : viewDatasetURL
+            , 'loadDatasetURL'      : loadDatasetURL   
             , 'datasetName'         : datasetName
             , 'dataToolURL'         : dataToolURL
             , 'mainURL'             : mainURL
