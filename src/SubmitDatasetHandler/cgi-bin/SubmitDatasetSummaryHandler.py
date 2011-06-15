@@ -57,6 +57,7 @@ def datasetSummaryForm(formdata, outputstr):
         resetURL         =  "../../SubmitDatasetUI/html/SubmitDatasetDetails.html?dir="+dirName
         loadDatasetURL   =  "'../../DisplayDataset/html/DisplayDataset.html?dir="+ dirName + "#"+ datasetUnzippedName +" #outherMain"+"'"
         viewDatasetURL   =  "'../../DisplayDataset/html/DisplayDataset.html?dir="+ dirName + "#"+ datasetUnzippedName +"'"
+        unpackedLink     = "/"+admiral.databanksilo+"/datasets/"+datasetUnzippedName;
         
         pageTemplate = ("""
             <html>
@@ -116,7 +117,7 @@ def datasetSummaryForm(formdata, outputstr):
                             { var datasetName = "%(datasetUnzippedName)s";
                               var datasetPath = "/"+admiral.databanksilo+"/datasets/"+datasetName;
                               admiral.datasetManifestDictionary(datasetPath,datasetName, callback);   
-                            });
+                            }); 
                             m.eval(function(datasetdetails,callback)                          
                             {                                                 
                                jQuery("#currentVersion").text(datasetdetails.currentVersion);
@@ -155,7 +156,7 @@ def datasetSummaryForm(formdata, outputstr):
                         </table>
                         <h4><a href="%(viewDatasetURL)s">View details of submitted ADMIRAL data package - %(datasetUnzippedName)s</a></h4> 
                     -->
-                    
+                    <h4><a href="%(unpackedLink)s">View the data package</a></h4>
                     <h4><a href="%(resetURL)s" id="revised">Submit a revised version of this data package</a></h4>
                     <h4><a href="%(dataToolURL)s">Submit another ADMIRAL data package to databank</a></h4>
                     <h4><a href="%(mainURL)s">Return to your research group's ADMIRAL front page</a></h4>
@@ -164,7 +165,8 @@ def datasetSummaryForm(formdata, outputstr):
             """)
         print (pageTemplate%
             { 'viewDatasetURL'      : viewDatasetURL
-            , 'loadDatasetURL'      : loadDatasetURL   
+            , 'loadDatasetURL'      : loadDatasetURL 
+            , 'unpackedLink'        : unpackedLink  
             , 'datasetName'         : datasetName
             , 'dataToolURL'         : dataToolURL
             , 'mainURL'             : mainURL
