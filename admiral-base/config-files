@@ -62,6 +62,7 @@ apache2.conf /root/apache2.conf
 createapacheuserconfig.sh /root/createapacheuserconfig.sh
 www/index.html /var/www/index.html
 www/images/Admiral-logo-284x100.png /var/www/images/Admiral-logo-284x100.png
+www/images/AdmiralToDataBank-284x100.png /var/www/images/AdmiralToDataBank-284x100.png
 www/docs/accessdirect.html /var/www/docs/accessdirect.html
 www/docs/accesshttp.html /var/www/docs/accesshttp.html
 www/docs/accesslinux.html /var/www/docs/accesslinux.html
