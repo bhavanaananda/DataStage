@@ -30,7 +30,7 @@
        
      
 .box           {    position:relative;
-                    padding: 1%;   
+                    padding: 4%;   
                     clear: both;
                }
 
@@ -56,10 +56,12 @@
                }
                
 .sublabel      {    position:relative;
+                    padding: 8px 1px 1px 1px; 
                     float:left;
                     clear:both;
-                    width:30%;
-                    font-size: smaller;
+                    text-align: justify;
+                    width:59%;
+                    font-size: small;
                     font-weight:normal;
                     color: #484848 ;
                    
@@ -72,6 +74,7 @@
                     font-size: smaller;
                     font-weight:normal;  
                }
+               
        
 .sublabelvalue {    position:relative;
                     clear: both;
