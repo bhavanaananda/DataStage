@@ -83,33 +83,36 @@
    <span><a href="http://databank.ora.ox.ac.uk"><img name="databank_logo" id="databank_logo" alt="databank_logo" src="http://databank.ora.ox.ac.uk/static/databank_logo_generic.png" /></a></span>
    </h2>
    <h3>Research Group: <span id="groupname">%{RESEARCHGROUPNAME}</span></h3>
-   <div>   
-	    <table id="tableDatasets" style="padding:2px">
-         <!-- 
-		     <thead>
-		         <tr>
-		           <th> Dataset identifier </th>
-		           <th> Version            </th>
-		           <th> Submitted on       </th>
-		           <th> Submitted by       </th>
-		        </tr>
-		    </thead>
-          -->
-		    <tbody>
-            <tr>
-                <td colspan="4">(Waiting for listing from Databank...)</td>
-            </tr>
-            <!-- 
-            <tr>
-               <td><a href="somehost/somesilo/dataset/somedatasets1">somedataset1</a></td>
-               <td></td>
-               <td></td>
-               <td></td>
-            </tr>
-              -->
-		     </tbody>
-	      </table> 
-   </div>   
+   <form id="submitForm" name="submitForm" action="/" method="post">
+     <div>   
+  	    <table id="tableDatasets" style="padding:2px">
+           <!-- 
+  		     <thead>
+  		         <tr>
+  		           <th> Dataset identifier </th>
+  		           <th> Version            </th>
+  		           <th> Submitted on       </th>
+  		           <th> Submitted by       </th>
+  		        </tr>
+  		    </thead>
+            -->
+  		    <tbody>
+              <tr>
+                  <td colspan="4">(Waiting for listing from Databank...)</td>
+              </tr>
+              <!-- 
+              <tr>
+                 <td><a href="somehost/somesilo/dataset/somedatasets1">somedataset1</a></td>
+                 <td></td>
+                 <td></td>
+                 <td></td>
+              </tr>
+                -->
+  		     </tbody>
+  	      </table> 
+          <input name="cancel" id="cancel" type="submit" value="Home"/>
+     </div>   
+   </form>
 </body>
 
 </html>
