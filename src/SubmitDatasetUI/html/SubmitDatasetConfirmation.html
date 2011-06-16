@@ -51,12 +51,66 @@
     <div>
         <span id="logo"><a href="/"><img alt="site_logo" src="/images/AdmiralToDataBank-284x100.png" border="0"/></a></span>
     </div>
-
-   <h3>Review the data package details prior to submission</h3>
-   <div class="sublabel">(Click the back button if you wish to revise them)</div>
-   <form id="confirmForm" action="../../SubmitDatasetHandler/cgi-bin/SubmitDatasetConfirmationHandler.py" method="post">
+   
+   <div class="section sectionSpace">
+       <h3>Review the data package details prior to submission</h3>
+       <div class="sublabel">(Click the back button if you wish to revise them)</div>
+       <form id="confirmForm" action="../../SubmitDatasetHandler/cgi-bin/SubmitDatasetConfirmationHandler.py" method="post">
+          <table>
+          <tr>
+               <th> Directory, sub-directories and files <BR> comprising this data package </th>
+               <td id="datasetDir"  name="datasetDir"></td>
+               <td id="dirtreecontents">  </td>
+          </tr>
+          <tr>
+               <th> DataBank data package </th>
+               <td id="datasetId"  name="datasetId"></td>
+          </tr>
+          <tr>
+               <th> Title </th>
+               <td id="datasetTitle"  name="datasetTitle"></td>
+          </tr>
+          <tr>
+               <th> Description</th>
+               <td id="datasetDescription"  name="datasetDescription"></td>
+          </tr>
+       </table>
+      
+       <input  name="datDir" id="datDir" type="hidden"/>
+       <input  name="datId" id="datId" type="hidden"/>
+       <input  name="title" id="title" type="hidden"/>
+       <input  name="description" id="description" type="hidden"/>
+   </div>
+   
+   <div class="section sectionSpace">
+        <h3>Enter Oxford DataBank username and password</h3>
+        <div>
+            <div>
+               <span class="label confirm">User Name:</span>
+               <span class="labelvalue">
+                    <input name="user" id="user" type="text"/>
+                </span>       
+            </div>
+            <div class="box">
+                <span class="label confirm">Password :</span>
+                <span class="labelvalue">
+                        <input name="pass" id="pass" type="password"/>
+                </span>
+            </div> 
+            <div>
+                <span class="labelvalue">
+                    <input name="cancel" id="cancel" type="submit" value="Back"/>
+                    <input name="submit" id="submit" type="submit" value="Submit"/>
+                </span>
+            </div>
+            <div id="progressmessage" class="progressmessage">
+            </div>
+        </div>
+   </div>
+   
+   <!--
    <div class="outer">
-        <div class="box">
+        <div class="confirmField">
             <span class="label confirm ">
                 Directory, sub-directories and files comprising this data package :
             </span>
@@ -68,50 +122,26 @@
             </span>  
             <input  name="datDir" id="datDir" type="hidden"/>
         </div>
-        <div class="box">
+        <div class="confirmField">
            <span class="label confirm">DataBank data package :</span>
            <span class="labelvalue" id="datasetId"  name="datasetId"></span>
            <input  name="datId" id="datId" type="hidden"/>
         </div>
-        <div class="box">
+        <div class="confirmField">
            <span class="label confirm">Title :</span>
            <span class="labelvalue" id="datasetTitle" name="datasetTitle"></span>
            <input  name="title" id="title" type="hidden"/>
         </div>  
-        <div class="box">
+        <div class="confirmField">
            <span class="label confirm">Description :</span>
            <span class="labelvalue" id="datasetDescription" name="datasetDescription"></span>
            <input  name="description" id="description" type="hidden"/>
         </div>     
-    </div>
-
-    <!--    
-    <h3>Enter University single signon username and password</h3>
-    -->
-    <h3>Enter Oxford DataBank username and password</h3>
-    
-    <div class="outer">
-        <div class="box">
-            <span class="label confirm">User Name:</span>
-           <span class="labelvalue">
-                <input name="user" id="user" type="text"/>
-            </span>       
-        </div>
-        <div class="box">
-            <span class="label confirm">Password :</span>
-            <span class="labelvalue">
-                    <input name="pass" id="pass" type="password"/>
-            </span>
-        </div> 
-        <div class="box">
-            <span class="labelvalue">
-                <input name="cancel" id="cancel" type="submit" value="Back"/>
-                <input name="submit" id="submit" type="submit" value="Submit"/>
-            </span>
-        </div>
-        <div id="progressmessage" class="progressmessage">
-        </div>
    </div>
+     -->
+
+    
+
 </form>  
 </body>
 

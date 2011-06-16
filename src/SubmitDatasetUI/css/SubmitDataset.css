@@ -23,14 +23,20 @@
                    height:100px;
                }
 
-.outer         {    position:relative;
+.section      {    position:relative;
                     height:  40%;
                     width:   75%;
+                    float:left;
+                    clear: both;
                }
        
+
+.sectionSpace  {
+                  padding: 2%;
+               }
      
 .box           {    position:relative;
-                    padding: 4%;   
+                    padding: 3%;   
                     clear: both;
                }
 
@@ -121,3 +127,37 @@ input#datDir   {    position:relative;
 #logout       {
                     float:right;
               }
+
+              
+table
+{
+  border-collapse:collapse;
+  float:left;
+}
+td, th
+{
+  padding:5px;
+}
+
+th
+{   
+  background-color: #87A6E3;
+  color: white;  
+  text-align: left;  
+}
+table, th, td
+{
+  border: 1px solid #CEE3F6;
+}
+
+table, td
+{
+  background-color: #FFE;
+}
+             
+.floatleft
+{
+  float:left;
+}
+             
+              
