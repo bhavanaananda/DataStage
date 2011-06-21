@@ -23,6 +23,13 @@ if (typeof admiral == "undefined")
 	admiral = {};
 }
 
+function callbackFunc(a,b)
+{
+   return (a.datasetname < b.datasetname) ? -1 : 1;
+ }
+
+
+
 /**
  * Prepare page element containing a list of hyperlinked datasets in a silo
  * 
@@ -45,6 +52,7 @@ admiral.listDatasets = function (host, silo, getlist, callback)
     {
         //log.debug("admiral.listDatasets calling getlist");
         var datasets = getlist(host, silo, callback);
+        datasets.sort(callbackFunc);
     });
     m.eval(function(datasets,callback)
     {
