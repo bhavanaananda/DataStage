@@ -40,18 +40,27 @@
                     clear: both;
                }
 
+.credentiallabel         {    position:relative;                
+                         }
+
+.credentiallabelvalue         { position:relative;
+                           width: 90%;
+                           float: right;  
+                           font-size: smaller;
+                           font-weight:normal;  
+                         }                         
 
 .label         {    position:relative;
                     width: 30%;                    
                }
                
-.confirm       {    position:relative;
+.confirmlabel  {    position:relative;
                     font-size: medium;
                     font-weight:bolder;  
                     text-align:right;
                     float:left;
                     clear:both;
-                    width:30%;
+                    width: 40%;
                }
 .mainlabel     {    position:relative;
                     float:left;

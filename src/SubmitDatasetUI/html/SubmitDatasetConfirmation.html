@@ -51,11 +51,11 @@
     <div>
         <span id="logo"><a href="/"><img alt="site_logo" src="/images/AdmiralToDataBank-284x100.png" border="0"/></a></span>
     </div>
-   
+   <form id="confirmForm" action="../../SubmitDatasetHandler/cgi-bin/SubmitDatasetConfirmationHandler.py" method="post">  
    <div class="section sectionSpace">
        <h3>Review the data package details prior to submission</h3>
        <div class="sublabel">(Click the back button if you wish to revise them)</div>
-       <form id="confirmForm" action="../../SubmitDatasetHandler/cgi-bin/SubmitDatasetConfirmationHandler.py" method="post">
+
           <table>
           <tr>
                <th> Directory, sub-directories and files <BR> comprising this data package </th>
@@ -84,28 +84,26 @@
    
    <div class="section sectionSpace">
         <h3>Enter Oxford DataBank username and password</h3>
-        <div>
             <div>
-               <span class="label confirm">User Name:</span>
-               <span class="labelvalue">
+               <span class="credentiallabel">User Name:</span>
+               <span class="credentiallabelvalue">
                     <input name="user" id="user" type="text"/>
                 </span>       
             </div>
-            <div class="box">
-                <span class="label confirm">Password :</span>
-                <span class="labelvalue">
+            <div>
+                <span class="credentiallabel">Password :</span>
+                <span class="credentiallabelvalue">
                         <input name="pass" id="pass" type="password"/>
                 </span>
             </div> 
             <div>
-                <span class="labelvalue">
+                <span class="credentiallabelvalue">
                     <input name="cancel" id="cancel" type="submit" value="Back"/>
                     <input name="submit" id="submit" type="submit" value="Submit"/>
                 </span>
             </div>
             <div id="progressmessage" class="progressmessage">
             </div>
-        </div>
    </div>
    
    <!--
