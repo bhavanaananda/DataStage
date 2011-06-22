@@ -65,6 +65,7 @@ function displayValues(directorySelected,callback)
     n.eval(function(directorySelected,callback)
     { 
         jQuery("#datDir").val(directorySelected);
+        jQuery("#user").val(admiral.databanksilo);
         // Get the persisted informaton from the server to display for 
         // the selected directory
         admiral.getDatasetMetadata(directorySelected,callback); 
