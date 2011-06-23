@@ -16,6 +16,7 @@
 # See: 000-default.host
 
 ProxyRequests Off
+SSLProxyEngine on
 
 <Proxy *>
   Order deny,allow
