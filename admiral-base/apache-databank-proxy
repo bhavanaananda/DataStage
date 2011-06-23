@@ -23,15 +23,15 @@ SSLProxyEngine on
   Allow from all 
 </Proxy>
 
-ProxyPass        /silos http://%{DATABANKHOST}/silos
-ProxyPassReverse /silos http://%{DATABANKHOST}/silos
-ProxyPass        /silos/ http://%{DATABANKHOST}/silos/
-ProxyPassReverse /silos/ http://%{DATABANKHOST}/silos/
+ProxyPass        /silos https://%{DATABANKHOST}/silos
+ProxyPassReverse /silos https://%{DATABANKHOST}/silos
+ProxyPass        /silos/ https://%{DATABANKHOST}/silos/
+ProxyPassReverse /silos/ https://%{DATABANKHOST}/silos/
 
-ProxyPass        /static http://%{DATABANKHOST}/static
-ProxyPassReverse /static http://%{DATABANKHOST}/static
-ProxyPass        /static/ http://%{DATABANKHOST}/static/
-ProxyPassReverse /static/ http://%{DATABANKHOST}/static/
+ProxyPass        /static https://%{DATABANKHOST}/static
+ProxyPassReverse /static https://%{DATABANKHOST}/static
+ProxyPass        /static/ https://%{DATABANKHOST}/static/
+ProxyPassReverse /static/ https://%{DATABANKHOST}/static/
 
 ProxyPass        /admin http://%{HOSTFULLNAME}:8080/admin
 ProxyPassReverse /admin http://%{HOSTFULLNAME}:8080/admin
@@ -53,14 +53,14 @@ ProxyPassReverse /error http://%{HOSTFULLNAME}:8080/error
 ProxyPass        /error/ http://%{HOSTFULLNAME}:8080/error/
 ProxyPassReverse /error/ http://%{HOSTFULLNAME}:8080/error/
 
-ProxyPass        /databanksilo http://%{DATABANKHOST}/%{DATABANKSILO}
-ProxyPassReverse /databanksilo http://%{DATABANKHOST}/%{DATABANKSILO}
-ProxyPass        /databanksilo/ http://%{DATABANKHOST}/%{DATABANKSILO}/
-ProxyPassReverse /databanksilo/ http://%{DATABANKHOST}/%{DATABANKSILO}/
+ProxyPass        /databanksilo https://%{DATABANKHOST}/%{DATABANKSILO}
+ProxyPassReverse /databanksilo https://%{DATABANKHOST}/%{DATABANKSILO}
+ProxyPass        /databanksilo/ https://%{DATABANKHOST}/%{DATABANKSILO}/
+ProxyPassReverse /databanksilo/ https://%{DATABANKHOST}/%{DATABANKSILO}/
 
-ProxyPass        /%{DATABANKSILO} http://%{DATABANKHOST}/%{DATABANKSILO}
-ProxyPassReverse /%{DATABANKSILO} http://%{DATABANKHOST}/%{DATABANKSILO}
-ProxyPass        /%{DATABANKSILO}/ http://%{DATABANKHOST}/%{DATABANKSILO}/
-ProxyPassReverse /%{DATABANKSILO}/ http://%{DATABANKHOST}/%{DATABANKSILO}/
+ProxyPass        /%{DATABANKSILO} https://%{DATABANKHOST}/%{DATABANKSILO}
+ProxyPassReverse /%{DATABANKSILO} https://%{DATABANKHOST}/%{DATABANKSILO}
+ProxyPass        /%{DATABANKSILO}/ https://%{DATABANKHOST}/%{DATABANKSILO}/
+ProxyPassReverse /%{DATABANKSILO}/ https://%{DATABANKHOST}/%{DATABANKSILO}/
 
 #ProxyPreserveHost On
