@@ -46,13 +46,12 @@ function callbackFunc(a,b)
  */
 admiral.listDatasets = function (host, silo, getlist, callback)
 {
-    // log.debug("admiral.listDatasets "+host+", "+silo);
+    // log.debug("admiral.listDatasets "+ host +", "+silo);
     var m = new admiral.AsyncComputation();
     m.eval(function(val,callback)
     {
         //log.debug("admiral.listDatasets calling getlist");
         var datasets = getlist(host, silo, callback);
-        datasets.sort(callbackFunc);
     });
     m.eval(function(datasets,callback)
     {
@@ -72,7 +71,8 @@ admiral.listDatasets = function (host, silo, getlist, callback)
                 );
 
        if(datasets!=null)
-       {
+       { 
+        datasets.sort(callbackFunc);
   	    for (var i in datasets)
   	    {
   	        var datasetname = datasets[i].datasetname;
