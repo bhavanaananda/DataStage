@@ -142,7 +142,7 @@ def datasetSummaryForm(formdata, outputstr):
                 
                 <body>
                     <h2>%(status)s   
-                           <span><a href="http://databank.ora.ox.ac.uk"><img name="databank_logo" id="databank_logo" alt="databank_logo" src="http://databank.ora.ox.ac.uk/static/databank_logo_generic.png" /></a></span>
+                           <span><a href="%(unpackedLink)s"><img name="databank_logo" id="databank_logo" alt="databank_logo" src="http://databank.ora.ox.ac.uk/static/databank_logo_generic.png" /></a></span>
                     </h2>
                     <div id="displayDatasetPage"> </div> 
                     <!-- 
