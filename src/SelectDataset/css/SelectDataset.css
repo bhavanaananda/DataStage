@@ -21,6 +21,18 @@
 /*  
   Visual style for error message display
 */
+
+.section      {    position:relative;
+                    height:  40%;
+                    width:   75%;
+                    float:left;
+                    clear: both;
+               }
+       
+
+.sectionSpace  {
+                  padding: 2%;
+               }
 .error { 
     color:red ;
 }
