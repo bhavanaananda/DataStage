@@ -184,7 +184,7 @@ def unzipRemoteFileToNewDataset(session, datasetName, zipFileName):
     session.doHTTP_POST(
         data=reqdata, data_type=reqtype,         
         resource=resourceString, 
-        expect_status=[200,201], expect_reason=["OK","Created"])
+        expect_status=[200,201,204], expect_reason=["OK","Created","No Content"])
     return datasetName
 
 def getFileFromDataset(session, datasetName, fileName):  
