@@ -49,7 +49,7 @@ migrate postboot-2.sh              /root
 migrate postboot-3.sh              /root
 migrate postboot-4.sh              /root
 
-chmod -f 640 /etc/sudoers
+#chmod -f 640 /etc/sudoers
 migrate sudoers /etc/sudoers
 chmod 440 /etc/sudoers
 chmod -f 755 /usr/local/sbin/testwriteaccess.sh
