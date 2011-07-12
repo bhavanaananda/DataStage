@@ -59,7 +59,7 @@ class TestFileHTTPwriteCIFSread(unittest.TestCase):
         return
 
     def testSharedUserCIFSB(self):
-        mountcommand = ( 'mount.cifs //%(host)s/%(share)s/ %(mountpt)s -o rw,user=%(user)s,password=%(pass)s,nounix,forcedirectio' %
+        mountcommand = ( '/sbin/mount.cifs //%(host)s/%(share)s/ %(mountpt)s -o rw,user=%(user)s,password=%(pass)s,nounix,forcedirectio' %
                          { 'host': TestConfig.hostname
                          , 'share': TestConfig.cifssharename
                          , 'userA': TestConfig.userAname
@@ -94,10 +94,10 @@ class TestFileHTTPwriteCIFSread(unittest.TestCase):
         except:
             pass
         assert (f!=None), "User B cannot open User A's collab files for writing!"
-        os.system('umount.cifs '+TestConfig.cifsmountpoint)
+        os.system('/sbin/umount.cifs '+TestConfig.cifsmountpoint)
 
     def testSharedUserCIFSRGLeader(self):
-        mountcommand = ( 'mount.cifs //%(host)s/%(share)s/ %(mountpt)s -o rw,user=%(user)s,password=%(pass)s,nounix,forcedirectio' %
+        mountcommand = ( '/sbin/mount.cifs //%(host)s/%(share)s/ %(mountpt)s -o rw,user=%(user)s,password=%(pass)s,nounix,forcedirectio' %
                          { 'host': TestConfig.hostname
                          , 'share': TestConfig.cifssharename
                          , 'userA': TestConfig.userAname
@@ -133,10 +133,10 @@ class TestFileHTTPwriteCIFSread(unittest.TestCase):
         except:
             pass
         assert (f!=None), "Research group leader cannot open User A's collab files for writing!"
-        os.system('umount.cifs '+TestConfig.cifsmountpoint)
+        os.system('/sbin/umount.cifs '+TestConfig.cifsmountpoint)
 
     def testSharedUserCIFSCollab(self):
-        mountcommand = ( 'mount.cifs //%(host)s/%(share)s/ %(mountpt)s -o rw,user=%(user)s,password=%(pass)s,nounix,forcedirectio' %
+        mountcommand = ( '/sbin/mount.cifs //%(host)s/%(share)s/ %(mountpt)s -o rw,user=%(user)s,password=%(pass)s,nounix,forcedirectio' %
                          { 'host': TestConfig.hostname
                          , 'share': TestConfig.cifssharename
                          , 'user': TestConfig.collabname

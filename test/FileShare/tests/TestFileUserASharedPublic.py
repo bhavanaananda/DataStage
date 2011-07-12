@@ -24,7 +24,7 @@ urllib2.install_opener(opener)
 class TestFileUserASharedPublic(unittest.TestCase):
 
     def setUp(self):
-        mountcommand = ( 'mount.cifs //%(host)s/%(share)s/shared/%(userA)s %(mountpt)s -o rw,user=%(user)s,password=%(pass)s,nounix,forcedirectio' %
+        mountcommand = ( '/sbin/mount.cifs //%(host)s/%(share)s/shared/%(userA)s %(mountpt)s -o rw,user=%(user)s,password=%(pass)s,nounix,forcedirectio' %
                          { 'host': TestConfig.hostname
                          , 'share': TestConfig.cifssharename
                          , 'userA': TestConfig.userAname
@@ -37,7 +37,7 @@ class TestFileUserASharedPublic(unittest.TestCase):
         return
 
     def tearDown(self):
-        os.system('umount.cifs '+TestConfig.cifsmountpoint)
+        os.system('/sbin/umount.cifs '+TestConfig.cifsmountpoint)
         return
 
     # Test cases

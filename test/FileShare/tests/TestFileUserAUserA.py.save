@@ -24,7 +24,7 @@ class TestFileUserAUserA(unittest.TestCase):
         return
 
     def setUp(self):
-        mountcommand = ( 'mount.cifs //%(host)s/%(share)s/%(user)s %(mountpt)s -o rw,user=%(user)s,password=%(pass)s,nounix,forcedirectio' %
+        mountcommand = ( '/sbin/mount.cifs //%(host)s/%(share)s/%(user)s %(mountpt)s -o rw,user=%(user)s,password=%(pass)s,nounix,forcedirectio' %
                          { 'host': TestConfig.hostname
                          , 'share': TestConfig.cifssharename
                          , 'user': TestConfig.userAname
@@ -38,7 +38,7 @@ class TestFileUserAUserA(unittest.TestCase):
         return
 
     def tearDown(self):
-        os.system('umount.cifs '+TestConfig.cifsmountpoint)
+        os.system('/sbin/umount.cifs '+TestConfig.cifsmountpoint)
 #        os.system('umount '+TestConfig.webdavmountpoint)
         return
 

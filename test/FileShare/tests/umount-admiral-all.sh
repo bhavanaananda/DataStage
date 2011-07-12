@@ -4,7 +4,7 @@ done=false
 
 while [[ $done == false ]]
 do
-  umount.cifs mountadmiral
+  /sbin/umount.cifs mountadmiral
   if [[ $? != 0 ]]; then
     done=true
   fi

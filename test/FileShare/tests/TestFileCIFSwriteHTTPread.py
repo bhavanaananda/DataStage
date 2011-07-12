@@ -33,7 +33,7 @@ class TestFileCIFSwriteHTTPread(unittest.TestCase):
         return
 
     def testSharedUserCIFS(self):
-        mountcommand = ( 'mount.cifs //%(host)s/%(share)s/ %(mountpt)s -o rw,user=%(user)s,password=%(pass)s,nounix,forcedirectio' %
+        mountcommand = ( '/sbin/mount.cifs //%(host)s/%(share)s/ %(mountpt)s -o rw,user=%(user)s,password=%(pass)s,nounix,forcedirectio' %
                          { 'host': TestConfig.hostname
                          , 'share': TestConfig.cifssharename
                          , 'userA': TestConfig.userAname
@@ -60,7 +60,7 @@ class TestFileCIFSwriteHTTPread(unittest.TestCase):
         l = f.readline()
         f.close()
         self.assertEqual(l, 'Test creation of file\n', 'Unexpected file content by user A') 
-        os.system('umount.cifs '+TestConfig.cifsmountpoint)
+        os.system('/sbin/umount.cifs '+TestConfig.cifsmountpoint)
 
     def testSharedUserHTTPB(self):
         passman = urllib2.HTTPPasswordMgrWithDefaultRealm()

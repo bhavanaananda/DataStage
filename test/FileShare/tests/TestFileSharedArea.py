@@ -32,7 +32,7 @@ class TestFileSharedArea(unittest.TestCase):
         return
 
     def testSharedUserCIFS(self):
-        mountcommand = ( 'mount.cifs //%(host)s/%(share)s/shared/%(userA)s %(mountpt)s -o rw,user=%(user)s,password=%(pass)s,nounix,forcedirectio' %
+        mountcommand = ( '/sbin/mount.cifs //%(host)s/%(share)s/shared/%(userA)s %(mountpt)s -o rw,user=%(user)s,password=%(pass)s,nounix,forcedirectio' %
                          { 'host': TestConfig.hostname
                          , 'share': TestConfig.cifssharename
                          , 'userA': TestConfig.userAname
@@ -51,8 +51,8 @@ class TestFileSharedArea(unittest.TestCase):
         l = f.readline()
         f.close()
         self.assertEqual(l, 'Test creation of file\n', 'Unexpected file content by user A') 
-        os.system('umount.cifs '+TestConfig.cifsmountpoint)
-        mountcommand = ( 'mount.cifs //%(host)s/%(share)s/shared/%(userA)s %(mountpt)s -o rw,user=%(user)s,password=%(pass)s,nounix,forcedirectio' %
+        os.system('/sbin/umount.cifs '+TestConfig.cifsmountpoint)
+        mountcommand = ( '/sbin/mount.cifs //%(host)s/%(share)s/shared/%(userA)s %(mountpt)s -o rw,user=%(user)s,password=%(pass)s,nounix,forcedirectio' %
                          { 'host': TestConfig.hostname
                          , 'share': TestConfig.cifssharename
                          , 'userA': TestConfig.userAname
@@ -67,7 +67,7 @@ class TestFileSharedArea(unittest.TestCase):
         l = f.readline()
         f.close()
         self.assertEqual(l, 'Test creation of file\n', 'Unexpected file content by user B') 
-        os.system('umount.cifs '+TestConfig.cifsmountpoint)
+        os.system('/sbin/umount.cifs '+TestConfig.cifsmountpoint)
         status=os.system(mountcommand)
         self.assertEqual(status, 0, 'CIFS Mount failure')
         f=None
@@ -76,8 +76,8 @@ class TestFileSharedArea(unittest.TestCase):
         except:
             pass
         assert (f==None), "User B can open User A's files for writing!"
-        os.system('umount.cifs '+TestConfig.cifsmountpoint)
-        mountcommand = ( 'mount.cifs //%(host)s/%(share)s/shared/%(userA)s %(mountpt)s -o rw,user=%(user)s,password=%(pass)s,nounix,forcedirectio' %
+        os.system('/sbin/umount.cifs '+TestConfig.cifsmountpoint)
+        mountcommand = ( '/sbin/mount.cifs //%(host)s/%(share)s/shared/%(userA)s %(mountpt)s -o rw,user=%(user)s,password=%(pass)s,nounix,forcedirectio' %
                          { 'host': TestConfig.hostname
                          , 'share': TestConfig.cifssharename
                          , 'userA': TestConfig.userAname
@@ -92,7 +92,7 @@ class TestFileSharedArea(unittest.TestCase):
         l = f.readline()
         f.close()
         self.assertEqual(l, 'Test creation of file\n', 'Unexpected file content by user B') 
-        os.system('umount.cifs '+TestConfig.cifsmountpoint)
+        os.system('/sbin/umount.cifs '+TestConfig.cifsmountpoint)
         status=os.system(mountcommand)
         self.assertEqual(status, 0, 'CIFS Mount failure')
         f=None
@@ -101,7 +101,7 @@ class TestFileSharedArea(unittest.TestCase):
         except:
             pass
         assert (f==None), "Group Leader can open User A's files for writing!"
-        os.system('umount.cifs '+TestConfig.cifsmountpoint)
+        os.system('/sbin/umount.cifs '+TestConfig.cifsmountpoint)
         return
 
     def testSharedUserHTTP(self):
