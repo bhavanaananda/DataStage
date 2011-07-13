@@ -41,8 +41,8 @@ ExpectedUpdatedDictionary =  {
 class TestSubmitDatasetHandler(unittest.TestCase):
 
     def setUp(self):
-        self.endpointhost = "localhost"
-        self.basepath = "/admiral-test/"
+        self.endpointhost = TestConfig.HostName
+        self.basepath = "/"+TestConfig.SiloName+"/"
         self.session  = HttpSession.makeHttpSession(self.endpointhost, self.basepath, TestConfig.Username, TestConfig.Password)
  
         return

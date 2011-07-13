@@ -21,8 +21,8 @@ logger               = logging.getLogger(TestDatasetName)
 class TestDatasetSubmission(unittest.TestCase):
   
     def setUp(self):
-        self.endpointhost = "localhost"
-        self.basepath = "/admiral-test/"
+        self.endpointhost = TestConfig.HostName
+        self.basepath = "/"+TestConfig.SiloName+"/"
         self.session  = HttpSession.makeHttpSession(self.endpointhost, self.basepath, TestConfig.Username, TestConfig.Password)
         return
         
