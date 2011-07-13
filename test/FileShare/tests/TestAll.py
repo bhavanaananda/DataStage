@@ -32,6 +32,7 @@ def getTestSuite(select="all"):
     return suite
 
 from MiscLib import TestUtils
+import junitxml
 
 if __name__ == "__main__":
     print "============================================================"
@@ -39,6 +40,14 @@ if __name__ == "__main__":
     print "Edit TestConfig.py to specify hostname and other parameters"
     print "Create test accounts on target system to match TestConfig.py"
     print "============================================================"
-    TestUtils.runTests("TestAll", getTestSuite, sys.argv)
+    
+    if len(sys.argv) >= 2 and sys.argv[1] == "xml":
+        with open('xmlresults.xml', 'w') as report:
+            result = junitxml.JUnitXmlResult(report)
+            result.startTestRun()
+            getTestSuite().run(result)
+            result.stopTestRun()
+    else:
+        TestUtils.runTests("TestAll", getTestSuite, sys.argv)
 
 # End.
