@@ -13,13 +13,14 @@ def setDatasetsBaseDir(base):
     #global HostName         = "zoo-admiral-silk.zoo.ox.ac.uk"
     #global HostName         = "zoo-admiral-devel.zoo.ox.ac.uk"
     #global HostName         = "zoo-admiral-ibrg.zoo.ox.ac.uk"
-    #global HostName         = "zakynthos.zoo.ox.ac.uk"
+    #global hostname         = "zakynthos.zoo.ox.ac.uk"
     global HostName, SiloName, Username, Password, FileName
     global FilePath, FileMimeType, ZipMimeType
     global DirName, DirPath 
     global DatasetsEmptyDirName, DatasetsEmptyDirPath
     global UpdatedTitle, UpdatedDescription, TestPat
     
+    #HostName                 =  "localhost"
     HostName                 =  "zoo-admiral-ibrg.zoo.ox.ac.uk"
     SiloName                 =  "admiral"
     Username                 =  "admiral"
@@ -50,7 +51,7 @@ def setDatasetsBaseDir(base):
                                  , 'description' :  cgi.MiniFieldStorage('description' ,  "Submission tool test description")
                                  , 'user'        :  cgi.MiniFieldStorage('user'        ,  Username)
                                  , 'pass'        :  cgi.MiniFieldStorage('pass'        ,  Password)
-                                 , 'endpointhost':  cgi.MiniFieldStorage('endpointhost',  "localhost")
+                                 , 'endpointhost':  cgi.MiniFieldStorage('endpointhost',  HostName)
                                  , 'basepath'    :  cgi.MiniFieldStorage('basepath'    ,  "/"+SiloName+"/")                             
                                  , 'submit'      :  cgi.MiniFieldStorage('submit'      ,  "Submit")
                                  , 'directory'   :  cgi.MiniFieldStorage('directory'   ,   DirPath)
@@ -62,7 +63,7 @@ def setDatasetsBaseDir(base):
                                  , 'description' :  cgi.MiniFieldStorage('description' ,  "Submission tool updated test description")
                                  , 'user'        :  cgi.MiniFieldStorage('user'        ,  Username)
                                  , 'pass'        :  cgi.MiniFieldStorage('pass'        ,  Password)
-                                 , 'endpointhost':  cgi.MiniFieldStorage('endpointhost',  "localhost")
+                                 , 'endpointhost':  cgi.MiniFieldStorage('endpointhost',  HostName)
                                  , 'basepath'    :  cgi.MiniFieldStorage('basepath'    ,  "/"+SiloName+"/")       
                                  , 'submit'      :  cgi.MiniFieldStorage('submit'      ,  "Submit")      
                                 }

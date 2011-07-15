@@ -20,8 +20,8 @@ class TestHttpSession(unittest.TestCase):
   
     def setUp(self):
         # Tests run against Databank via local proxy
-        self.endpointhost = "localhost"
-        self.basepath     = "/admiral-test/"
+        self.endpointhost = TestConfig.HostName
+        self.basepath     = "/"+TestConfig.SiloName+"/"
         self.username     = TestConfig.Username
         self.password     = TestConfig.Password
         return
