@@ -13,6 +13,7 @@ sys.path.append("../../SubmitDatasetHandler/cgi-bin")
 sys.path.append("../../SubmitDatasetHandler/tests")
 import  TestAll
 import  TestConfig
+import junitxml
 logger  =  logging.getLogger("AllTests")
 
 
@@ -31,6 +32,15 @@ if __name__ == "__main__":
     print "============================================================"
     #print repr( commands.getstatusoutput('ls ../../'))
     TestConfig.setDatasetsBaseDir("../../SubmitDatasetHandler/tests")
-    TestUtils.runTests("AllTests", getTestSuite, sys.argv)
+    
+        
+    if len(sys.argv) >= 2 and sys.argv[1] == "xml":
+        with open('xmlresults.xml', 'w') as report:
+            result = junitxml.JUnitXmlResult(report)
+            result.startTestRun()
+            getTestSuite().run(result)
+            result.stopTestRun()
+    else:
+        TestUtils.runTests("AllTests", getTestSuite, sys.argv)
 
 # End.
