@@ -1,6 +1,5 @@
 curl http://databank.ora.ox.ac.uk/admiral-test/datasets -u admiral:admiral -H "Accept: application/rdf+xml"
 
-
 curl http://zakynthos.zoo.ox.ac.uk/user/TestUser1 -u TestLeader:leader 
 
 curl http://zakynthos.zoo.ox.ac.uk/user/TestUser1 -u TestLeader:leader -d  '{"UserID":"TestUser1","UserFullName":"Test User 1","UserRole":"RGMember","UserRoomNumber":"Room 1","UserWorkPhone":"12345","UserPassword":"user1"}' -X PUT
