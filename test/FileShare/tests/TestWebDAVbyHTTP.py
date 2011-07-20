@@ -16,16 +16,10 @@ sys.path.append("../..")
 
 readmetext="This directory is the root of the ADMIRAL shared file system.\n"
 readmefile="ADMIRAL.README"
-hostname="zoo-admiral-silk.zoo.ox.ac.uk"
-theurl="http://" +hostname+ "/webdav/ChrisHolland"
-#username="test_admiral"
-#password="test_admiral"
-username="FritzVollrath"
-password="Fritz-2203"
-#username="ChrisHolland"
-#password="Chris-2203"
-#username="test2"
-#password="test2"
+hostname="zoo-admiral-ibrg.zoo.ox.ac.uk"
+theurl="http://" +hostname+ "/data/private/TestUser1"
+username="TestUser1"
+password="user1"
 passman = urllib2.HTTPPasswordMgrWithDefaultRealm()
 passman.add_password(None, theurl, username, password)
 authhandler = urllib2.HTTPBasicAuthHandler(passman)
@@ -47,15 +41,15 @@ class TestWebDAVbyHTTP(unittest.TestCase):
 
     def testWebDAVFile(self):
         h1 = httplib.HTTPConnection(hostname)
-        h1.request('GET','/webdav')
+        h1.request('GET','/data')
         res=h1.getresponse()
-        authreq = str(res.status) + ' ' + res.reason
+        authreq = str(res.status) + ' ' +res.reason
         print authreq
 #        self.assertEqual(authreq, '401 Authorization Required', 'Unexpected response') 
         return
 
     def testWebDAVFileRead(self):
-        print theurl
+        theurl="http://" +hostname+ "/data"
         pagehandle = urllib2.urlopen(theurl+'/ADMIRAL.README')
         thepage = pagehandle.read()
         self.assertEqual(thepage, readmetext) 

@@ -10,25 +10,23 @@ import sys, unittest, logging
 sys.path.append("../..")
 
 import TestFilePrivateArea
-import TestFileUserASharedPublic
-import TestFileUserAPublic
 import TestFileSharedArea
 import TestFileCollabArea
-import TestFileCIFSwriteHTTPread
-import TestFileHTTPwriteCIFSread
+import TestDeletedUserCheckFileAccess
 import TestFileDefaultArea
+import TestWebDAVAccess
+import TestWebDAVbyHTTP
 
 # Code to run unit tests from all library test modules
 def getTestSuite(select="all"):
     suite = unittest.TestSuite()
-#    suite.addTest(TestFileUserASharedPublic.getTestSuite(select=select))
-#    suite.addTest(TestFileUserAPublic.getTestSuite(select=select))
     suite.addTest(TestFilePrivateArea.getTestSuite(select=select))
     suite.addTest(TestFileSharedArea.getTestSuite(select=select))
     suite.addTest(TestFileCollabArea.getTestSuite(select=select))
-    suite.addTest(TestFileCIFSwriteHTTPread.getTestSuite(select=select))
-    suite.addTest(TestFileHTTPwriteCIFSread.getTestSuite(select=select))
+    suite.addTest(TestDeletedUserCheckFileAccess.getTestSuite(select=select))
     suite.addTest(TestFileDefaultArea.getTestSuite(select=select))
+    suite.addTest(TestWebDAVAccess.getTestSuite(select=select))
+    suite.addTest(TestWebDAVbyHTTP.getTestSuite(select=select))
     return suite
 
 from MiscLib import TestUtils

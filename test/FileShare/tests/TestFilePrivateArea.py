@@ -23,7 +23,6 @@ class TestFilePrivateArea(unittest.TestCase):
         return
 
     def tearDown(self):
-        #self.cifsUnmount()
         return
 
     def HTTP_redirect(self, opener, method, uri, data, content_type):
@@ -547,7 +546,7 @@ class TestFilePrivateArea(unittest.TestCase):
         createMessage = self.httpCreateFile(TestConfig.userAname, TestConfig.userApass, fileName, fileContent)
         self.assertEqual(createMessage[0],0,"Create file failed: "+str(createMessage))
         readFileContent = self.httpReadFileAs(TestConfig.userAname, TestConfig.userRGleadername, TestConfig.userRGleaderpass, fileName)
-        self.assertEqual(fileContent,readFileContent,"RGLeader read of file in User A's filespace by HTTP")
+        self.assertEqual(fileContent,readFileContent,"RGLeader cannot read the file in User A's filespace by HTTP")
         return
      
     def testUserACreateHTTPRGLeaderUpdateHTTP(self): 

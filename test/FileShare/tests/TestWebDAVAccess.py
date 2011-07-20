@@ -20,7 +20,7 @@ sys.path.append("../..")
 readmetext="This directory is the root of the ADMIRAL shared file system.\n"
 mountpoint="mountadmiralwebdav"
 readmefile="ADMIRAL.README"
-theurl="http://zoo-admiral-silk.zoo.ox.ac.uk/webdav/ChrisHolland"
+theurl="http://zoo-admiral-ibrg.zoo.ox.ac.uk/webdav/TestUser1"
 
 class TestWebDAVAccess(unittest.TestCase):
 
