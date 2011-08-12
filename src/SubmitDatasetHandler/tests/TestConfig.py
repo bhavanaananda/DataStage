@@ -21,7 +21,8 @@ def setDatasetsBaseDir(base):
     global UpdatedTitle, UpdatedDescription, TestPat
     
     #HostName                 =  "localhost"
-    HostName                 =  "zoo-admiral-ibrg.zoo.ox.ac.uk"
+    #HostName                 =  "zoo-admiral-ibrg.zoo.ox.ac.uk"
+    HostName                 =  "datastage-test.bodleian.ox.ac.uk"
     SiloName                 =  "admiral"
     Username                 =  "admiral"
     Password                 =  "admiral"

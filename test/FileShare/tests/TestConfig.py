@@ -8,9 +8,9 @@ class TestConfig:
     #hostname         = "zoo-admiral-behav.zoo.ox.ac.uk"
     #hostname         = "zoo-admiral-silk.zoo.ox.ac.uk"
     #hostname         = "zoo-admiral-devel.zoo.ox.ac.uk"
-    hostname         = "zoo-admiral-ibrg.zoo.ox.ac.uk"
+    #hostname         = "zoo-admiral-ibrg.zoo.ox.ac.uk"
     #hostname         = "zakynthos.zoo.ox.ac.uk"
-    
+    hostname         = "datastage-test.bodleian.ox.ac.uk"
     cifssharename    = "data"
     cifsmountpoint   = "mountadmiral"
     webdavmountpoint = "mountadmiralwebdav"
