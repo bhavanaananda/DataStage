@@ -14,8 +14,8 @@ import TestFileSharedArea
 import TestFileCollabArea
 import TestDeletedUserCheckFileAccess
 import TestFileDefaultArea
-import TestWebDAVAccess
-import TestWebDAVbyHTTP
+# import TestWebDAVAccess
+# import TestWebDAVbyHTTP
 
 # Code to run unit tests from all library test modules
 def getTestSuite(select="all"):
