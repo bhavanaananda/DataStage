@@ -25,8 +25,8 @@ def getTestSuite(select="all"):
     suite.addTest(TestFileCollabArea.getTestSuite(select=select))
     suite.addTest(TestDeletedUserCheckFileAccess.getTestSuite(select=select))
     suite.addTest(TestFileDefaultArea.getTestSuite(select=select))
-    suite.addTest(TestWebDAVAccess.getTestSuite(select=select))
-    suite.addTest(TestWebDAVbyHTTP.getTestSuite(select=select))
+    # suite.addTest(TestWebDAVAccess.getTestSuite(select=select))
+    # suite.addTest(TestWebDAVbyHTTP.getTestSuite(select=select))
     return suite
 
 from MiscLib import TestUtils
